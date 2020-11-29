@@ -15,10 +15,9 @@
 	EXTERN __BANK_6_tail
 	EXTERN __BANK_7_tail
 
-	PUBLIC _bankedtapeloader
-    SECTION code_compiler
+    SECTION code_driver
 
-_bankedtapeloader:
+bankedtapeloader:
      ld   ix,__BANK_0_head
      ld   de,__BANK_0_tail - __BANK_0_head
      ld   c,0x10 ;Bank 0
@@ -92,4 +91,4 @@ load_block1:
      ret
 
 	SECTION code_crt_init
-     call _bankedtapeloader
+     call bankedtapeloader
