@@ -20,7 +20,8 @@
 
      SECTION code_driver
 
-     defc ZX_BANK_IOPORT = 0x7ffd
+     defc ZX_BANK_IOPORT	= 0x7ffd
+     defc ERR_SP			= 0x5c3d
      INCLUDE "target/zx/def/sysvar.def"
 
 
@@ -73,7 +74,7 @@ _bankedtapeloader:
      ei
      ret
 
-load_block:
+.load_block
      ld   a,d
      or   e
      ret  z     ;Nothing to load
@@ -83,18 +84,18 @@ load_block:
      ld   bc,ZX_BANK_IOPORT
      out  (c),a
      ei
-     ld   hl,(23613)
+     ld   hl,(ERR_SP)
      push hl
      ld   hl,load_block1
      push hl
-     ld   (23613),sp
+     ld   (ERR_SP),sp
      ld   a,255  ;Data block
      scf         ;Load
      call 0x556	 ; call the tape loader in ROM
-load_block1:
+.load_block1
      pop  hl
      pop  hl
-     ld   (23613),hl
+     ld   (ERR_SP),hl
      and  a
      ret
 
