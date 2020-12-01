@@ -66,5 +66,5 @@ _cls:
 	ret
 
 	SECTION	bss_compiler
-tempSP:
+.tempSP
 	dw	0
