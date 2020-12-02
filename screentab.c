@@ -1,6 +1,6 @@
 #include "screentab.h"
 
-char *screenTab[SCREEN_TAB_LEN];
+unsigned char *screenTab[SCREEN_TAB_LEN];
 
 void createScreenTab(void)
 {
