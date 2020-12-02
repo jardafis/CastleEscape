@@ -21,6 +21,13 @@ _displayScreen:
 	push	hl
 	push	ix
 
+	; Get the address of the tilemap
+	; passed on the stack
+	ld		ix,12	; the 5 pushes above plus return address
+	add		ix,sp
+	ld		l,(ix+0)
+	ld		h,(ix+1)
+
 	; IX points to the temporary storage for our variables
 	ld		ix,varbase
 
