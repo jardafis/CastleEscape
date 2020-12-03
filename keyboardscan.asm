@@ -4,6 +4,7 @@
 	SECTION	code_compiler
 
 	PUBLIC	_keyboardScan
+	PUBLIC	_updateDirection
 
 _keyboardScan:
 										PUSH AF
@@ -43,12 +44,87 @@ _keyboardScan:
                                         POP AF
                                         RET
 
-.Keyboard_Map
-							            DB 0xFE,"#","Z","X","C","V"
-                                        DB 0xFD,"A","S","D","F","G"
-                                        DB 0xFB,"Q","W","E","R","T"
-                                        DB 0xF7,"1","2","3","4","5"
-                                        DB 0xEF,"0","9","8","7","6"
-                                        DB 0xDF,"P","O","I","U","Y"
-                                        DB 0xBF,"\n","L","K","J","H"
-                                        DB 0x7F," ","#","M","N","B"
+		; Bit numbers for directions
+		defc	FIRE  = 4
+		defc	UP	  = 3
+		defc	DOWN  = 2
+		defc	LEFT  = 1
+		defc	RIGHT = 0
+
+_updateDirection:
+		push	af
+		push	bc
+		push	de
+
+		ld		e,0			; Return value
+		ld		c,0xfe		; C is always FEh for reading keyboard ports
+		ld		hl,scanCodes
+
+.checkUp
+		ld		b,(hl)		; Upper port address
+		inc		hl
+		in		a,(c)       ; Read row
+		and		(hl)		; key mask
+		inc		hl
+		jr		nz,checkDown
+		set		UP,e
+.checkDown
+		ld		b,(hl)		; Upper port address
+		inc		hl
+		in		a,(c)       ; Read row
+		and		(hl)		; key mask
+		inc		hl
+		jr		nz,checkLeft
+		set		DOWN,e
+.checkLeft
+		ld		b,(hl)		; Upper port address
+		inc		hl
+		in		a,(c)       ; Read row
+		and		(hl)		; key mask
+		inc		hl
+		jr		nz,checkRight
+		set		LEFT,e
+.checkRight
+		ld		b,(hl)		; Upper port address
+		inc		hl
+		in		a,(c)       ; Read row
+		and		(hl)		; key mask
+		inc		hl
+		jr		nz,checkFire
+		set		RIGHT,e
+.checkFire
+		ld		b,(hl)		; Upper port address
+		inc		hl
+		in		a,(c)       ; Read row
+		and		(hl)		; key mask
+		jr		nz,checkDone
+		set		FIRE,e
+.checkDone
+		ld		h,0
+		ld		l,e
+		pop		de
+		pop		bc
+		pop		af
+		ret
+
+		SECTION bss_compiler
+		; Upper byte is the mask used to check for key when data is read from port
+		; Lower byte is the upper bits of the port to read
+.scanCodes
+		dw	0x01fb	; Up(Q)
+		dw	0x01fd	; Down(A)
+		dw	0x02df	; Left(O)
+		dw	0x01df	; Right(P)
+		dw	0x017f	; Jump(SPACE)
+
+		SECTION rodata_compiler
+
+.Keyboard_Map ;Bit 0,  1,  2,  3,  4
+		DB	0xFE,"#","Z","X","C","V"
+		DB	0xFD,"A","S","D","F","G"
+		DB	0xFB,"Q","W","E","R","T"
+		DB	0xF7,"1","2","3","4","5"
+		DB	0xEF,"0","9","8","7","6"
+		DB	0xDF,"P","O","I","U","Y"
+		DB	0xBF,"\n","L","K","J","H"
+		DB	0x7F," ","#","M","N","B"
