@@ -12,6 +12,12 @@ extern const unsigned char tile0[];
 extern void screen;
 extern unsigned char keyboardScan(void);
 extern void displayScreen(void *scr);
+extern void copyScreen(unsigned char xPos, unsigned char yPos,
+        unsigned char *buffer);
+extern void pasteScreen(unsigned char xPos, unsigned char yPos,
+        unsigned char *buffer);
+extern void displaySprite(unsigned char xPos, unsigned char yPos,
+        unsigned char *buffer);
 extern void cls(char attr)
 __z88dk_fastcall;
 extern unsigned char updateDirection(void)
@@ -21,13 +27,19 @@ __z88dk_fastcall;
 #define TABLE_ADDR             ((void*) 0x8000)
 #define JUMP_POINT             ((unsigned char*) ((JUMP_POINT_BYTE << 8) | JUMP_POINT_BYTE))
 
+#define FIRE    0x10
+#define UP      0x08
+#define DOWN    0x04
+#define LEFT    0x02
+#define RIGHT   0x01
+
 static int ticks = 0;
 
 void isr(void);
 IM2_DEFINE_ISR( isr)
 {
     static unsigned char a = 0;
-    zx_border(a++ & 0x7);
+//    zx_border(a++ & 0x7);
     ticks++;
 }
 
@@ -64,31 +76,73 @@ void brick(TILE_MAP *tileMap)
     }
 }
 
+unsigned char buffer[128];
+
 int main()
 {
+    int xPos = 0;
+    int yPos = 0;
     char key = 0;
     static unsigned char dir;
 
     initISR();
     cls(INK_WHITE | PAPER_BLACK);
+    zx_border(INK_BLACK);
     createScreenTab();
 
     intrinsic_halt();
     displayScreen((void*) &screen);
 
+    copyScreen(xPos, yPos, buffer);
+
     while ((key = keyboardScan()) != '\n')
     {
         intrinsic_halt();
+        zx_border(INK_WHITE);
+
+//        for(int n=0; n<400; n++)
+//            ;
+
+        // Restore original contents of screen
+        pasteScreen(xPos, yPos, buffer);
 
         // Scan Q, A, O, P, SPACE and update the direction flags accordingly
         dir = updateDirection();
-        if(dir)
+        if (dir & UP)
         {
-            printf("0x%02x ", dir);
+            if (yPos)
+                yPos-=2;
         }
+        else if (dir & DOWN)
+        {
+            if (yPos < (192 - 8))
+                yPos+=2;
+        }
+
+        if (dir & LEFT)
+        {
+            if (xPos >= 8)
+                xPos -= 8;
+        }
+        else if (dir & RIGHT)
+        {
+            if (xPos < (256 - 8))
+                xPos += 8;
+        }
+
+        if(dir & FIRE)
+        {
+            ;
+        }
+
+        // Copy contents of screen at new location
+        copyScreen(xPos, yPos, buffer);
+
+        displaySprite(xPos, yPos, buffer);
+
+        zx_border(INK_BLACK);
     }
 
-//    printf("%c\n", key);
     intrinsic_di();
     intrinsic_im_1();
     return (0);
