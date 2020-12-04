@@ -61,7 +61,7 @@ _displayScreen:
 
 	push	bc			; save the loop counter
 	push	hl			; save thte tilemap pointer
-	push	af			; save tile index
+	ex		af,af'		; save tile index
 
 	; Claculate the screen Y address
 	ld		hl,(y)		; get the y position	  16
@@ -81,8 +81,8 @@ _displayScreen:
 	ld		b,(hl)		; high order byte         7
 ;                                           Total 118
 	; Calculate the tile index address
-	pop		af			; restore tile index
-	dec		a			; Out tile indexes should be 0 based
+	ex		af,af'		; restore tile index
+	dec		a			; Our tile indexes should be 0 based
 	ld		l,a
 	ld		h,0
 	add		hl,hl		; Multuply by 8 since 8 bytes per tile

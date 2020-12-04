@@ -100,7 +100,7 @@ int main()
         intrinsic_halt();
         zx_border(INK_WHITE);
 
-//        for(int n=0; n<400; n++)
+//        for(int n=0; n<200; n++)
 //            ;
 
         // Restore original contents of screen
@@ -108,26 +108,32 @@ int main()
 
         // Scan Q, A, O, P, SPACE and update the direction flags accordingly
         dir = updateDirection();
+
+        //
+        // Check for collisions and clear the direction bits accordingly
+        //
+
+        // Update to new position based on direction bits
         if (dir & UP)
         {
             if (yPos)
-                yPos-=2;
+                yPos-=1;
         }
         else if (dir & DOWN)
         {
             if (yPos < (192 - 8))
-                yPos+=2;
+                yPos+=1;
         }
 
         if (dir & LEFT)
         {
-            if (xPos >= 8)
-                xPos -= 8;
+            if (xPos)
+                xPos -= 1;
         }
         else if (dir & RIGHT)
         {
             if (xPos < (256 - 8))
-                xPos += 8;
+                xPos += 1;
         }
 
         if(dir & FIRE)
