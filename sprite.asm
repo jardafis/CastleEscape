@@ -24,26 +24,26 @@ _copyScreen:
 
 		; Claculate the screen Y address
 		ld		h,0
-		ld		l,(ix+1)	; get the y position	  19
-		add		hl,hl		; multiply by 2           11
-		ld		sp,_screenTab	;                     10
-		add		hl,sp		;                         11
-		ld		sp,hl		;						  6
+		ld		l,(ix+1)	; get the y position
+		add		hl,hl		; multiply by 2
+		ld		sp,_screenTab
+		add		hl,sp
+		ld		sp,hl
 
 
 		ld		e,(ix+2)
 		ld		d,(ix+3)
 
 
-		ld		b,8
-		ld		c,(ix+0)	; Get the X offset        13
+		ld		c,(ix+0)	; Get the X offset
 		srl		c			; divide by 8 to get byte address
 		srl		c
 		srl		c
+		ld		b,8
 .copyloop
 		pop		hl			; get screen row adress
 		ld		a,l
-		add		a,c			; add x offset
+		add		c			; add x offset
 		ld		l,a
 
 		ld		a,(hl)
@@ -81,36 +81,35 @@ _pasteScreen:
 
 		; Claculate the screen Y address
 		ld		h,0
-		ld		l,(ix+1)	; get the y position	  19
-		add		hl,hl		; multiply by 2           11
-		ld		sp,_screenTab	;                     10
-		add		hl,sp		;                         11
-		ld		sp,hl		;						  6
+		ld		l,(ix+1)	; get the y position
+		add		hl,hl		; multiply by 2
+		ld		sp,_screenTab
+		add		hl,sp
+		ld		sp,hl
 
-
+		; Get buffer address
 		ld		e,(ix+2)
 		ld		d,(ix+3)
 
-
 		ld		b,8
-		ld		c,(ix+0)	; Get the X offset        13
+		ld		c,(ix+0)	; Get the X offset
 		srl		c			; divide by 8 to get byte address
 		srl		c
 		srl		c
 .pasteloop
 		pop		hl			; get screen row adress
 		ld		a,l
-		add		a,c			; add x offset
+		add		c			; add x offset
 		ld		l,a
 
 		ld		a,(de)
-		inc		de
 		ld		(hl),a
+		inc		de
 		inc		hl
 
 		ld		a,(de)
-		inc		de
 		ld		(hl),a
+		inc		de
 
 		djnz	pasteloop
 
@@ -136,100 +135,66 @@ _displaySprite:
 		di
 		ld		(tempsp),sp
 
-		; Claculate the screen Y address
+		; Calculate the offset into the screen table
 		ld		h,0
-		ld		l,(ix+1)	; get the y position	  16
-		add		hl,hl		; multiply by 2           11
-		ld		sp,_screenTab	;                     10
-		add		hl,sp		;                         11
+		ld		l,(ix+1)	; get the y position
+		add		hl,hl		; multiply by 2
+		ld		sp,_screenTab
+		add		hl,sp
 		ld		sp,hl
 
-
-		ld		a,(ix+0)	; Get the X offset        13
-		ld		c,a
-		and		0x07
-		jr		z,noShift
-
-		;
-		; Need to use the pixel shifted sprites
-		;
-		ld		de,spriteShift1
-		dec		a
-		ld		h,0
-		ld		l,a			; Lower 3 bits of X offset from above
+		ld		a,(ix+0)	; Get the X offset
+		ld		c,a			; Store it
+		and		0x07		; Get the sprite shift index
 		; Multiply by 32
-		add		hl,hl		; x2
-		add		hl,hl		; x4
-		add		hl,hl		; x8
-		add		hl,hl		; x16
-		add		hl,hl		; x32
+		add		a			; x2
+		add		a			; x4
+		add		a			; x8
+		add		a			; x16
+		add		a			; x32
+		ld		h,0
+		ld		l,a
+		ld		de,spriteShift0
 		add		hl,de
 		ex		de,hl
 
-		srl		c			; /2 divide by 8 to get byte address
+		; c is the pixel X offset
+		; Divide by 8 to get byte address
+		srl		c			; /2
 		srl		c			; /4
 		srl		c			; /8
-		ld		b,8
+		ld		b,8			; Sprite height
 .loop2
 		pop		hl			; get screen row adress
 		ld		a,l
 		add		a,c			; add x offset
 		ld		l,a
 
-		ld		a,(de)		; mask data
-		and		(hl)
-		ld		(hl),a
-		inc		de
-		ld		a,(de)		; sprite data
-		or		(hl)
-		ld		(hl),a
-		inc		de
+		ld		a,(de)		; Get mask data
+		and		(hl)		; Logical AND screen data with mask
+		ld		(hl),a		; Store result back to screen
+		inc		de			; Next byte of sprite data
+		ld		a,(de)		; Get sprite data
+		or		(hl)		; Logical OR screen data with sprite data
+		ld		(hl),a		; Store result back to the screen
+		inc		de			; Next byte of sprite data
 
-		inc		hl
+		inc		hl			; Next screen X address
 
-		ld		a,(de)		; mask data
-		and		(hl)
-		ld		(hl),a
-		inc		de
-		ld		a,(de)		; sprite data
-		or		(hl)
-		ld		(hl),a
-		inc		de
+		ld		a,(de)		; Get mask data
+		and		(hl)		; Logical AND screen data with mask
+		ld		(hl),a		; Store result back to screen
+		inc		de			; Next byte of sprite data
+		ld		a,(de)		; Get sprite data
+		or		(hl)		; Logical OR screen data with sprite data
+		ld		(hl),a		; Store result back to the screen
+		inc		de			; Next byte of sprite data
 
 		djnz	loop2
 
 		ld		sp,(tempsp)
 		ei
 
-		jr		displaySpriteDone
-
-.noShift
-		ld		de,spriteNoShift
-		srl		c			; divide by 8 to get byte address
-		srl		c
-		srl		c
-		ld		b,8
-.loop1
-		pop		hl			; get screen row adress
-		ld		a,l
-		add		a,c			; add x offset
-		ld		l,a
-
-		ld		a,(de)		; mask data
-		and		(hl)
-		ld		(hl),a
-		inc		de
-
-		ld		a,(de)		; sprite data
-		or		(hl)
-		ld		(hl),a
-		inc		de
-
-		djnz	loop1
-
-		ld		sp,(tempsp)
-		ei
-.displaySpriteDone
 		pop		ix
 		pop		hl
 		pop		de
@@ -238,15 +203,16 @@ _displaySprite:
 		ret
 
 		SECTION rodata_compiler
-.spriteNoShift
-		db	11000011b, 00000000b
-		db	10000001b, 00111100b
-		db	00000000b, 01111110b
-		db	00000000b, 01100110b
-		db	00000000b, 01100110b
-		db	00000000b, 01111110b
-		db	10000001b, 00111100b
-		db	11000011b, 00000000b
+		; 	  mask,      data,     mask,     data
+.spriteShift0
+		db	11000011b, 00000000b,11111111b,00000000b
+		db	10000001b, 00111100b,11111111b,00000000b
+		db	00000000b, 01111110b,11111111b,00000000b
+		db	00000000b, 01100110b,11111111b,00000000b
+		db	00000000b, 01100110b,11111111b,00000000b
+		db	00000000b, 01111110b,11111111b,00000000b
+		db	10000001b, 00111100b,11111111b,00000000b
+		db	11000011b, 00000000b,11111111b,00000000b
 .spriteShift1
 		db	11100001b,00000000b,11111111b,00000000b
 		db	11000000b,00011110b,11111111b,00000000b
@@ -310,15 +276,6 @@ _displaySprite:
 		db	11111110b,00000000b,00000001b,11111100b
 		db	11111111b,00000000b,00000011b,01111000b
 		db	11111111b,00000000b,10000111b,00000000b
-.spriteShift8
-		db	11111111b,00000000b,11000011b,00000000b
-		db	11111111b,00000000b,10000001b,00111100b
-		db	11111111b,00000000b,00000000b,01111110b
-		db	11111111b,00000000b,00000000b,01100110b
-		db	11111111b,00000000b,00000000b,01100110b
-		db	11111111b,00000000b,00000000b,01111110b
-		db	11111111b,00000000b,10000001b,00111100b
-		db	11111111b,00000000b,11000011b,00000000b
 
 		SECTION bss_compiler
 .tempsp
