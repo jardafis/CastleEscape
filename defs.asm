@@ -1,4 +1,14 @@
         module  defs
+
+        ;
+        ; Bit numbers for user keys
+        ;
+        defc    FIRE                       = 4
+        defc    UP                         = 3
+        defc    DOWN                       = 2
+        defc    LEFT                       = 1
+        defc    RIGHT                      = 0
+
         ;
         ; Screen addresses
         ;
