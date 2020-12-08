@@ -5,6 +5,7 @@
 
         public  _keyboardScan
         public  _updateDirection
+		include "defs.asm"
 
 _keyboardScan:
         push    AF
@@ -46,13 +47,6 @@ _keyboardScan:
         pop     BC
         pop     AF
         ret     
-
-        ; Bit numbers for directions
-        defc    FIRE  = 4
-        defc    UP	  = 3
-        defc    DOWN  = 2
-        defc    LEFT  = 1
-        defc    RIGHT = 0
 
 _updateDirection:
         push    af
