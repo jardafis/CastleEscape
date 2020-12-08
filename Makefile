@@ -2,7 +2,7 @@ CC=zcc
 AS=zcc
 LD=zcc
 TARGET=zx
-CRT=0
+CRT=31
 
 EXEC=mixed.tap
 EXEC_OUTPUT=mixed.bin
