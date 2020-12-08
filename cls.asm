@@ -1,70 +1,64 @@
-	PUBLIC	_cls
-	SECTION	code_compiler
+        public  _cls
+        section code_user
 
-	defc SCREEN_START	= 0x4000
-	defc SCREEN_LENGTH	= 0x1800
-	defc SCREEN_ATTR_START	= (SCREEN_START + SCREEN_LENGTH)
-	defc SCREEN_ATTR_LENGTH = 0x300
+        include "defs.asm"
 
-	;
-	; Clear the screen bitmap and attr data.
-	;
-	; On entry, l contains the attribute to fill the attr memory.
-	;
+        ;
+        ; Clear the screen bitmap and attr data.
+        ;
+        ; On entry, l contains the attribute to fill the attr memory.
+        ;
 _cls:
-	push	bc
-	push	de
-	push	hl
+        push    bc
+        push    hl
 
-	di
-	ld	(tempSP),sp
+        di      
+        ld      (l_tempSP),sp
 
-	ld	sp,SCREEN_START+SCREEN_LENGTH
-	ld	de,0	; data to fill
-	; If we devide the screen length by 32 it will
-	; fit in 8 bits and we can use djnz
-	ld	b,SCREEN_LENGTH/32
-.loop
-	; Push 32 bytes of 0 into the screen memory
-	; Each push is 2 bytes
-	push de
-	push de
-	push de
-	push de
-	push de
-	push de
-	push de
-	push de
-	push de
-	push de
-	push de
-	push de
-	push de
-	push de
-	push de
-	push de
-	djnz loop
-
-	ld	sp,SCREEN_ATTR_START+SCREEN_ATTR_LENGTH
-	ld	h,l	; attr input parameter in l
-	; If we devide the attr length by 4 it will
-	; fit in 8 bits and we can use djnz
-	ld	b,SCREEN_ATTR_LENGTH/4
+        ld      sp,SCREEN_ATTR_END
+        ld      h,l                     ; attr input parameter in l
+        ; If we devide the attr length by 4 it will
+        ; fit in 8 bits and we can use djnz
+        ld      b,SCREEN_ATTR_LENGTH/4
 .loop2
-	; Push 4 bytes of 0 into the screen memory
-	; Each push is 2 bytes
-	push hl
-	push hl
-	djnz	loop2
+        ; Push 4 bytes into screen attr memory
+        ; Each push is 2 bytes
+        push    hl
+        push    hl
+        djnz    loop2
 
-	ld	sp,(tempSP)
-	ei
+        ld      hl,0                    ; data to fill
+        ; If we devide the screen length by 32 it will
+        ; fit in 8 bits and we can use djnz
+        ld      b,SCREEN_LENGTH/32
+.loop
+        ; Push 32 bytes of 0 into the screen memory
+        ; Each push is 2 bytes
+        push    hl
+        push    hl
+        push    hl
+        push    hl
+        push    hl
+        push    hl
+        push    hl
+        push    hl
+        push    hl
+        push    hl
+        push    hl
+        push    hl
+        push    hl
+        push    hl
+        push    hl
+        push    hl
+        djnz    loop
 
-	pop	hl
-	pop	de
-	pop	bc
-	ret
+        ld      sp,(l_tempSP)
+        ei      
 
-	SECTION	bss_compiler
-.tempSP
-	dw	0
+        pop     hl
+        pop     bc
+        ret     
+
+        section bss_user
+.l_tempSP
+        dw      0
