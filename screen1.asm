@@ -1,4 +1,4 @@
-	PUBLIC _screen
-	SECTION rodata_compiler
+        public  _screen
+        section rodata_user
 _screen:
-	BINARY "screen1.dat"
+        binary  "screen1.dat"
