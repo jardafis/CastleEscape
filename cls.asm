@@ -17,7 +17,7 @@ _cls:
 
         ld      sp,SCREEN_ATTR_END
         ld      h,l                     ; attr input parameter in l
-        ; If we devide the attr length by 4 it will
+        ; If we divide the attr length by 4 it will
         ; fit in 8 bits and we can use djnz
         ld      b,SCREEN_ATTR_LENGTH/4
 .loop2
@@ -28,7 +28,7 @@ _cls:
         djnz    loop2
 
         ld      hl,0                    ; data to fill
-        ; If we devide the screen length by 32 it will
+        ; If we divide the screen length by 32 it will
         ; fit in 8 bits and we can use djnz
         ld      b,SCREEN_LENGTH/32
 .loop
