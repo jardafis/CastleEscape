@@ -98,6 +98,7 @@ int main()
     while ((key = keyboardScan()) != '\n')
     {
         intrinsic_halt();
+        intrinsic_halt();
         zx_border(INK_WHITE);
 
 //        for(int n=0; n<200; n++)
@@ -127,13 +128,13 @@ int main()
 
         if (dir & LEFT)
         {
-            if (xPos)
-                xPos -= 1;
+            if (xPos>=2)
+                xPos -= 2;
         }
         else if (dir & RIGHT)
         {
             if (xPos < (256 - 8))
-                xPos += 1;
+                xPos += 2;
         }
 
         if(dir & FIRE)
@@ -150,6 +151,5 @@ int main()
     }
 
     intrinsic_di();
-    intrinsic_im_1();
     return (0);
 }
