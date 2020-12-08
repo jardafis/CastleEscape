@@ -1,6 +1,6 @@
 		EXTERN _screenTab
 
-		SECTION	code_compiler
+		SECTION	code_user
 
 		PUBLIC _copyScreen
 		PUBLIC _pasteScreen
@@ -202,7 +202,7 @@ _displaySprite:
 		pop		af
 		ret
 
-		SECTION rodata_compiler
+		SECTION rodata_user
 		; 	  mask,      data,     mask,     data
 .spriteShift0
 		db	11000011b, 00000000b,11111111b,00000000b
@@ -277,7 +277,7 @@ _displaySprite:
 		db	11111111b,00000000b,00000011b,01111000b
 		db	11111111b,00000000b,10000111b,00000000b
 
-		SECTION bss_compiler
-.tempsp
+		SECTION bss_user
+.tempSP
 		dw		0
 
