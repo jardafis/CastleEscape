@@ -1,93 +1,97 @@
 		extern	_screenTab
         public  _scroll
+        public  _scrollInit
         section code_user
 
-        defc	FONT	= 0x3d00
-		defc	X		= 0x07
-		defc	Y		= 0x00
-		defc	WIDTH	= 0x10
+		defc	X				= 0x08	; Start column of message
+		defc	Y				= 0x00	; Start row of message
+		defc	WIDTH			= 0x10	; Width, in columns, of message area
+		defc	MESSAGE_ATTR	= PAPER_BLACK | INK_GREEN | BRIGHT ; Attribute for the message
+        include "defs.asm"
 
-_scroll:
+		;
+		; Inputs:
+		; 			hl - Pointer to message or 0 to use default message.
+		;
+_scrollInit:
 		push	af
 		push	bc
 		push	de
 		push	hl
 
-		; Check if we are in the middle of rotating a character
-		ld		a,(rotate)
-		dec		a
-		and		0x07
+		;
+		; Initialize the message pointer
+		;
+		ld		a,l						; If the user passed in a pointer to a message
+		or		h						; in hl we should use it. If hl is 0 use the
+		jr		nz,customMessage		; default message.
+		ld		hl,defaultMessage		; Use the default message
+.customMessage
+		ld		(messagePointer),hl
+		ld		(messageStart),hl
+
+		;
+		; Initialize the rotate counter to 1
+		; It will be decremented on entry to the
+		; scroll routine.
+		;
+		ld		a,1
 		ld		(rotate),a
-		jr		nz,nextBit
 
-		; We are not in the middle of rotating a character
-		; so we need to get the next character from the message
-.getChar
-		ld		hl,message				; Get the address of the message
-		ld		de,(messageIndex)		; Get the index into the message
-		add		hl,de					; hl now points to the character we need
-		ld		a,(hl)					; Read the character
-		and		a						; Check if the end of the message has been reached
-		jr		z,resetIndex			; Not end of message
-
-		sub		0x20					; Font starts at ASCII 32
-		inc		de						; Increment the message index
-		ld		(messageIndex),de
-
-		ld		de,FONT
-		ld		l,a
-		ld		h,0
-		add		hl,hl					; x2
-		add		hl,hl					; x4
-		add		hl,hl					; x8
-		add		hl,de
-		ld		de,buffer
-		ld		bc,8					; 8 bytes per char
-		ldir							; Copy font data to our buffer
-
-.nextBit
-
-		; Calculate the screen start address
+		;
+		; Initialize the screen address to top right corner
+		;
 		ld		de,_screenTab
 		ld		hl,Y					; Get Y offset
 		add		hl,hl					; x 2
 		add		hl,de					; Index into the screen table
-		ld		e,(hl)
-		inc		hl
+		ld		e,(hl)					; Get the screen address from the table
+		inc		hl						; into de
 		ld		d,(hl)
-		ex		de,hl
 
+		ld		hl,X+WIDTH-1			; Add the X offset and WIDTH to get
+		add		hl,de					; the right hand side of the message
+		ld		(screenAddr),hl			; Save this screen address for use by the scroll routine
 
-		ld		de,buffer
-		ld		b,8
-.loop2
-		push	bc						; Store the loop counter
-		push	hl						; Store the screen address
+		;
+		; Clear the message area on the screen
+		;
+		xor		a						; Zero accumulator
+		ld		b,8						; Height of character
+.clearRow
+		ld		c,b						; Save outer loop counter
+		ld		de,hl					; Store the screen address
 
-		ld		a,X+WIDTH				; Start on the right hand side
-		add		l
-		ld		l,a
+		ld		b,WIDTH					; Width of scrolling window
+.clearCol
+		ld		(hl),a					; Store 0 to the screen
+		dec		hl						; Next character to the left
+		djnz	clearCol				; Loop for the width of the message
 
-		and		a						; Clear the carry flag
-		ld		a,(de)					; Get buffer data
-		rla								; Rotate it left
-		ld		(de),a					; Store buffer data
-										; The carry flag contains the data we need
-
-
-		ld		b,WIDTH
-.loop
-		ld		a,(hl)					; Get the screen data
-		rla								; Rotate left taking data from the carry flag
-		ld		(hl),a					; Store data back to the screen
-		dec		hl						; Previous screen location
-		djnz	loop					; Loop for the width of the message
-
-		inc		de						; Next buffer address
-		pop		hl						; Restore screen address
+		ld		hl,de					; Restore screen address
 		inc		h						; Increment to next row
-		pop		bc						; Restore the loop counter
-		djnz	loop2					; Loop for height of characters
+		ld		b,c						; Restore outer loop counter
+		djnz	clearRow				; Loop for height of characters
+
+		;
+		; Set the screen attributes for the message
+		;
+		ld		de,SCREEN_ATTR_START	; Get the start of the screen attributes
+		ld		hl,Y					; Get the Y position and multiply by 32
+		add		hl,hl					; x2
+		add		hl,hl					; x4
+		add		hl,hl					; x8
+		add		hl,hl					; x16
+		add		hl,hl					; x32
+		add		hl,de					; Add it to the attr start address
+		ld		de,X					; Get the X position
+		add		hl,de					; and add it to the attr address
+		ld		b,WIDTH
+		ld		a,MESSAGE_ATTR
+.setAttr
+		ld		(hl),a
+		inc		hl
+		djnz	setAttr
 
 		pop		hl
 		pop		de
@@ -95,22 +99,99 @@ _scroll:
 		pop		af
 		ret
 
-.resetIndex
-		ld		d,a						; End of message detected so reset the index
-		ld		e,a
-		ld		(messageIndex),de
-		jr		getChar					; Loop to get a character
+_scroll:
+		exx								; Save bc, de, hl
+		ex		af,af'					; and af
+
+		; Check if we are in the middle of rotating a character
+		ld		a,(rotate)
+		dec		a
+		and		0x07
+		ld		(rotate),a
+		jp		z,getNextChar			; If the counter is 0, get the next character
+
+.startShift
+		ld		hl,(screenAddr)			; Screen address of right hand side of message calculated by scrollInit
+		ld		de,charBuffer
+
+		ld		b,8						; Height of character
+.rowLoop
+		ld		c,b						; Save outer loop counter
+		push	hl						; Store the screen address
+
+		and		a						; Clear the carry flag
+		ld		a,(de)					; Get buffer data
+		rla								; Rotate it left through the carry flag
+		ld		(de),a					; Store buffer data
+										; The carry flag contains the data we will shift
+										; into the next character on the screen
+
+		ld		b,WIDTH					; Width of scrolling window
+.colLoop
+		ld		a,(hl)					; Get the screen data
+		rla								; Shift left, bit 0 will get the contents of the carry flag
+		ld		(hl),a					; Store data back to the screen
+		dec		hl						; Next character to the left
+		djnz	colLoop					; Loop for the width of the message
+
+		inc		de						; Next buffer address
+		pop		hl						; Restore screen address
+		inc		h						; Increment to next row
+		ld		b,c						; Restore outer loop counter
+		djnz	rowLoop					; Loop for height of characters
+
+		ex		af,af'					; Restore af
+		exx								; bc, de, and hl
+		ret
+
+.getNextChar
+		; We are not in the middle of rotating a character
+		; so we need to get the next character from the message
+		ld		hl,(messagePointer)		; Get the message pointer
+		ld		a,(hl)					; Read the character
+		and		a						; Check if the end of the message has been reached
+		jp		z,resetMessagePointer	; Reset pointer if we reach the end of the message
+		inc		hl						; Otherwise increment the message pointer
+		ld		(messagePointer),hl		; and save it
+
+		sub		0x20					; Font starts at ASCII 32
+
+		;
+		; Copy 8 bytes of font data corresponding to the
+		; character from the message to our character buffer.
+		; This allows us to rotate and save the font data
+		; without corrupting the actual font.
+		;
+		ld		l,a						; Get the font character index
+		ld		h,0						; and multiply it by 8
+		add		hl,hl					; x2
+		add		hl,hl					; x4
+		add		hl,hl					; x8
+		ld		de,ROM_FONT				; Pointer to the font in ROM
+		add		hl,de					; hl points to the font data address
+		ld		de,charBuffer			; Point to our character buffer address
+		ld		bc,8					; 8 bytes per char
+		ldir							; Copy font data to our buffer
+		jp		startShift
+
+.resetMessagePointer
+		ld		hl,(messageStart)
+		ld		(messagePointer),hl
+		jp		getNextChar					; Loop to get a character
 
 		section rodata_user
-.message
+.defaultMessage
 		db		"This is a test message. It Requires a font so we are using the one "
 		db		"from the ZX Spectrum ROM.... ", 0x00
 
 		section bss_user
-.buffer
-		ds		8
-.messageIndex
-		dw		0
-		section	data_user
+.messagePointer
+		dw		0						; Pointer to the current location in the message
+.messageStart
+		dw		0						; Pointer to the start of the message
+.screenAddr
+		dw		0						; Pointer to the top right-hand location on the screen
+.charBuffer
+		ds		8						; Buffer to store font data while we are rotating it
 .rotate
-		db		1
+		db		0						; Counter so we know when to get the next character from the message
