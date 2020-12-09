@@ -24,6 +24,11 @@ extern unsigned char updateDirection(void)
 __z88dk_fastcall;
 extern void scroll(void)
 __z88dk_fastcall;
+extern void scrollInit(void *message)
+__z88dk_fastcall;
+
+
+static const char *message = "This is a test... ";
 
 #define JUMP_POINT_BYTE        0x81
 #define TABLE_ADDR             ((void*) 0x8000)
@@ -97,14 +102,16 @@ int main()
 
     copyScreen(xPos, yPos, buffer);
 
+    scrollInit(NULL);
+
     while ((key = keyboardScan()) != '\n')
     {
         intrinsic_halt();
         intrinsic_halt();
         zx_border(INK_WHITE);
+
+        // Scroll the message
         scroll();
-//        for(int n=0; n<200; n++)
-//            ;
 
         // Restore original contents of screen
         pasteScreen(xPos, yPos, buffer);
