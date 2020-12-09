@@ -22,6 +22,8 @@ extern void cls(char attr)
 __z88dk_fastcall;
 extern unsigned char updateDirection(void)
 __z88dk_fastcall;
+extern void scroll(void)
+__z88dk_fastcall;
 
 #define JUMP_POINT_BYTE        0x81
 #define TABLE_ADDR             ((void*) 0x8000)
@@ -100,7 +102,7 @@ int main()
         intrinsic_halt();
         intrinsic_halt();
         zx_border(INK_WHITE);
-
+        scroll();
 //        for(int n=0; n<200; n++)
 //            ;
 
