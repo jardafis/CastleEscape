@@ -5,9 +5,9 @@
 #include <string.h>
 #include <z80.h>
 #include <arch/zx.h>
-#include "screentab.h"
 #include "tiled.h"
 
+extern unsigned char *screenTab[];
 extern const unsigned char tile0[];
 extern void screen;
 extern unsigned char keyboardScan(void);
@@ -95,7 +95,6 @@ int main()
     initISR();
     cls(INK_WHITE | PAPER_BLACK);
     zx_border(INK_BLACK);
-    createScreenTab();
 
     intrinsic_halt();
     displayScreen((void*) &screen);
