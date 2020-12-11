@@ -1,5 +1,6 @@
 CC=zcc
-AS=zcc
+#AS=zcc
+AS=asmpp.pl
 LD=zcc
 TARGET=zx
 CRT=31
@@ -8,11 +9,13 @@ EXEC=mixed.tap
 EXEC_OUTPUT=mixed.bin
 PRAGMA_FILE=zpragma.inc
 
-C_OPT_FLAGS=-SO2 --max-allocs-per-node200000
+#C_OPT_FLAGS=-SO2 --max-allocs-per-node200000
+C_OPT_FLAGS=-SO2
 
 CFLAGS=+$(TARGET) $(C_OPT_FLAGS) --legacy-banking -clib=sdcc_iy -c -pragma-include:$(PRAGMA_FILE)
 LDFLAGS=+$(TARGET) -m -clib=sdcc_iy -pragma-include:$(PRAGMA_FILE) -Cz--clearaddr -Cz32768
-ASFLAGS=+$(TARGET) -c -pragma-include:$(PRAGMA_FILE)
+#ASFLAGS=+$(TARGET) -c -pragma-include:$(PRAGMA_FILE)
+ASFLAGS=-I$(Z88DK)/lib
 
 OBJECTS =  $(patsubst %.c,%.o,$(wildcard *.c)) $(patsubst %.asm,%.o,$(wildcard *.asm)) tiles/tiles.o
 
@@ -22,14 +25,18 @@ all: $(EXEC)
 	$(CC) $(CFLAGS) -o $@ $<
 
 %.o: %.asm $(PRAGMA_FILE) Makefile
-	$(AS) $(ASFLAGS) -o $@ $<
+	$(AS) $(ASFLAGS) $<
 	
 $(EXEC) : $(OBJECTS) $(PRAGMA_FILE) Makefile
 	 $(LD) $(LDFLAGS) -startup=$(CRT) $(OBJECTS) -o $(EXEC_OUTPUT) -create-app
 	
-.PHONY: clean run
+.PHONY: clean run dis
+
 clean:
-	rm -f $(OBJECTS) $(EXEC) $(EXEC_OUTPUT) *.bin *.map *.lis *.sym
+	rm -f $(OBJECTS) $(EXEC) $(EXEC_OUTPUT) *.bin *.map *.lis *.sym *.i
 
 run: all
 	fuse.exe ${EXEC}
+
+dis: all
+	z88dk-dis -o 0x8184 -x mixed.map mixed_CODE.bin | less

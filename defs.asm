@@ -47,3 +47,75 @@
         ; Address of the ZX Spectrum font in ROM
         ;
         defc    ROM_FONT                = 0x3d00
+
+
+        ;
+        ; Macros for use with asmpp.pl
+        ;
+
+        ;
+        ; Multiply hl by times where times is 2, 4, 8, 16, 32, 64
+        ;
+hlx     macro   times
+        IF times >=2
+            add     hl,hl
+        ENDIF
+        IF times >= 4
+            add     hl,hl
+        ENDIF
+        IF times >= 8
+            add     hl,hl
+        ENDIF
+        IF times >= 16
+            add     hl,hl
+        ENDIF
+        IF times >= 32
+            add     hl,hl
+        ENDIF
+        IF times >= 64
+            add     hl,hl
+        ENDIF
+    endm
+
+entry   macro
+        push    af
+        push    bc
+        push    de
+        push    hl
+        push    ix
+        ld      ix,12                   ; the 6 pushes above plus return address
+        add     ix,sp
+        endm
+
+exit    macro
+        pop     ix
+        pop     hl
+        pop     de
+        pop     bc
+        pop     af
+        endm
+
+        ;
+        ; Push af-hl onto the stack
+        ;
+pushall macro
+        push    af
+        push    bc
+        push    de
+        push    hl
+        push    ix
+        push    iy
+        endm
+
+        ;
+        ; Pop hl-af off the stack
+        ;
+popall macro
+        pop     iy
+        pop     ix
+        pop     hl
+        pop     de
+        pop     bc
+        pop     af
+        endm
+
