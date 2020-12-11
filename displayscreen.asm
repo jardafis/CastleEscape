@@ -15,17 +15,12 @@
         ; Tilemaps are converted to binary using the TiledToBinary app.
         ;
 _displayScreen:
-        ; Save the registers we are going to use so we can return to C
-        push    af
-        push    bc
-        push    de
-        push    hl
-        push    ix
+        ; Save the registers and setup ix to point to the right most parameter
+        ; passed on the stack.
+		entry
 
         ; Get the address of the tilemap
         ; passed on the stack
-        ld      ix,12                   ; the 5 pushes above plus return address
-        add     ix,sp
         ld      l,(ix+0)
         ld      h,(ix+1)
 
@@ -80,12 +75,9 @@ _displayScreen:
         ;
         ld      hl,(y)
         ; Multiple by 32
-        add     hl,hl
-        add     hl,hl
-        add     hl,hl
-        add     hl,hl
+		hlx		16
         push    hl                      ; y * 16 - save it for later
-        add     hl,hl
+		hlx		2
         ld      a,(x)
         ld      e,a
         ld      d,0
@@ -113,9 +105,7 @@ _displayScreen:
         ex      af,af'                  ; restore tile index
         ld      l,a
         ld      h,0
-        add     hl,hl                   ; Multuply by 8 since 8 bytes per tile
-        add     hl,hl
-        add     hl,hl
+        hlx		8                   ; Multuply by 8 since 8 bytes per tile
         ld      de,_tile0               ; Start of tile data
         add     hl,de
 
@@ -182,11 +172,7 @@ _displayScreen:
         pop     bc
         djnz    yloop
 
-        pop     ix
-        pop     hl
-        pop     de
-        pop     bc
-        pop     af
+		exit
         ret     
 
         section bss_user

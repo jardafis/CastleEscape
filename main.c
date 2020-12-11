@@ -26,7 +26,8 @@ extern void scroll(void)
 __z88dk_fastcall;
 extern void scrollInit(void *message)
 __z88dk_fastcall;
-
+void initISR(void)
+__z88dk_fastcall;
 
 static const char *message = "This is a test... ";
 
@@ -41,24 +42,6 @@ static const char *message = "This is a test... ";
 #define RIGHT   0x01
 
 static int ticks = 0;
-
-void isr(void);
-IM2_DEFINE_ISR( isr)
-{
-    static unsigned char a = 0;
-//    zx_border(a++ & 0x7);
-    ticks++;
-}
-
-void initISR(void)
-{
-    intrinsic_di();
-    memset(TABLE_ADDR, JUMP_POINT_BYTE, 257);
-    im2_init(TABLE_ADDR);
-    z80_bpoke(JUMP_POINT, 0xc3);
-    z80_wpoke(JUMP_POINT + 1, (unsigned int) isr);
-    intrinsic_ei();
-}
 
 inline void drawTile(unsigned char tileID, unsigned char x, unsigned char y)
 {
@@ -83,7 +66,7 @@ void brick(TILE_MAP *tileMap)
     }
 }
 
-unsigned char buffer[128];
+unsigned char buffer[16];
 
 int main()
 {
@@ -107,7 +90,7 @@ int main()
     {
         intrinsic_halt();
         intrinsic_halt();
-        zx_border(INK_WHITE);
+//        zx_border(INK_WHITE);
 
         // Scroll the message
         scroll();
@@ -126,17 +109,17 @@ int main()
         if (dir & UP)
         {
             if (yPos)
-                yPos-=1;
+                yPos -= 1;
         }
         else if (dir & DOWN)
         {
             if (yPos < (192 - 8))
-                yPos+=1;
+                yPos += 1;
         }
 
         if (dir & LEFT)
         {
-            if (xPos>=2)
+            if (xPos >= 2)
                 xPos -= 2;
         }
         else if (dir & RIGHT)
@@ -145,7 +128,7 @@ int main()
                 xPos += 2;
         }
 
-        if(dir & FIRE)
+        if (dir & FIRE)
         {
             ;
         }
@@ -155,7 +138,7 @@ int main()
 
         displaySprite(xPos, yPos, buffer);
 
-        zx_border(INK_BLACK);
+//        zx_border(INK_BLACK);
     }
 
     intrinsic_di();

@@ -78,11 +78,7 @@ _scrollInit:
 		;
 		ld		de,SCREEN_ATTR_START	; Get the start of the screen attributes
 		ld		hl,Y					; Get the Y position and multiply by 32
-		add		hl,hl					; x2
-		add		hl,hl					; x4
-		add		hl,hl					; x8
-		add		hl,hl					; x16
-		add		hl,hl					; x32
+		hlx		32
 		add		hl,de					; Add it to the attr start address
 		ld		de,X					; Get the X position
 		add		hl,de					; and add it to the attr address
@@ -164,9 +160,7 @@ _scroll:
 		;
 		ld		l,a						; Get the font character index
 		ld		h,0						; and multiply it by 8
-		add		hl,hl					; x2
-		add		hl,hl					; x4
-		add		hl,hl					; x8
+		hlx		8
 		ld		de,ROM_FONT				; Pointer to the font in ROM
 		add		hl,de					; hl points to the font data address
 		ld		de,charBuffer			; Point to our character buffer address
