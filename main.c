@@ -29,19 +29,11 @@ __z88dk_fastcall;
 void initISR(void)
 __z88dk_fastcall;
 
-static const char *message = "This is a test... ";
-
-#define JUMP_POINT_BYTE        0x81
-#define TABLE_ADDR             ((void*) 0x8000)
-#define JUMP_POINT             ((unsigned char*) ((JUMP_POINT_BYTE << 8) | JUMP_POINT_BYTE))
-
 #define FIRE    0x10
 #define UP      0x08
 #define DOWN    0x04
 #define LEFT    0x02
 #define RIGHT   0x01
-
-static int ticks = 0;
 
 inline void drawTile(unsigned char tileID, unsigned char x, unsigned char y)
 {
@@ -88,7 +80,7 @@ int main()
 
     while ((key = keyboardScan()) != '\n')
     {
-        intrinsic_halt();
+//        intrinsic_halt();
         intrinsic_halt();
 //        zx_border(INK_WHITE);
 
