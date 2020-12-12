@@ -48,6 +48,12 @@
         ;
         defc    ROM_FONT                = 0x3d00
 
+        ;
+        ; I/O Ports
+        ;
+        defc    IO_BORDER               = 0xfe
+        defc    IO_BEEPER               = 0xfe
+        defc    IO_BANK                 = 0x7ffd
 
         ;
         ; Macros for use with asmpp.pl

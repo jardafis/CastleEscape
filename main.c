@@ -1,23 +1,18 @@
 #include <stdio.h>
-#include <input.h>
 #include <intrinsic.h>
-#include <im2.h>
-#include <string.h>
-#include <z80.h>
 #include <arch/zx.h>
 #include "tiled.h"
 
 extern unsigned char *screenTab[];
 extern const unsigned char tile0[];
-extern void screen;
+extern const unsigned char screen[];
 extern unsigned char keyboardScan(void);
 extern void displayScreen(void *scr);
 extern void copyScreen(unsigned char xPos, unsigned char yPos,
         unsigned char *buffer);
 extern void pasteScreen(unsigned char xPos, unsigned char yPos,
         unsigned char *buffer);
-extern void displaySprite(unsigned char xPos, unsigned char yPos,
-        unsigned char *buffer);
+extern void displaySprite(unsigned char xPos, unsigned char yPos);
 extern void cls(char attr)
 __z88dk_fastcall;
 extern unsigned char updateDirection(void)
@@ -27,6 +22,8 @@ __z88dk_fastcall;
 extern void scrollInit(void *message)
 __z88dk_fastcall;
 void initISR(void)
+__z88dk_fastcall;
+void border(unsigned char color)
 __z88dk_fastcall;
 
 #define FIRE    0x10
@@ -69,10 +66,10 @@ int main()
 
     initISR();
     cls(INK_WHITE | PAPER_BLACK);
-    zx_border(INK_BLACK);
+    border(INK_BLACK);
 
     intrinsic_halt();
-    displayScreen((void*) &screen);
+    displayScreen(&screen[0]);
 
     copyScreen(xPos, yPos, buffer);
 
@@ -82,7 +79,7 @@ int main()
     {
 //        intrinsic_halt();
         intrinsic_halt();
-//        zx_border(INK_WHITE);
+        border(INK_WHITE);
 
         // Scroll the message
         scroll();
@@ -128,9 +125,9 @@ int main()
         // Copy contents of screen at new location
         copyScreen(xPos, yPos, buffer);
 
-        displaySprite(xPos, yPos, buffer);
+        displaySprite(xPos, yPos);
 
-//        zx_border(INK_BLACK);
+        border(INK_BLACK);
     }
 
     intrinsic_di();
