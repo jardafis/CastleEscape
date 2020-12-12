@@ -23,10 +23,11 @@
         defc    ZX_BANK_IOPORT	= 0x7ffd
         defc    ERR_SP			= 0x5c3d
         include "target/zx/def/sysvar.def"
-
+		include "defs.asm"
 
         public  _bankedtapeloader
 _bankedtapeloader:
+		pushall
         ld      ix,__BANK_0_head
         ld      de,__BANK_0_tail - __BANK_0_head
         ld      c,0x10                  ; Bank 0
@@ -71,7 +72,8 @@ _bankedtapeloader:
         ld      (SV_BANKM),a
         ld      bc,ZX_BANK_IOPORT
         out     (c),a
-        ei      
+        ei
+        popall
         ret     
 
 .load_block
