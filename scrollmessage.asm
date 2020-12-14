@@ -32,8 +32,7 @@ _scrollInit:
 
 		;
 		; Initialize the rotate counter to 1
-		; It will be decremented on entry to the
-		; scroll routine.
+		; It will be updated by the scroll routine
 		;
 		ld		a,1
 		ld		(rotate),a
@@ -100,39 +99,44 @@ _scroll:
 		ex		af,af'					; and af
 
 		; Check if we are in the middle of rotating a character
-		ld		a,(rotate)
-		dec		a
-		and		0x07
-		ld		(rotate),a
-		jp		z,getNextChar			; If the counter is 0, get the next character
+		ld		hl,rotate
+		rlc		(hl)
+		jp		c,getNextChar
 
-.startShift
+.shift
 		ld		hl,(screenAddr)			; Screen address of right hand side of message calculated by scrollInit
 		ld		de,charBuffer
 
 		ld		b,8						; Height of character
 .rowLoop
 		ld		c,b						; Save outer loop counter
-		push	hl						; Store the screen address
 
 		and		a						; Clear the carry flag
 		ld		a,(de)					; Get buffer data
 		rla								; Rotate it left through the carry flag
 		ld		(de),a					; Store buffer data
+		inc		de						; Next buffer address
 										; The carry flag contains the data we will shift
 										; into the next character on the screen
 
-		ld		b,WIDTH					; Width of scrolling window
+		ld		b,WIDTH/2				; Width of scrolling window
 .colLoop
 		ld		a,(hl)					; Get the screen data
 		rla								; Shift left, bit 0 will get the contents of the carry flag
 		ld		(hl),a					; Store data back to the screen
 		dec		hl						; Next character to the left
+
+		ld		a,(hl)					; Get the screen data
+		rla								; Shift left, bit 0 will get the contents of the carry flag
+		ld		(hl),a					; Store data back to the screen
+		dec		hl						; Next character to the left
+
 		djnz	colLoop					; Loop for the width of the message
 
-		inc		de						; Next buffer address
-		pop		hl						; Restore screen address
-		inc		h						; Increment to next row
+		ld		a,WIDTH					; 15 cycles to do the add vs. 21 for a push and pop (7 cycles)
+		add		l						; 4 cycles
+		ld		l,a						; 4 cycles
+		inc		h						; +256 To increment to next row
 		ld		b,c						; Restore outer loop counter
 		djnz	rowLoop					; Loop for height of characters
 
@@ -141,8 +145,7 @@ _scroll:
 		ret
 
 .getNextChar
-		; We are not in the middle of rotating a character
-		; so we need to get the next character from the message
+		; Need to get the next character from the message
 		ld		hl,(messagePointer)		; Get the message pointer
 		ld		a,(hl)					; Read the character
 		and		a						; Check if the end of the message has been reached
@@ -154,8 +157,8 @@ _scroll:
 
 		;
 		; Copy 8 bytes of font data corresponding to the
-		; character from the message to our character buffer.
-		; This allows us to rotate and save the font data
+		; character from the ROM font to our character buffer.
+		; This allows us to rotate and save the character
 		; without corrupting the actual font.
 		;
 		ld		l,a						; Get the font character index
@@ -166,7 +169,7 @@ _scroll:
 		ld		de,charBuffer			; Point to our character buffer address
 		ld		bc,8					; 8 bytes per char
 		ldir							; Copy font data to our buffer
-		jp		startShift
+		jp		shift
 
 .resetMessagePointer
 		ld		hl,(messageStart)
