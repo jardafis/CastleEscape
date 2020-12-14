@@ -56,11 +56,11 @@ void brick(TILE_MAP *tileMap)
 }
 
 unsigned char buffer[16];
-
+unsigned int *tileMapData = &screen[17];
 int main()
 {
-    int xPos = 0;
-    int yPos = 0;
+    int xPos = 40;
+    int yPos = 40;
     char key = 0;
     static unsigned char dir;
 
@@ -98,12 +98,20 @@ int main()
         if (dir & UP)
         {
             if (yPos)
-                yPos -= 1;
+            {
+                if((tileMapData[(((yPos-1)>>3)*32)+(xPos>>3)] == 0) &&
+                   (tileMapData[(((yPos-1)>>3)*32)+((xPos+7)>>3)] == 0))
+                    yPos -= 1;
+            }
         }
         else if (dir & DOWN)
         {
             if (yPos < (192 - 8))
-                yPos += 1;
+            {
+                if((tileMapData[(((yPos+8+1)>>3)*32)+(xPos>>3)] == 0) &&
+                   (tileMapData[(((yPos+8+1)>>3)*32)+((xPos+7)>>3)] == 0))
+                    yPos += 1;
+            }
         }
 
         if (dir & LEFT)

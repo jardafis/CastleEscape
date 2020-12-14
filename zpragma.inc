@@ -1,4 +1,4 @@
-#pragma output REGISTER_SP = 0xc000
+#pragma output REGISTER_SP = 0x8181
 #pragma output CLIB_MALLOC_HEAP_SIZE = 0x0000
 #pragma output CRT_INTERRUPT_MODE_EXIT = 1
 #pragma output CRT_ORG_CODE = 0x8184

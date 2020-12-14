@@ -1,5 +1,4 @@
 CC=zcc
-#AS=zcc
 AS=asmpp.pl
 LD=zcc
 TARGET=zx
@@ -13,8 +12,7 @@ PRAGMA_FILE=zpragma.inc
 C_OPT_FLAGS=-SO2
 
 CFLAGS=+$(TARGET) $(C_OPT_FLAGS) --legacy-banking -clib=sdcc_iy -c -pragma-include:$(PRAGMA_FILE)
-LDFLAGS=+$(TARGET) -m -clib=sdcc_iy -pragma-include:$(PRAGMA_FILE) -Cz--clearaddr -Cz32768
-#ASFLAGS=+$(TARGET) -c -pragma-include:$(PRAGMA_FILE)
+LDFLAGS=+$(TARGET) -m -clib=sdcc_iy -pragma-include:$(PRAGMA_FILE) -Cz--clearaddr -Cz32767
 ASFLAGS=-I$(Z88DK)/lib
 
 OBJECTS =  $(patsubst %.c,%.o,$(wildcard *.c)) $(patsubst %.asm,%.o,$(wildcard *.asm)) tiles/tiles.o
