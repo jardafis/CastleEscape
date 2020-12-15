@@ -4,7 +4,7 @@
         section code_user
 
 		defc	X				= 0x08	; Start column of message
-		defc	Y				= 0x00	; Start row of message
+		defc	Y				= 0x17	; Start character row of message
 		defc	WIDTH			= 0x10	; Width, in columns, of message area
 		defc	MESSAGE_ATTR	= PAPER_BLACK | INK_GREEN | BRIGHT ; Attribute for the message
         include "defs.asm"
@@ -31,10 +31,10 @@ _scrollInit:
 		ld		(messageStart),hl
 
 		;
-		; Initialize the rotate counter to 1
+		; Initialize the rotate counter
 		; It will be updated by the scroll routine
 		;
-		ld		a,1
+		ld		a,0x80
 		ld		(rotate),a
 
 		;
@@ -42,7 +42,7 @@ _scrollInit:
 		;
 		ld		de,_screenTab
 		ld		hl,Y					; Get Y offset
-		add		hl,hl					; x 2
+		hlx		16						; x16
 		add		hl,de					; Index into the screen table
 		ld		e,(hl)					; Get the screen address from the table
 		inc		hl						; into de
@@ -98,7 +98,7 @@ _scroll:
 		exx								; Save bc, de, hl
 		ex		af,af'					; and af
 
-		; Check if we are in the middle of rotating a character
+		; Check if we need to get the next character of the message
 		ld		hl,rotate
 		rlc		(hl)
 		jp		c,getNextChar
@@ -109,9 +109,8 @@ _scroll:
 
 		ld		b,8						; Height of character
 .rowLoop
-		ld		c,b						; Save outer loop counter
+		ld		c,b						; Save row loop counter
 
-		and		a						; Clear the carry flag
 		ld		a,(de)					; Get buffer data
 		rla								; Rotate it left through the carry flag
 		ld		(de),a					; Store buffer data
@@ -119,25 +118,20 @@ _scroll:
 										; The carry flag contains the data we will shift
 										; into the next character on the screen
 
+		ld		a,l						; save l which includes the screen X starting offset
 		ld		b,WIDTH/2				; Width of scrolling window
 .colLoop
-		ld		a,(hl)					; Get the screen data
-		rla								; Shift left, bit 0 will get the contents of the carry flag
-		ld		(hl),a					; Store data back to the screen
+		rl		(hl)					; Rotate left the contents of hl through the carry flag
 		dec		hl						; Next character to the left
 
-		ld		a,(hl)					; Get the screen data
-		rla								; Shift left, bit 0 will get the contents of the carry flag
-		ld		(hl),a					; Store data back to the screen
+		rl		(hl)					; Rotate left the contents of hl through the carry flag
 		dec		hl						; Next character to the left
 
 		djnz	colLoop					; Loop for the width of the message
 
-		ld		a,WIDTH					; 15 cycles to do the add vs. 21 for a push and pop (7 cycles)
-		add		l						; 4 cycles
-		ld		l,a						; 4 cycles
+		ld		l,a						; Restore low order byte of screen address
 		inc		h						; +256 To increment to next row
-		ld		b,c						; Restore outer loop counter
+		ld		b,c						; Restore row loop counter
 		djnz	rowLoop					; Loop for height of characters
 
 		ex		af,af'					; Restore af
