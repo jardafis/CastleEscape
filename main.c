@@ -77,23 +77,24 @@ int main()
 
     while ((key = keyboardScan()) != '\n')
     {
-//        intrinsic_halt();
         intrinsic_halt();
-        border(INK_WHITE);
+//        for(int a = 0; a<256; a++); // Delay so we can see the border on screen
 
+        border(INK_WHITE);
         // Scroll the message
         scroll();
-
-        // Restore original contents of screen
-        pasteScreen(xPos, yPos, buffer);
-
         // Scan Q, A, O, P, SPACE and update the direction flags accordingly
         dir = updateDirection();
+
+        border(INK_RED);
+        // Restore original contents of screen
+        pasteScreen(xPos, yPos, buffer);
 
         //
         // Check for collisions and clear the direction bits accordingly
         //
 
+        border(INK_BLUE);
         // Update to new position based on direction bits
         if (dir & UP)
         {
@@ -108,8 +109,8 @@ int main()
         {
             if (yPos < (192 - 8))
             {
-                if((tileMapData[(((yPos+8+1)>>3)*32)+(xPos>>3)] == 0) &&
-                   (tileMapData[(((yPos+8+1)>>3)*32)+((xPos+7)>>3)] == 0))
+                if((tileMapData[(((yPos+7+1)>>3)*32)+(xPos>>3)] == 0) &&
+                   (tileMapData[(((yPos+7+1)>>3)*32)+((xPos+7)>>3)] == 0))
                     yPos += 1;
             }
         }
@@ -117,12 +118,20 @@ int main()
         if (dir & LEFT)
         {
             if (xPos >= 2)
-                xPos -= 2;
+            {
+                if((tileMapData[((yPos>>3)*32)+((xPos-2)>>3)] == 0) &&
+                   (tileMapData[(((yPos+7)>>3)*32)+((xPos-2)>>3)] == 0))
+                    xPos -= 2;
+            }
         }
         else if (dir & RIGHT)
         {
             if (xPos < (256 - 8))
-                xPos += 2;
+            {
+                if((tileMapData[((yPos>>3)*32)+((xPos+7+2)>>3)] == 0) &&
+                   (tileMapData[(((yPos+7)>>3)*32)+((xPos+7+2)>>3)] == 0))
+                    xPos += 2;
+            }
         }
 
         if (dir & FIRE)
@@ -130,9 +139,11 @@ int main()
             ;
         }
 
+        border(INK_YELLOW);
         // Copy contents of screen at new location
         copyScreen(xPos, yPos, buffer);
 
+        border(INK_CYAN);
         displaySprite(xPos, yPos);
 
         border(INK_BLACK);
