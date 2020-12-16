@@ -4,7 +4,7 @@
         section code_user
 
 		defc	X				= 0x08	; Start column of message
-		defc	Y				= 0x17	; Start character row of message
+		defc	Y				= 0x01	; Start character row of message
 		defc	WIDTH			= 0x10	; Width, in columns, of message area
 		defc	MESSAGE_ATTR	= PAPER_BLACK | INK_GREEN | BRIGHT ; Attribute for the message
         include "defs.asm"
@@ -101,7 +101,7 @@ _scroll:
 		; Check if we need to get the next character of the message
 		ld		hl,rotate
 		rlc		(hl)
-		jp		c,getNextChar
+		jr		c,getNextChar
 
 .shift
 		ld		hl,(screenAddr)			; Screen address of right hand side of message calculated by scrollInit
@@ -143,7 +143,7 @@ _scroll:
 		ld		hl,(messagePointer)		; Get the message pointer
 		ld		a,(hl)					; Read the character
 		and		a						; Check if the end of the message has been reached
-		jp		z,resetMessagePointer	; Reset pointer if we reach the end of the message
+		jr		z,resetMessagePointer	; Reset pointer if we reach the end of the message
 		inc		hl						; Otherwise increment the message pointer
 		ld		(messagePointer),hl		; and save it
 

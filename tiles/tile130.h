@@ -1,7 +1,7 @@
 /*
   tiles/tile130.h (PNM).
 */
- const unsigned char
+const unsigned char
   tile130[] =
   {
     0x00, 0x00, 0x00, 0x00, 0x00, 
