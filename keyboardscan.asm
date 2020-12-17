@@ -31,7 +31,7 @@ _keyboardScan:
         jr      NZ,Read_Keyboard_1      ; Loop around until this row finished
         dec     D                       ; Decrement row loop counter
         jr      NZ,Read_Keyboard_0      ; Loop around until we are done
-        and     A                       ; Clear A (no key found)
+        xor     A                       ; Clear A (no key found)
         pop     HL                      ; Restore H
         ld      L,A                     ; Overwrite L
         pop     DE
