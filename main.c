@@ -56,13 +56,16 @@ void brick(TILE_MAP *tileMap)
 }
 
 unsigned char buffer[16];
-unsigned int *tileMapData = &screen[17];
+unsigned char *tileMapData = &screen[0];
+extern void attribEdit(void);
 int main()
 {
     int xPos = 40;
     int yPos = 40;
     char key = 0;
     static unsigned char dir;
+
+    attribEdit();
 
     initISR();
     cls(INK_WHITE | PAPER_BLACK);
@@ -100,8 +103,8 @@ int main()
         {
             if (yPos)
             {
-                if((tileMapData[(((yPos-1)>>3)*32)+(xPos>>3)] == 0) &&
-                   (tileMapData[(((yPos-1)>>3)*32)+((xPos+7)>>3)] == 0))
+                if((tileMapData[(((yPos-1)>>3)*32)+(xPos>>3)] == 0xff) &&
+                   (tileMapData[(((yPos-1)>>3)*32)+((xPos+7)>>3)] == 0xff))
                     yPos -= 1;
             }
         }
@@ -109,8 +112,8 @@ int main()
         {
             if (yPos < (192 - 8))
             {
-                if((tileMapData[(((yPos+7+1)>>3)*32)+(xPos>>3)] == 0) &&
-                   (tileMapData[(((yPos+7+1)>>3)*32)+((xPos+7)>>3)] == 0))
+                if((tileMapData[(((yPos+7+1)>>3)*32)+(xPos>>3)] == 0xff) &&
+                   (tileMapData[(((yPos+7+1)>>3)*32)+((xPos+7)>>3)] == 0xff))
                     yPos += 1;
             }
         }
@@ -119,8 +122,8 @@ int main()
         {
             if (xPos >= 2)
             {
-                if((tileMapData[((yPos>>3)*32)+((xPos-2)>>3)] == 0) &&
-                   (tileMapData[(((yPos+7)>>3)*32)+((xPos-2)>>3)] == 0))
+                if((tileMapData[((yPos>>3)*32)+((xPos-2)>>3)] == 0xff) &&
+                   (tileMapData[(((yPos+7)>>3)*32)+((xPos-2)>>3)] == 0xff))
                     xPos -= 2;
             }
         }
@@ -128,8 +131,8 @@ int main()
         {
             if (xPos < (256 - 8))
             {
-                if((tileMapData[((yPos>>3)*32)+((xPos+7+2)>>3)] == 0) &&
-                   (tileMapData[(((yPos+7)>>3)*32)+((xPos+7+2)>>3)] == 0))
+                if((tileMapData[((yPos>>3)*32)+((xPos+7+2)>>3)] == 0xff) &&
+                   (tileMapData[(((yPos+7)>>3)*32)+((xPos+7+2)>>3)] == 0xff))
                     xPos += 2;
             }
         }
