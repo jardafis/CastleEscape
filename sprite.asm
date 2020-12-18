@@ -6,144 +6,133 @@
         public  _pasteScreen
         public  _displaySprite
 
-        ; On input:
-        ;	sp + 0 = sprite x position in pixels
-        ;	sp + 1 = sprite y position in pixels
-        ;	sp + 2 = pointer to buffer
+		include	"defs.asm"
+        ; After entry:
+        ;	ix + 0 = sprite x position in pixels
+        ;	ix + 1 = sprite y position in pixels
+        ;	ix + 2 = buffer pointer lo byte
+        ;	ix + 3 = buffer pointer hi byte
+        defc	X_OFFSET			= 0x00
+        defc	Y_OFFSET			= 0x01
+        defc	BUFFER_LO			= 0x02
+        defc	BUFFER_HI			= 0x03
 _copyScreen:
-        push    af
-        push    de
-        push    hl
-        push    ix
-
-        ld      ix,10
-        add     ix,sp
+		entry
 
         di      
-        ld      (tempsp),sp
+        ld      (copyTempSP),sp			; Optimization, self modifying code
 
         ; Claculate the screen Y address
         ld      h,0
-        ld      l,(ix+1)                ; get the y position
+        ld      l,(ix+Y_OFFSET)         ; get the y position
         add     hl,hl                   ; multiply by 2
         ld      sp,_screenTab
         add     hl,sp
         ld      sp,hl
 
 
-        ld      e,(ix+2)
-        ld      d,(ix+3)
+        ; Get buffer destination address
+        ld      e,(ix+BUFFER_LO)
+        ld      d,(ix+BUFFER_HI)
 
 
-        ld      c,(ix+0)                ; Get the X offset
+        ld      c,(ix+X_OFFSET)         ; Get the X offset
         srl     c                       ; divide by 8 to get byte address
         srl     c
         srl     c
         ld      b,8
 .copyloop
-        pop     hl                      ; get screen row adress
+        pop     hl                      ; get screen row source adress
         ld      a,l
         add     c                       ; add x offset
         ld      l,a
 
-        ld      a,(hl)
-        ld      (de),a
-        inc     de
-        inc     hl
+        ldi								; Optimization to save 4 cycles
+        inc		bc						; The ldi will decrement bc so increment it here
 
         ld      a,(hl)
         ld      (de),a
         inc     de
-
+		; No need to increment hl because we will pop a new one
+		; at the beginning of the loop
         djnz    copyloop
 
-        ld      sp,(tempsp)
+.copyTempSP = $+1
+        ld      sp,0x0000
         ei      
 
-        pop     ix
-        pop     hl
-        pop     de
-        pop     af
+		exit
         ret     
 
+        ; After entry:
+        ;	ix + 0 = sprite x position in pixels
+        ;	ix + 1 = sprite y position in pixels
+        ;	ix + 2 = buffer pointer lo byte
+        ;	ix + 3 = buffer pointer hi byte
 _pasteScreen:
-        push    af
-        push    de
-        push    hl
-        push    ix
-
-
-        ld      ix,10
-        add     ix,sp
+		entry
 
         di      
-        ld      (tempsp),sp
+        ld      (pasteTempSP),sp
 
         ; Claculate the screen Y address
         ld      h,0
-        ld      l,(ix+1)                ; get the y position
+        ld      l,(ix+Y_OFFSET)         ; get the y position
         add     hl,hl                   ; multiply by 2
         ld      sp,_screenTab
         add     hl,sp
         ld      sp,hl
 
-        ; Get buffer address
-        ld      e,(ix+2)
-        ld      d,(ix+3)
+        ; Get buffer source address
+        ld      l,(ix+BUFFER_LO)
+        ld      h,(ix+BUFFER_HI)
 
         ld      b,8
-        ld      c,(ix+0)                ; Get the X offset
+        ld      c,(ix+X_OFFSET)         ; Get the X offset
         srl     c                       ; divide by 8 to get byte address
         srl     c
         srl     c
 .pasteloop
-        pop     hl                      ; get screen row adress
-        ld      a,l
+        pop     de                      ; get screen row destination adress
+        ld      a,e
         add     c                       ; add x offset
-        ld      l,a
+        ld      e,a
 
-        ld      a,(de)
-        ld      (hl),a
-        inc     de
+        ldi								; Optimization to save 4 cycles
+        inc		bc						; The ldi will decrement bc so increment it here
+
+        ld      a,(hl)
+        ld      (de),a
         inc     hl
-
-        ld      a,(de)
-        ld      (hl),a
-        inc     de
-
+		; No need to increment de because we will pop a new one
+		; at the beginning of the loop
         djnz    pasteloop
 
-        ld      sp,(tempsp)
+.pasteTempSP = $+1
+        ld      sp,0x0000
         ei      
 
-        pop     ix
-        pop     hl
-        pop     de
-        pop     af
+		exit
         ret     
 
+        ; After entry:
+        ;	ix + 0 = sprite x position in pixels
+        ;	ix + 1 = sprite y position in pixels
 _displaySprite:
-        push    af
-        push    bc
-        push    de
-        push    hl
-        push    ix
-
-        ld      ix,12
-        add     ix,sp
+		entry
 
         di      
-        ld      (tempsp),sp
+        ld      (displaySpriteSP),sp
 
         ; Calculate the offset into the screen table
         ld      h,0
-        ld      l,(ix+1)                ; get the y position
+        ld      l,(ix+Y_OFFSET)         ; get the y position
         add     hl,hl                   ; multiply by 2
         ld      sp,_screenTab
         add     hl,sp
         ld      sp,hl
 
-        ld      a,(ix+0)                ; Get the X offset
+        ld      a,(ix+X_OFFSET)         ; Get the X offset
         ld      c,a                     ; Store it
         and     0x07                    ; Get the sprite shift index
         ; Multiply by 32
@@ -191,15 +180,11 @@ _displaySprite:
         inc     de                      ; Next byte of sprite data
 
         djnz    loop2
-
-        ld      sp,(tempsp)
+.displaySpriteSP = $+1
+        ld      sp,0x0000
         ei      
 
-        pop     ix
-        pop     hl
-        pop     de
-        pop     bc
-        pop     af
+		exit
         ret     
 
         section rodata_user
@@ -276,8 +261,3 @@ _displaySprite:
         db      11111110b,00000000b,00000001b,11111100b
         db      11111111b,00000000b,00000011b,01111000b
         db      11111111b,00000000b,10000111b,00000000b
-
-        section bss_user
-.tempsp
-        dw      0
-
