@@ -1,13 +1,13 @@
         module  defs
 
         ;
-        ; Bit numbers for user keys
+        ; Values numbers for control keys
         ;
-        defc    FIRE                    = 4
-        defc    UP                      = 3
-        defc    DOWN                    = 2
-        defc    LEFT                    = 1
-        defc    RIGHT                   = 0
+        defc    FIRE                    = 0x10
+        defc    UP                      = 0x08
+        defc    DOWN                    = 0x04
+        defc    LEFT                    = 0x02
+        defc    RIGHT                   = 0x01
 
         ;
         ; Screen addresses
