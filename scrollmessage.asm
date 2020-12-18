@@ -56,9 +56,8 @@ _scrollInit:
 		; Clear the message area on the screen
 		;
 		xor		a						; Zero accumulator
-		ld		b,8						; Height of character
+		ld		c,8						; Height of character
 .clearRow
-		ld		c,b						; Save outer loop counter
 		ld		de,hl					; Store the screen address
 
 		ld		b,WIDTH					; Width of scrolling window
@@ -69,8 +68,8 @@ _scrollInit:
 
 		ld		hl,de					; Restore screen address
 		inc		h						; Increment to next row
-		ld		b,c						; Restore outer loop counter
-		djnz	clearRow				; Loop for height of characters
+		dec		c
+		jr		nz,clearRow
 
 		;
 		; Set the screen attributes for the message
@@ -107,10 +106,8 @@ _scroll:
 		ld		hl,(screenAddr)			; Screen address of right hand side of message calculated by scrollInit
 		ld		de,charBuffer
 
-		ld		b,8						; Height of character
+		ld		c,8						; Height of character
 .rowLoop
-		ld		c,b						; Save row loop counter
-
 		ld		a,(de)					; Get buffer data
 		rla								; Rotate it left through the carry flag
 		ld		(de),a					; Store buffer data
@@ -130,9 +127,9 @@ _scroll:
 		djnz	colLoop					; Loop for the width of the message
 
 		ld		l,a						; Restore low order byte of screen address
-		inc		h						; +256 To increment to next row
-		ld		b,c						; Restore row loop counter
-		djnz	rowLoop					; Loop for height of characters
+		inc		h						; +0x100 To increment to next row
+		dec		c
+		jr		nz,rowLoop
 
 		ex		af,af'					; Restore af
 		exx								; bc, de, and hl

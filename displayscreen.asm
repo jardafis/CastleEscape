@@ -8,7 +8,8 @@
 
         defc    xPos		= 0x0000
         defc    yPos		= 0x0001
-
+		defc	TILEMAP_LO	= 0x00
+		defc	TILEMAP_HI	= 0x01
         ;
         ; Display a complete tile map
         ;
@@ -22,8 +23,8 @@ _displayScreen:
 
         ; Get the address of the tilemap
         ; passed on the stack
-        ld      l,(ix+0)
-        ld      h,(ix+1)
+        ld      l,(ix+TILEMAP_LO)
+        ld      h,(ix+TILEMAP_HI)
 
         ; IX points to the temporary storage for our variables
         ld      ix,varbase
@@ -109,7 +110,7 @@ _displayScreen:
         ; we need to disable interrupts.
         di      
         ; Save the current stack pointer
-        ld      (l_tempSP),sp
+        ld      (displayScreenTempSP),sp
         ; Point the stack at the tile data
         ld      sp,hl
         ; Point hl at the screen address
@@ -147,7 +148,8 @@ _displayScreen:
         ld      (hl),b                  ; 7
 
         ; Restore the stack pointer.
-        ld      sp,(l_tempSP)
+.displayScreenTempSP = $+1
+        ld      sp,0x0000
         ei      
 
         pop     hl                      ; tile map pointer
@@ -174,8 +176,6 @@ _displayScreen:
 .x
         db      0
 .y
-        dw      0
-.l_tempSP
         dw      0
 
         section rodata_user

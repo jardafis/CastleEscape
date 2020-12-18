@@ -13,7 +13,7 @@ _cls:
         push    hl
 
         di      
-        ld      (l_tempSP),sp
+        ld      (clsTempSP),sp
 
         ld      sp,SCREEN_ATTR_END
         ld      h,l                     ; attr input parameter in l
@@ -51,14 +51,10 @@ _cls:
         push    hl
         push    hl
         djnz    loop
-
-        ld      sp,(l_tempSP)
+.clsTempSP = $+1
+        ld      sp,0x0000
         ei      
 
         pop     hl
         pop     bc
         ret     
-
-        section bss_user
-.l_tempSP
-        dw      0

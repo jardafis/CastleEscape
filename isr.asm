@@ -23,12 +23,10 @@ _initISR:
 		ld		a,JP_OPCODE				; Store the opcode for JP
 		ld		(hl),a
 		inc		hl
-		ld		de,isr					; Store the jump address
-		ld		a,e						; which is the address of the
-		ld		(hl),a					; isr routine.
+		ld		de,isr					; Store the jump address which is the address of the
+		ld		(hl),e					; isr routine.
 		inc		hl
-		ld		a,d
-		ld		(hl),a
+		ld		(hl),d
 
 		ld		a,VECTOR_TABLE_HIGH		; Write the address of the vector table
 		ld		i,a						; to the i register
@@ -39,27 +37,17 @@ _initISR:
 		ret
 
 .isr
-		push	af						; Save the register we are going to use
-		push	hl
-
+;		push	hl
 		;
 		; Increment the 16-bit ticks count
 		;
-		ld		hl,(ticks)
-		inc		hl
-		ld		a,l
-		ld		(ticksLower),a
-		ld		a,h
-		ld		(ticksUpper),a
-
-		pop		hl						; Restore the registers we used
-		pop		af
+;		ld		hl,(ticks)
+;		inc		hl
+;		ld		(ticks),hl
+;		pop		hl						; Restore the registers we used
 		ei								; Enable interrupts
 		reti							; Acknowledge and return from interrupt
 
 		section	bss_user
 .ticks
-.ticksLower
-		db		0
-.ticksUpper
-		db		0
+		dw		0
