@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <intrinsic.h>
 #include <arch/zx.h>
-#include "tiled.h"
 
 extern unsigned char *screenTab[];
 extern const unsigned char tile0[];
+extern const unsigned char tileAttr[];
 extern const unsigned char screen[];
+extern void attribEdit(unsigned char *tileset, unsigned char *attrib);
 extern unsigned char keyboardScan(void);
 extern void displayScreen(void *scr);
 extern void copyScreen(unsigned char xPos, unsigned char yPos,
@@ -44,20 +45,19 @@ inline void drawTile(unsigned char tileID, unsigned char x, unsigned char y)
     }
 }
 
-void brick(TILE_MAP *tileMap)
+void brick(unsigned char *tileMap)
 {
     for (unsigned char y = 0; y < 24; y++)
     {
         for (unsigned char x = 0; x < 32; x++)
         {
-            drawTile(tileMap->data[(y * 32) + x], x, y);
+            drawTile(tileMap[(y * 32) + x], x, y);
         }
     }
 }
 
 unsigned char buffer[16];
 unsigned char *tileMapData = &screen[0];
-extern void attribEdit(void);
 int main()
 {
     int xPos = 40;
@@ -65,27 +65,26 @@ int main()
     char key = 0;
     static unsigned char dir;
 
-    attribEdit();
-
     initISR();
+
+    // Setup the screen and border
     cls(INK_WHITE | PAPER_BLACK);
     border(INK_BLACK);
-
-    intrinsic_halt();
     displayScreen(&screen[0]);
+    scrollInit(NULL);
 
     copyScreen(xPos, yPos, buffer);
-
-    scrollInit(NULL);
 
     while ((key = keyboardScan()) != '\n')
     {
         intrinsic_halt();
-//        for(int a = 0; a<256; a++); // Delay so we can see the border on screen
+        for(int a = 0; a<256; a++); // Delay so we can see the border on screen
 
         border(INK_WHITE);
         // Scroll the message
         scroll();
+
+        border(INK_MAGENTA);
         // Scan Q, A, O, P, SPACE and update the direction flags accordingly
         dir = updateDirection();
 
@@ -103,8 +102,9 @@ int main()
         {
             if (yPos)
             {
-                if((tileMapData[(((yPos-1)>>3)*32)+(xPos>>3)] == 0xff) &&
-                   (tileMapData[(((yPos-1)>>3)*32)+((xPos+7)>>3)] == 0xff))
+                if ((tileMapData[(((yPos - 1) >> 3) * 32) + (xPos >> 3)] == 0xff)
+                        && (tileMapData[(((yPos - 1) >> 3) * 32)
+                                + ((xPos + 7) >> 3)] == 0xff))
                     yPos -= 1;
             }
         }
@@ -112,8 +112,10 @@ int main()
         {
             if (yPos < (192 - 8))
             {
-                if((tileMapData[(((yPos+7+1)>>3)*32)+(xPos>>3)] == 0xff) &&
-                   (tileMapData[(((yPos+7+1)>>3)*32)+((xPos+7)>>3)] == 0xff))
+                if ((tileMapData[(((yPos + 7 + 1) >> 3) * 32) + (xPos >> 3)]
+                        == 0xff)
+                        && (tileMapData[(((yPos + 7 + 1) >> 3) * 32)
+                                + ((xPos + 7) >> 3)] == 0xff))
                     yPos += 1;
             }
         }
@@ -122,8 +124,9 @@ int main()
         {
             if (xPos >= 2)
             {
-                if((tileMapData[((yPos>>3)*32)+((xPos-2)>>3)] == 0xff) &&
-                   (tileMapData[(((yPos+7)>>3)*32)+((xPos-2)>>3)] == 0xff))
+                if ((tileMapData[((yPos >> 3) * 32) + ((xPos - 2) >> 3)] == 0xff)
+                        && (tileMapData[(((yPos + 7) >> 3) * 32)
+                                + ((xPos - 2) >> 3)] == 0xff))
                     xPos -= 2;
             }
         }
@@ -131,8 +134,10 @@ int main()
         {
             if (xPos < (256 - 8))
             {
-                if((tileMapData[((yPos>>3)*32)+((xPos+7+2)>>3)] == 0xff) &&
-                   (tileMapData[(((yPos+7)>>3)*32)+((xPos+7+2)>>3)] == 0xff))
+                if ((tileMapData[((yPos >> 3) * 32) + ((xPos + 7 + 2) >> 3)]
+                        == 0xff)
+                        && (tileMapData[(((yPos + 7) >> 3) * 32)
+                                + ((xPos + 7 + 2) >> 3)] == 0xff))
                     xPos += 2;
             }
         }
@@ -150,6 +155,13 @@ int main()
         displaySprite(xPos, yPos);
 
         border(INK_BLACK);
+        if (key == 'S')
+        {
+            attribEdit(tile0, tileAttr);
+            cls(INK_WHITE | PAPER_BLACK);
+            displayScreen(&screen[0]);
+            scrollInit(NULL);
+        }
     }
 
     intrinsic_di();
