@@ -32,6 +32,8 @@ void displayScore(void)
 __z88dk_fastcall;
 void incScore(void)
 __z88dk_fastcall;
+void addScore(unsigned char value)
+__z88dk_fastcall;
 
 #define FIRE    0x10
 #define UP      0x08
@@ -69,6 +71,7 @@ int main()
     int xPos = 40;
     int yPos = 40;
     char key = 0;
+    unsigned char count = 0;
     static unsigned char dir;
 
     initISR();
@@ -79,6 +82,7 @@ int main()
     displayScreen(&screen[0]);
     scrollInit(NULL);
     initScore();
+    displayScore();
 
     copyScreen(xPos, yPos, buffer);
 
@@ -162,8 +166,13 @@ int main()
         displaySprite(xPos, yPos);
 
         border(INK_GREEN);
-        incScore();
-        displayScore();
+        if(count++ >= 50)
+        {
+            addScore(0x17);
+//            incScore();
+            count = 0;
+            displayScore();
+        }
         border(INK_BLACK);
         if (key == 'S')
         {

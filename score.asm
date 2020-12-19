@@ -1,6 +1,7 @@
         extern  _screenTab
 		public	_initScore
 		public	_incScore
+		public	_addScore
 		public	_displayScore
 
 		include	"defs.asm"
@@ -17,32 +18,47 @@ _initScore:
 		ret
 
 		;
+		; On entry:
+		;		l = BCD value to add to score
+		;
+_addScore:
+		push	af
+		push	de
+
+		ld		de,score				; Pointer to the score
+
+		ld		a,(de)					; Get low byte of BCD score
+		or		a						; Clear the carry flag
+		add		l						; Add the BCD value passed in
+		daa								; Adjust result for BCD
+		ld		(de),a					; Save the updated score
+		jr		c,incUpper				; If c there was wraparound
+
+.addScoreDone
+		pop		de
+		pop		af
+		ret
+
+.incUpper
+		inc		de						; There was a wraparound
+		ld		a,(de)					; Get high byte of BCD score
+		or		a						; Clear the carry flag
+		inc		a						; Increment the score
+		daa								; Adjust result for BCD
+		ld		(de),a					; Save the incremented score
+		jp		addScoreDone
+
+		;
 		; Increment the score by 1
 		; The Score is stored in BCD so this is not straight forward
 		;
 _incScore:
-		push	af
 		push	hl
 
-		ld		hl,score				; Pointer to the score
+		ld		l,1
+		call	_addScore
 
-		ld		a,(hl)					; Get 10's and units
-		or		a						; Clear the carry flag
-		inc		a						; Increment the score
-		daa								; Adjust result for BCD
-		ld		(hl),a					; Save the incremented score
-		jr		nz,incScoreDone			; If nz there was no wraparound so we are done
-
-		inc		hl						; There was a wraparound
-		ld		a,(hl)					; Get 1000's and 100's
-		or		a						; Clear the carry flag
-		inc		a						; Increment the score
-		daa								; Adjust result for BCD
-		ld		(hl),a					; Save the incremented score
-
-.incScoreDone
 		pop		hl
-		pop		af
 		ret
 
 		;
