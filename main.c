@@ -26,6 +26,12 @@ void initISR(void)
 __z88dk_fastcall;
 void border(unsigned char color)
 __z88dk_fastcall;
+void initScore(void)
+__z88dk_fastcall;
+void displayScore(void)
+__z88dk_fastcall;
+void incScore(void)
+__z88dk_fastcall;
 
 #define FIRE    0x10
 #define UP      0x08
@@ -72,13 +78,14 @@ int main()
     border(INK_BLACK);
     displayScreen(&screen[0]);
     scrollInit(NULL);
+    initScore();
 
     copyScreen(xPos, yPos, buffer);
 
     while ((key = keyboardScan()) != '\n')
     {
         intrinsic_halt();
-        for(int a = 0; a<256; a++); // Delay so we can see the border on screen
+//        for(int a = 0; a<256; a++); // Delay so we can see the border on screen
 
         border(INK_WHITE);
         // Scroll the message
@@ -154,6 +161,9 @@ int main()
         border(INK_CYAN);
         displaySprite(xPos, yPos);
 
+        border(INK_GREEN);
+        incScore();
+        displayScore();
         border(INK_BLACK);
         if (key == 'S')
         {
