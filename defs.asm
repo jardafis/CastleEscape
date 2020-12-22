@@ -1,5 +1,7 @@
         module  defs
 
+        extern _font_8x8_cpc_system
+
         ;
         ; Values numbers for control keys
         ;
@@ -44,9 +46,10 @@
         defc    FLASH                   = 0x80
 
         ;
-        ; Address of the ZX Spectrum font in ROM
+        ; Address of the font. If 0x3d00 is used this constant points
+        ; to the font in the Spectrum ROM.
         ;
-        defc    ROM_FONT                = 0x3d00
+        defc    FONT                    = _font_8x8_cpc_system
 
         ;
         ; I/O Ports

@@ -6,7 +6,7 @@
 		defc	X				= 0x08	; Start column of message
 		defc	Y				= 0x01	; Start character row of message
 		defc	WIDTH			= 0x10	; Width, in columns, of message area
-		defc	MESSAGE_ATTR	= PAPER_BLACK | INK_GREEN | BRIGHT ; Attribute for the message
+		defc	MESSAGE_ATTR	= PAPER_BLACK | INK_WHITE | BRIGHT ; Attribute for the message
         include "defs.asm"
 
 		;
@@ -155,7 +155,7 @@ _scroll:
 		ld		l,a						; Get the font character index
 		ld		h,0						; and multiply it by 8
 		hlx		8
-		ld		de,ROM_FONT				; Pointer to the font in ROM
+		ld		de,FONT					; Pointer to the font
 		add		hl,de					; hl points to the font data address
 		ld		de,charBuffer			; Point to our character buffer address
 		ld		bc,8					; 8 bytes per char
@@ -169,8 +169,7 @@ _scroll:
 
 		section rodata_user
 .defaultMessage
-		db		"This is a test message. It Requires a font so we are using the one "
-		db		"from the ZX Spectrum ROM.... ", 0x00
+		db		"This is a test message....        Boo....        ", 0x00
 
 		section bss_user
 .messagePointer
