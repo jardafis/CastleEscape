@@ -110,7 +110,7 @@ _displayScore:
 		ld		l,a
 		ld		h,0
 		hlx		8						; x8
-		ld		de,ROM_FONT + (('0' - 32) * 8) ; Start address of numbers in font
+		ld		de,FONT + (('0' - 32) * 8) ; Start address of numbers in font
 		add		hl,de					; Pointer to start of character in ROM font
 		push	hl						; Save font pointer address
 
