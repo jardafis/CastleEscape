@@ -6,8 +6,7 @@
 
 		; On entry:
 		;		a[3:0] = BCD value to display, a[7:4] must be zero
-		;		b = X character position
-		;		c = y character position
+		;		bc = Character screen location b=Xpos, c=YPos
 		;
 		;		All registers are preserved
 _displayBCD:
@@ -42,8 +41,8 @@ _displayBCD:
 
 		; Display a single digit 0 - 9
 		ldi
-		dec		e
-		inc		d
+		dec		e						; Incremented by ldi so decrement it
+		inc		d						; Add 256 for next screen row
 		ldi
 		dec		e
 		inc		d
