@@ -57,6 +57,7 @@
         defc    IO_BORDER               = 0xfe
         defc    IO_BEEPER               = 0xfe
         defc    IO_BANK                 = 0x7ffd
+        defc    IO_KEMPSTON             = 0x1f
 
         ;
         ; Macros for use with asmpp.pl
