@@ -49,8 +49,8 @@ _displayScreen:
         ld      b,32
 .xloop
         ld      a,(hl)                  ; read the tile index
-        cmp		0xff
-        jr      z,nextTile              ; if the index is 0 skip tile
+        cmp		0xff					; If the index is 0xff
+        jr      z,nextTile              ; the Z flag will be set.
 
         push    bc                      ; save the loop counter
         push    hl                      ; save the tilemap pointer
@@ -63,13 +63,12 @@ _displayScreen:
         ld      h,0
         ex      af,af'                  ; save tile index
         add     hl,de
-        ld      a,(hl)
-        ld      c,a                     ; Save attribute for the tile
+        ld      c,(hl)
 
         ;
         ; Set the attribute for the tile
         ;
-        ld      hl,(y)
+        ld      hl,(y)					;16
         ; Multiple by 32
 		hlx		16
         push    hl                      ; y * 16 - save it for later
@@ -80,8 +79,7 @@ _displayScreen:
         add     hl,de
         ld      de,SCREEN_ATTR_START
         add     hl,de
-        ld      a,c                     ; Get tile attribute we saved earlier
-        ld      (hl),a                  ; Store it to the screen
+        ld      (hl),c                  ; Store it to the screen
 
         ; Claculate the screen Y address
         pop     hl                      ; y * 16 saved above
@@ -91,7 +89,7 @@ _displayScreen:
         ; Load the screen address into BC
         ; and add the X character position
         ld      a,(x)                   ; Get the X offset        13
-        add     a,(hl)                  ; low order byte          7
+        add     (hl)                    ; low order byte          7
         ld      c,a                     ; 4
         inc     hl                      ; 6
         ld      b,(hl)                  ; high order byte         7
