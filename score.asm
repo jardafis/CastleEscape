@@ -70,7 +70,7 @@ _displayScore:
 		push	bc
 		push	hl
 
-		ld		bc,0x0204				; x,y screen location
+		ld		bc,0x0201				; x,y screen location
 		ld		hl,score+1				; Point to 1000's/100's of score
 		xor		a						; Zero a
 
