@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 import array,sys,getopt
-import numpy as np
-
 
 def main(argv):
     inputfile = ''
