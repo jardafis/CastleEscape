@@ -1,4 +1,4 @@
-        public  _screen
+        public  _levels
         section rodata_user
-_screen:
-        binary  "level1.dat"
+_levels:
+        binary  "levels.dat"
