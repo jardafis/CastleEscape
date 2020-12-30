@@ -2,10 +2,13 @@
 #include <intrinsic.h>
 #include <arch/zx.h>
 
+#define MAX_LEVEL_X 2
+#define MAX_LEVEL_Y 2
+
 extern unsigned char *screenTab[];
 extern const unsigned char tile0[];
 extern const unsigned char tileAttr[];
-extern const unsigned char screen[];
+extern const unsigned char levels[];
 extern void attribEdit(unsigned char *tileset, unsigned char *attrib);
 extern unsigned char keyboardScan(void);
 extern void displayScreen(void *scr);
@@ -22,6 +25,8 @@ extern void scroll(void)
 __z88dk_fastcall;
 extern void scrollInit(void *message)
 __z88dk_fastcall;
+extern void scrollReset(void)
+__z88dk_fastcall;
 void initISR(void)
 __z88dk_fastcall;
 void border(unsigned char color)
@@ -34,7 +39,8 @@ void incScore(void)
 __z88dk_fastcall;
 void addScore(unsigned char value)
 __z88dk_fastcall;
-
+void lanternFlicker(void)
+__z88dk_fastcall;
 #define FIRE    0x10
 #define UP      0x08
 #define DOWN    0x04
@@ -65,9 +71,11 @@ void brick(unsigned char *tileMap)
 }
 
 unsigned char buffer[16];
-unsigned char *tileMapData = &screen[0];
+unsigned char *tileMapData = &levels[0];
 int main()
 {
+    int screenX = 0;
+    int screenY = 0;
     int xPos = 40;
     int yPos = 40;
     char key = 0;
@@ -79,7 +87,7 @@ int main()
     // Setup the screen and border
     cls(INK_WHITE | PAPER_BLACK);
     border(INK_BLACK);
-    displayScreen(&screen[0]);
+    displayScreen(&levels[(screenY * (768*2)) + (screenX * 32)]);
     scrollInit(NULL);
     initScore();
     displayScore();
@@ -111,23 +119,47 @@ int main()
         // Update to new position based on direction bits
         if (dir & UP)
         {
-            if (yPos)
+            if (yPos > 24)
             {
-                if ((tileMapData[(((yPos - 1) >> 3) * 32) + (xPos >> 3)] == 0xff)
-                        && (tileMapData[(((yPos - 1) >> 3) * 32)
-                                + ((xPos + 7) >> 3)] == 0xff))
+//                if ((tileMapData[(((yPos - 1) >> 3) * 32) + (xPos >> 3)] == 0xff)
+//                        && (tileMapData[(((yPos - 1) >> 3) * 32)
+//                                + ((xPos + 7) >> 3)] == 0xff))
                     yPos -= 1;
+            }
+            else
+            {
+                if(screenY > 0)
+                {
+                    screenY--;
+                    yPos = 184;
+                    cls(INK_WHITE | PAPER_BLACK);
+                    displayScreen(&levels[(screenY * (768*2)) + (screenX * 32)]);
+                    scrollReset();
+                    displayScore();
+                }
             }
         }
         else if (dir & DOWN)
         {
             if (yPos < (192 - 8))
             {
-                if ((tileMapData[(((yPos + 7 + 1) >> 3) * 32) + (xPos >> 3)]
-                        == 0xff)
-                        && (tileMapData[(((yPos + 7 + 1) >> 3) * 32)
-                                + ((xPos + 7) >> 3)] == 0xff))
+//                if ((tileMapData[(((yPos + 7 + 1) >> 3) * 32) + (xPos >> 3)]
+//                        == 0xff)
+//                        && (tileMapData[(((yPos + 7 + 1) >> 3) * 32)
+//                                + ((xPos + 7) >> 3)] == 0xff))
                     yPos += 1;
+            }
+            else
+            {
+                if(screenY < (MAX_LEVEL_Y-1))
+                {
+                    screenY++;
+                    yPos = 24;
+                    cls(INK_WHITE | PAPER_BLACK);
+                    displayScreen(&levels[(screenY * (768*2)) + (screenX * 32)]);
+                    scrollReset();
+                    displayScore();
+                }
             }
         }
 
@@ -135,21 +167,45 @@ int main()
         {
             if (xPos >= 2)
             {
-                if ((tileMapData[((yPos >> 3) * 32) + ((xPos - 2) >> 3)] == 0xff)
-                        && (tileMapData[(((yPos + 7) >> 3) * 32)
-                                + ((xPos - 2) >> 3)] == 0xff))
+//                if ((tileMapData[((yPos >> 3) * 32) + ((xPos - 2) >> 3)] == 0xff)
+//                        && (tileMapData[(((yPos + 7) >> 3) * 32)
+//                                + ((xPos - 2) >> 3)] == 0xff))
                     xPos -= 2;
+            }
+            else
+            {
+                if(screenX > 0)
+                {
+                    screenX--;
+                    xPos = 248;
+                    cls(INK_WHITE | PAPER_BLACK);
+                    displayScreen(&levels[(screenY * (768*2)) + (screenX * 32)]);
+                    scrollReset();
+                    displayScore();
+                }
             }
         }
         else if (dir & RIGHT)
         {
             if (xPos < (256 - 8))
             {
-                if ((tileMapData[((yPos >> 3) * 32) + ((xPos + 7 + 2) >> 3)]
-                        == 0xff)
-                        && (tileMapData[(((yPos + 7) >> 3) * 32)
-                                + ((xPos + 7 + 2) >> 3)] == 0xff))
+//                if ((tileMapData[((yPos >> 3) * 32) + ((xPos + 7 + 2) >> 3)]
+//                        == 0xff)
+//                        && (tileMapData[(((yPos + 7) >> 3) * 32)
+//                                + ((xPos + 7 + 2) >> 3)] == 0xff))
                     xPos += 2;
+            }
+            else
+            {
+                if(screenX < (MAX_LEVEL_X-1))
+                {
+                    screenX++;
+                    xPos = 0;
+                    cls(INK_WHITE | PAPER_BLACK);
+                    displayScreen(&levels[(screenY * (768*2)) + (screenX * 32)]);
+                    scrollReset();
+                    displayScore();
+                }
             }
         }
 
@@ -178,9 +234,10 @@ int main()
         {
             attribEdit(tile0, tileAttr);
             cls(INK_WHITE | PAPER_BLACK);
-            displayScreen(&screen[0]);
+            displayScreen(&levels[(screenY * (768*2)) + (screenX * 32)]);
             scrollInit(NULL);
         }
+        lanternFlicker();
     }
 
     intrinsic_di();
