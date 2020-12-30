@@ -20,6 +20,7 @@
         defc    SCREEN_ATTR_START       = (SCREEN_START + SCREEN_LENGTH)
         defc    SCREEN_ATTR_LENGTH      = 0x300
         defc    SCREEN_ATTR_END         = (SCREEN_ATTR_START + SCREEN_ATTR_LENGTH)
+        defc    SCREEN_WIDTH            = 0x20
 
         ;
         ; Screen attribute definitions
