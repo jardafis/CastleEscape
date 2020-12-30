@@ -12,6 +12,8 @@ _cls:
         push    bc
         push    hl
 
+		halt
+
         di      
         ld      (clsTempSP),sp
 
