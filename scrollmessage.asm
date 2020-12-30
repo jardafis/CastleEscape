@@ -1,6 +1,7 @@
 		extern	_screenTab
         public  _scroll
         public  _scrollInit
+        public	_scrollReset
         section code_user
 
 		defc	X				= 0x08	; Start column of message
@@ -27,15 +28,7 @@ _scrollInit:
 		jr		nz,customMessage		; default message.
 		ld		hl,defaultMessage		; Use the default message
 .customMessage
-		ld		(messagePointer),hl
 		ld		(messageStart),hl
-
-		;
-		; Initialize the rotate counter
-		; It will be updated by the scroll routine
-		;
-		ld		a,0x80
-		ld		(rotate),a
 
 		;
 		; Initialize the screen address to top right corner
@@ -71,6 +64,33 @@ _scrollInit:
 		dec		c
 		jr		nz,clearRow
 
+		call	_scrollReset
+
+		pop		hl
+		pop		de
+		pop		bc
+		pop		af
+		ret
+
+_scrollReset:
+		push	af
+		push	bc
+		push	de
+		push	hl
+
+		;
+		; Reset the message pointer
+		;
+		ld		hl,(messageStart)
+		ld		(messagePointer),hl
+
+		;
+		; Initialize the rotate counter
+		; It will be updated by the scroll routine
+		;
+		ld		a,0x80
+		ld		(rotate),a
+
 		;
 		; Set the screen attributes for the message
 		;
@@ -80,12 +100,13 @@ _scrollInit:
 		add		hl,de					; Add it to the attr start address
 		ld		de,X					; Get the X position
 		add		hl,de					; and add it to the attr address
-		ld		b,WIDTH
-		ld		a,MESSAGE_ATTR
-.setAttr
-		ld		(hl),a
-		inc		hl
-		djnz	setAttr
+		ld		de,hl
+		inc		de
+
+		ld		(hl),MESSAGE_ATTR
+
+		ld		bc,WIDTH-1
+		ldir
 
 		pop		hl
 		pop		de
