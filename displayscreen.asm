@@ -6,10 +6,11 @@
 
         include "defs.asm"
 
-        defc    xPos		= 0x0000
-        defc    yPos		= 0x0001
-		defc	TILEMAP_LO	= 0x00
-		defc	TILEMAP_HI	= 0x01
+        defc    xPos			= 0x0000
+        defc    yPos			= 0x0001
+		defc	TILEMAP_LO		= 0x00
+		defc	TILEMAP_HI		= 0x01
+		defc	TILEMAP_WIDTH	= 0x40
         ;
         ; Display a complete tile map
         ;
@@ -159,6 +160,9 @@ _displayScreen:
         inc     (ix+xPos)
 
         djnz    xloop
+
+		ld		de,TILEMAP_WIDTH - 32
+		add		hl,de
 
         ; next y location
         inc     (ix+yPos)
