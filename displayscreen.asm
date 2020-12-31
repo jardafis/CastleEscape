@@ -1,9 +1,8 @@
         extern  _screenTab
         extern  _tile0
-        section code_user
+        extern	_lanternList
         public  _displayScreen
         public	_tileAttr
-        public	_lanternList
 
         include "defs.asm"
 
@@ -12,6 +11,12 @@
 		defc	TILEMAP_LO		= 0x00
 		defc	TILEMAP_HI		= 0x01
 		defc	TILEMAP_WIDTH	= 0x40
+
+		; Sprite ID's
+		defc	ID_LANTERN		= 88
+		defc	ID_BLANK		= 0xff
+
+        section code_user
         ;
         ; Display a complete tile map
         ;
@@ -24,10 +29,9 @@ _displayScreen:
 		entry
 
 		ld		hl,_lanternList
-		xor		a
-		ld		(hl),a					; Zero the lantern count
+		ld		(hl),0					; Zero the lantern count
 		inc		hl
-		ld		(lanternPtr),hl
+		ld		(lanternPtr),hl			; Initialize table pointer
 
         ; Get the address of the tilemap
         ; passed on the stack
@@ -57,11 +61,11 @@ _displayScreen:
         ld      b,32
 .xloop
         ld      a,(hl)                  ; read the tile index
-        cmp		0xff					; If the index is 0xff
-        jr      z,nextTile              ; the Z flag will be set.
-		cmp		88						; Tile ID for lantern fire
-		call	z,addLantern
+        cmp		ID_BLANK				; Check for blank
+        jr      z,nextTile              ; On to the next tile
 
+		cmp		ID_LANTERN				; Check for a lantern
+		call	z,addLantern
 
         push    bc                      ; save the loop counter
         push    hl                      ; save the tilemap pointer
@@ -74,20 +78,18 @@ _displayScreen:
         ld      h,0
         ex      af,af'                  ; save tile index
         add     hl,de
-        ld      c,(hl)
+        ld      c,(hl)					; Tile attribute in 'c'
 
         ;
         ; Set the attribute for the tile
         ;
-        ld      hl,(y)					;16
-        ; Multiple by 32
+        ld      hl,(y)
 		hlx		16
         push    hl                      ; y * 16 - save it for later
 		hlx		2
         ld      a,(x)
-        ld      e,a
-        ld      d,0
-        add     hl,de
+		add		l
+		ld		l,a
         ld      de,SCREEN_ATTR_START
         add     hl,de
         ld      (hl),c                  ; Store it to the screen
@@ -193,9 +195,11 @@ _displayScreen:
 		push	de
 		push	hl
 
+		; Increment the lantern count
 		ld		hl,_lanternList
 		inc		(hl)
 
+		; Calculate the screen attribute address
 		ld		hl,(y)
 		hlx		32
 		ld		a,(x)
@@ -204,14 +208,11 @@ _displayScreen:
 		ld		de,SCREEN_ATTR_START
 		add		hl,de
 
-		ex		de,hl
-
-		ld		hl,(lanternPtr)
-		ld		(hl),e
-		inc		hl
-		ld		(hl),d
-		inc		hl
-		ld		(lanternPtr),hl
+.lanternPtr = $ + 1
+		ld		(0x0000),hl			; Self modifying code
+		ld		hl,lanternPtr
+		inc		(hl)
+		inc		(hl)
 
 		pop		hl
 		pop		de
@@ -225,10 +226,6 @@ _displayScreen:
         db      0
 .y
         dw      0
-.lanternPtr
-		dw		0
-_lanternList:							; Max of 8 lanterns on any screen
-		ds		17,0x55
 
         section rodata_user
 _tileAttr:

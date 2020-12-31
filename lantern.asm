@@ -1,4 +1,5 @@
 		public	_lanternFlicker
+        public	_lanternList
 		extern	ticks
 		include	"defs.asm"
 
@@ -14,35 +15,37 @@ _lanternFlicker:
 		or		a
 		jr		z,done					; No lanterns
 
-		push	bc
-		push	de
+		push	bc						; Save the rest of the registers
 		push	hl
 
 		inc		hl						; Point to first attribute address
-		ld		b,a
+
+		di
+		ld		(tempSP),sp				; Save stack pointer
+		ld		sp,hl					; Point stack at attribute address table
+
+		ld		b,a						; Set loop count
+
+		ld		hl,colors				; Pointer to color table
+		ld		a,(ticks)				; Use ticks as the color table index
+		and		0x07					; Bottom 3 bits only
+		add		l						; Need to handle wraparound
+		jr		nc,noCarry
+		inc		h
+.noCarry
+		ld		l,a						; 'hl' now points to our color attribute
+		ld		a,(hl)					; Read attribute
+
 .loop
-		ld		e,(hl)					; Get low byte of address
-		inc		hl
-		ld		d,(hl)					; Get high byte of address
-		inc		hl
-		; DE is the pointer to the attribute memory
+		pop		hl						; Pop the attribute address
+		ld		(hl),a					; and update the attribute value
+		djnz	loop					; Loop for all lanterns
 
-		ld		a,(ticks)
-		and		0x03					; Bottom 2 bits are the index into color table
-
-		push	bc						; Save loop counter
-		ld		bc,colors				; Pointer to color table
-		add		c						; 'colors' address is aligned by 4 so add it to 'a'
-		ld		c,a						; 'hl' now points to our color attribute
-
-		ld		a,(bc)					; Read attribute
-		ld		(de),a					; and write it to the screen
-
-		pop		bc						; Restore loop counter
-		djnz	loop
+.tempSP = $ + 1
+		ld		sp,0x0000				; Restore the stack
+		ei
 
 		pop		hl
-		pop		de
 		pop		bc
 .done
 		pop		af
@@ -50,4 +53,17 @@ _lanternFlicker:
 
 		section rodata_user
 .colors
-		db		(INK_YELLOW | BRIGHT), INK_YELLOW, INK_RED, (INK_RED | BRIGHT)
+		db		(INK_YELLOW | BRIGHT)
+		db		(INK_YELLOW | BRIGHT)
+		db		INK_YELLOW
+		db		INK_YELLOW
+		db		INK_RED
+		db		INK_RED
+		db		(INK_RED | BRIGHT)
+		db		(INK_RED | BRIGHT)
+
+		section	bss_user
+_lanternList:							; Max of 8 lanterns on any screen
+		db		0
+		dw		0x0000, 0x0000, 0x0000, 0x0000
+		dw		0x0000, 0x0000, 0x0000, 0x0000
