@@ -3,6 +3,7 @@
         section code_user
         public  _displayScreen
         public	_tileAttr
+        public	_lanternList
 
         include "defs.asm"
 
@@ -21,6 +22,12 @@ _displayScreen:
         ; Save the registers and setup ix to point to the right most parameter
         ; passed on the stack.
 		entry
+
+		ld		hl,_lanternList
+		xor		a
+		ld		(hl),a					; Zero the lantern count
+		inc		hl
+		ld		(lanternPtr),hl
 
         ; Get the address of the tilemap
         ; passed on the stack
@@ -52,6 +59,9 @@ _displayScreen:
         ld      a,(hl)                  ; read the tile index
         cmp		0xff					; If the index is 0xff
         jr      z,nextTile              ; the Z flag will be set.
+		cmp		88						; Tile ID for lantern fire
+		call	z,addLantern
+
 
         push    bc                      ; save the loop counter
         push    hl                      ; save the tilemap pointer
@@ -173,12 +183,52 @@ _displayScreen:
 		exit
         ret     
 
+		;
+		; Add a lantern to the lantern list
+		; On entry:
+		;			a - Sprite ID of lantern
+		;
+.addLantern
+		push	af
+		push	de
+		push	hl
+
+		ld		hl,_lanternList
+		inc		(hl)
+
+		ld		hl,(y)
+		hlx		32
+		ld		a,(x)
+		add		l
+		ld		l,a
+		ld		de,SCREEN_ATTR_START
+		add		hl,de
+
+		ex		de,hl
+
+		ld		hl,(lanternPtr)
+		ld		(hl),e
+		inc		hl
+		ld		(hl),d
+		inc		hl
+		ld		(lanternPtr),hl
+
+		pop		hl
+		pop		de
+		pop		af
+		ret
+
+
         section bss_user
 .varbase
 .x
         db      0
 .y
         dw      0
+.lanternPtr
+		dw		0
+_lanternList:							; Max of 8 lanterns on any screen
+		ds		17,0x55
 
         section rodata_user
 _tileAttr:
