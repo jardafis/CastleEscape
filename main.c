@@ -85,6 +85,8 @@ int main()
     int xPos = 40;
     int yPos = 120;
     char key = 0;
+    char jumping = 0;
+    char falling = 0;
     unsigned char count = 0;
     static unsigned char dir;
 
@@ -148,33 +150,38 @@ int main()
         }
         else if (dir & DOWN)    // Down is always set. This is gravity.
         {
-            if (yPos < (192 - 8))
+            if (jumping == 0)
             {
-                if ((tileMapData[(((yPos + 7 + 1) >> 3) * 64) + (xPos >> 3)] < 144)
-                        && (tileMapData[(((yPos + 7 + 1) >> 3) * 64) + ((xPos + 7) >> 3)] < 144))
-                    yPos += 1;
-            }
-            else
-            {
-                if (screenY < (MAX_LEVEL_Y - 1))
+                if (yPos < (192 - 8))
                 {
-                    screenY++;
-                    yPos = 24;
-                    cls(INK_WHITE | PAPER_BLACK);
-                    displayScreen(&levels[(screenY * (768 * 2)) + (screenX * 32)]);
-                    scrollReset();
-                    displayScore();
+                    if ((tileMapData[(((yPos + 7 + 1) >> 3) * 64) + (xPos >> 3)] < 144)
+                            && (tileMapData[(((yPos + 7 + 1) >> 3) * 64) + ((xPos + 7) >> 3)] < 144))
+                        yPos += 1;
+                    else
+                        falling = 0;
+                }
+                else
+                {
+                    if (screenY < (MAX_LEVEL_Y - 1))
+                    {
+                        screenY++;
+                        yPos = 24;
+                        cls(INK_WHITE | PAPER_BLACK);
+                        displayScreen(&levels[(screenY * (768 * 2)) + (screenX * 32)]);
+                        scrollReset();
+                        displayScore();
+                    }
                 }
             }
         }
 
         if (dir & LEFT)
         {
-            if (xPos >= 2)
+            if (xPos > 0)
             {
-                if ((tileMapData[((yPos >> 3) * 64) + ((xPos - 2) >> 3)] < 144)
-                        && (tileMapData[(((yPos + 7) >> 3) * 64) + ((xPos - 2) >> 3)] < 144))
-                    xPos -= 2;
+                if ((tileMapData[((yPos >> 3) * 64) + ((xPos - 1) >> 3)] < 144)
+                        && (tileMapData[(((yPos + 7) >> 3) * 64) + ((xPos - 1) >> 3)] < 144))
+                    xPos -= 1;
             }
             else
             {
@@ -193,9 +200,9 @@ int main()
         {
             if (xPos < (256 - 8))
             {
-                if ((tileMapData[((yPos >> 3) * 64) + ((xPos + 7 + 2) >> 3)] < 144)
-                        && (tileMapData[(((yPos + 7) >> 3) * 64) + ((xPos + 7 + 2) >> 3)] < 144))
-                    xPos += 2;
+                if ((tileMapData[((yPos >> 3) * 64) + ((xPos + 7 + 1) >> 3)] < 144)
+                        && (tileMapData[(((yPos + 7) >> 3) * 64) + ((xPos + 7 + 1) >> 3)] < 144))
+                    xPos += 1;
             }
             else
             {
@@ -211,9 +218,23 @@ int main()
             }
         }
 
-        if (dir & FIRE)
+        if (jumping)
         {
-            ;
+            if (yPos > 24)
+            {
+                if ((tileMapData[(((yPos - 2) >> 3) * 64) + (xPos >> 3)] < 144)
+                        && (tileMapData[(((yPos - 2) >> 3) * 64) + ((xPos + 7) >> 3)] < 144))
+                    yPos -= 1;
+            }
+
+            jumping--;
+            if (jumping == 0)
+                falling = 1;
+        }
+        else if (dir & FIRE)
+        {
+            if (!falling)
+                jumping = 25;
         }
 
         border(INK_YELLOW);
