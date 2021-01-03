@@ -6,6 +6,9 @@ extern void cls(char attr)
 __z88dk_fastcall;
 extern unsigned char *screenTab[];
 
+#define TILE_WIDTH      12
+#define TILE_HEIGHT     14
+
 /*
  * Current cursor location for displaying text to the screen.
  */
@@ -67,9 +70,9 @@ void putString(unsigned char *string)
  */
 void displayTileset(const unsigned char *tiles)
 {
-    for (char y = 0; y < 12; y++)
+    for (char y = 0; y < TILE_HEIGHT; y++)
     {
-        for (char x = 0; x < 12; x++)
+        for (char x = 0; x < TILE_WIDTH; x++)
         {
             unsigned char *screenAddr = screenTab[y * 8] + x;
             for (char n = 0; n < 8; n++)
@@ -125,9 +128,9 @@ void saveAttrib(unsigned char *dest)
     int x;
     int y;
 
-    for (y = 0; y < 12; y++)
+    for (y = 0; y < TILE_HEIGHT; y++)
     {
-        for (x = 0; x < 12; x++)
+        for (x = 0; x < TILE_WIDTH; x++)
         {
             *dest++ = attr[(y * 32) + x];
         }
@@ -142,9 +145,9 @@ void loadAttrib(unsigned char *src)
     int x;
     int y;
 
-    for (y = 0; y < 12; y++)
+    for (y = 0; y < TILE_HEIGHT; y++)
     {
-        for (x = 0; x < 12; x++)
+        for (x = 0; x < TILE_WIDTH; x++)
         {
             attr[(y * 32) + x] = *src++;
         }
@@ -161,7 +164,7 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
     unsigned char key;
 
     cls(INK_WHITE | PAPER_BLACK);
-    setCursor(0, 12);
+    setCursor(0, TILE_HEIGHT);
     putString("Up          - 'q'\n");
     putString("Down        - 'a'\n");
     putString("Left        - 'o'\n");
@@ -188,7 +191,7 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
         {
         case 'P':                           // Right
             xorCursor(x, y);
-            if (x < 11)
+            if (x < (TILE_WIDTH-1))
                 x++;
             xorCursor(x, y);
             break;
@@ -206,7 +209,7 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
             break;
         case 'A':                           // Down
             xorCursor(x, y);
-            if (y < 11)
+            if (y < (TILE_HEIGHT-1))
                 y++;
             xorCursor(x, y);
             break;

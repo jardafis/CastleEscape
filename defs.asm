@@ -21,6 +21,7 @@
         defc    SCREEN_ATTR_LENGTH      = 0x300
         defc    SCREEN_ATTR_END         = (SCREEN_ATTR_START + SCREEN_ATTR_LENGTH)
         defc    SCREEN_WIDTH            = 0x20
+        defc    SCREEN_HEIGHT           = 0x18
 
         ;
         ; Screen attribute definitions
@@ -130,3 +131,10 @@ popall macro
         pop     af
         endm
 
+addhl	macro
+		add		l
+		ld		l,a
+		adc		h
+		sub		l
+		ld		h,a
+		endm
