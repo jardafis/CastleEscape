@@ -44,9 +44,8 @@ _initCoins:
 		ld		(currentTable),hl
 
 		ld		hl,_levels
-		ld		(currentLevel), hl
-
 .levelYLoop
+		ld		(currentLevel), hl
 		ld		(ix+levelX), MAX_LEVEL_X
 
 .levelXLoop
@@ -55,7 +54,7 @@ _initCoins:
 		ld		(hl),e
 		inc		hl
 		ld		(hl),d
-		inc hl
+		inc		hl
 		ld		(currentTable),hl
 
 		ld		hl,(currentLevel)
@@ -68,40 +67,13 @@ _initCoins:
 
 .tileXLoop
 		ld		a,(hl)					; Get tile ID
-		inc		hl
 		cmp		ID_COIN
-		jr		nz,noCoin
-
-		; Found a coin
-		inc		(ix+coinCount)
-		ld		de,(currentCoin)
-
-		; Flags, Bit0 = visible
-		ld		a,1
-		ld		(de),a
-		inc		de
-
-		; X screen position
-		ld		a,(ix+tileX)
-		ld		(de),a
-		inc		de
-
-		; Y screen position
-		ld		a,(ix+tileY)
-		ld		(de),a
-		inc		de
-
-		; Animation frame
-		xor		a
-		ld		(de),a
-		inc		de
-
-		ld		(currentCoin),de
-.noCoin
+		call	z,addCoin
+		inc		hl
 		inc		(ix+tileX)
 		djnz	tileXLoop
 
-
+		; Next row in the tilemap
 		ld		de,SCREEN_WIDTH * MAX_LEVEL_X - SCREEN_WIDTH
 		add		hl,de
 
@@ -156,6 +128,38 @@ _initCoins:
 		ret
 
 		;
+		; Add a coin to the coin table
+		;
+.addCoin
+		ld		de,(currentCoin)
+
+		; Flags, Bit0 = visible
+		ld		a,1
+		ld		(de),a
+		inc		de
+
+		; X screen position
+		ld		a,(ix+tileX)
+		ld		(de),a
+		inc		de
+
+		; Y screen position
+		ld		a,(ix+tileY)
+		ld		(de),a
+		inc		de
+
+		; Animation frame
+		ld		a,(ix+coinCount)
+		inc		(ix+coinCount)
+		ld		(de),a
+		inc		de
+
+		ld		(currentCoin),de
+
+		ret
+
+
+		;
 		; On entry
 		;		hl - pointer to coin table for current level
 _animateCoins:
@@ -175,7 +179,7 @@ _animateCoins:
 
 
 		; Calculate the screen address
-		ld		a,(hl)					; X screen position
+		ld		c,(hl)					; X screen position
 		inc		hl
 		push	hl						; Save coin table pointer
 
@@ -184,7 +188,7 @@ _animateCoins:
 		hlx		16
 		ld		de,_screenTab
 		add		hl,de
-		ld		c,(hl)
+		ld		a,(hl)
 		add		c						; Add X offset
 		ld		c,a						; Store result in 'c'
 		inc		hl
@@ -260,15 +264,11 @@ _animateCoins:
 
 .notVisible
 		ld		a,SIZEOF_coin
-		add		l
-		ld		l,a
-		jr		nc,nextCoin
-		inc		h
+		addhl
 		jp		nextCoin
 
 .endOfList
 		exx
-.done
 		ex		af,af'
 		ret
 
