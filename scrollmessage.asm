@@ -98,13 +98,13 @@ _scrollReset:
 		ld		hl,Y					; Get the Y position and multiply by 32
 		hlx		32
 		add		hl,de					; Add it to the attr start address
-		ld		de,X					; Get the X position
-		add		hl,de					; and add it to the attr address
+		ld		a,X
+		add		l
+		ld		l,a
 		ld		de,hl
 		inc		de
 
 		ld		(hl),MESSAGE_ATTR
-
 		ld		bc,WIDTH-1
 		ldir
 

@@ -1,4 +1,5 @@
 		public	_initISR
+		public	ticks
 		section code_user
 
 		include	"defs.asm"

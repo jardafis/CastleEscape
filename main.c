@@ -39,8 +39,11 @@ void incScore(void)
 __z88dk_fastcall;
 void addScore(unsigned char value)
 __z88dk_fastcall;
-void lanternFlicker(void)
+void lanternFlicker(void *lanterns)
 __z88dk_fastcall;
+
+extern void *lanternList;
+
 #define FIRE    0x10
 #define UP      0x08
 #define DOWN    0x04
@@ -229,6 +232,9 @@ int main()
             count = 0;
             displayScore();
         }
+
+        border(INK_RED);
+        lanternFlicker(&lanternList);
         border(INK_BLACK);
         if (key == 'S')
         {
@@ -237,7 +243,6 @@ int main()
             displayScreen(&levels[(screenY * (768*2)) + (screenX * 32)]);
             scrollInit(NULL);
         }
-        lanternFlicker();
     }
 
     intrinsic_di();
