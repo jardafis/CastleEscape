@@ -12,10 +12,8 @@ extern const unsigned char levels[];
 extern void attribEdit(unsigned char *tileset, unsigned char *attrib);
 extern unsigned char keyboardScan(void);
 extern void displayScreen(void *scr);
-extern void copyScreen(unsigned char xPos, unsigned char yPos,
-        unsigned char *buffer);
-extern void pasteScreen(unsigned char xPos, unsigned char yPos,
-        unsigned char *buffer);
+extern void copyScreen(unsigned char xPos, unsigned char yPos, unsigned char *buffer);
+extern void pasteScreen(unsigned char xPos, unsigned char yPos, unsigned char *buffer);
 extern void displaySprite(unsigned char xPos, unsigned char yPos);
 extern void cls(char attr)
 __z88dk_fastcall;
@@ -41,8 +39,13 @@ void addScore(unsigned char value)
 __z88dk_fastcall;
 void lanternFlicker(void *lanterns)
 __z88dk_fastcall;
+void initCoins(void)
+__z88dk_fastcall;
+void animateCoins(void *coins)
+__z88dk_fastcall;
 
 extern void *lanternList;
+extern void *coinTables[MAX_LEVEL_Y][MAX_LEVEL_X];
 
 #define FIRE    0x10
 #define UP      0x08
@@ -80,7 +83,7 @@ int main()
     int screenX = 0;
     int screenY = 0;
     int xPos = 40;
-    int yPos = 40;
+    int yPos = 120;
     char key = 0;
     unsigned char count = 0;
     static unsigned char dir;
@@ -90,7 +93,8 @@ int main()
     // Setup the screen and border
     cls(INK_WHITE | PAPER_BLACK);
     border(INK_BLACK);
-    displayScreen(&levels[(screenY * (768*2)) + (screenX * 32)]);
+    initCoins();
+    displayScreen(&levels[(screenY * (768 * 2)) + (screenX * 32)]);
     scrollInit(NULL);
     initScore();
     displayScore();
@@ -117,6 +121,7 @@ int main()
         //
         // Check for collisions and clear the direction bits accordingly
         //
+        dir |= DOWN;
 
         border(INK_BLUE);
         // Update to new position based on direction bits
@@ -124,42 +129,39 @@ int main()
         {
             if (yPos > 24)
             {
-//                if ((tileMapData[(((yPos - 1) >> 3) * 32) + (xPos >> 3)] == 0xff)
-//                        && (tileMapData[(((yPos - 1) >> 3) * 32)
-//                                + ((xPos + 7) >> 3)] == 0xff))
+                if ((tileMapData[(((yPos - 1) >> 3) * 64) + (xPos >> 3)] < 144)
+                        && (tileMapData[(((yPos - 1) >> 3) * 64) + ((xPos + 7) >> 3)] < 144))
                     yPos -= 1;
             }
             else
             {
-                if(screenY > 0)
+                if (screenY > 0)
                 {
                     screenY--;
                     yPos = 184;
                     cls(INK_WHITE | PAPER_BLACK);
-                    displayScreen(&levels[(screenY * (768*2)) + (screenX * 32)]);
+                    displayScreen(&levels[(screenY * (768 * 2)) + (screenX * 32)]);
                     scrollReset();
                     displayScore();
                 }
             }
         }
-        else if (dir & DOWN)
+        else if (dir & DOWN)    // Down is always set. This is gravity.
         {
             if (yPos < (192 - 8))
             {
-//                if ((tileMapData[(((yPos + 7 + 1) >> 3) * 32) + (xPos >> 3)]
-//                        == 0xff)
-//                        && (tileMapData[(((yPos + 7 + 1) >> 3) * 32)
-//                                + ((xPos + 7) >> 3)] == 0xff))
+                if ((tileMapData[(((yPos + 7 + 1) >> 3) * 64) + (xPos >> 3)] < 144)
+                        && (tileMapData[(((yPos + 7 + 1) >> 3) * 64) + ((xPos + 7) >> 3)] < 144))
                     yPos += 1;
             }
             else
             {
-                if(screenY < (MAX_LEVEL_Y-1))
+                if (screenY < (MAX_LEVEL_Y - 1))
                 {
                     screenY++;
                     yPos = 24;
                     cls(INK_WHITE | PAPER_BLACK);
-                    displayScreen(&levels[(screenY * (768*2)) + (screenX * 32)]);
+                    displayScreen(&levels[(screenY * (768 * 2)) + (screenX * 32)]);
                     scrollReset();
                     displayScore();
                 }
@@ -170,19 +172,18 @@ int main()
         {
             if (xPos >= 2)
             {
-//                if ((tileMapData[((yPos >> 3) * 32) + ((xPos - 2) >> 3)] == 0xff)
-//                        && (tileMapData[(((yPos + 7) >> 3) * 32)
-//                                + ((xPos - 2) >> 3)] == 0xff))
+                if ((tileMapData[((yPos >> 3) * 64) + ((xPos - 2) >> 3)] < 144)
+                        && (tileMapData[(((yPos + 7) >> 3) * 64) + ((xPos - 2) >> 3)] < 144))
                     xPos -= 2;
             }
             else
             {
-                if(screenX > 0)
+                if (screenX > 0)
                 {
                     screenX--;
                     xPos = 248;
                     cls(INK_WHITE | PAPER_BLACK);
-                    displayScreen(&levels[(screenY * (768*2)) + (screenX * 32)]);
+                    displayScreen(&levels[(screenY * (768 * 2)) + (screenX * 32)]);
                     scrollReset();
                     displayScore();
                 }
@@ -192,20 +193,18 @@ int main()
         {
             if (xPos < (256 - 8))
             {
-//                if ((tileMapData[((yPos >> 3) * 32) + ((xPos + 7 + 2) >> 3)]
-//                        == 0xff)
-//                        && (tileMapData[(((yPos + 7) >> 3) * 32)
-//                                + ((xPos + 7 + 2) >> 3)] == 0xff))
+                if ((tileMapData[((yPos >> 3) * 64) + ((xPos + 7 + 2) >> 3)] < 144)
+                        && (tileMapData[(((yPos + 7) >> 3) * 64) + ((xPos + 7 + 2) >> 3)] < 144))
                     xPos += 2;
             }
             else
             {
-                if(screenX < (MAX_LEVEL_X-1))
+                if (screenX < (MAX_LEVEL_X - 1))
                 {
                     screenX++;
                     xPos = 0;
                     cls(INK_WHITE | PAPER_BLACK);
-                    displayScreen(&levels[(screenY * (768*2)) + (screenX * 32)]);
+                    displayScreen(&levels[(screenY * (768 * 2)) + (screenX * 32)]);
                     scrollReset();
                     displayScore();
                 }
@@ -220,11 +219,17 @@ int main()
         border(INK_YELLOW);
         // Copy contents of screen at new location
         copyScreen(xPos, yPos, buffer);
+        if (count++ >= 6)
+        {
+            animateCoins(coinTables[screenY][screenX]);
+            count = 0;
+        }
 
         border(INK_CYAN);
         displaySprite(xPos, yPos);
 
         border(INK_GREEN);
+#ifdef LATER
         if(count++ >= 50)
         {
             addScore(0x17);
@@ -232,6 +237,7 @@ int main()
             count = 0;
             displayScore();
         }
+#endif
 
         border(INK_RED);
         lanternFlicker(&lanternList);
@@ -240,7 +246,7 @@ int main()
         {
             attribEdit(tile0, tileAttr);
             cls(INK_WHITE | PAPER_BLACK);
-            displayScreen(&levels[(screenY * (768*2)) + (screenX * 32)]);
+            displayScreen(&levels[(screenY * (768 * 2)) + (screenX * 32)]);
             scrollInit(NULL);
         }
     }
