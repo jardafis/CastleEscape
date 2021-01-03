@@ -3,7 +3,7 @@
 # width in tiles. zero offset
 width=11
 # height in tiles. zero offset
-height=11
+height=13
 tile=0
 tileSheet="sprites.png"
 tileSet=tiles/tiles.c
