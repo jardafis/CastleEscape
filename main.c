@@ -77,7 +77,17 @@ void brick(unsigned char *tileMap)
 }
 
 unsigned char buffer[16];
-unsigned char *tileMapData = &levels[0];
+unsigned const char *tileMap = NULL;
+
+void setupScreen(void *tileMap)
+{
+    cls(INK_WHITE | PAPER_BLACK);
+    displayScreen(tileMap);
+    scrollReset();
+    displayScore();
+}
+
+
 int main()
 {
     int screenX = 0;
@@ -96,10 +106,10 @@ int main()
     cls(INK_WHITE | PAPER_BLACK);
     border(INK_BLACK);
     initCoins();
-    displayScreen(&levels[(screenY * (768 * 2)) + (screenX * 32)]);
     scrollInit(NULL);
     initScore();
-    displayScore();
+    tileMap = &levels[(screenY * (768 * 2)) + (screenX * 32)];
+    setupScreen(tileMap);
 
     copyScreen(xPos, yPos, buffer);
 
@@ -131,8 +141,8 @@ int main()
         {
             if (yPos > 24)
             {
-                if ((tileMapData[(((yPos - 1) >> 3) * 64) + (xPos >> 3)] < 144)
-                        && (tileMapData[(((yPos - 1) >> 3) * 64) + ((xPos + 7) >> 3)] < 144))
+                if ((tileMap[(((yPos - 1) >> 3) * 64) + (xPos >> 3)] < 144)
+                        && (tileMap[(((yPos - 1) >> 3) * 64) + ((xPos + 7) >> 3)] < 144))
                     yPos -= 1;
             }
             else
@@ -141,10 +151,8 @@ int main()
                 {
                     screenY--;
                     yPos = 184;
-                    cls(INK_WHITE | PAPER_BLACK);
-                    displayScreen(&levels[(screenY * (768 * 2)) + (screenX * 32)]);
-                    scrollReset();
-                    displayScore();
+                    tileMap = &levels[(screenY * (768 * 2)) + (screenX * 32)];
+                    setupScreen(tileMap);
                 }
             }
         }
@@ -154,8 +162,8 @@ int main()
             {
                 if (yPos < (192 - 8))
                 {
-                    if ((tileMapData[(((yPos + 7 + 1) >> 3) * 64) + (xPos >> 3)] < 144)
-                            && (tileMapData[(((yPos + 7 + 1) >> 3) * 64) + ((xPos + 7) >> 3)] < 144))
+                    if ((tileMap[(((yPos + 7 + 1) >> 3) * 64) + (xPos >> 3)] < 144)
+                            && (tileMap[(((yPos + 7 + 1) >> 3) * 64) + ((xPos + 7) >> 3)] < 144))
                         yPos += 1;
                     else
                         falling = 0;
@@ -166,10 +174,8 @@ int main()
                     {
                         screenY++;
                         yPos = 24;
-                        cls(INK_WHITE | PAPER_BLACK);
-                        displayScreen(&levels[(screenY * (768 * 2)) + (screenX * 32)]);
-                        scrollReset();
-                        displayScore();
+                        tileMap = &levels[(screenY * (768 * 2)) + (screenX * 32)];
+                        setupScreen(tileMap);
                     }
                 }
             }
@@ -179,8 +185,8 @@ int main()
         {
             if (xPos > 0)
             {
-                if ((tileMapData[((yPos >> 3) * 64) + ((xPos - 1) >> 3)] < 144)
-                        && (tileMapData[(((yPos + 7) >> 3) * 64) + ((xPos - 1) >> 3)] < 144))
+                if ((tileMap[((yPos >> 3) * 64) + ((xPos - 1) >> 3)] < 144)
+                        && (tileMap[(((yPos + 7) >> 3) * 64) + ((xPos - 1) >> 3)] < 144))
                     xPos -= 1;
             }
             else
@@ -189,10 +195,8 @@ int main()
                 {
                     screenX--;
                     xPos = 248;
-                    cls(INK_WHITE | PAPER_BLACK);
-                    displayScreen(&levels[(screenY * (768 * 2)) + (screenX * 32)]);
-                    scrollReset();
-                    displayScore();
+                    tileMap = &levels[(screenY * (768 * 2)) + (screenX * 32)];
+                    setupScreen(tileMap);
                 }
             }
         }
@@ -200,8 +204,8 @@ int main()
         {
             if (xPos < (256 - 8))
             {
-                if ((tileMapData[((yPos >> 3) * 64) + ((xPos + 7 + 1) >> 3)] < 144)
-                        && (tileMapData[(((yPos + 7) >> 3) * 64) + ((xPos + 7 + 1) >> 3)] < 144))
+                if ((tileMap[((yPos >> 3) * 64) + ((xPos + 7 + 1) >> 3)] < 144)
+                        && (tileMap[(((yPos + 7) >> 3) * 64) + ((xPos + 7 + 1) >> 3)] < 144))
                     xPos += 1;
             }
             else
@@ -210,10 +214,8 @@ int main()
                 {
                     screenX++;
                     xPos = 0;
-                    cls(INK_WHITE | PAPER_BLACK);
-                    displayScreen(&levels[(screenY * (768 * 2)) + (screenX * 32)]);
-                    scrollReset();
-                    displayScore();
+                    tileMap = &levels[(screenY * (768 * 2)) + (screenX * 32)];
+                    setupScreen(tileMap);
                 }
             }
         }
@@ -222,9 +224,19 @@ int main()
         {
             if (yPos > 24)
             {
-                if ((tileMapData[(((yPos - 2) >> 3) * 64) + (xPos >> 3)] < 144)
-                        && (tileMapData[(((yPos - 2) >> 3) * 64) + ((xPos + 7) >> 3)] < 144))
+                if ((tileMap[(((yPos - 2) >> 3) * 64) + (xPos >> 3)] < 144)
+                        && (tileMap[(((yPos - 2) >> 3) * 64) + ((xPos + 7) >> 3)] < 144))
                     yPos -= 1;
+            }
+            else
+            {
+                if (screenY > 0)
+                {
+                    screenY--;
+                    yPos = 184;
+                    tileMap = &levels[(screenY * (768 * 2)) + (screenX * 32)];
+                    setupScreen(tileMap);
+                }
             }
 
             jumping--;
