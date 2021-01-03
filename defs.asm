@@ -1,6 +1,6 @@
         module  defs
 
-        extern _font_8x8_cpc_system
+        extern  _font_8x8_cpc_system
 
         ;
         ; Values numbers for control keys
@@ -70,22 +70,22 @@
         ;
 hlx     macro   times
         IF times >=2
-            add     hl,hl
+        add     hl,hl
         ENDIF
         IF times >= 4
-            add     hl,hl
+        add     hl,hl
         ENDIF
         IF times >= 8
-            add     hl,hl
+        add     hl,hl
         ENDIF
         IF times >= 16
-            add     hl,hl
+        add     hl,hl
         ENDIF
         IF times >= 32
-            add     hl,hl
+        add     hl,hl
         ENDIF
         IF times >= 64
-            add     hl,hl
+        add     hl,hl
         ENDIF
     endm
 
@@ -132,9 +132,9 @@ popall macro
         endm
 
 addhl	macro
-		add		l
-		ld		l,a
-		adc		h
-		sub		l
-		ld		h,a
+        add     l
+        ld      l,a
+        adc     h
+        sub     l
+        ld      h,a
 		endm

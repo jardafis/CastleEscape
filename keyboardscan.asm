@@ -5,16 +5,16 @@
 
         public  _keyboardScan
         public  _updateDirection
-        public	_kempstonScan
-		include "defs.asm"
-;		define	KEMPSTON
+        public  _kempstonScan
+        include "defs.asm"
+        ;		define	KEMPSTON
 
 _kempstonScan:
-		ex		af,af'
-		in		a,(IO_KEMPSTON)			; Read the kempston IO port
-        ld      l,a						; Override l  ---FUDLR
-		ex		af,af'
-		ret
+        ex      af,af'
+        in      a,(IO_KEMPSTON)         ; Read the kempston IO port
+        ld      l,a                     ; Override l  ---FUDLR
+        ex      af,af'
+        ret     
 
 _keyboardScan:
         push    AF
@@ -36,7 +36,7 @@ _keyboardScan:
         srl     A                       ; Shift A right; bit 0 sets carry bit
         jr      NC,foundKey             ; If the bit is 0, we've found our key
         inc     HL                      ; Go to next table address
-        djnz	nextKey					; Loop around until this row finished
+        djnz    nextKey                 ; Loop around until this row finished
 
         dec     D                       ; Decrement row loop counter
         jr      NZ,nextRow              ; Loop around until we are done
@@ -62,34 +62,34 @@ _updateDirection:
         push    af
         push    bc
         push    de
-        push	hl
+        push    hl
 
-		ld		hl,scanCodes			; Point to the scan codes
-		ld		c,0xfe					; Lower 8 bits of the IO port
-		ld		e,0						; Clear our return value
-		ld		d,5						; Number of scan codes
+        ld      hl,scanCodes            ; Point to the scan codes
+        ld      c,0xfe                  ; Lower 8 bits of the IO port
+        ld      e,0                     ; Clear our return value
+        ld      d,5                     ; Number of scan codes
 .nextScanCode
-		ld		b,(hl)					; Get IO port upper bits
-		inc		hl						; Point to key mask
-		in		a,(c)					; Read port
-		and		(hl)					; Logicaly and mask
-		inc		hl						; Point to Direction bit
-		jr		nz,notPressed			; If the bit was set the key is not pressed
-		ld		a,e						; Get the return value
-		or		(hl)					; Logically or the bit for the pressed key
-		ld		e,a						; Save the return value
+        ld      b,(hl)                  ; Get IO port upper bits
+        inc     hl                      ; Point to key mask
+        in      a,(c)                   ; Read port
+        and     (hl)                    ; Logicaly and mask
+        inc     hl                      ; Point to Direction bit
+        jr      nz,notPressed           ; If the bit was set the key is not pressed
+        ld      a,e                     ; Get the return value
+        or      (hl)                    ; Logically or the bit for the pressed key
+        ld      e,a                     ; Save the return value
 .notPressed
-		inc		hl						; Point to next key
-		dec		d						; Decrement scan code count
-		jr		nz,nextScanCode			; Loop until we have checked all scan codes
+        inc     hl                      ; Point to next key
+        dec     d                       ; Decrement scan code count
+        jr      nz,nextScanCode         ; Loop until we have checked all scan codes
 
-		pop		hl						; Restore HL
+        pop     hl                      ; Restore HL
 	ifdef KEMPSTON
-		in		a,(IO_KEMPSTON)			; Read the kempston port
-		or		e						; and OR with the keyboard input.
-        ld      l,a						; Override L
+        in      a,(IO_KEMPSTON)         ; Read the kempston port
+        or      e                       ; and OR with the keyboard input.
+        ld      l,a                     ; Override L
 	else
-		ld		l,e
+        ld      l,e
 	endif
         pop     de
         pop     bc
@@ -100,15 +100,15 @@ _updateDirection:
 
         ; Port upper 8 bits, key mask, direction bit
 .scanCodes
-		db		0xfb, 0x01, UP
-		db		0xfd, 0x01, DOWN
-		db		0xdf, 0x02, LEFT
-		db		0xdf, 0x01, RIGHT
-		db		0x7f, 0x01, FIRE
+        db      0xfb, 0x01, UP
+        db      0xfd, 0x01, DOWN
+        db      0xdf, 0x02, LEFT
+        db      0xdf, 0x01, RIGHT
+        db      0x7f, 0x01, FIRE
 
         section rodata_user
 
-.Keyboard_Map    ;Bit 0,  1,  2,  3,  4
+.Keyboard_Map                           ;Bit 0,  1,  2,  3,  4
         db      0xFE,"#","Z","X","C","V"
         db      0xFD,"A","S","D","F","G"
         db      0xFB,"Q","W","E","R","T"

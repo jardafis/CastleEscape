@@ -1,16 +1,16 @@
-		public	_border
-		section	code_user
+        public  _border
+        section code_user
 
-		include	"defs.asm"
-		;
-		; Change the border color. On entry, l contains the color.
-		;
+        include "defs.asm"
+        ;
+        ; Change the border color. On entry, l contains the color.
+        ;
 _border:
-		push	af						; Save the register we are using
+        push    af                      ; Save the register we are using
 
-		ld		a,l						; Get the input parameter which is the color
-		and		0x07					; Only the lower 3 bits are used
-		out		(IO_BORDER),a			; Send it out the port
+        ld      a,l                     ; Get the input parameter which is the color
+        and     0x07                    ; Only the lower 3 bits are used
+        out     (IO_BORDER),a           ; Send it out the port
 
-		pop		af						; Restore the register we used
-		ret
+        pop     af                      ; Restore the register we used
+        ret     
