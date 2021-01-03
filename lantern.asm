@@ -1,59 +1,69 @@
 		public	_lanternFlicker
+        public	_lanternList
+		extern	ticks
 		include	"defs.asm"
 
 		section	code_user
-
+		;
+		; On entry:
+		;			hl - Pointer to lantern table
+		;
 _lanternFlicker:
 		push	af
-		push	bc
-		push	de
+
+		ld		a,(hl)					; Number of lanterns
+		or		a
+		jr		z,done					; No lanterns
+
+		push	bc						; Save the rest of the registers
 		push	hl
 
-		ld		hl,lanterns				; Pointer to table of lanterns
+		inc		hl						; Point to first attribute address
 
-		ld		b,(hl)					; Number of lanterns
-		inc		hl
-.loop
-		ld		e,(hl)					; Get low byte of address
-		inc		hl
-		ld		d,(hl)					; Get high byte of address
-		inc		hl
+		di
+		ld		(tempSP),sp				; Save stack pointer
+		ld		sp,hl					; Point stack at attribute address table
 
-		push	hl						; Save lantern pointer
-		; HL is the pointer to the attribute memory
-
-		ld		a,(toggle)
-		inc		a
-		ld		(toggle),a
-		and		0x03					; Bottom 2 bits are index into color table
+		ld		b,a						; Set loop count
 
 		ld		hl,colors				; Pointer to color table
-		add		a,l						; 'colors' address is aligned by 4 so add it to 'a'
+		ld		a,(ticks)				; Use ticks as the color table index
+		and		0x07					; Bottom 3 bits only
+		add		l						; Need to handle wraparound
+		jr		nc,noCarry
+		inc		h
+.noCarry
 		ld		l,a						; 'hl' now points to our color attribute
-
 		ld		a,(hl)					; Read attribute
-		ld		(de),a					; and write it to the screen
 
-		pop		hl						; Restore lantern pointer
-		djnz	loop
+.loop
+		pop		hl						; Pop the attribute address
+		ld		(hl),a					; and update the attribute value
+		djnz	loop					; Loop for all lanterns
+
+.tempSP = $ + 1
+		ld		sp,0x0000				; Restore the stack
+		ei
 
 		pop		hl
-		pop		de
 		pop		bc
+.done
 		pop		af
 		ret
 
-		section bss_user
-.toggle
-		db		0
-
 		section rodata_user
-		ds		$ - ($ & 0x03) + 0x03, 0x55	; Align by 4
 .colors
-		db		INK_YELLOW | BRIGHT, INK_YELLOW, INK_RED, INK_RED | BRIGHT
+		db		(INK_YELLOW | BRIGHT)
+		db		(INK_YELLOW | BRIGHT)
+		db		INK_YELLOW
+		db		INK_YELLOW
+		db		INK_RED
+		db		INK_RED
+		db		(INK_RED | BRIGHT)
+		db		(INK_RED | BRIGHT)
 
-.lanterns	;   y,x
-		db		3						; Num lanterns
-		dw		SCREEN_ATTR_START + (16 * SCREEN_WIDTH) + 15
-		dw		SCREEN_ATTR_START + (8 * SCREEN_WIDTH) + 21
-		dw		SCREEN_ATTR_START + (16 * SCREEN_WIDTH) + 28
+		section	bss_user
+_lanternList:							; Max of 8 lanterns on any screen
+		db		0
+		dw		0x0000, 0x0000, 0x0000, 0x0000
+		dw		0x0000, 0x0000, 0x0000, 0x0000
