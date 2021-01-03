@@ -30,7 +30,8 @@ def main(argv):
         for line in lines:
             # Remove the CR
             line = line.replace('\n','')
-            line = line.replace('-1','255')
+#            line = line.replace('-1','255')
+            line = line.replace('-1','11')
             # Split entries by comma
             entries = line.split(',')
             values = [int(x) for x in entries]
