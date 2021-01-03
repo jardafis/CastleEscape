@@ -29,11 +29,7 @@ _lanternFlicker:
 		ld		hl,colors				; Pointer to color table
 		ld		a,(ticks)				; Use ticks as the color table index
 		and		0x07					; Bottom 3 bits only
-		add		l						; Need to handle wraparound
-		jr		nc,noCarry
-		inc		h
-.noCarry
-		ld		l,a						; 'hl' now points to our color attribute
+		addhl
 		ld		a,(hl)					; Read attribute
 
 .loop
@@ -53,14 +49,14 @@ _lanternFlicker:
 
 		section rodata_user
 .colors
-		db		(INK_YELLOW | BRIGHT)
-		db		(INK_YELLOW | BRIGHT)
-		db		INK_YELLOW
 		db		INK_YELLOW
 		db		INK_RED
+		db		(INK_YELLOW | BRIGHT)
+		db		(INK_RED | BRIGHT)
+		db		(INK_YELLOW | BRIGHT)
+		db		(INK_RED | BRIGHT)
+		db		INK_YELLOW
 		db		INK_RED
-		db		(INK_RED | BRIGHT)
-		db		(INK_RED | BRIGHT)
 
 		section	bss_user
 _lanternList:							; Max of 8 lanterns on any screen
