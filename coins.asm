@@ -1,221 +1,221 @@
-		extern	_levels
-		extern	_screenTab
+        extern  _levels
+        extern  _screenTab
         extern  _tile0
-		public	_initCoins
-		public	_animateCoins
-		public	_coinTables
+        public  _initCoins
+        public  _animateCoins
+        public  _coinTables
 
 
-		include	"defs.asm"
+        include "defs.asm"
 
-		defc	MAX_LEVEL_X		= 0x02
-		defc	MAX_LEVEL_Y		= 0x02
-		defc	ID_COIN			= 74
-		section	code_user
-		;
-		; Initialize the coin tables. This routine is called once
-		; at the start of each game to initialize the coin tables.
-		;
-		; The routine scans each level from top right to bottom left
-		; building up a table of coins for each level. These tables
-		; are then used by the coin animation routines and the coin
-		; collision routine.
-		;
+        defc    MAX_LEVEL_X		= 0x02
+        defc    MAX_LEVEL_Y		= 0x02
+        defc    ID_COIN			= 74
+        section code_user
+        ;
+        ; Initialize the coin tables. This routine is called once
+        ; at the start of each game to initialize the coin tables.
+        ;
+        ; The routine scans each level from top right to bottom left
+        ; building up a table of coins for each level. These tables
+        ; are then used by the coin animation routines and the coin
+        ; collision routine.
+        ;
 _initCoins:
 		pushall
 
-		;
-		; Build a stack frame for our variables
-		;
-		ld		(tempSP),sp
-		ld		hl,-SIZEOF_vars
-		add		hl,sp
-		ld		sp,hl
-		ld		ix,hl
+        ;
+        ; Build a stack frame for our variables
+        ;
+        ld      (tempSP),sp
+        ld      hl,-SIZEOF_vars
+        add     hl,sp
+        ld      sp,hl
+        ld      ix,hl
 
-		;
-		; Initialize memory variables
-		;
-		ld		(ix+levelY), MAX_LEVEL_Y
-		ld		(ix+coinCount), 0
-		ld		hl,coins
-		ld		(currentCoin),hl
-		ld		hl,_coinTables
-		ld		(currentTable),hl
+        ;
+        ; Initialize memory variables
+        ;
+        ld      (ix+levelY), MAX_LEVEL_Y
+        ld      (ix+coinCount), 0
+        ld      hl,coins
+        ld      (currentCoin),hl
+        ld      hl,_coinTables
+        ld      (currentTable),hl
 
-		ld		hl,_levels
+        ld      hl,_levels
 .levelYLoop
-		ld		(currentLevel), hl
-		ld		(ix+levelX), MAX_LEVEL_X
+        ld      (currentLevel), hl
+        ld      (ix+levelX), MAX_LEVEL_X
 
 .levelXLoop
-		ld		hl,(currentTable)
-		ld		de,(currentCoin)
-		ld		(hl),e
-		inc		hl
-		ld		(hl),d
-		inc		hl
-		ld		(currentTable),hl
+        ld      hl,(currentTable)
+        ld      de,(currentCoin)
+        ld      (hl),e
+        inc     hl
+        ld      (hl),d
+        inc     hl
+        ld      (currentTable),hl
 
-		ld		hl,(currentLevel)
-		ld		(ix+tileY), 0
-		ld		c,SCREEN_HEIGHT
+        ld      hl,(currentLevel)
+        ld      (ix+tileY), 0
+        ld      c,SCREEN_HEIGHT
 
 .tileYLoop
-		ld		(ix+tileX), 0
-		ld		b,SCREEN_WIDTH
+        ld      (ix+tileX), 0
+        ld      b,SCREEN_WIDTH
 
 .tileXLoop
-		ld		a,(hl)					; Get tile ID
+        ld      a,(hl)                  ; Get tile ID
 		cmp		ID_COIN
-		call	z,addCoin
-		inc		hl
-		inc		(ix+tileX)
-		djnz	tileXLoop
+        call    z,addCoin
+        inc     hl
+        inc     (ix+tileX)
+        djnz    tileXLoop
 
-		; Next row in the tilemap
-		ld		de,SCREEN_WIDTH * MAX_LEVEL_X - SCREEN_WIDTH
-		add		hl,de
+        ; Next row in the tilemap
+        ld      de,SCREEN_WIDTH * MAX_LEVEL_X - SCREEN_WIDTH
+        add     hl,de
 
-		inc		(ix+tileY)
-		dec		c
-		jr		nz,tileYLoop
+        inc     (ix+tileY)
+        dec     c
+        jr      nz,tileYLoop
 
-		;
-		; Move the current level pointer to the next level to the right
-		;
-		ld		hl,(currentLevel)
-		ld		de,SCREEN_WIDTH
-		add		hl,de
-		ld		(currentLevel),hl
+        ;
+        ; Move the current level pointer to the next level to the right
+        ;
+        ld      hl,(currentLevel)
+        ld      de,SCREEN_WIDTH
+        add     hl,de
+        ld      (currentLevel),hl
 
-		ld		de,(currentCoin)
-		; Flags, 0xff = end of list
-		ld		a,0xff
-		ld		(de),a
-		inc		de
-		ld		(currentCoin),de
+        ld      de,(currentCoin)
+        ; Flags, 0xff = end of list
+        ld      a,0xff
+        ld      (de),a
+        inc     de
+        ld      (currentCoin),de
 
-		;
-		; Decrement X counter and loop if not zero
-		;
-		dec		(ix+levelX)
-		jr		nz,levelXLoop
+        ;
+        ; Decrement X counter and loop if not zero
+        ;
+        dec     (ix+levelX)
+        jr      nz,levelXLoop
 
-		;
-		; Move the current level pointer to the next level down
-		;
-		ld		hl,(currentLevel)
-		ld		de,-SCREEN_WIDTH * MAX_LEVEL_X
-		add		hl,de
-		ld		de,SCREEN_WIDTH * MAX_LEVEL_X * SCREEN_HEIGHT
-		add		hl,de
-		ld		(currentLevel),hl
+        ;
+        ; Move the current level pointer to the next level down
+        ;
+        ld      hl,(currentLevel)
+        ld      de,-SCREEN_WIDTH * MAX_LEVEL_X
+        add     hl,de
+        ld      de,SCREEN_WIDTH * MAX_LEVEL_X * SCREEN_HEIGHT
+        add     hl,de
+        ld      (currentLevel),hl
 
-		;
-		; Decrement Y counter and loop if not zero
-		;
-		dec		(ix+levelY)
-		jr		nz,levelYLoop
+        ;
+        ; Decrement Y counter and loop if not zero
+        ;
+        dec     (ix+levelY)
+        jr      nz,levelYLoop
 
-		;
-		; Restore the stack frame
-		;
+        ;
+        ; Restore the stack frame
+        ;
 .tempSP = $ + 1
-		ld		sp,0x0000
+        ld      sp,0x0000
 
 		popall
-		ret
+        ret     
 
-		;
-		; Add a coin to the coin table
-		;
+        ;
+        ; Add a coin to the coin table
+        ;
 .addCoin
-		ld		de,(currentCoin)
+        ld      de,(currentCoin)
 
-		; Flags, Bit0 = visible
-		ld		a,1
-		ld		(de),a
-		inc		de
+        ; Flags, Bit0 = visible
+        ld      a,1
+        ld      (de),a
+        inc     de
 
-		; X screen position
-		ld		a,(ix+tileX)
-		ld		(de),a
-		inc		de
+        ; X screen position
+        ld      a,(ix+tileX)
+        ld      (de),a
+        inc     de
 
-		; Y screen position
-		ld		a,(ix+tileY)
-		ld		(de),a
-		inc		de
+        ; Y screen position
+        ld      a,(ix+tileY)
+        ld      (de),a
+        inc     de
 
-		; Animation frame
-		ld		a,(ix+coinCount)
-		inc		(ix+coinCount)
-		ld		(de),a
-		inc		de
+        ; Animation frame
+        ld      a,(ix+coinCount)
+        inc     (ix+coinCount)
+        ld      (de),a
+        inc     de
 
-		ld		(currentCoin),de
+        ld      (currentCoin),de
 
-		ret
+        ret     
 
 
-		;
-		; On entry
-		;		hl - pointer to coin table for current level
+        ;
+        ; On entry
+        ;		hl - pointer to coin table for current level
 _animateCoins:
-		ex		af,af'
-		push	hl
-		exx
-		pop		hl
+        ex      af,af'
+        push    hl
+        exx     
+        pop     hl
 
 .nextCoin
-		ld		a,(hl)					; Coin flags
-		cp		0xff
-		jr		z,endOfList
+        ld      a,(hl)                  ; Coin flags
+        cp      0xff
+        jr      z,endOfList
 
-		cp		0x01					; Is the coin visible?
-		jr		nz,notVisible
-		inc		hl
+        cp      0x01                    ; Is the coin visible?
+        jr      nz,notVisible
+        inc     hl
 
 
-		; Calculate the screen address
-		ld		c,(hl)					; X screen position
-		inc		hl
-		push	hl						; Save coin table pointer
+        ; Calculate the screen address
+        ld      c,(hl)                  ; X screen position
+        inc     hl
+        push    hl                      ; Save coin table pointer
 
-		ld		l,(hl)					; Y screen position
-		ld		h,0
+        ld      l,(hl)                  ; Y screen position
+        ld      h,0
 		hlx		16
-		ld		de,_screenTab
-		add		hl,de
-		ld		a,(hl)
-		add		c						; Add X offset
-		ld		c,a						; Store result in 'c'
-		inc		hl
-		ld		b,(hl)
+        ld      de,_screenTab
+        add     hl,de
+        ld      a,(hl)
+        add     c                       ; Add X offset
+        ld      c,a                     ; Store result in 'c'
+        inc     hl
+        ld      b,(hl)
 
-		pop		hl						; Restore coin table pointer
-		inc		hl
+        pop     hl                      ; Restore coin table pointer
+        inc     hl
 
-		; Calculate the tile address using the animation index
-		ld		a,(hl)					; Animation index
-		and		0x03					; Only 4 animations 0-3
-		add		ID_COIN					; Index of first animation
-		inc		(hl)					; Increment animation index for next time
-		inc		hl
+        ; Calculate the tile address using the animation index
+        ld      a,(hl)                  ; Animation index
+        and     0x03                    ; Only 4 animations 0-3
+        add     ID_COIN                 ; Index of first animation
+        inc     (hl)                    ; Increment animation index for next time
+        inc     hl
 
-		push	hl						; Save coin table pointer
+        push    hl                      ; Save coin table pointer
 
-		ld		l,a
-		ld		h,0
+        ld      l,a
+        ld      h,0
 		hlx		8
-		ld		de,_tile0
-		add		hl,de
+        ld      de,_tile0
+        add     hl,de
 
         ; Display the tile. We are going to use the
         ; stack pointer to load a 16 bit value so
         ; we need to disable interrupts.
-        di
+        di      
         ; Save the current stack pointer
         ld      (animateTempSP),sp
         ; Point the stack at the tile data
@@ -257,22 +257,22 @@ _animateCoins:
         ; Restore the stack pointer.
 .animateTempSP = $+1
         ld      sp,0x0000
-        ei
+        ei      
 
-		pop		hl						; Restore coin table pointer
-		jp		nextCoin
+        pop     hl                      ; Restore coin table pointer
+        jp      nextCoin
 
 .notVisible
-		ld		a,SIZEOF_coin
+        ld      a,SIZEOF_coin
 		addhl
-		jp		nextCoin
+        jp      nextCoin
 
 .endOfList
-		exx
-		ex		af,af'
-		ret
+        exx     
+        ex      af,af'
+        ret     
 
-		defvars 0	; Define the stack variables used
+		defvars 0                             ; Define the stack variables used
 		{
 			levelX			ds.b	1
 			levelY			ds.b	1
@@ -291,7 +291,7 @@ _animateCoins:
 			SIZEOF_coin
 		}
 
-		section bss_user
+        section bss_user
 .currentLevel		dw		0
 .currentCoin		dw		0
 .currentTable		dw		0

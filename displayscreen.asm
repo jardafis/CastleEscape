@@ -1,20 +1,20 @@
         extern  _screenTab
         extern  _tile0
-        extern	_lanternList
+        extern  _lanternList
         public  _displayScreen
-        public	_tileAttr
+        public  _tileAttr
 
         include "defs.asm"
 
         defc    xPos			= 0x0000
         defc    yPos			= 0x0001
-		defc	TILEMAP_LO		= 0x00
-		defc	TILEMAP_HI		= 0x01
-		defc	TILEMAP_WIDTH	= 0x40
+        defc    TILEMAP_LO		= 0x00
+        defc    TILEMAP_HI		= 0x01
+        defc    TILEMAP_WIDTH	= 0x40
 
-		; Sprite ID's
-		defc	ID_LANTERN		= 88
-		defc	ID_BLANK		= 0xff
+        ; Sprite ID's
+        defc    ID_LANTERN		= 88
+        defc    ID_BLANK		= 0xff
 
         section code_user
         ;
@@ -28,10 +28,10 @@ _displayScreen:
         ; passed on the stack.
 		entry
 
-		ld		hl,_lanternList
-		ld		(hl),0					; Zero the lantern count
-		inc		hl
-		ld		(lanternPtr),hl			; Initialize table pointer
+        ld      hl,_lanternList
+        ld      (hl),0                  ; Zero the lantern count
+        inc     hl
+        ld      (lanternPtr),hl         ; Initialize table pointer
 
         ; Get the address of the tilemap
         ; passed on the stack
@@ -61,11 +61,11 @@ _displayScreen:
         ld      b,32
 .xloop
         ld      a,(hl)                  ; read the tile index
-        cmp		ID_BLANK				; Check for blank
+        cmp		ID_BLANK                   ; Check for blank
         jr      z,nextTile              ; On to the next tile
 
-		cmp		ID_LANTERN				; Check for a lantern
-		call	z,addLantern
+		cmp		ID_LANTERN                       ; Check for a lantern
+        call    z,addLantern
 
         push    bc                      ; save the loop counter
         push    hl                      ; save the tilemap pointer
@@ -78,7 +78,7 @@ _displayScreen:
         ld      h,0
         ex      af,af'                  ; save tile index
         add     hl,de
-        ld      c,(hl)					; Tile attribute in 'c'
+        ld      c,(hl)                  ; Tile attribute in 'c'
 
         ;
         ; Set the attribute for the tile
@@ -88,8 +88,8 @@ _displayScreen:
         push    hl                      ; y * 16 - save it for later
 		hlx		2
         ld      a,(x)
-		add		l
-		ld		l,a
+        add     l
+        ld      l,a
         ld      de,SCREEN_ATTR_START
         add     hl,de
         ld      (hl),c                  ; Store it to the screen
@@ -112,7 +112,7 @@ _displayScreen:
         ex      af,af'                  ; restore tile index
         ld      l,a
         ld      h,0
-        hlx		8                   ; Multuply by 8 since 8 bytes per tile
+        hlx		8                          ; Multuply by 8 since 8 bytes per tile
         ld      de,_tile0               ; Start of tile data
         add     hl,de
 
@@ -173,8 +173,8 @@ _displayScreen:
 
         djnz    xloop
 
-		ld		de,TILEMAP_WIDTH - 32
-		add		hl,de
+        ld      de,TILEMAP_WIDTH - 32
+        add     hl,de
 
         ; next y location
         inc     (ix+yPos)
@@ -185,39 +185,39 @@ _displayScreen:
 		exit
         ret     
 
-		;
-		; Add a lantern to the lantern list
-		; On entry:
-		;			a - Sprite ID of lantern
-		;
+        ;
+        ; Add a lantern to the lantern list
+        ; On entry:
+        ;			a - Sprite ID of lantern
+        ;
 .addLantern
-		push	af
-		push	de
-		push	hl
+        push    af
+        push    de
+        push    hl
 
-		; Increment the lantern count
-		ld		hl,_lanternList
-		inc		(hl)
+        ; Increment the lantern count
+        ld      hl,_lanternList
+        inc     (hl)
 
-		; Calculate the screen attribute address
-		ld		hl,(y)
+        ; Calculate the screen attribute address
+        ld      hl,(y)
 		hlx		32
-		ld		a,(x)
-		add		l
-		ld		l,a
-		ld		de,SCREEN_ATTR_START
-		add		hl,de
+        ld      a,(x)
+        add     l
+        ld      l,a
+        ld      de,SCREEN_ATTR_START
+        add     hl,de
 
 .lanternPtr = $ + 1
-		ld		(0x0000),hl			; Self modifying code
-		ld		hl,lanternPtr
-		inc		(hl)
-		inc		(hl)
+        ld      (0x0000),hl             ; Self modifying code
+        ld      hl,lanternPtr
+        inc     (hl)
+        inc     (hl)
 
-		pop		hl
-		pop		de
-		pop		af
-		ret
+        pop     hl
+        pop     de
+        pop     af
+        ret     
 
 
         section bss_user
@@ -229,4 +229,4 @@ _displayScreen:
 
         section rodata_user
 _tileAttr:
-		binary	"attrib.dat"
+        binary  "attrib.dat"

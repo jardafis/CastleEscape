@@ -6,21 +6,21 @@
         public  _pasteScreen
         public  _displaySprite
 
-		include	"defs.asm"
+        include "defs.asm"
         ; After entry:
         ;	ix + 0 = sprite x position in pixels
         ;	ix + 1 = sprite y position in pixels
         ;	ix + 2 = buffer pointer lo byte
         ;	ix + 3 = buffer pointer hi byte
-        defc	X_OFFSET			= 0x00
-        defc	Y_OFFSET			= 0x01
-        defc	BUFFER_LO			= 0x02
-        defc	BUFFER_HI			= 0x03
+        defc    X_OFFSET			= 0x00
+        defc    Y_OFFSET			= 0x01
+        defc    BUFFER_LO			= 0x02
+        defc    BUFFER_HI			= 0x03
 _copyScreen:
 		entry
 
         di      
-        ld      (copyTempSP),sp			; Optimization, self modifying code
+        ld      (copyTempSP),sp         ; Optimization, self modifying code
 
         ; Claculate the screen Y address
         ld      h,0
@@ -47,14 +47,14 @@ _copyScreen:
         add     c                       ; add x offset
         ld      l,a
 
-        ldi								; Optimization to save 4 cycles
-        inc		bc						; The ldi will decrement bc so increment it here
+        ldi                             ; Optimization to save 4 cycles
+        inc     bc                      ; The ldi will decrement bc so increment it here
 
         ld      a,(hl)
         ld      (de),a
         inc     de
-		; No need to increment hl because we will pop a new one
-		; at the beginning of the loop
+        ; No need to increment hl because we will pop a new one
+        ; at the beginning of the loop
         djnz    copyloop
 
 .copyTempSP = $+1
@@ -98,14 +98,14 @@ _pasteScreen:
         add     c                       ; add x offset
         ld      e,a
 
-        ldi								; Optimization to save 4 cycles
-        inc		bc						; The ldi will decrement bc so increment it here
+        ldi                             ; Optimization to save 4 cycles
+        inc     bc                      ; The ldi will decrement bc so increment it here
 
         ld      a,(hl)
         ld      (de),a
         inc     hl
-		; No need to increment de because we will pop a new one
-		; at the beginning of the loop
+        ; No need to increment de because we will pop a new one
+        ; at the beginning of the loop
         djnz    pasteloop
 
 .pasteTempSP = $+1

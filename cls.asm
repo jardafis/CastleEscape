@@ -12,7 +12,7 @@ _cls:
         push    bc
         push    hl
 
-		halt
+        halt    
 
         di      
         ld      (clsTempSP),sp
