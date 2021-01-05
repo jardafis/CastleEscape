@@ -8,35 +8,27 @@
 
         defc    xPos			= 0x0000
         defc    yPos			= 0x0001
-        defc    TILEMAP_LO		= 0x00
-        defc    TILEMAP_HI		= 0x01
-        defc    TILEMAP_WIDTH	= 0x40
 
         ; Sprite ID's
         defc    ID_LANTERN		= 88
-        defc    ID_BLANK		= 0xff
+        defc    ID_BLANK		= 11
 
         section code_user
         ;
         ; Display a complete tile map
         ;
         ; On entry hl points to the tilemap to be displayed.
-        ; Tilemaps are converted to binary using the TiledToBinary app.
         ;
 _displayScreen:
         ; Save the registers and setup ix to point to the right most parameter
         ; passed on the stack.
-		entry
+		pushall
 
-        ld      hl,_lanternList
-        ld      (hl),0                  ; Zero the lantern count
-        inc     hl
-        ld      (lanternPtr),hl         ; Initialize table pointer
-
-        ; Get the address of the tilemap
-        ; passed on the stack
-        ld      l,(ix+TILEMAP_LO)
-        ld      h,(ix+TILEMAP_HI)
+        ld      de,_lanternList
+        xor		a
+        ld      (de),a                  ; Zero the lantern count
+        inc     de
+        ld      (lanternPtr),de         ; Initialize table pointer
 
         ; IX points to the temporary storage for our variables
         ld      ix,varbase
@@ -182,7 +174,7 @@ _displayScreen:
         pop     bc
         djnz    yloop
 
-		exit
+		popall
         ret     
 
         ;
