@@ -6,9 +6,6 @@
 
         include "defs.asm"
 
-        defc    xPos			= 0x0000
-        defc    yPos			= 0x0001
-
         ; Sprite ID's
         defc    ID_LANTERN		= 88
         defc    ID_BLANK		= 11
@@ -20,9 +17,16 @@
         ; On entry hl points to the tilemap to be displayed.
         ;
 _displayScreen:
-        ; Save the registers and setup ix to point to the right most parameter
-        ; passed on the stack.
+        ; Save the registers and setup ix to point to variable space
 		pushall
+
+        ;
+        ; Build a stack frame for our variables
+        ;
+        ld      (tempSP),sp
+        ld      ix,-SIZEOF_vars
+        add     ix,sp
+        ld      sp,ix
 
         ld      de,_lanternList
         xor		a
@@ -30,27 +34,17 @@ _displayScreen:
         inc     de
         ld      (lanternPtr),de         ; Initialize table pointer
 
-        ; IX points to the temporary storage for our variables
-        ld      ix,varbase
-
         ; Zero out the Y character location
-        ; We use 16 bits because we need to multiple by 16
-        ; to get the screenTab offset and the screen is 192
-        ; lines.
-        ld      de,0
-        ld      (y),de
+        ld      (ix+yPos),0
 
-        ; 24 Character rows
-        ld      b,24
+        ld      b,SCREEN_HEIGHT
 .yloop
         push    bc
 
         ; Zero out the X character location
-        xor     a
-        ld      (x), a
+        ld      (ix+xPos),0
 
-        ; 32 character columns
-        ld      b,32
+        ld      b,SCREEN_WIDTH
 .xloop
         ld      a,(hl)                  ; read the tile index
         cmp		ID_BLANK                   ; Check for blank
@@ -75,11 +69,12 @@ _displayScreen:
         ;
         ; Set the attribute for the tile
         ;
-        ld      hl,(y)
+        ld		l,(ix+yPos)
+        ld		h,0
 		hlx		16
         push    hl                      ; y * 16 - save it for later
 		hlx		2
-        ld      a,(x)
+        ld      a,(ix+xPos)
         add     l
         ld      l,a
         ld      de,SCREEN_ATTR_START
@@ -93,7 +88,7 @@ _displayScreen:
 
         ; Load the screen address into BC
         ; and add the X character position
-        ld      a,(x)                   ; Get the X offset        13
+        ld      a,(ix+xPos)             ; Get the X offset        13
         add     (hl)                    ; low order byte          7
         ld      c,a                     ; 4
         inc     hl                      ; 6
@@ -165,7 +160,7 @@ _displayScreen:
 
         djnz    xloop
 
-        ld      de,TILEMAP_WIDTH - 32
+        ld      de,TILEMAP_WIDTH - SCREEN_WIDTH
         add     hl,de
 
         ; next y location
@@ -174,6 +169,8 @@ _displayScreen:
         pop     bc
         djnz    yloop
 
+.tempSP = $ + 1
+		ld		sp,0x0000
 		popall
         ret     
 
@@ -192,9 +189,10 @@ _displayScreen:
         inc     (hl)
 
         ; Calculate the screen attribute address
-        ld      hl,(y)
+        ld      l,(ix+yPos)
+        ld		h,0
 		hlx		32
-        ld      a,(x)
+        ld      a,(ix+xPos)
         add     l
         ld      l,a
         ld      de,SCREEN_ATTR_START
@@ -211,13 +209,12 @@ _displayScreen:
         pop     af
         ret     
 
-
-        section bss_user
-.varbase
-.x
-        db      0
-.y
-        dw      0
+		defvars 0
+		{
+			xPos	ds.b	1
+			yPos	ds.b	1
+			SIZEOF_vars
+		}
 
         section rodata_user
 _tileAttr:
