@@ -28,10 +28,9 @@ _initCoins:
         ; Build a stack frame for our variables
         ;
         ld      (tempSP),sp
-        ld      hl,-SIZEOF_vars
-        add     hl,sp
-        ld      sp,hl
-        ld      ix,hl
+        ld      ix,-SIZEOF_vars
+        add     ix,sp
+        ld      sp,ix
 
         ;
         ; Initialize memory variables
