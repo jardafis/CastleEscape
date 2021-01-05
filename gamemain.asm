@@ -3,11 +3,15 @@
 		extern	_border
 		extern	_initCoins
 		extern	_scrollInit
+		extern	_scrollReset
+		extern	_scroll
 		extern	_initScore
 		extern	_levels
 		extern	_displayScreen
 		extern	_displayScore
-		extern	_scrollReset
+		extern	_updateDirection
+		extern	_lanternFlicker
+		extern	_lanternList
 		public	_gameMain
 		public	_currentTileMap
 		public	_setCurrentTileMap
@@ -15,8 +19,15 @@
 		public	_tileMapX
 		public	_tileMapY
 		public	_setupScreen
+		public	_gameLoop
+		public	_direction
+		public	_xPos
+		public	_yPos
 
 		include	"defs.asm"
+
+		defc	START_X		= 40
+		defc	START_Y		= 120
 
 		section	code_user
 _gameMain:
@@ -53,6 +64,14 @@ _gameMain:
 
 .newGame
 		;
+		; Starting X and Y player position
+		;
+		ld		hl,START_X
+		ld		(_xPos),hl
+		ld		hl,START_Y
+		ld		(_yPos),hl
+
+		;
 		; Setup the coin tables
 		;
 		call	_initCoins
@@ -78,6 +97,18 @@ _gameMain:
 		call	_setCurrentTileMap
 
 		call	_setupScreen
+		ret
+
+_gameLoop:
+		pushall
+		
+		halt
+		call	_scroll
+		call	_updateDirection
+		ld		hl,_lanternList
+		call	_lanternFlicker
+
+		popall
 		ret
 
 _setupScreen:
@@ -155,3 +186,9 @@ _tileMapX:
 		db		0
 _tileMapY:
 		db		0
+_direction:
+		db		0
+_xPos:
+		dw		0
+_yPos:
+		dw		0

@@ -4,47 +4,41 @@
 
 #define MAX_LEVEL_X 2
 #define MAX_LEVEL_Y 2
+#define TILE_MAP_WIDTH  64
+#define TILE_MAP_HEIGHT 24
 
-extern unsigned char *screenTab[];
+#define PLAYER_WIDTH    8
+#define PLAYER_HEIGHT   8
+
+#define MAX_X_POS           256
+#define MAX_Y_POS           192
+
 extern const unsigned char tile0[];
 extern const unsigned char tileAttr[];
-extern const unsigned char levels[];
-extern void attribEdit(unsigned char *tileset, unsigned char *attrib);
-extern unsigned char keyboardScan(void);
-extern void displayScreen(void *scr);
-extern void copyScreen(unsigned char xPos, unsigned char yPos, unsigned char *buffer);
-extern void pasteScreen(unsigned char xPos, unsigned char yPos, unsigned char *buffer);
-extern void displaySprite(unsigned char xPos, unsigned char yPos);
-extern void cls(char attr)
+extern void
+attribEdit(unsigned char *tileset, unsigned char *attrib);
+extern unsigned char
+keyboardScan(void);
+extern void
+copyScreen(unsigned char xPos, unsigned char yPos, unsigned char *buffer);
+extern void
+pasteScreen(unsigned char xPos, unsigned char yPos, unsigned char *buffer);
+extern void
+displaySprite(unsigned char xPos, unsigned char yPos);
+
+extern void border(unsigned char color)
 __z88dk_fastcall;
-extern unsigned char updateDirection(void)
+extern void animateCoins(void *coins)
 __z88dk_fastcall;
-extern void scroll(void)
+extern void gameMain(void)
 __z88dk_fastcall;
-extern void scrollInit(void *message)
+extern void setCurrentTileMap()
 __z88dk_fastcall;
-extern void scrollReset(void)
+extern void setupScreen()
 __z88dk_fastcall;
-void initISR(void)
-__z88dk_fastcall;
-void border(unsigned char color)
-__z88dk_fastcall;
-void initScore(void)
-__z88dk_fastcall;
-void displayScore(void)
-__z88dk_fastcall;
-void incScore(void)
-__z88dk_fastcall;
-void addScore(unsigned char value)
-__z88dk_fastcall;
-void lanternFlicker(void *lanterns)
-__z88dk_fastcall;
-void initCoins(void)
-__z88dk_fastcall;
-void animateCoins(void *coins)
+extern void gameLoop()
 __z88dk_fastcall;
 
-extern void *lanternList;
 extern void *coinTables[MAX_LEVEL_Y][MAX_LEVEL_X];
 
 #define FIRE    0x10
@@ -53,234 +47,204 @@ extern void *coinTables[MAX_LEVEL_Y][MAX_LEVEL_X];
 #define LEFT    0x02
 #define RIGHT   0x01
 
-inline void drawTile(unsigned char tileID, unsigned char x, unsigned char y)
-{
-    const unsigned char *tiles = &tile0[0];
-    if (tileID)
-    {
-        for (unsigned char n = 0; n < 8; n++)
-        {
-            *(screenTab[(y << 3) + n] + x) = tiles[((tileID - 1) * 8) + n];
-        }
-    }
-}
-
-void brick(unsigned char *tileMap)
-{
-    for (unsigned char y = 0; y < 24; y++)
-    {
-        for (unsigned char x = 0; x < 32; x++)
-        {
-            drawTile(tileMap[(y * 32) + x], x, y);
-        }
-    }
-}
-
 unsigned char buffer[16];
-unsigned const char *tileMap = NULL;
+extern const unsigned char *currentTileMap;
+extern unsigned char tileMapX;
+extern unsigned char tileMapY;
+extern unsigned char direction;
+extern int xPos;
+extern int yPos;
 
-void setupScreen(void *tileMap)
-{
-    cls(INK_WHITE | PAPER_BLACK);
-    displayScreen(tileMap);
-    scrollReset();
-    displayScore();
-}
+#define MAX_X_ACCEL     2
+#define MAX_X_DECEL     4
+#define MAX_X_SPEED     32
+static signed char xSpeed = 0;
+static signed char xAccel = 0;
+static signed char xDecel = 0;
 
+#define MAX_Y_SPEED     32
+#define MAX_Y_ACCEL     4
+static signed char ySpeed = 0;
+static signed char yAccel = 0;
 
 int main()
 {
-    int screenX = 0;
-    int screenY = 0;
-    int xPos = 40;
-    int yPos = 120;
+    int mapRow = 0;
     char key = 0;
     char jumping = 0;
     char falling = 0;
     unsigned char count = 0;
-    static unsigned char dir;
 
-    initISR();
-
-    // Setup the screen and border
-    cls(INK_WHITE | PAPER_BLACK);
-    border(INK_BLACK);
-    initCoins();
-    scrollInit(NULL);
-    initScore();
-    tileMap = &levels[(screenY * (768 * 2)) + (screenX * 32)];
-    setupScreen(tileMap);
+    gameMain();
 
     copyScreen(xPos, yPos, buffer);
 
     while ((key = keyboardScan()) != '\n')
     {
-        intrinsic_halt();
-//        for(int a = 0; a<256; a++); // Delay so we can see the border on screen
-
-        border(INK_WHITE);
-        // Scroll the message
-        scroll();
-
-        border(INK_MAGENTA);
-        // Scan Q, A, O, P, SPACE and update the direction flags accordingly
-        dir = updateDirection();
-
-        border(INK_RED);
-        // Restore original contents of screen
-        pasteScreen(xPos, yPos, buffer);
-
-        //
-        // Check for collisions and clear the direction bits accordingly
-        //
-        dir |= DOWN;
+        gameLoop();
 
         border(INK_BLUE);
-        // Update to new position based on direction bits
-        if (dir & UP)
+        if (direction & LEFT)
         {
-            if (yPos > 24)
+            xDecel = 0;
+            if (xAccel > -MAX_X_ACCEL)
+                xAccel--;
+
+            xSpeed = (xSpeed < -MAX_X_SPEED) ? -MAX_X_SPEED : xSpeed + xAccel;
+        }
+        else if (direction & RIGHT)
+        {
+            xDecel = 0;
+            if (xAccel < MAX_X_ACCEL)
+                xAccel++;
+
+            xSpeed = (xSpeed > MAX_X_SPEED) ? MAX_X_SPEED : xSpeed + xAccel;
+        }
+        else
+        {
+            xAccel = 0;
+
+            if (xDecel < MAX_X_DECEL)
+                xDecel++;
+
+            if (xSpeed < 0) // Moving left
             {
-                if ((tileMap[(((yPos - 1) >> 3) * 64) + (xPos >> 3)] < 144)
-                        && (tileMap[(((yPos - 1) >> 3) * 64) + ((xPos + 7) >> 3)] < 144))
-                    yPos -= 1;
+                xSpeed = ((xSpeed + xDecel) > 0) ? 0 : xSpeed + xDecel;
+            }
+            else if (xSpeed > 0) // Moving right
+            {
+                xSpeed = ((xSpeed - xDecel) < 0) ? 0 : xSpeed - xDecel;
+            }
+        }
+
+        if (xSpeed > 0)         // Moving right
+        {
+            // Check for collision with solid tile
+            if ((currentTileMap[((yPos >> 3) * TILE_MAP_WIDTH) + ((xPos + (PLAYER_WIDTH - 1) + (xSpeed / 16)) >> 3)] >= 144)
+                    || (currentTileMap[(((yPos + (PLAYER_HEIGHT - 1)) >> 3) * TILE_MAP_WIDTH)
+                            + ((xPos + (PLAYER_WIDTH - 1) + (xSpeed / 16)) >> 3)] >= 144))
+            {
+                // Stop movement, reset acceleration and align x position
+                xSpeed = 0;
+                xAccel = 0;
+                xPos = (xPos + 7) & 0xfff8;
             }
             else
             {
-                if (screenY > 0)
+                // Check if player had moved off the screen to the right
+                if ((xPos + (xSpeed / 16)) > (MAX_X_POS - PLAYER_WIDTH))
                 {
-                    screenY--;
-                    yPos = 184;
-                    tileMap = &levels[(screenY * (768 * 2)) + (screenX * 32)];
-                    setupScreen(tileMap);
+                    if (tileMapX < (MAX_LEVEL_X - 1))
+                    {
+                        tileMapX++;
+                        xPos = 0;
+                        setCurrentTileMap();
+                        setupScreen();
+                    }
                 }
             }
         }
-        else if (dir & DOWN)    // Down is always set. This is gravity.
+        else if (xSpeed < 0)    // Moving left
         {
-            if (jumping == 0)
+            // Check for collision with solid tile
+            if ((currentTileMap[((yPos >> 3) * TILE_MAP_WIDTH) + ((xPos + (xSpeed / 16)) >> 3)] >= 144)
+                    || (currentTileMap[(((yPos + (PLAYER_HEIGHT - 1)) >> 3) * TILE_MAP_WIDTH) + ((xPos + (xSpeed / 16)) >> 3)]
+                            >= 144))
             {
-                if (yPos < (192 - 8))
+                // Stop movement, reset acceleration and align x position
+                xSpeed = 0;
+                xAccel = 0;
+                xPos &= 0xfff8;
+            }
+            else
+            {
+                // Check if player had moved off the screen to the left
+                if ((xPos + (xSpeed / 16)) < 0)
                 {
-                    if ((tileMap[(((yPos + 7 + 1) >> 3) * 64) + (xPos >> 3)] < 144)
-                            && (tileMap[(((yPos + 7 + 1) >> 3) * 64) + ((xPos + 7) >> 3)] < 144))
-                        yPos += 1;
-                    else
-                        falling = 0;
-                }
-                else
-                {
-                    if (screenY < (MAX_LEVEL_Y - 1))
+                    if (tileMapX > 0)
                     {
-                        screenY++;
-                        yPos = 24;
-                        tileMap = &levels[(screenY * (768 * 2)) + (screenX * 32)];
-                        setupScreen(tileMap);
+                        tileMapX--;
+                        xPos = MAX_X_POS - PLAYER_WIDTH;
+                        setCurrentTileMap();
+                        setupScreen();
                     }
                 }
             }
         }
 
-        if (dir & LEFT)
+        ySpeed = ((ySpeed + yAccel) < MAX_Y_SPEED) ? ySpeed + yAccel : MAX_Y_SPEED;
+
+        if ((currentTileMap[(((yPos + (PLAYER_HEIGHT - 1) + (ySpeed / 16)) >> 3) * 64) + (xPos >> 3)] < 144)
+                && (currentTileMap[(((yPos + (PLAYER_HEIGHT - 1) + (ySpeed / 16)) >> 3) * 64) + ((xPos + (PLAYER_WIDTH - 1)) >> 3)]
+                        < 144))
         {
-            if (xPos > 0)
+            // Add gravity
+            if (yAccel < MAX_Y_ACCEL)
+                yAccel++;
+        }
+        else
+        {
+            if (direction & FIRE)
             {
-                if ((tileMap[((yPos >> 3) * 64) + ((xPos - 1) >> 3)] < 144)
-                        && (tileMap[(((yPos + 7) >> 3) * 64) + ((xPos - 1) >> 3)] < 144))
-                    xPos -= 1;
+                ySpeed = -MAX_Y_SPEED * 2;
             }
             else
             {
-                if (screenX > 0)
-                {
-                    screenX--;
-                    xPos = 248;
-                    tileMap = &levels[(screenY * (768 * 2)) + (screenX * 32)];
-                    setupScreen(tileMap);
-                }
+                // Stop gravity
+                yAccel = 0;
+                ySpeed = 0;
+                falling = 0;
             }
         }
-        else if (dir & RIGHT)
+
+        if ((yPos + (PLAYER_HEIGHT - 1) + (ySpeed / 16)) >= MAX_Y_POS)
         {
-            if (xPos < (256 - 8))
+            if (tileMapY < (MAX_LEVEL_Y - 1))
             {
-                if ((tileMap[((yPos >> 3) * 64) + ((xPos + 7 + 1) >> 3)] < 144)
-                        && (tileMap[(((yPos + 7) >> 3) * 64) + ((xPos + 7 + 1) >> 3)] < 144))
-                    xPos += 1;
+                tileMapY++;
+                yPos = 24;
+                setCurrentTileMap();
+                setupScreen();
             }
-            else
+        }
+        else if ((yPos + (ySpeed / 16)) < 24)
+        {
+            if (tileMapY > 0)
             {
-                if (screenX < (MAX_LEVEL_X - 1))
-                {
-                    screenX++;
-                    xPos = 0;
-                    tileMap = &levels[(screenY * (768 * 2)) + (screenX * 32)];
-                    setupScreen(tileMap);
-                }
+                tileMapY--;
+                yPos = MAX_Y_POS - PLAYER_HEIGHT;
+                setCurrentTileMap();
+                setupScreen();
             }
         }
-
-        if (jumping)
-        {
-            if (yPos > 24)
-            {
-                if ((tileMap[(((yPos - 2) >> 3) * 64) + (xPos >> 3)] < 144)
-                        && (tileMap[(((yPos - 2) >> 3) * 64) + ((xPos + 7) >> 3)] < 144))
-                    yPos -= 1;
-            }
-            else
-            {
-                if (screenY > 0)
-                {
-                    screenY--;
-                    yPos = 184;
-                    tileMap = &levels[(screenY * (768 * 2)) + (screenX * 32)];
-                    setupScreen(tileMap);
-                }
-            }
-
-            jumping--;
-            if (jumping == 0)
-                falling = 1;
-        }
-        else if (dir & FIRE)
-        {
-            if (!falling)
-                jumping = 25;
-        }
-
-        border(INK_YELLOW);
-        // Copy contents of screen at new location
-        copyScreen(xPos, yPos, buffer);
-        if (count++ >= 6)
-        {
-            animateCoins(coinTables[screenY][screenX]);
-            count = 0;
-        }
-
-        border(INK_CYAN);
-        displaySprite(xPos, yPos);
-
-        border(INK_GREEN);
-#ifdef LATER
-        if(count++ >= 50)
-        {
-            addScore(0x17);
-//            incScore();
-            count = 0;
-            displayScore();
-        }
-#endif
 
         border(INK_RED);
-        lanternFlicker(&lanternList);
+        // Restore original contents of screen
+        pasteScreen(xPos, yPos, buffer);
+
+        // Update the player position based on speed
+        xPos += (xSpeed / 16);
+        yPos += (ySpeed / 16);
+
+        border(INK_CYAN);
+        // Copy contents of screen at new location
+        copyScreen(xPos, yPos, buffer);
+
+        border(INK_GREEN);
+        displaySprite(xPos, yPos);
+
+        border(INK_YELLOW);
+        if (count++ >= 6)
+        {
+            animateCoins(coinTables[tileMapY][tileMapX]);
+            count = 0;
+        }
+
         border(INK_BLACK);
         if (key == 'S')
         {
             attribEdit(tile0, tileAttr);
-            cls(INK_WHITE | PAPER_BLACK);
-            displayScreen(&levels[(screenY * (768 * 2)) + (screenX * 32)]);
-            scrollInit(NULL);
+            setupScreen();
         }
     }
 
