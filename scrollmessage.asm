@@ -115,8 +115,8 @@ _scrollReset:
         ret     
 
 _scroll:
-        exx                             ; Save bc, de, hl
-        ex      af,af'                  ; and af
+;        exx                             ; Save bc, de, hl
+;        ex      af,af'                  ; and af
 
         ; Check if we need to get the next character of the message
         ld      hl,rotate
@@ -152,8 +152,8 @@ _scroll:
         dec     c
         jr      nz,rowLoop
 
-        ex      af,af'                  ; Restore af
-        exx                             ; bc, de, and hl
+;        ex      af,af'                  ; Restore af
+;        exx                             ; bc, de, and hl
         ret     
 
 .getNextChar
