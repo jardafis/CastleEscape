@@ -2,6 +2,12 @@
 
         extern  _font_8x8_cpc_system
 
+		;
+		; Tilemap definitions
+		;
+		defc	TILEMAP_WIDTH			= 0x40
+		defc	TILEMAP_HEIGHT			= SCREEN_HEIGHT
+
         ;
         ; Values numbers for control keys
         ;
