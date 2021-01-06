@@ -12,6 +12,8 @@
 		extern	_updateDirection
 		extern	_lanternFlicker
 		extern	_lanternList
+		extern	_copyScreen
+		extern	_pasteScreen
 		public	_gameMain
 		public	_currentTileMap
 		public	_setCurrentTileMap
@@ -23,6 +25,7 @@
 		public	_direction
 		public	_xPos
 		public	_yPos
+		public	_spriteBuffer
 
 		include	"defs.asm"
 
@@ -97,16 +100,61 @@ _gameMain:
 		call	_setCurrentTileMap
 
 		call	_setupScreen
+
+		ld		hl,_spriteBuffer
+		push	hl
+		ld		a,(_xPos)
+		ld		l,a
+		ld		a,(_yPos)
+		ld		h,a
+		push	hl
+
+		call	_copyScreen
+
+		pop		hl
+		pop		hl
 		ret
 
 _gameLoop:
 		pushall
 		
+		;
+		; Wait for refresh interrupt
+		;
 		halt
+		ld		l,INK_RED
+		call	_border
+
+		;
+		; Update the scrolling message
+		;
 		call	_scroll
+
+		;
+		; Read the keyboard and update the direction flags
+		;
 		call	_updateDirection
+
+		;
+		; Flicker any lanterns on the screen
+		;
 		ld		hl,_lanternList
 		call	_lanternFlicker
+
+		;
+		; Re-draw the screen at the players current location
+		;
+		ld		hl,_spriteBuffer
+		push	hl
+		ld		a,(_xPos)
+		ld		l,a
+		ld		a,(_yPos)
+		ld		h,a
+		push	hl
+		call	_pasteScreen
+		pop		hl
+		pop		hl
+
 
 		popall
 		ret
@@ -159,7 +207,7 @@ _mul_hla:
 		push	bc
 		push	de
 
-		ld		de,hl
+		ex		de,hl					; Save hl in de
 		ld		hl,0
 		or		a						; If multiplying by 0, result is zero
 		jr		z,mulDone
@@ -192,3 +240,5 @@ _xPos:
 		dw		0
 _yPos:
 		dw		0
+_spriteBuffer:
+		ds		16
