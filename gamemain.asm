@@ -14,6 +14,7 @@
 		extern	_lanternList
 		extern	_copyScreen
 		extern	_pasteScreen
+		extern	ticks
 		public	_gameMain
 		public	_currentTileMap
 		public	_setCurrentTileMap
@@ -121,7 +122,19 @@ _gameLoop:
 		;
 		; Wait for refresh interrupt
 		;
-		halt
+;		halt
+		ld		a,(ticks)
+		ld		b,a
+.wait
+		push	af
+		push	bc
+		call	_updateDirection
+		pop		bc
+		pop		af
+		ld		a,(ticks)
+		cp		b
+		jr		z,wait
+
 		ld		l,INK_RED
 		call	_border
 
