@@ -13,6 +13,8 @@
 #define MAX_X_POS           256
 #define MAX_Y_POS           192
 
+#define JUMP_HEIGHT         24
+
 extern const unsigned char tile0[];
 extern const unsigned char tileAttr[];
 extern void
@@ -227,6 +229,7 @@ int main()
         xPos += (xSpeed / 16);
         yPos += (ySpeed / 16);
 #else
+        // Update X speed based on user input
         if (direction & LEFT)
         {
             xSpeed = -1;
@@ -240,78 +243,97 @@ int main()
             xSpeed = 0;
         }
 
-        if ((direction & FIRE) && (!jumping))
+        // If not already jumping or falling, kickoff a jump
+        if ((direction & FIRE) && (!jumping) && (!falling))
         {
             ySpeed = -1;
-            jumping = 48;
+            jumping = JUMP_HEIGHT * 2;
         }
 
-        if(!jumping)
+        if(jumping)
         {
-            // Gravity
-            if ((currentTileMap[(((yPos + PLAYER_HEIGHT) >> 3) * 64) + (xPos >> 3)] < 144)
-                    && (currentTileMap[(((yPos + PLAYER_HEIGHT) >> 3) * 64) + ((xPos + (PLAYER_WIDTH - 1)) >> 3)] < 144))
-            {
+            // Jumping starts off with Y speed = -1
+            // Halfway through switch the Y direction
+            if(jumping == JUMP_HEIGHT)
                 ySpeed = 1;
-                xSpeed = 0;
-                if ((yPos + (PLAYER_HEIGHT - 1) + ySpeed) >= MAX_Y_POS)
-                {
-                    if (tileMapY < (MAX_LEVEL_Y - 1))
-                    {
-                        tileMapY++;
-                        yPos = 24;
-                        setCurrentTileMap();
-                        setupScreen();
-                    }
-                }
-            }
-            else
-            {
-                ySpeed = 0;
-            }
-        }
-        else
-        {
+
+            // Decrease jump counter
             jumping--;
-            if(jumping == 23)
-                ySpeed = 1;
 
             if(ySpeed < 0)      // Going up
             {
-
-                if (yPos + ySpeed < 24)
-                {
-                    if (tileMapY > 0)
-                    {
-                        tileMapY--;
-                        yPos = MAX_Y_POS - PLAYER_HEIGHT;
-                        setCurrentTileMap();
-                        setupScreen();
-                    }
-                    else
-                    {
-                        ySpeed = 0;
-                    }
-                }
+                // Nothing here right now
+                // Maybe check if player has hit his head on a platform
             }
             else
             if(ySpeed > 0)      // Going down
             {
+                // Check if player has landed on a solid platform
                 if ((currentTileMap[(((yPos + PLAYER_HEIGHT) >> 3) * 64) + (xPos >> 3)] >= 144)
                         || (currentTileMap[(((yPos + PLAYER_HEIGHT) >> 3) * 64) + ((xPos + (PLAYER_WIDTH - 1)) >> 3)] >= 144))
                 {
+                    // Player has landed, stop Y movement and clear any remaining jump count
                     ySpeed = 0;
+                    jumping = 0;
+                }
+            }
+        }
+
+        //
+        // No else here. Jumping may transition to 0 above and we need to process that change below
+        //
+
+        // If player stopped jumping check if gravity should take over
+        if(!jumping)
+        {
+            // Gravity
+            if ((currentTileMap[(((yPos + PLAYER_HEIGHT) >> 3) * 64) + (xPos >> 3)] >= 144)
+                    || (currentTileMap[(((yPos + PLAYER_HEIGHT) >> 3) * 64) + ((xPos + (PLAYER_WIDTH - 1)) >> 3)] >= 144))
+            {
+                // Player is on a solid platform, phew...
+                falling = 0;
+                ySpeed = 0;
+            }
+            else
+            {
+                // Player is falling. No X movement is allowed
+                // Player needs to die if they fall too far
+                falling = 1;
+                ySpeed = 1;
+                xSpeed = 0;
+            }
+        }
+
+        if(ySpeed < 0)      // Going up
+        {
+            // Check if new position requires a screen change
+            if (yPos + ySpeed < 24)
+            {
+                if (tileMapY > 0)
+                {
+                    tileMapY--;
+                    yPos = MAX_Y_POS - PLAYER_HEIGHT;
+                    setCurrentTileMap();
+                    setupScreen();
                 }
                 else
-                if ((yPos + ySpeed) >= (MAX_Y_POS - PLAYER_HEIGHT))
                 {
-                    if (tileMapY < (MAX_LEVEL_Y - 1))
-                    {
-                        tileMapY++;
-                        yPos = 24;
-                        setCurrentTileMap();
-                        setupScreen();
-                    }
+                    ySpeed = 0;
+                }
+            }
+        }
+        else
+        if(ySpeed > 0)      // Going down
+        {
+            // Check if a screen change is required
+            if ((yPos + ySpeed) >= (MAX_Y_POS - PLAYER_HEIGHT))
+            {
+                if (tileMapY < (MAX_LEVEL_Y - 1))
+                {
+                    tileMapY++;
+                    yPos = 24;
+                    setCurrentTileMap();
+                    setupScreen();
                 }
             }
         }
@@ -366,19 +388,19 @@ int main()
         xPos += xSpeed;
         yPos += ySpeed;
 #endif
-        border(INK_CYAN);
-        // Copy contents of screen at new location
-        copyScreen((unsigned char) xPos, (unsigned char) yPos, spriteBuffer);
-
-        border(INK_GREEN);
-        displaySprite(xPos, yPos);
-
         border(INK_YELLOW);
         if (count++ >= 6)
         {
             animateCoins(coinTables[tileMapY][tileMapX]);
             count = 0;
         }
+
+        border(INK_CYAN);
+        // Copy contents of screen at new location
+        copyScreen((unsigned char) xPos, (unsigned char) yPos, spriteBuffer);
+
+        border(INK_GREEN);
+        displaySprite(xPos, yPos);
 
         border(INK_BLACK);
         if (key == 'S')
