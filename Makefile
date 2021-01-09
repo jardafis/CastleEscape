@@ -11,13 +11,18 @@ PRAGMA_FILE=zpragma.inc
 #C_OPT_FLAGS=-SO2 --max-allocs-per-node200000
 C_OPT_FLAGS=-SO2
 
-CFLAGS=+$(TARGET) $(C_OPT_FLAGS) --legacy-banking -clib=sdcc_iy -c -pragma-include:$(PRAGMA_FILE)
+#CFLAGS=+$(TARGET) $(C_OPT_FLAGS) --legacy-banking -clib=sdcc_iy -c -pragma-include:$(PRAGMA_FILE)
+CFLAGS=+$(TARGET) $(C_OPT_FLAGS) -compiler=sdcc -I$(Z88DK)/include/_DEVELOPMENT/sdcc --legacy-banking -c -pragma-include:$(PRAGMA_FILE)
 LDFLAGS=+$(TARGET) -m -clib=sdcc_iy -pragma-include:$(PRAGMA_FILE) -Cz--clearaddr -Cz32767
 ASFLAGS=-I$(Z88DK)/lib
 
 OBJECTS =  $(patsubst %.c,%.o,$(wildcard *.c)) $(patsubst %.asm,%.o,$(wildcard *.asm)) tiles/tiles.o
 
 all: $(EXEC)
+	@grep __code_user_size mixed.map | sed -e "s/;.*//"
+	@grep __data_user_size mixed.map | sed -e "s/;.*//"
+	@grep __rodata_user_size mixed.map | sed -e "s/;.*//"
+	@grep __bss_user_size mixed.map | sed -e "s/;.*//"
 
 %.o: %.c $(PRAGMA_FILE) Makefile
 	$(CC) $(CFLAGS) -o $@ $<

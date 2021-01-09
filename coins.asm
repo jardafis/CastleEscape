@@ -22,7 +22,7 @@
         ; collision routine.
         ;
 _initCoins:
-		pushall
+        pushall 
 
         ;
         ; Build a stack frame for our variables
@@ -123,7 +123,7 @@ _initCoins:
 .tempSP = $ + 1
         ld      sp,0x0000
 
-		popall
+        popall  
         ret     
 
         ;
@@ -184,7 +184,7 @@ _animateCoins:
 
         ld      l,(hl)                  ; Y screen position
         ld      h,0
-		hlx		16
+        hlx     16
         ld      de,_screenTab
         add     hl,de
         ld      a,(hl)
@@ -207,7 +207,7 @@ _animateCoins:
 
         ld      l,a
         ld      h,0
-		hlx		8
+        hlx     8
         ld      de,_tile0
         add     hl,de
 
@@ -263,7 +263,7 @@ _animateCoins:
 
 .notVisible
         ld      a,SIZEOF_coin
-		addhl
+        addhl   
         jp      nextCoin
 
 .endOfList

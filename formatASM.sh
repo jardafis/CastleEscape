@@ -79,7 +79,15 @@ list="SECTION \
 	SRA \
 	SRL \
 	SUB \
-	XOR"
+	XOR \
+	HLX \
+	PUSHALL \
+	POPALL \
+	ENTRY \
+	EXIT \
+	ADDHL \
+	ADDDE \
+	ADDBC"
 
 for file in $@
 do

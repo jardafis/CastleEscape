@@ -18,7 +18,7 @@
         ;
 _displayScreen:
         ; Save the registers and setup ix to point to variable space
-		pushall
+        pushall 
 
         ;
         ; Build a stack frame for our variables
@@ -29,7 +29,7 @@ _displayScreen:
         ld      sp,ix
 
         ld      de,_lanternList
-        xor		a
+        xor     a
         ld      (de),a                  ; Zero the lantern count
         inc     de
         ld      (lanternPtr),de         ; Initialize table pointer
@@ -69,11 +69,11 @@ _displayScreen:
         ;
         ; Set the attribute for the tile
         ;
-        ld		l,(ix+yPos)
-        ld		h,0
-		hlx		16
+        ld      l,(ix+yPos)
+        ld      h,0
+        hlx     16
         push    hl                      ; y * 16 - save it for later
-		hlx		2
+        hlx     2
         ld      a,(ix+xPos)
         add     l
         ld      l,a
@@ -99,7 +99,7 @@ _displayScreen:
         ex      af,af'                  ; restore tile index
         ld      l,a
         ld      h,0
-        hlx		8                          ; Multuply by 8 since 8 bytes per tile
+        hlx     8                       ; Multuply by 8 since 8 bytes per tile
         ld      de,_tile0               ; Start of tile data
         add     hl,de
 
@@ -170,8 +170,8 @@ _displayScreen:
         djnz    yloop
 
 .tempSP = $ + 1
-		ld		sp,0x0000
-		popall
+        ld      sp,0x0000
+        popall  
         ret     
 
         ;
@@ -190,8 +190,8 @@ _displayScreen:
 
         ; Calculate the screen attribute address
         ld      l,(ix+yPos)
-        ld		h,0
-		hlx		32
+        ld      h,0
+        hlx     32
         ld      a,(ix+xPos)
         add     l
         ld      l,a

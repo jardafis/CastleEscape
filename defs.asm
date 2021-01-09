@@ -2,20 +2,33 @@
 
         extern  _font_8x8_cpc_system
 
-		;
-		; Tilemap definitions
-		;
-		defc	TILEMAP_WIDTH			= 0x40
-		defc	TILEMAP_HEIGHT			= SCREEN_HEIGHT
+        ;
+        ; Tilemap definitions
+        ;
+        defc    TILEMAP_WIDTH			= 0x40
+        defc    TILEMAP_HEIGHT			= SCREEN_HEIGHT
 
         ;
         ; Values numbers for control keys
         ;
-        defc    FIRE                    = 0x10
+        defc    JUMP                    = 0x10
         defc    UP                      = 0x08
         defc    DOWN                    = 0x04
         defc    LEFT                    = 0x02
         defc    RIGHT                   = 0x01
+        defc    JUMP_BIT                = 4
+        defc    UP_BIT                  = 3
+        defc    DOWN_BIT                = 2
+        defc    LEFT_BIT                = 1
+        defc    RIGHT_BIT               = 0
+
+        defc    JUMP_HEIGHT				= 24
+        defc    LEFT_SPEED				= -1
+        defc    RIGHT_SPEED				= 1
+        defc    JUMP_SPEED				= -1
+
+		defc	PLAYER_WIDTH			= 8
+		defc	PLAYER_HEIGHT			= 8
 
         ;
         ; Screen addresses
@@ -93,7 +106,7 @@ hlx     macro   times
         IF times >= 64
         add     hl,hl
         ENDIF
-    endm
+    	endm
 
 entry   macro
         push    af
@@ -128,7 +141,7 @@ pushall macro
         ;
         ; Pop hl-af off the stack
         ;
-popall macro
+popall  macro
         pop     iy
         pop     ix
         pop     hl
@@ -137,10 +150,35 @@ popall macro
         pop     af
         endm
 
-addhl	macro
+        ;
+        ; Add 'a' to 'hl'
+        ;
+addhl   macro
         add     l
         ld      l,a
         adc     h
         sub     l
         ld      h,a
+		endm
+
+        ;
+        ; Add 'a' to 'de'
+        ;
+addde   macro
+        add     e
+        ld      e,a
+        adc     d
+        sub     e
+        ld      d,a
+		endm
+
+        ;
+        ; Add 'a' to 'bc'
+        ;
+addbc   macro
+        add     c
+        ld      c,a
+        adc     b
+        sub     c
+        ld      b,a
 		endm

@@ -27,7 +27,7 @@
 
         public  _bankedtapeloader
 _bankedtapeloader:
-		pushall
+        pushall 
         ld      ix,__BANK_0_head
         ld      de,__BANK_0_tail - __BANK_0_head
         ld      c,0x10                  ; Bank 0
@@ -73,7 +73,7 @@ _bankedtapeloader:
         ld      bc,ZX_BANK_IOPORT
         out     (c),a
         ei      
-        popall
+        popall  
         ret     
 
 .load_block
