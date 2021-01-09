@@ -26,7 +26,7 @@ _displayBCD:
 
         ld      h,0
         ld      l,c
-		hlx		16                               ; x16
+        hlx     16                      ; x16
         ld      de,_screenTab
         add     hl,de                   ; Pointer to screenTab entry
 

@@ -35,7 +35,7 @@ _scrollInit:
         ;
         ld      de,_screenTab
         ld      hl,Y                    ; Get Y offset
-		hlx		16                               ; x16
+        hlx     16                      ; x16
         add     hl,de                   ; Index into the screen table
         ld      e,(hl)                  ; Get the screen address from the table
         inc     hl                      ; into de
@@ -96,7 +96,7 @@ _scrollReset:
         ;
         ld      de,SCREEN_ATTR_START    ; Get the start of the screen attributes
         ld      hl,Y                    ; Get the Y position and multiply by 32
-		hlx		32
+        hlx     32
         add     hl,de                   ; Add it to the attr start address
         ld      a,X
         add     l
@@ -115,8 +115,8 @@ _scrollReset:
         ret     
 
 _scroll:
-;        exx                             ; Save bc, de, hl
-;        ex      af,af'                  ; and af
+        ;        exx                             ; Save bc, de, hl
+        ;        ex      af,af'                  ; and af
 
         ; Check if we need to get the next character of the message
         ld      hl,rotate
@@ -152,8 +152,8 @@ _scroll:
         dec     c
         jr      nz,rowLoop
 
-;        ex      af,af'                  ; Restore af
-;        exx                             ; bc, de, and hl
+        ;        ex      af,af'                  ; Restore af
+        ;        exx                             ; bc, de, and hl
         ret     
 
 .getNextChar
@@ -175,7 +175,7 @@ _scroll:
         ;
         ld      l,a                     ; Get the font character index
         ld      h,0                     ; and multiply it by 8
-		hlx		8
+        hlx     8
         ld      de,FONT                 ; Pointer to the font
         add     hl,de                   ; hl points to the font data address
         ld      de,charBuffer           ; Point to our character buffer address

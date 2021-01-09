@@ -9,14 +9,14 @@
         ;			hl - Pointer to lantern table
         ;
 _lanternFlicker:
-;        push    af
+        ;        push    af
 
         ld      a,(hl)                  ; Number of lanterns
         or      a
         jr      z,done                  ; No lanterns
 
-;        push    bc                      ; Save the rest of the registers
-;        push    hl
+        ;        push    bc                      ; Save the rest of the registers
+        ;        push    hl
 
         inc     hl                      ; Point to first attribute address
 
@@ -29,7 +29,7 @@ _lanternFlicker:
         ld      hl,colors               ; Pointer to color table
         ld      a,(ticks)               ; Use ticks as the color table index
         and     0x07                    ; Bottom 3 bits only
-		addhl
+        addhl   
         ld      a,(hl)                  ; Read attribute
 
 .loop
@@ -41,10 +41,10 @@ _lanternFlicker:
         ld      sp,0x0000               ; Restore the stack
         ei      
 
-;        pop     hl
-;        pop     bc
+        ;        pop     hl
+        ;        pop     bc
 .done
-;        pop     af
+        ;        pop     af
         ret     
 
         section rodata_user

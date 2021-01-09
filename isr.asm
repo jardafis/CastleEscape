@@ -10,7 +10,7 @@
         defc    JP_OPCODE				= 0xc3
 
 _initISR:
-		pushall
+        pushall 
 
         ld      hl,VECTOR_TABLE         ; Get vector table address
         ld      a,JUMP_ADDR_BYTE        ; High order byte of jump adress
@@ -34,7 +34,7 @@ _initISR:
         im      2                       ; Enable interrupt mode 2
         ei                              ; Enable interrupts
 
-		popall
+        popall  
         ret     
 
 .isr

@@ -100,7 +100,7 @@
 			<resource resourceType="PROJECT" workspacePath="/mixed"/>
 		</configuration>
 		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/png"/>
+			<resource resourceType="PROJECT" workspacePath="/mixed"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">

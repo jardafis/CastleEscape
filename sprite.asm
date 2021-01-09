@@ -17,7 +17,7 @@
         defc    BUFFER_LO			= 0x02
         defc    BUFFER_HI			= 0x03
 _copyScreen:
-		entry
+        entry   
 
         di      
         ld      (copyTempSP),sp         ; Optimization, self modifying code
@@ -61,7 +61,7 @@ _copyScreen:
         ld      sp,0x0000
         ei      
 
-		exit
+        exit    
         ret     
 
         ; After entry:
@@ -70,7 +70,7 @@ _copyScreen:
         ;	ix + 2 = buffer pointer lo byte
         ;	ix + 3 = buffer pointer hi byte
 _pasteScreen:
-		entry
+        entry   
 
         di      
         ld      (pasteTempSP),sp
@@ -112,14 +112,14 @@ _pasteScreen:
         ld      sp,0x0000
         ei      
 
-		exit
+        exit    
         ret     
 
         ; After entry:
         ;	ix + 0 = sprite x position in pixels
         ;	ix + 1 = sprite y position in pixels
 _displaySprite:
-		entry
+        entry   
 
         di      
         ld      (displaySpriteSP),sp
@@ -184,7 +184,7 @@ _displaySprite:
         ld      sp,0x0000
         ei      
 
-		exit
+        exit    
         ret     
 
         section rodata_user

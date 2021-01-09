@@ -1,4 +1,3 @@
-		extern		_direction
         ;
         ; Taken from http://www.breakintoprogram.co.uk/computers/zx-spectrum/keyboard
         ;
@@ -60,10 +59,10 @@ _keyboardScan:
         ret     
 
 _updateDirection:
-;        push    af
-;        push    bc
-;        push    de
-;        push    hl
+        ;        push    af
+        ;        push    bc
+        ;        push    de
+        ;        push    hl
 
         ld      hl,scanCodes            ; Point to the scan codes
         ld      c,0xfe                  ; Lower 8 bits of the IO port
@@ -84,19 +83,17 @@ _updateDirection:
         dec     d                       ; Decrement scan code count
         jr      nz,nextScanCode         ; Loop until we have checked all scan codes
 
-;        pop     hl                      ; Restore HL
+        ;        pop     hl                      ; Restore HL
 	ifdef KEMPSTON
         in      a,(IO_KEMPSTON)         ; Read the kempston port
         or      e                       ; and OR with the keyboard input.
         ld      l,a                     ; Override L
 	else
-;        ld      l,e
-		ld		a,e
-		ld		(_direction),a
+        ;        ld      l,e
 	endif
-;        pop     de
-;        pop     bc
-;        pop     af
+        ;        pop     de
+        ;        pop     bc
+        ;        pop     af
         ret     
 
         section bss_user
@@ -107,7 +104,7 @@ _updateDirection:
         db      0xfd, 0x01, DOWN
         db      0xdf, 0x02, LEFT
         db      0xdf, 0x01, RIGHT
-        db      0x7f, 0x01, FIRE
+        db      0x7f, 0x01, JUMP
 
         section rodata_user
 

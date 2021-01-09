@@ -1,257 +1,384 @@
-		extern	_cls
-		extern	_initISR
-		extern	_border
-		extern	_initCoins
-		extern	_scrollInit
-		extern	_scrollReset
-		extern	_scroll
-		extern	_initScore
-		extern	_levels
-		extern	_displayScreen
-		extern	_displayScore
-		extern	_updateDirection
-		extern	_lanternFlicker
-		extern	_lanternList
-		extern	_copyScreen
-		extern	_pasteScreen
-		extern	ticks
-		public	_gameMain
-		public	_currentTileMap
-		public	_setCurrentTileMap
-		public	_mul_hla
-		public	_tileMapX
-		public	_tileMapY
-		public	_setupScreen
-		public	_gameLoop
-		public	_direction
-		public	_xPos
-		public	_yPos
-		public	_spriteBuffer
+        extern  _cls
+        extern  _initISR
+        extern  _border
+        extern  _initCoins
+        extern  _scrollInit
+        extern  _scrollReset
+        extern  _scroll
+        extern  _initScore
+        extern  _levels
+        extern  _displayScreen
+        extern  _displayScore
+        extern  _updateDirection
+        extern  _lanternFlicker
+        extern  _lanternList
+        extern  _copyScreen
+        extern  _pasteScreen
+        extern  ticks
+        public  _gameMain
+        public  _currentTileMap
+        public  _setCurrentTileMap
+        public  _mul_hla
+        public  _tileMapX
+        public  _tileMapY
+        public  _setupScreen
+        public  _gameLoop
+        public  _xPos
+        public  _yPos
+        public  _xSpeed
+        public  _ySpeed
+        public  _jumping
+        public  _spriteBuffer
+        public  _falling
 
-		include	"defs.asm"
+        include "defs.asm"
 
-		defc	START_X		= 40
-		defc	START_Y		= 120
+        defc    START_X		= 40
+        defc    START_Y		= 120
 
-		section	code_user
+        section code_user
 _gameMain:
-		pushall
-		call	init
+        pushall 
+        call    init
 
-		call	newGame
+        call    newGame
 .gameLoop
-		;
-		; Wait for refresh interrupt
-		;
-		halt
+        ;
+        ; Wait for refresh interrupt
+        ;
+        halt    
 
-;		jp		gameLoop
+		;		call	_gameLoop
+        ;		jp		gameLoop
 
-		popall
-		ret
+        popall  
+        ret     
 
 .init
-		;
-		; Init ISR handling
-		;
-		call	_initISR
+        ;
+        ; Init ISR handling
+        ;
+        call    _initISR
 
-		;
-		; Clear the screen and set the border color
-		;
-		ld		l,INK_WHITE | PAPER_BLACK
-		call	_cls
-		ld		l,INK_BLACK
-		call	_border
+        ;
+        ; Clear the screen and set the border color
+        ;
+        ld      l,INK_WHITE | PAPER_BLACK
+        call    _cls
+        ld      l,INK_BLACK
+        call    _border
 
-		ret
+        ret     
 
 .newGame
-		;
-		; Starting X and Y player position
-		;
-		ld		hl,START_X
-		ld		(_xPos),hl
-		ld		hl,START_Y
-		ld		(_yPos),hl
+        ;
+        ; Starting X and Y player position
+        ;
+        ld      hl,START_X
+        ld      (_xPos),hl
+        ld      hl,START_Y
+        ld      (_yPos),hl
 
-		;
-		; Setup the coin tables
-		;
-		call	_initCoins
+        ;
+        ; Initialize the X/Y speed variables
+        ;
+        xor     a
+        ld      (_xSpeed),a
+        ld      (_ySpeed),a
+        ld      (_jumping),a
+        ld      (_falling),a
+        ;
+        ; Set the current tilemap
+        ;
+        ld      (_tileMapX),a
+        ld      (_tileMapY),a
+        call    _setCurrentTileMap
 
-		;
-		; Setup the scrolling message
-		;
-		ld		l,0
-		ld		h,l
-		call	_scrollInit
+        ;
+        ; Setup the coin tables
+        ;
+        call    _initCoins
 
-		;
-		; Initialize the core to 0
-		;
-		call	_initScore
+        ;
+        ; Setup the scrolling message
+        ;
+        ld      l,0
+        ld      h,l
+        call    _scrollInit
 
-		;
-		; Set the current tilemap
-		;
-		xor		a
-		ld		(_tileMapX),a
-		ld		(_tileMapY),a
-		call	_setCurrentTileMap
+        ;
+        ; Initialize the core to 0
+        ;
+        call    _initScore
 
-		call	_setupScreen
 
-		ld		hl,_spriteBuffer
-		push	hl
-		ld		a,(_xPos)
-		ld		l,a
-		ld		a,(_yPos)
-		ld		h,a
-		push	hl
+        call    _setupScreen
 
-		call	_copyScreen
+        ld      hl,_spriteBuffer
+        push    hl
+        ld      a,(_xPos)
+        ld      l,a
+        ld      a,(_yPos)
+        ld      h,a
+        push    hl
 
-		pop		hl
-		pop		hl
-		ret
+        call    _copyScreen
+
+        pop     hl
+        pop     hl
+        ret     
 
 _gameLoop:
-		pushall
+        pushall 
 		
-		;
-		; Wait for refresh interrupt
-		;
-;		halt
-		ld		a,(ticks)
-		ld		b,a
+        ;
+        ; Wait for refresh interrupt
+        ;
+        ;		halt
+        ld      a,(ticks)
+        ld      b,a
 .wait
-		push	af
-		push	bc
-		call	_updateDirection
-		pop		bc
-		pop		af
-		ld		a,(ticks)
-		cp		b
-		jr		z,wait
+        push    bc                      ; Save 'b'
+        call    _updateDirection
+        pop     bc                      ; Restore 'b'
+        ld      a,(ticks)               ; Get the latest 'ticks' value
+        cp      b                       ; Has it changed?
+        jr      z,wait                  ; If not, keep looping
 
-		ld		l,INK_RED
-		call	_border
+        ;
+        ; Handle the keyboard input from the user
+        ; 'e' should contain the direction bits from
+        ; the call to _updateDirection above.
+        ;
 
-		;
-		; Update the scrolling message
-		;
-		call	_scroll
+        ;
+        ; Update the X speed based on the user input
+        ;
+        bit     LEFT_BIT,e
+        jr      z,checkRight
+        ld      a,LEFT_SPEED
+        jr      dirUpdateDone
+.checkRight
+        bit     RIGHT_BIT,e
+        jr      z,noMovement
+        ld      a,RIGHT_SPEED
+        jr      dirUpdateDone
+.noMovement
+        xor     a
+.dirUpdateDone
+        ld      (_xSpeed),a
 
-		;
-		; Read the keyboard and update the direction flags
-		;
-		call	_updateDirection
+        ;
+        ; Update the jump status
+        ;
+        ld      hl,(jumpFall)           ; Falling and jumping flags
+        ld      a,l                     ; must be zero before
+        or      h                       ; a jump can be started
+        jr      nz,noJump               ; If nz, falling or jumping are non-zero
 
-		;
-		; Flicker any lanterns on the screen
-		;
-		ld		hl,_lanternList
-		call	_lanternFlicker
+        bit     JUMP_BIT,e
+        jr      z,noJump
+        ld      a,JUMP_SPEED
+        ld      (_ySpeed),a
+        ld      a,JUMP_HEIGHT * 2
+        ld      (_jumping),a
+.noJump
 
+		ld		a,(_jumping)
+		or		a
+		jz		_2F
+		ld		e,a						; Save the jump counter
+		cp		JUMP_HEIGHT
+		jr		nz,_1F
+		ld		a,-JUMP_SPEED
+        ld      (_ySpeed),a
+_1F
+		ld		a,e						; Restore jump counter
+		dec		a
+		ld		(_jumping),a
+_2F
+
+
+		ld		a,(_ySpeed)
+		bit		7,a
+		jr		nz,_3F					; 'nz' if bit 7 is set, i.e. ySpeed is negative
 		;
-		; Re-draw the screen at the players current location
+		; ySpeed is positive
 		;
-		ld		hl,_spriteBuffer
-		push	hl
-		ld		a,(_xPos)
+		; if ((currentTileMap[(((yPos + PLAYER_HEIGHT) >> 3) * 64) + (xPos >> 3)] >= 144)
+		;  || (currentTileMap[(((yPos + PLAYER_HEIGHT) >> 3) * 64) + ((xPos + (PLAYER_WIDTH - 1)) >> 3)] >= 144))
+		ld		hl,(_yPos)				; Get the Y pixel offset
+		ld		a,PLAYER_HEIGHT
+		addhl							; 'hl' is now the offset of the pixel row below the player
+		ld		a,l
+		and		0xf8					; Remove the pixel offset within the byte (lower 3 bits)
 		ld		l,a
-		ld		a,(_yPos)
-		ld		h,a
-		push	hl
-		call	_pasteScreen
-		pop		hl
-		pop		hl
+		hlx		8						; Divide by 8 to get byte offset and multiply by 64 (width of tilemap)
+
+		ld		a,(_xPos)				; Get the X pixel offset
+		ld		b,a						; Save pixel offset for later
+		srl		a						; Divide by 8 to get the byte offset
+		srl		a
+		srl		a
+		addhl							; Add X byte offset to tile map Y index
+
+		ld		de,(_currentTileMap)
+		add		hl,de
+
+		ld		a,(hl)					; Get tile ID
+		cp		144
+		jr		nc,landed				; 'nc' if a >= 144
+
+		ld		a,b						; Restore X pixel offset
+		and		0x07					; Check if any of the lower 3 bits are set
+		jr		z,gravity				; If not we are done
+		inc		hl						; Check the tile to the right
+		ld		a,(hl)
+		cp		144
+		jr		c,gravity				; 'c' if a < 144
+.landed
+		;
+		; Reset ySpeed and jumping count and falling flag
+		;
+		xor		a
+		ld		(_ySpeed),a
+		ld		(_jumping),a
+		ld		(_falling),a
+		jp		_3F
+
+.gravity
+		ld		a,(_jumping)
+		or		a
+		jr		nz,_3F
+
+		xor		a
+		ld		(_xSpeed),a
+		inc		a
+		ld		(_ySpeed),a
+		ld		(_falling),a
+_3F
 
 
-		popall
-		ret
+
+
+        ld      l,INK_RED
+        call    _border
+
+        ;
+        ; Update the scrolling message
+        ;
+        call    _scroll
+
+        ;
+        ; Flicker any lanterns on the screen
+        ;
+        ld      hl,_lanternList
+        call    _lanternFlicker
+
+        ;
+        ; Re-draw the screen at the players current location
+        ;
+        ld      hl,_spriteBuffer
+        push    hl
+        ld      a,(_xPos)
+        ld      l,a
+        ld      a,(_yPos)
+        ld      h,a
+        push    hl
+        call    _pasteScreen
+        pop     hl
+        pop     hl
+
+
+        popall  
+        ret     
 
 _setupScreen:
-		pushall
+        pushall 
 
-		ld		l,INK_WHITE | PAPER_BLACK
-		call	_cls
+        ld      l,INK_WHITE | PAPER_BLACK
+        call    _cls
 
-		ld		hl,(_currentTileMap)
-		call	_displayScreen
+        ld      hl,(_currentTileMap)
+        call    _displayScreen
 
-		call	_displayScore
-		call	_scrollReset
+        call    _displayScore
+        call    _scrollReset
 
-		popall
-		ret
+        popall  
+        ret     
 
 _setCurrentTileMap:
-		ld		a,(_tileMapY)
-		ld		hl, TILEMAP_WIDTH * TILEMAP_HEIGHT
-		call	_mul_hla
+        ld      a,(_tileMapY)
+        ld      hl, TILEMAP_WIDTH * TILEMAP_HEIGHT
+        call    _mul_hla
 
-		ex		de,hl
+        ex      de,hl
 
-		ld		a,(_tileMapX)
-		ld		hl,SCREEN_WIDTH
-		call	_mul_hla
+        ld      a,(_tileMapX)
+        ld      hl,SCREEN_WIDTH
+        call    _mul_hla
 
-		add		hl,de
+        add     hl,de
 
-		ld		de,_levels
-		add		hl,de
+        ld      de,_levels
+        add     hl,de
 
-		ld		(_currentTileMap),hl
+        ld      (_currentTileMap),hl
 
-		ret
+        ret     
 
-		;
-		; On input:
-		;		hl - value
-		;		a  - Multiplier
-		;
-		; Output:
-		;		hl	- Product of hl and a
-		;		All other registers unchanged
-		;
+        ;
+        ; On input:
+        ;		hl - value
+        ;		a  - Multiplier
+        ;
+        ; Output:
+        ;		hl	- Product of hl and a
+        ;		All other registers unchanged
+        ;
 _mul_hla:
-		push	bc
-		push	de
+        push    bc
+        push    de
 
-		ex		de,hl					; Save hl in de
-		ld		hl,0
-		or		a						; If multiplying by 0, result is zero
-		jr		z,mulDone
+        ex      de,hl                   ; Save hl in de
+        ld      hl,0
+        or      a                       ; If multiplying by 0, result is zero
+        jr      z,mulDone
 
-		ld		b,8
+        ld      b,8
 .nextMul
-		add		hl,hl
-		rlca
-		jr		nc,noAdd
-		add		hl,de
+        add     hl,hl
+        rlca    
+        jr      nc,noAdd
+        add     hl,de
 .noAdd
-		djnz	nextMul
+        djnz    nextMul
 
 .mulDone
-		pop		de
-		pop		bc
-		ret
+        pop     de
+        pop     bc
+        ret     
 
-
-		section	bss_user
+        section bss_user
 _currentTileMap:
-		dw		0
+        dw		0
 _tileMapX:
-		db		0
+        db      0
 _tileMapY:
-		db		0
-_direction:
-		db		0
+        db      0
 _xPos:
-		dw		0
+        dw      0
 _yPos:
-		dw		0
+        dw      0
+_xSpeed:
+        db      0
+_ySpeed:
+        db      0
+.jumpFall                               ; Access jumping and falling as a single word
+_jumping:
+        db      0
+_falling:
+        db      0
 _spriteBuffer:
 		ds		16
