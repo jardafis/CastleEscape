@@ -102,8 +102,7 @@ _gameMain:
         ;
         ; Setup the scrolling message
         ;
-        ld      l,0
-        ld      h,l
+        ld      hl,0
         call    _scrollInit
 
         ;
@@ -146,6 +145,20 @@ _gameLoop:
         jr      z,wait                  ; If not, keep looping
 
         ;
+        ; Re-draw the screen at the players current location
+        ;
+        ld      hl,_spriteBuffer
+        push    hl
+        ld      a,(_xPos)
+        ld      l,a
+        ld      a,(_yPos)
+        ld      h,a
+        push    hl
+        call    _pasteScreen
+        pop     hl
+        pop     hl
+
+        ;
         ; Handle the keyboard input from the user
         ; 'e' should contain the direction bits from
         ; the call to _updateDirection above.
@@ -174,15 +187,15 @@ _gameLoop:
         ld      hl,(jumpFall)           ; Falling and jumping flags
         ld      a,l                     ; must be zero before
         or      h                       ; a jump can be started
-        jr      nz,noJump               ; If nz, falling or jumping are non-zero
+        jr      nz,cantJump              ; If nz, falling or jumping are non-zero
 
         bit     JUMP_BIT,e
-        jr      z,noJump
+        jr      z,cantJump
         ld      a,JUMP_SPEED
         ld      (_ySpeed),a
         ld      a,JUMP_HEIGHT * 2
         ld      (_jumping),a
-.noJump
+.cantJump
 
 		ld		a,(_jumping)
 		or		a
@@ -201,25 +214,45 @@ _2F
 
 		ld		a,(_ySpeed)
 		bit		7,a
-		jr		nz,_3F					; 'nz' if bit 7 is set, i.e. ySpeed is negative
+		jr		nz,checkTop					; 'nz' if bit 7 is set, i.e. ySpeed is negative
 		;
-		; ySpeed is positive
+		; ySpeed is positive player is moving down
 		;
+
+		;
+		; Check if the new Y position puts the player off the bottom
+		; of the screen and change the level accordingly.
+		;
+		ld		hl,(_yPos)				; Get the Y pixel offset
+;		ld		a,(_ySpeed)				; 'a' still holds _ySpeed from above
+		add		l
+		cp		MAX_Y_POS - PLAYER_HEIGHT
+		jr		c,_4F					; a < (MAX_Y_POS - PLAYER_HEIGHT)
+		; else a >= (MAX_Y_POS - PLAYER_HEIGHT)
+		ld		hl,_tileMapY
+		inc		(hl)
+		ld		a,24
+		ld		(_yPos),a
+		call	_setCurrentTileMap
+		call	_setupScreen
+
+_4F
 		; if ((currentTileMap[(((yPos + PLAYER_HEIGHT) >> 3) * 64) + (xPos >> 3)] >= 144)
 		;  || (currentTileMap[(((yPos + PLAYER_HEIGHT) >> 3) * 64) + ((xPos + (PLAYER_WIDTH - 1)) >> 3)] >= 144))
-		ld		hl,(_yPos)				; Get the Y pixel offset
+;		ld		hl,(_yPos)				; 'hl' still holds _yPos from above
 		ld		a,PLAYER_HEIGHT
 		addhl							; 'hl' is now the offset of the pixel row below the player
 		ld		a,l
-		and		0xf8					; Remove the pixel offset within the byte (lower 3 bits)
+		and		%11111000				; Remove the pixel offset within the byte (lower 3 bits)
 		ld		l,a
 		hlx		8						; Divide by 8 to get byte offset and multiply by 64 (width of tilemap)
 
 		ld		a,(_xPos)				; Get the X pixel offset
 		ld		b,a						; Save pixel offset for later
-		srl		a						; Divide by 8 to get the byte offset
-		srl		a
-		srl		a
+		rrca							; Divide by 8 to get the byte offset
+		rrca							; Faster to do rrca followed by AND rather than srl
+		rrca
+		and		%00011111
 		addhl							; Add X byte offset to tile map Y index
 
 		ld		de,(_currentTileMap)
@@ -230,8 +263,8 @@ _2F
 		jr		nc,landed				; 'nc' if a >= 144
 
 		ld		a,b						; Restore X pixel offset
-		and		0x07					; Check if any of the lower 3 bits are set
-		jr		z,gravity				; If not we are done
+		and		%00000111				; Check if any of the lower 3 bits are set
+		jr		z,gravity				; if not we are done
 		inc		hl						; Check the tile to the right
 		ld		a,(hl)
 		cp		144
@@ -244,21 +277,20 @@ _2F
 		ld		(_ySpeed),a
 		ld		(_jumping),a
 		ld		(_falling),a
-		jp		_3F
+		jp		checkXCol
 
 .gravity
 		ld		a,(_jumping)
 		or		a
-		jr		nz,_3F
+		jr		nz,checkXCol
 
 		xor		a
 		ld		(_xSpeed),a
 		inc		a
 		ld		(_ySpeed),a
 		ld		(_falling),a
-_3F
 
-
+.checkXCol
 
 
         ld      l,INK_RED
@@ -275,23 +307,26 @@ _3F
         ld      hl,_lanternList
         call    _lanternFlicker
 
-        ;
-        ; Re-draw the screen at the players current location
-        ;
-        ld      hl,_spriteBuffer
-        push    hl
-        ld      a,(_xPos)
-        ld      l,a
-        ld      a,(_yPos)
-        ld      h,a
-        push    hl
-        call    _pasteScreen
-        pop     hl
-        pop     hl
-
-
         popall  
         ret     
+
+.checkTop
+		;
+		; ySpeed is negative player is moving up
+		;
+		ld		hl,(_yPos)				; Get the Y pixel offset
+;		ld		a,(_ySpeed)				; 'a' still holds _ySpeed from above
+		add		l
+		cp		24
+		jr		nc,checkXCol			; a >= 24
+		; else a < 24
+		ld		hl,_tileMapY
+		dec		(hl)
+		ld		a,MAX_Y_POS - PLAYER_HEIGHT
+		ld		(_yPos),a
+		call	_setCurrentTileMap
+		call	_setupScreen
+		jp		checkXCol
 
 _setupScreen:
         pushall 

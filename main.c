@@ -126,7 +126,7 @@ int main()
                 xSpeed = 0;
             }
         }
-#endif
+
         if(ySpeed < 0)      // Going up
         {
             // Check if new position requires a screen change
@@ -160,6 +160,7 @@ int main()
                 }
             }
         }
+#endif
 
         if(xSpeed < 0)      // Going left
         {

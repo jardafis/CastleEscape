@@ -7,7 +7,6 @@
         public  _updateDirection
         public  _kempstonScan
         include "defs.asm"
-        ;		define	KEMPSTON
 
 _kempstonScan:
         ex      af,af'
@@ -58,6 +57,11 @@ _keyboardScan:
         pop     AF
         ret     
 
+		;
+		; Inputs: None
+		; Outputs:
+		;		e	-	Direction bits
+
 _updateDirection:
         ;        push    af
         ;        push    bc
@@ -84,19 +88,13 @@ _updateDirection:
         jr      nz,nextScanCode         ; Loop until we have checked all scan codes
 
         ;        pop     hl                      ; Restore HL
-	ifdef KEMPSTON
-        in      a,(IO_KEMPSTON)         ; Read the kempston port
-        or      e                       ; and OR with the keyboard input.
-        ld      l,a                     ; Override L
-	else
         ;        ld      l,e
-	endif
         ;        pop     de
         ;        pop     bc
         ;        pop     af
         ret     
 
-        section bss_user
+        section data_user
 
         ; Port upper 8 bits, key mask, direction bit
 .scanCodes

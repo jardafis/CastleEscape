@@ -29,6 +29,8 @@
 
 		defc	PLAYER_WIDTH			= 8
 		defc	PLAYER_HEIGHT			= 8
+		defc	MAX_X_POS           	= 256
+		defc	MAX_Y_POS           	= 192
 
         ;
         ; Screen addresses
