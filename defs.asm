@@ -26,11 +26,15 @@
         defc    LEFT_SPEED				= -1
         defc    RIGHT_SPEED				= 1
         defc    JUMP_SPEED				= -1
+		defc	DOWN_SPEED				= 1
+		defc	UP_SPEED				= -1
 
-		defc	PLAYER_WIDTH			= 8
-		defc	PLAYER_HEIGHT			= 8
+		defc	PLAYER_WIDTH			= 16
+		defc	PLAYER_HEIGHT			= 16
 		defc	MAX_X_POS           	= 256
 		defc	MAX_Y_POS           	= 192
+
+        defc    ID_COIN					= 74
 
         ;
         ; Screen addresses

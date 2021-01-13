@@ -130,21 +130,23 @@ _pasteScreen:
         ;	ix + 0 = sprite x position in pixels
         ;	ix + 1 = sprite y position in pixels
 _displaySprite:
-        entry   
+        push    af
+        push    bc
+        push    de
+        push    hl
 
         di      
         ld      (displaySpriteSP),sp
 
         ; Calculate the offset into the screen table
+		ld		c,h						; Save xPos
         ld      h,0
-        ld      l,(ix+Y_OFFSET)         ; get the y position
         add     hl,hl                   ; multiply by 2
-        ld      sp,_screenTab
-        add     hl,sp
-        ld      sp,hl
+        ld      de,_screenTab
+        add     hl,de
+		ld		(screenStore),hl
 
-        ld      a,(ix+X_OFFSET)         ; Get the X offset
-        ld      c,a                     ; Store it
+		ld		a,c
         and     0x07                    ; Get the sprite shift index
         ld		l,a
         ld		h,0
@@ -155,7 +157,7 @@ _displaySprite:
 		add		hl,de					; Add 32x
         ld      de,(playerSprite)
         add     hl,de
-        ex      de,hl
+        ld		(spriteStore),hl
 
         ; c is the pixel X offset
         ; Divide by 8 to get byte address
@@ -164,46 +166,48 @@ _displaySprite:
         srl     c                       ; /8
         ld      b,PLAYER_HEIGHT         ; Sprite height
 .loop2
-        pop     hl                      ; get screen row adress
+.screenStore = $ + 1
+		ld		sp,0x0000				; Get the screen table pointer
+		pop		hl						; Pop screen row address
+		ld		(screenStore),sp		; Save stack pointing to next row
         ld      a,l
-        add     a,c                     ; add x offset
+        add     c                       ; add x offset
         ld      l,a
+.spriteStore = $ + 1
+		ld		sp,0x0000				; Get the sprite pointer
 
-        ld      a,(de)                  ; Get mask data
-        and     (hl)                    ; Logical AND screen data with mask
-        ld      (hl),a                  ; Store result back to screen
-        inc     de                      ; Next byte of sprite data
-        ld      a,(de)                  ; Get sprite data
-        or      (hl)                    ; Logical OR screen data with sprite data
-        ld      (hl),a                  ; Store result back to the screen
-        inc     de                      ; Next byte of sprite data
-        inc     hl                      ; Next screen X address
+		pop		de						; Pop sprite data
+		ld		a,(hl)					; Read the screen contents
+		and		e						; and with mask
+		or		d						; or with sprite data
+		ld		(hl),a					; save it back to the screen
+		inc		l						; Next screen position to the right
 
-        ld      a,(de)                  ; Get mask data
-        and     (hl)                    ; Logical AND screen data with mask
-        ld      (hl),a                  ; Store result back to screen
-        inc     de                      ; Next byte of sprite data
-        ld      a,(de)                  ; Get sprite data
-        or      (hl)                    ; Logical OR screen data with sprite data
-        ld      (hl),a                  ; Store result back to the screen
-        inc     de                      ; Next byte of sprite data
-        inc     hl                      ; Next screen X address
+		pop		de
+		ld		a,(hl)
+		and		e
+		or		d
+		ld		(hl),a
+		inc		l
 
-        ld      a,(de)                  ; Get mask data
-        and     (hl)                    ; Logical AND screen data with mask
-        ld      (hl),a                  ; Store result back to screen
-        inc     de                      ; Next byte of sprite data
-        ld      a,(de)                  ; Get sprite data
-        or      (hl)                    ; Logical OR screen data with sprite data
-        ld      (hl),a                  ; Store result back to the screen
-        inc     de                      ; Next byte of sprite data
+		pop		de
+		ld		a,(hl)
+		and		e
+		or		d
+		ld		(hl),a
+;		inc		l						; No need to inc l we will pop a new screen address at top of loop
+
+		ld		(spriteStore),sp
 
         djnz    loop2
 .displaySpriteSP = $+1
         ld      sp,0x0000
         ei      
 
-        exit    
+        pop     hl
+        pop     de
+        pop     bc
+        pop     af
         ret     
 
 		section	bss_user

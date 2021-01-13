@@ -16,7 +16,7 @@ CFLAGS=+$(TARGET) $(C_OPT_FLAGS) -compiler=sdcc -I$(Z88DK)/include/_DEVELOPMENT/
 LDFLAGS=+$(TARGET) -m -clib=sdcc_iy -pragma-include:$(PRAGMA_FILE) -Cz--clearaddr -Cz32767
 ASFLAGS=-I$(Z88DK)/lib
 
-OBJECTS =  $(patsubst %.c,%.o,$(wildcard *.c)) $(patsubst %.asm,%.o,$(wildcard *.asm)) tiles/tiles.o
+OBJECTS =  $(patsubst %.c,%.o,$(wildcard *.c)) $(patsubst %.asm,%.o,$(wildcard *.asm)) tiles/tiles.o sprite/LeftSprite.o sprite/RightSprite.o
 
 all: $(EXEC)
 	@grep __code_user_size mixed.map | sed -e "s/;.*//"
