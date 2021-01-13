@@ -1,10 +1,13 @@
         extern  _screenTab
+        extern	_LeftSprite0
+        extern	_RightSprite0
 
         section code_user
 
         public  _copyScreen
         public  _pasteScreen
         public  _displaySprite
+		public	playerSprite
 
         include "defs.asm"
         ; After entry:
@@ -36,17 +39,21 @@ _copyScreen:
         ld      d,(ix+BUFFER_HI)
 
 
-        ld      c,(ix+X_OFFSET)         ; Get the X offset
-        srl     c                       ; divide by 8 to get byte address
-        srl     c
-        srl     c
-        ld      b,8
+        ld      a,(ix+X_OFFSET)         ; Get the X offset
+        rrca
+        rrca
+        rrca
+        and		%00011111
+        ld		c,a
+        ld      b,PLAYER_HEIGHT
 .copyloop
         pop     hl                      ; get screen row source adress
         ld      a,l
         add     c                       ; add x offset
         ld      l,a
 
+        ldi                             ; Optimization to save 4 cycles
+        inc     bc                      ; The ldi will decrement bc so increment it here
         ldi                             ; Optimization to save 4 cycles
         inc     bc                      ; The ldi will decrement bc so increment it here
 
@@ -62,7 +69,7 @@ _copyScreen:
         ei      
 
         exit    
-        ret     
+        ret
 
         ; After entry:
         ;	ix + 0 = sprite x position in pixels
@@ -87,17 +94,21 @@ _pasteScreen:
         ld      l,(ix+BUFFER_LO)
         ld      h,(ix+BUFFER_HI)
 
-        ld      b,8
-        ld      c,(ix+X_OFFSET)         ; Get the X offset
-        srl     c                       ; divide by 8 to get byte address
-        srl     c
-        srl     c
+        ld      b,PLAYER_HEIGHT
+        ld      a,(ix+X_OFFSET)         ; Get the X offset
+        rrca	                        ; divide by 8 to get byte address
+        rrca
+        rrca
+        and		%00011111
+        ld		c,a
 .pasteloop
         pop     de                      ; get screen row destination adress
         ld      a,e
         add     c                       ; add x offset
         ld      e,a
 
+        ldi                             ; Optimization to save 4 cycles
+        inc     bc                      ; The ldi will decrement bc so increment it here
         ldi                             ; Optimization to save 4 cycles
         inc     bc                      ; The ldi will decrement bc so increment it here
 
@@ -135,15 +146,14 @@ _displaySprite:
         ld      a,(ix+X_OFFSET)         ; Get the X offset
         ld      c,a                     ; Store it
         and     0x07                    ; Get the sprite shift index
-        ; Multiply by 32
-        add     a                       ; x2
-        add     a                       ; x4
-        add     a                       ; x8
-        add     a                       ; x16
-        add     a                       ; x32
-        ld      h,0
-        ld      l,a
-        ld      de,spriteShift0
+        ld		l,a
+        ld		h,0
+        ; Multiple by 96
+		hlx		32
+		ld		de,hl					; Save 32x
+		hlx		2						; 64x
+		add		hl,de					; Add 32x
+        ld      de,(playerSprite)
         add     hl,de
         ex      de,hl
 
@@ -152,7 +162,7 @@ _displaySprite:
         srl     c                       ; /2
         srl     c                       ; /4
         srl     c                       ; /8
-        ld      b,8                     ; Sprite height
+        ld      b,PLAYER_HEIGHT         ; Sprite height
 .loop2
         pop     hl                      ; get screen row adress
         ld      a,l
@@ -167,7 +177,16 @@ _displaySprite:
         or      (hl)                    ; Logical OR screen data with sprite data
         ld      (hl),a                  ; Store result back to the screen
         inc     de                      ; Next byte of sprite data
+        inc     hl                      ; Next screen X address
 
+        ld      a,(de)                  ; Get mask data
+        and     (hl)                    ; Logical AND screen data with mask
+        ld      (hl),a                  ; Store result back to screen
+        inc     de                      ; Next byte of sprite data
+        ld      a,(de)                  ; Get sprite data
+        or      (hl)                    ; Logical OR screen data with sprite data
+        ld      (hl),a                  ; Store result back to the screen
+        inc     de                      ; Next byte of sprite data
         inc     hl                      ; Next screen X address
 
         ld      a,(de)                  ; Get mask data
@@ -187,77 +206,6 @@ _displaySprite:
         exit    
         ret     
 
-        section rodata_user
-        ; 	  mask,      data,     mask,     data
-.spriteShift0
-        db      11000011b, 00000000b,11111111b,00000000b
-        db      10000001b, 00111100b,11111111b,00000000b
-        db      00000000b, 01111110b,11111111b,00000000b
-        db      00000000b, 01100110b,11111111b,00000000b
-        db      00000000b, 01100110b,11111111b,00000000b
-        db      00000000b, 01111110b,11111111b,00000000b
-        db      10000001b, 00111100b,11111111b,00000000b
-        db      11000011b, 00000000b,11111111b,00000000b
-.spriteShift1
-        db      11100001b,00000000b,11111111b,00000000b
-        db      11000000b,00011110b,11111111b,00000000b
-        db      10000000b,00111111b,01111111b,00000000b
-        db      10000000b,00110011b,01111111b,00000000b
-        db      10000000b,00110011b,01111111b,00000000b
-        db      10000000b,00111111b,01111111b,00000000b
-        db      11000000b,00011110b,11111111b,00000000b
-        db      11100001b,00000000b,11111111b,00000000b
-.spriteShift2
-        db      11110000b,00000000b,11111111b,00000000b
-        db      11100000b,00001111b,01111111b,00000000b
-        db      11000000b,00011111b,00111111b,10000000b
-        db      11000000b,00011001b,00111111b,10000000b
-        db      11000000b,00011001b,00111111b,10000000b
-        db      11000000b,00011111b,00111111b,10000000b
-        db      11100000b,00001111b,01111111b,00000000b
-        db      11110000b,00000000b,11111111b,00000000b
-.spriteShift3
-        db      11111000b,00000000b,01111111b,00000000b
-        db      11110000b,00000111b,00111111b,10000000b
-        db      11100000b,00001111b,00011111b,11000000b
-        db      11100000b,00001100b,00011111b,11000000b
-        db      11100000b,00001100b,00011111b,11000000b
-        db      11100000b,00001111b,00011111b,11000000b
-        db      11110000b,00000111b,00111111b,10000000b
-        db      11111000b,00000000b,01111111b,00000000b
-.spriteShift4
-        db      11111100b,00000000b,00111111b,00000000b
-        db      11111000b,00000011b,00011111b,11000000b
-        db      11110000b,00000111b,00001111b,11100000b
-        db      11110000b,00000110b,00001111b,01100000b
-        db      11110000b,00000110b,00001111b,01100000b
-        db      11110000b,00000111b,00001111b,11100000b
-        db      11111000b,00000011b,00011111b,11000000b
-        db      11111100b,00000000b,00111111b,00000000b
-.spriteShift5
-        db      11111110b,00000000b,00011111b,00000000b
-        db      11111100b,00000001b,00001111b,11100000b
-        db      11111000b,00000011b,00000111b,11110000b
-        db      11111000b,00000011b,00000111b,00110000b
-        db      11111000b,00000011b,00000111b,00110000b
-        db      11111000b,00000011b,00000111b,11110000b
-        db      11111100b,00000001b,00001111b,11100000b
-        db      11111110b,00000000b,00011111b,00000000b
-.spriteShift6
-        db      11111111b,00000000b,00001111b,00000000b
-        db      11111110b,00000000b,00000111b,11110000b
-        db      11111100b,00000001b,00000011b,11111000b
-        db      11111100b,00000001b,00000011b,10011000b
-        db      11111100b,00000001b,00000011b,10011000b
-        db      11111100b,00000001b,00000011b,11111000b
-        db      11111110b,00000000b,00000111b,11110000b
-        db      11111111b,00000000b,00001111b,00000000b
-.spriteShift7
-        db      11111111b,00000000b,10000111b,00000000b
-        db      11111111b,00000000b,00000011b,01111000b
-        db      11111110b,00000000b,00000001b,11111100b
-        db      11111110b,00000000b,00000001b,11001100b
-        db      11111110b,00000000b,00000001b,11001100b
-        db      11111110b,00000000b,00000001b,11111100b
-        db      11111111b,00000000b,00000011b,01111000b
-        db      11111111b,00000000b,10000111b,00000000b
+		section	bss_user
+.playerSprite
+		dw		0
