@@ -23,8 +23,7 @@ extern unsigned char
 keyboardScan(void);
 extern void
 copyScreen(unsigned char xPos, unsigned char yPos, unsigned char *spriteBuffer);
-extern void
-displaySprite(unsigned char xPos, unsigned char yPos);
+extern void displaySprite(unsigned int XY) __z88dk_fastcall;
 
 extern void border(unsigned char color)
 __z88dk_fastcall;
@@ -161,7 +160,7 @@ int main()
             }
         }
 #endif
-
+/*
         if(xSpeed < 0)      // Going left
         {
             if ((currentTileMap[((yPos >> 3) * TILE_MAP_WIDTH) + ((xPos - 1) >> 3)] >= 144)
@@ -208,8 +207,8 @@ int main()
             }
         }
 
-
-        xPos += xSpeed;
+*/
+//        xPos += xSpeed;
         yPos += ySpeed;
 
         border(INK_YELLOW);
@@ -224,7 +223,7 @@ int main()
         copyScreen((unsigned char) xPos, (unsigned char) yPos, spriteBuffer);
 
         border(INK_GREEN);
-        displaySprite(xPos, yPos);
+        displaySprite((xPos << 8) | yPos);
 
         border(INK_BLACK);
         if (key == 'S')

@@ -10,7 +10,6 @@
 
         defc    MAX_LEVEL_X		= 0x02
         defc    MAX_LEVEL_Y		= 0x02
-        defc    ID_COIN			= 74
         section code_user
         ;
         ; Initialize the coin tables. This routine is called once

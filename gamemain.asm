@@ -10,11 +10,15 @@
         extern  _displayScreen
         extern  _displayScore
         extern  _updateDirection
+        extern	_addScore
         extern  _lanternFlicker
         extern  _lanternList
         extern  _copyScreen
         extern  _pasteScreen
         extern  ticks
+		extern	playerSprite
+        extern	_LeftSprite0
+        extern	_RightSprite0
         public  _gameMain
         public  _currentTileMap
         public  _setCurrentTileMap
@@ -71,6 +75,12 @@ _gameMain:
         ret     
 
 .newGame
+		;
+		; Set the initial player sprite
+		;
+        ld		hl,_RightSprite0
+        ld		(playerSprite),hl
+
         ;
         ; Starting X and Y player position
         ;
@@ -170,17 +180,36 @@ _gameLoop:
         bit     LEFT_BIT,e
         jr      z,checkRight
         ld      a,LEFT_SPEED
-        jr      dirUpdateDone
+        ld		hl,_LeftSprite0
+        ld		(playerSprite),hl
+        jr      updateXSpeedDone
 .checkRight
         bit     RIGHT_BIT,e
-        jr      z,noMovement
+        jr      z,noXMovement
         ld      a,RIGHT_SPEED
-        jr      dirUpdateDone
-.noMovement
+        ld		hl,_RightSprite0
+        ld		(playerSprite),hl
+        jr      updateXSpeedDone
+.noXMovement
         xor     a
-.dirUpdateDone
+.updateXSpeedDone
         ld      (_xSpeed),a
 
+	IF 0 ; Enable for testing, allows movement
+        bit     DOWN_BIT,e
+        jr      z,checkUp
+        ld      a,DOWN_SPEED
+        jr      updateYSpeedDone
+.checkUp
+        bit     UP_BIT,e
+        jr      z,noYMovement
+        ld      a,UP_SPEED
+        jr      updateYSpeedDone
+.noYMovement
+        xor     a
+.updateYSpeedDone
+        ld      (_ySpeed),a
+	ENDIF
         ;
         ; Update the jump status
         ;
@@ -211,21 +240,23 @@ _1F
 		ld		(_jumping),a
 _2F
 
+;		jp		checkX
 
+	IF 1
 		ld		a,(_ySpeed)
-		bit		7,a
-		jr		nz,checkTop					; 'nz' if bit 7 is set, i.e. ySpeed is negative
+		or		a
+		jp		m,checkX					; If 'a' is negative (m) player is going up
 		;
 		; ySpeed is positive player is moving down
 		;
-
+	IF 0
 		;
 		; Check if the new Y position puts the player off the bottom
 		; of the screen and change the level accordingly.
 		;
 		ld		hl,(_yPos)				; Get the Y pixel offset
 ;		ld		a,(_ySpeed)				; 'a' still holds _ySpeed from above
-		add		l
+		add		l						; add Y pixel offset
 		cp		MAX_Y_POS - PLAYER_HEIGHT
 		jr		c,_4F					; a < (MAX_Y_POS - PLAYER_HEIGHT)
 		; else a >= (MAX_Y_POS - PLAYER_HEIGHT)
@@ -235,11 +266,11 @@ _2F
 		ld		(_yPos),a
 		call	_setCurrentTileMap
 		call	_setupScreen
-
+	ENDIF
+		ld		hl,(_yPos)
 _4F
 		; if ((currentTileMap[(((yPos + PLAYER_HEIGHT) >> 3) * 64) + (xPos >> 3)] >= 144)
 		;  || (currentTileMap[(((yPos + PLAYER_HEIGHT) >> 3) * 64) + ((xPos + (PLAYER_WIDTH - 1)) >> 3)] >= 144))
-;		ld		hl,(_yPos)				; 'hl' still holds _yPos from above
 		ld		a,PLAYER_HEIGHT
 		addhl							; 'hl' is now the offset of the pixel row below the player
 		ld		a,l
@@ -262,6 +293,11 @@ _4F
 		cp		144
 		jr		nc,landed				; 'nc' if a >= 144
 
+		inc		hl
+		ld		a,(hl)					; Get tile ID
+		cp		144
+		jr		nc,landed				; 'nc' if a >= 144
+
 		ld		a,b						; Restore X pixel offset
 		and		%00000111				; Check if any of the lower 3 bits are set
 		jr		z,gravity				; if not we are done
@@ -277,12 +313,12 @@ _4F
 		ld		(_ySpeed),a
 		ld		(_jumping),a
 		ld		(_falling),a
-		jp		checkXCol
+		jp		checkX
 
 .gravity
 		ld		a,(_jumping)
 		or		a
-		jr		nz,checkXCol
+		jr		nz,checkX
 
 		xor		a
 		ld		(_xSpeed),a
@@ -290,8 +326,13 @@ _4F
 		ld		(_ySpeed),a
 		ld		(_falling),a
 
-.checkXCol
+.checkX
 
+	ENDIF
+
+		ld		a,(_xSpeed)				; If xSpeed != 0 player is moving
+		or		a						; left or right.
+		call	nz,checkXCol			; Check for a collision.
 
         ld      l,INK_RED
         call    _border
@@ -310,6 +351,7 @@ _4F
         popall  
         ret     
 
+	IF 1
 .checkTop
 		;
 		; ySpeed is negative player is moving up
@@ -318,7 +360,7 @@ _4F
 ;		ld		a,(_ySpeed)				; 'a' still holds _ySpeed from above
 		add		l
 		cp		24
-		jr		nc,checkXCol			; a >= 24
+		jr		nc,checkX				; a >= 24
 		; else a < 24
 		ld		hl,_tileMapY
 		dec		(hl)
@@ -326,7 +368,79 @@ _4F
 		ld		(_yPos),a
 		call	_setCurrentTileMap
 		call	_setupScreen
-		jp		checkXCol
+		jp		checkX
+	ENDIF
+
+
+.checkXCol
+		ld		b,a						; Save xSpeed
+		ld		hl,(_yPos)				; Get the yPos and add the ySpeed
+		ld		a,(_ySpeed)				; ySpeed may be positive or negative
+		or		a
+		jp		p,pos1					; If ySpeed is positive
+		dec		h						; ySpeed is negative, subtract 1 from 'h'
+.pos1
+		addhl							; 'hl' holds yPos + ySpeed
+		ld		c,l						; save it in 'c'
+
+		ld		a,l
+		and		%11111000				; Remove the pixel offset within the byte (lower 3 bits)
+		ld		l,a
+		hlx		8						; Divide by 8 and multuply by 64 -> multiply by 8
+
+		ld		a,b						; Restore xSpeed
+		or		a						; Update flags
+
+		ld		a,(_xPos)				; Get the X pixel offset
+		jp		m,checkLeftCol			; If xSpeed was negative going left, check left side
+		add		PLAYER_WIDTH-1			; else, going right, check right size
+.checkLeftCol
+		add		b
+		rrca							; Divide by 8 to get the byte offset
+		rrca							; Faster to do rrca followed by AND rather than srl
+		rrca
+		and		%00011111
+		addhl							; Add X byte offset to tile map Y index
+
+		ld		de,(_currentTileMap)
+		add		hl,de
+		ld		a,(hl)
+		cp		143
+		ret		nc						; 'nc' if a >= 144
+
+		; Check the bottom half of the sprite
+		ld		de,TILEMAP_WIDTH
+		add		hl,de
+		ld		a,(hl)
+		cp		143
+		ret		nc						; 'nc' if a >= 144
+
+		ld		a,c						; Restore yPos + ySpeed
+		and		%00000111				; If the lower 3 bits are zero player has not shifted into
+		jr		z,checkXDone			; the next row down, return.
+		add		hl,de					; Next row down
+
+		ld		a,(hl)
+		cp		143
+		ret		nc						; 'nc' if a >= 144
+
+.checkXDone
+		ld		a,(_xPos)				; Get the X pixel offset
+		add		b
+		ld		(_xPos),a
+
+		ret
+
+.stopX
+		xor		a
+		ld		(_xSpeed),a
+		ret
+
+.getCoin
+		ld		l,0x05
+		call	_addScore
+		call	_displayScore
+		ret
 
 _setupScreen:
         pushall 
@@ -416,4 +530,4 @@ _jumping:
 _falling:
         db      0
 _spriteBuffer:
-		ds		16
+		ds		48
