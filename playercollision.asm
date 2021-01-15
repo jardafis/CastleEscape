@@ -41,19 +41,30 @@ checkXCol:
 		ld		l,a
 		hlx		8						; Divide by 8 and multuply by 64 -> multiply by 8
 
-		ld		a,b						; Restore xSpeed
+		ld		de,(_xPos)				; Get the X pixel offset
+		ld		a,b						; speed may be positive or negative
 		or		a						; Update flags
+		jp		p,pos2					; If positive
+		dec		d						; else negative, subtract 1 from hi-order byte
+.pos2
+		addde							; Add 'a'
 
-		ld		a,(_xPos)				; Get the X pixel offset
-		jp		m,checkLeftCol			; If xSpeed was negative going left, check left side
-		add		PLAYER_WIDTH-1			; else, going right, check right side
-.checkLeftCol
-		add		b
-		rrca							; Divide by 8 to get the byte offset
-		rrca							; Faster to do rrca followed by AND rather than srl
-		rrca
-		and		%00011111
-		addhl							; Add X byte offset to tile map Y index
+		ld		a,b						; Get speed again
+		or		a						; Update flags
+		jp		m,neg1					; If negative
+		ld		a,PLAYER_WIDTH-1		; else add player width
+		addde
+.neg1
+		; Divide by 8 to get byte offset
+		ld		a,e
+		sra		d						; SRA leaves the sign bit (bit-7) intact. Good for signed shifts.
+		rra
+		sra		d
+		rra
+		sra		d
+		rra
+		ld		e,a
+		add		hl,de					; Add X byte offset to tile map Y index
 
 		ld		de,(_currentTileMap)
 		add		hl,de
@@ -79,11 +90,11 @@ checkXCol:
 
 .checkXDone
 		ld		a,(_xPos)				; Get the X pixel offset
-		add		b
-		cp		0x00
-		jr		z,previousXLevel
-		cp		MAX_X_POS - PLAYER_WIDTH - 1
-		jr		nc,nextXLevel			; 'nc' if a >= MAX_X_POS - PLAYER_WIDTH - 1
+		add		b						; Add speed
+		cp		0xff					; If new xPos is negative
+		jr		z,previousXLevel		; display previous level.
+		cp		MAX_X_POS - PLAYER_WIDTH + 1
+		jr		nc,nextXLevel			; 'nc' if a > MAX_X_POS - PLAYER_WIDTH
 		ld		(_xPos),a
 		ret
 
@@ -93,7 +104,7 @@ checkXCol:
 		ret		z
 		dec		a
 		ld		(_tileMapX),a
-		ld		a,MAX_X_POS - PLAYER_WIDTH - 1
+		ld		a,MAX_X_POS - PLAYER_WIDTH
 		jr		changeXLevel
 .nextXLevel
 		ld		a,(_tileMapX)
@@ -101,7 +112,7 @@ checkXCol:
 		ret		z
 		inc		a
 		ld		(_tileMapX),a
-		ld		a,1
+		xor		a
 .changeXLevel
 		ld		(_xPos),a
 		call	setupScreen
