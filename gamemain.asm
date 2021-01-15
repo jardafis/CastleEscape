@@ -15,24 +15,29 @@
         extern  _lanternList
         extern  _copyScreen
         extern  _pasteScreen
+		extern	_displaySprite
         extern  ticks
 		extern	playerSprite
         extern	_LeftSprite0
         extern	_RightSprite0
+		extern	checkXCol
+		extern	checkYCol
+		extern	_coinTables
+		extern	_animateCoins
         public  _gameMain
         public  _currentTileMap
         public  _setCurrentTileMap
         public  _mul_hla
         public  _tileMapX
         public  _tileMapY
-        public  _setupScreen
+        public  setupScreen
         public  _gameLoop
         public  _xPos
         public  _yPos
         public  _xSpeed
         public  _ySpeed
-        public  _jumping
         public  _spriteBuffer
+        public  _jumping
         public  _falling
 
         include "defs.asm"
@@ -102,7 +107,12 @@ _gameMain:
         ;
         ld      (_tileMapX),a
         ld      (_tileMapY),a
-        call    _setCurrentTileMap
+
+		;
+		; Initial coin rotate counter
+		;
+		ld		a,6
+		ld		(coinRotate),a
 
         ;
         ; Setup the coin tables
@@ -121,7 +131,7 @@ _gameMain:
         call    _initScore
 
 
-        call    _setupScreen
+        call    setupScreen
 
         ld      hl,_spriteBuffer
         push    hl
@@ -154,6 +164,21 @@ _gameLoop:
         cp      b                       ; Has it changed?
         jr      z,wait                  ; If not, keep looping
 
+
+	IF	0
+		ld		b,255
+.lo
+		push	af
+		pop		af
+		push	af
+		pop		af
+		djnz	lo
+	ENDIF
+
+
+        ld      l,INK_BLUE
+        call    _border
+
         ;
         ; Re-draw the screen at the players current location
         ;
@@ -167,6 +192,11 @@ _gameLoop:
         call    _pasteScreen
         pop     hl
         pop     hl
+
+
+
+        ld      l,INK_RED
+        call    _border
 
         ;
         ; Handle the keyboard input from the user
@@ -195,21 +225,6 @@ _gameLoop:
 .updateXSpeedDone
         ld      (_xSpeed),a
 
-	IF 0 ; Enable for testing, allows movement
-        bit     DOWN_BIT,e
-        jr      z,checkUp
-        ld      a,DOWN_SPEED
-        jr      updateYSpeedDone
-.checkUp
-        bit     UP_BIT,e
-        jr      z,noYMovement
-        ld      a,UP_SPEED
-        jr      updateYSpeedDone
-.noYMovement
-        xor     a
-.updateYSpeedDone
-        ld      (_ySpeed),a
-	ENDIF
         ;
         ; Update the jump status
         ;
@@ -240,201 +255,93 @@ _1F
 		ld		(_jumping),a
 _2F
 
-;		jp		checkX
+        ld      l,INK_MAGENTA
+        call    _border
 
-	IF 1
-		ld		a,(_ySpeed)
-		or		a
-		jp		m,checkX					; If 'a' is negative (m) player is going up
+		call	checkYCol
+
 		;
-		; ySpeed is positive player is moving down
+		; If player is moving left or right, check for collisions.
 		;
-	IF 0
-		;
-		; Check if the new Y position puts the player off the bottom
-		; of the screen and change the level accordingly.
-		;
-		ld		hl,(_yPos)				; Get the Y pixel offset
-;		ld		a,(_ySpeed)				; 'a' still holds _ySpeed from above
-		add		l						; add Y pixel offset
-		cp		MAX_Y_POS - PLAYER_HEIGHT
-		jr		c,_4F					; a < (MAX_Y_POS - PLAYER_HEIGHT)
-		; else a >= (MAX_Y_POS - PLAYER_HEIGHT)
-		ld		hl,_tileMapY
-		inc		(hl)
-		ld		a,24
-		ld		(_yPos),a
-		call	_setCurrentTileMap
-		call	_setupScreen
-	ENDIF
-		ld		hl,(_yPos)
-_4F
-		; if ((currentTileMap[(((yPos + PLAYER_HEIGHT) >> 3) * 64) + (xPos >> 3)] >= 144)
-		;  || (currentTileMap[(((yPos + PLAYER_HEIGHT) >> 3) * 64) + ((xPos + (PLAYER_WIDTH - 1)) >> 3)] >= 144))
-		ld		a,PLAYER_HEIGHT
-		addhl							; 'hl' is now the offset of the pixel row below the player
-		ld		a,l
-		and		%11111000				; Remove the pixel offset within the byte (lower 3 bits)
-		ld		l,a
-		hlx		8						; Divide by 8 to get byte offset and multiply by 64 (width of tilemap)
-
-		ld		a,(_xPos)				; Get the X pixel offset
-		ld		b,a						; Save pixel offset for later
-		rrca							; Divide by 8 to get the byte offset
-		rrca							; Faster to do rrca followed by AND rather than srl
-		rrca
-		and		%00011111
-		addhl							; Add X byte offset to tile map Y index
-
-		ld		de,(_currentTileMap)
-		add		hl,de
-
-		ld		a,(hl)					; Get tile ID
-		cp		144
-		jr		nc,landed				; 'nc' if a >= 144
-
-		inc		hl
-		ld		a,(hl)					; Get tile ID
-		cp		144
-		jr		nc,landed				; 'nc' if a >= 144
-
-		ld		a,b						; Restore X pixel offset
-		and		%00000111				; Check if any of the lower 3 bits are set
-		jr		z,gravity				; if not we are done
-		inc		hl						; Check the tile to the right
-		ld		a,(hl)
-		cp		144
-		jr		c,gravity				; 'c' if a < 144
-.landed
-		;
-		; Reset ySpeed and jumping count and falling flag
-		;
-		xor		a
-		ld		(_ySpeed),a
-		ld		(_jumping),a
-		ld		(_falling),a
-		jp		checkX
-
-.gravity
-		ld		a,(_jumping)
-		or		a
-		jr		nz,checkX
-
-		xor		a
-		ld		(_xSpeed),a
-		inc		a
-		ld		(_ySpeed),a
-		ld		(_falling),a
-
-.checkX
-
-	ENDIF
-
+        ld      l,INK_GREEN
+        call    _border
 		ld		a,(_xSpeed)				; If xSpeed != 0 player is moving
 		or		a						; left or right.
 		call	nz,checkXCol			; Check for a collision.
 
-        ld      l,INK_RED
-        call    _border
 
         ;
         ; Update the scrolling message
         ;
+        ld      l,INK_CYAN
+        call    _border
         call    _scroll
 
         ;
         ; Flicker any lanterns on the screen
         ;
+        ld      l,INK_YELLOW
+        call    _border
         ld      hl,_lanternList
         call    _lanternFlicker
 
+        ld      l,INK_WHITE
+        call    _border
+		ld		hl,coinRotate
+		dec		(hl)
+		jr		nz,noRotate
+
+		ld		a,6						; Reset rotate counter
+		ld		(hl),a
+
+
+		ld		hl,(_tileMapX)
+		ld		a,h
+		rla								; x2
+		rla								; x4
+		and		%11111100
+		ld		h,a
+		ld		a,l
+		sla		a						; x2
+		add		h
+		ld		l,a
+		ld		h,0
+		ld		de,_coinTables
+		add		hl,de
+		ld		e,(hl)
+		inc		hl
+		ld		d,(hl)
+		ex		de,hl
+		call	_animateCoins
+
+.noRotate
+        ld      l,INK_BLUE
+        call    _border
+        ld      hl,_spriteBuffer
+        push    hl
+        ld      a,(_xPos)
+        ld      l,a
+        ld      a,(_yPos)
+        ld      h,a
+        push    hl
+        call    _copyScreen
+        pop     hl
+        pop     hl
+
+        ld      l,INK_RED
+        call    _border
+
+		ld		a,(_xPos)
+		ld		h,a
+		ld		a,(_yPos)
+		ld		l,a
+		call	_displaySprite
+
+        ld      l,INK_BLACK
+        call    _border
+
         popall  
         ret     
-
-	IF 1
-.checkTop
-		;
-		; ySpeed is negative player is moving up
-		;
-		ld		hl,(_yPos)				; Get the Y pixel offset
-;		ld		a,(_ySpeed)				; 'a' still holds _ySpeed from above
-		add		l
-		cp		24
-		jr		nc,checkX				; a >= 24
-		; else a < 24
-		ld		hl,_tileMapY
-		dec		(hl)
-		ld		a,MAX_Y_POS - PLAYER_HEIGHT
-		ld		(_yPos),a
-		call	_setCurrentTileMap
-		call	_setupScreen
-		jp		checkX
-	ENDIF
-
-
-.checkXCol
-		ld		b,a						; Save xSpeed
-		ld		hl,(_yPos)				; Get the yPos and add the ySpeed
-		ld		a,(_ySpeed)				; ySpeed may be positive or negative
-		or		a
-		jp		p,pos1					; If ySpeed is positive
-		dec		h						; ySpeed is negative, subtract 1 from 'h'
-.pos1
-		addhl							; 'hl' holds yPos + ySpeed
-		ld		c,l						; save it in 'c'
-
-		ld		a,l
-		and		%11111000				; Remove the pixel offset within the byte (lower 3 bits)
-		ld		l,a
-		hlx		8						; Divide by 8 and multuply by 64 -> multiply by 8
-
-		ld		a,b						; Restore xSpeed
-		or		a						; Update flags
-
-		ld		a,(_xPos)				; Get the X pixel offset
-		jp		m,checkLeftCol			; If xSpeed was negative going left, check left side
-		add		PLAYER_WIDTH-1			; else, going right, check right size
-.checkLeftCol
-		add		b
-		rrca							; Divide by 8 to get the byte offset
-		rrca							; Faster to do rrca followed by AND rather than srl
-		rrca
-		and		%00011111
-		addhl							; Add X byte offset to tile map Y index
-
-		ld		de,(_currentTileMap)
-		add		hl,de
-		ld		a,(hl)
-		cp		143
-		ret		nc						; 'nc' if a >= 144
-
-		; Check the bottom half of the sprite
-		ld		de,TILEMAP_WIDTH
-		add		hl,de
-		ld		a,(hl)
-		cp		143
-		ret		nc						; 'nc' if a >= 144
-
-		ld		a,c						; Restore yPos + ySpeed
-		and		%00000111				; If the lower 3 bits are zero player has not shifted into
-		jr		z,checkXDone			; the next row down, return.
-		add		hl,de					; Next row down
-
-		ld		a,(hl)
-		cp		143
-		ret		nc						; 'nc' if a >= 144
-
-.checkXDone
-		ld		a,(_xPos)				; Get the X pixel offset
-		add		b
-		ld		(_xPos),a
-
-		ret
-
-.stopX
-		xor		a
-		ld		(_xSpeed),a
-		ret
 
 .getCoin
 		ld		l,0x05
@@ -442,11 +349,13 @@ _4F
 		call	_displayScore
 		ret
 
-_setupScreen:
+setupScreen:
         pushall 
 
         ld      l,INK_WHITE | PAPER_BLACK
         call    _cls
+
+        call    _setCurrentTileMap
 
         ld      hl,(_currentTileMap)
         call    _displayScreen
@@ -510,6 +419,8 @@ _mul_hla:
         ret     
 
         section bss_user
+coinRotate:
+		db		0
 _currentTileMap:
         dw		0
 _tileMapX:

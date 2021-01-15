@@ -130,10 +130,10 @@ _pasteScreen:
         ;	ix + 0 = sprite x position in pixels
         ;	ix + 1 = sprite y position in pixels
 _displaySprite:
-        push    af
-        push    bc
-        push    de
-        push    hl
+;        push    af
+;        push    bc
+;        push    de
+;        push    hl
 
         di      
         ld      (displaySpriteSP),sp
@@ -204,10 +204,10 @@ _displaySprite:
         ld      sp,0x0000
         ei      
 
-        pop     hl
-        pop     de
-        pop     bc
-        pop     af
+;        pop     hl
+;        pop     de
+;        pop     bc
+;        pop     af
         ret     
 
 		section	bss_user

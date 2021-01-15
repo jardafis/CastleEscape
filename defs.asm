@@ -36,6 +36,10 @@
 
         defc    ID_COIN					= 74
 
+        defc    MAX_LEVEL_X				= 0x02
+        defc    MAX_LEVEL_Y				= 0x02
+
+
         ;
         ; Screen addresses
         ;
