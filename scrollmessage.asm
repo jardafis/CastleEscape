@@ -189,8 +189,15 @@ _scroll:
         jp      getNextChar             ; Loop to get a character
 
         section rodata_user
+
+        db		"Escape the castle...                ", 0x00
+.message1
+		db		"Hurry...                            ", 0x00
+.message2
+		db		"Collect the coins for points...                ", 0x00
+.message3
 .defaultMessage
-        db      "This is a test message....        Boo....        ", 0x00
+		db		"Purple eggs give you wiiings...                ", 0x00
 
         section bss_user
 .messagePointer
