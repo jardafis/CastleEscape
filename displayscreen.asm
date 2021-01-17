@@ -53,6 +53,9 @@ _displayScreen:
 		cmp		ID_LANTERN                       ; Check for a lantern
         call    z,addLantern
 
+		cmp		ID_COIN
+		jr		z,attribOnly
+
         push    bc                      ; save the loop counter
         push    hl                      ; save the tilemap pointer
 
@@ -62,9 +65,10 @@ _displayScreen:
         ld      de,_tileAttr
         ld      l,a
         ld      h,0
-        ex      af,af'                  ; save tile index
         add     hl,de
         ld      c,(hl)                  ; Tile attribute in 'c'
+
+        ex      af,af'                  ; save tile index
 
         ;
         ; Set the attribute for the tile
@@ -173,6 +177,35 @@ _displayScreen:
         ld      sp,0x0000
         popall  
         ret     
+
+.attribOnly
+		push	bc
+		push	hl
+        ;
+        ; Get the attribute for the tile
+        ;
+        ld      de,_tileAttr
+        ld      l,a
+        ld      h,0
+        add     hl,de
+        ld      c,(hl)                  ; Tile attribute in 'c'
+
+        ;
+        ; Set the attribute for the tile
+        ;
+        ld      l,(ix+yPos)
+        ld      h,0
+        hlx     32
+        ld      a,(ix+xPos)
+        add     l
+        ld      l,a
+        ld      de,SCREEN_ATTR_START
+        add     hl,de
+        ld      (hl),c                  ; Store it to the screen
+
+		pop		hl
+		pop		bc
+		jr		nextTile
 
         ;
         ; Add a lantern to the lantern list

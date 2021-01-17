@@ -24,6 +24,9 @@
 		extern	checkYCol
 		extern	_coinTables
 		extern	_animateCoins
+		extern	setCurrentCoinTable
+		extern	checkCoinCollision
+		extern	removeCollectedCoins
         public  _gameMain
         public  _currentTileMap
         public  _setCurrentTileMap
@@ -277,13 +280,7 @@ _2F
         call    _border
         call    _scroll
 
-        ;
-        ; Flicker any lanterns on the screen
-        ;
-        ld      l,INK_YELLOW
-        call    _border
-        ld      hl,_lanternList
-        call    _lanternFlicker
+		call	checkCoinCollision
 
         ld      l,INK_WHITE
         call    _border
@@ -294,24 +291,6 @@ _2F
 		ld		a,6						; Reset rotate counter
 		ld		(hl),a
 
-
-		ld		hl,(_tileMapX)
-		ld		a,h
-		rla								; x2
-		rla								; x4
-		and		%11111100
-		ld		h,a
-		ld		a,l
-		sla		a						; x2
-		add		h
-		ld		l,a
-		ld		h,0
-		ld		de,_coinTables
-		add		hl,de
-		ld		e,(hl)
-		inc		hl
-		ld		d,(hl)
-		ex		de,hl
 		call	_animateCoins
 
 .noRotate
@@ -337,6 +316,43 @@ _2F
 		ld		l,a
 		call	_displaySprite
 
+        ;
+        ; Flicker any lanterns on the screen
+        ;
+        ld      l,INK_YELLOW
+        call    _border
+        ld      hl,_lanternList
+        call    _lanternFlicker
+
+		; Date: 1/15/2021 Time: 10:08pm
+		;
+		; Check for collisions with coins. But how? Sigh! :(
+		;
+		; For items that are collected by the player... Coins, eggs, hearts...
+		;
+		; Calculate the items center pixel x,y coordinates. Basically this
+		; is their x,y character position x 8 and then add 4 to x and y to
+		; get the center of the character.
+		;
+		; Then calculate the same for the player. We can store and use the player
+		; coordinates for all player/item collision checking.
+		;
+		; Using these 4 values, calculate the distance between the two objects
+		; with the following algorithm.
+		;
+		; 		a = x1 - x2;		// Easy
+		;		b = y1 - y2;		// Easy
+		;		c = sqrt((a * a) + (b * b));		// How?
+		;
+		; 'c' is the distance between the objects. If 'c' < (some value, like 4, or 6) there is a colision.
+		;
+		;	How to do a sqrt? Can be done in Z80
+		;	How long will it take? Way too slow ~360 cycles per sqrt.
+		;
+		;	Use pixel box collision detection instead. 8x8 box in the center of the player comapred with
+		; 	a 4x4 box in the center of the 8x8 item. If the boxes overlap there is a collision.
+		;
+
         ld      l,INK_BLACK
         call    _border
 
@@ -355,10 +371,16 @@ setupScreen:
         ld      l,INK_WHITE | PAPER_BLACK
         call    _cls
 
+		call	setCurrentCoinTable
+
         call    _setCurrentTileMap
+
+		halt
 
         ld      hl,(_currentTileMap)
         call    _displayScreen
+
+		call	removeCollectedCoins
 
         call    _displayScore
         call    _scrollReset
