@@ -1,12 +1,25 @@
         extern  _levels
         extern  _screenTab
         extern  _tile0
+		extern	_tileMapX
+		extern	_xPos
+		extern	_yPos
+		extern  _addScore
+        extern  _displayScore
+        extern	clearAttr
+        extern	clearChar
+
         public  _initCoins
         public  _animateCoins
         public  _coinTables
-
+        public	setCurrentCoinTable
+		public	checkCoinCollision
+		public	removeCollectedCoins
 
         include "defs.asm"
+
+		defc	COIN_WIDTH			= 0x07
+		defc	COIN_HEIGHT			= 0x07
 
         section code_user
         ;
@@ -37,7 +50,7 @@ _initCoins:
         ld      hl,coins
         ld      (currentCoin),hl
         ld      hl,_coinTables
-        ld      (currentTable),hl
+        ld      (currentCoinTable),hl
 
         ld      hl,_levels
 .levelYLoop
@@ -45,13 +58,13 @@ _initCoins:
         ld      (ix+levelX), MAX_LEVEL_X
 
 .levelXLoop
-        ld      hl,(currentTable)
+        ld      hl,(currentCoinTable)
         ld      de,(currentCoin)
         ld      (hl),e
         inc     hl
         ld      (hl),d
         inc     hl
-        ld      (currentTable),hl
+        ld      (currentCoinTable),hl
 
         ld      hl,(currentLevel)
         ld      (ix+tileY), 0
@@ -159,11 +172,12 @@ _initCoins:
         ; On entry
         ;		hl - pointer to coin table for current level
 _animateCoins:
-        ex      af,af'
-        push    hl
-        exx     
-        pop     hl
+;        ex      af,af'
+;        push    hl
+;        exx
+;        pop     hl
 
+		ld		hl,(currentCoinTable)
 .nextCoin
         ld      a,(hl)                  ; Coin flags
         cp      0xff
@@ -264,9 +278,133 @@ _animateCoins:
         jp      nextCoin
 
 .endOfList
-        exx     
-        ex      af,af'
+;        exx
+;        ex      af,af'
         ret     
+
+setCurrentCoinTable:
+		ld		hl,(_tileMapX)			; Get tileMapX & tileMapY
+		ld		a,h
+		rla								; x2
+		rla								; x4
+		and		%11111100
+		ld		h,a
+		ld		a,l
+		sla		a						; x2
+		add		h
+		ld		l,a
+		ld		h,0
+		ld		de,_coinTables
+		add		hl,de
+		ld		e,(hl)
+		inc		hl
+		ld		d,(hl)
+		ld		(currentCoinTable),de
+		ret
+
+checkCoinCollision:
+		ld		hl,(currentCoinTable)
+.nextCoin2
+		ld		a,(hl)
+        cp      0xff
+        ret		z
+
+        cp      0x01                    ; Is the coin visible?
+        jr      nz,notVisible2
+
+		push	hl
+		inc		hl
+
+		;
+		; Collision check here
+		;
+		ld		a,(hl)					; Coin X byte position
+		rlca							; x2
+		rlca							; x4
+		rlca							; x8
+		and		%11111000				; Coin left side pixel offset
+		ld		b,a
+		add		COIN_WIDTH-1			; Coin right side pixel offset
+		ld		c,a
+
+		ld		a,(_xPos)				; Player left side pixel position
+		inc		a
+		cp		c						; Compare with coin right side
+		jr		nc,blah					; 'nc' if 'c' <= 'a'
+
+		add		PLAYER_WIDTH-4			; Get right side pixel position
+		cp		b						; Compare with coin left side
+		jr		c,blah					; 'c' if 'b' > 'a'
+
+		inc		hl
+		ld		a,(hl)					; Coin Y byte position
+		rlca							; x2
+		rlca							; x4
+		rlca							; x8
+		and		%11111000
+		ld		b,a						; Coin top pixel position
+		add		COIN_HEIGHT-1			; Coin bottom pixel offset
+		ld		c,a
+
+		ld		a,(_yPos)
+		cp		c						; Compare with coin bottom
+		jr		nc,blah					; 'nc' if 'c' <= 'a'
+
+		add		PLAYER_HEIGHT-1			; Player bottom pixel position
+		cp		b						; Compare with coin top
+		jr		c,blah					; 'c' if 'b' > 'a'
+
+		ld		b,(hl)					; Coin Y position
+		dec		hl						; Back to the coin flags
+		ld		c,(hl)					; Coin X position
+		dec		hl
+		xor		a						; Zero flags
+		ld		(hl),a
+
+		push	bc
+		call	clearAttr
+		pop		bc
+		call	clearChar
+
+		;
+		; Add 5 to the score and re-display the score
+		;
+		ld		l,5
+		call	_addScore
+		call	_displayScore
+.blah
+		pop		hl
+.notVisible2
+        ld      a,SIZEOF_coin
+        addhl
+        jp      nextCoin2
+
+removeCollectedCoins:
+		ld		hl,(currentCoinTable)
+.nextCoin3
+		ld		a,(hl)
+        cp      0xff
+        ret		z
+
+		or		a
+        jr      nz,visible
+
+		push	hl
+		inc		hl
+
+		ld		c,(hl)					; Coin X position
+		inc		hl
+		ld		b,(hl)					; Coin Y position
+		push	bc
+		call	clearAttr
+		pop		bc
+		call	clearChar
+
+		pop		hl
+.visible
+        ld      a,SIZEOF_coin
+        addhl
+        jp      nextCoin3
 
 		defvars 0                             ; Define the stack variables used
 		{
@@ -290,7 +428,7 @@ _animateCoins:
         section bss_user
 .currentLevel		dw		0
 .currentCoin		dw		0
-.currentTable		dw		0
+.currentCoinTable	dw		0
 
 _coinTables:
 		ds		MAX_LEVEL_X * MAX_LEVEL_Y * 2

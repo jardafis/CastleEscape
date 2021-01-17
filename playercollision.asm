@@ -68,9 +68,9 @@ checkXCol:
 
 		ld		de,(_currentTileMap)
 		add		hl,de
-		ld		a,(hl)
-		cp		143
-		ret		nc						; 'nc' if a >= 144
+;		ld		a,(hl)
+;		cp		143
+;		ret		nc						; 'nc' if a >= 144
 
 		; Check the bottom half of the sprite
 		ld		de,TILEMAP_WIDTH
@@ -125,7 +125,7 @@ checkXCol:
 		; screen.
 		;
 		; Entry:
-		;		a - ySpeed
+		;
 		;
 checkYCol:
 		ld		a,(_ySpeed)				; If jumping up ySpeed is negative,
@@ -204,7 +204,7 @@ checkYCol:
 		ld		a,(_yPos)
 		dec		a
 		cp		24
-		jr		c,previousYLevel
+		jr		c,previousYLevel		; 'c' if 'a' < 24
 		ld		(_yPos),a
 		ret
 
