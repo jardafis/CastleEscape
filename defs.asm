@@ -35,6 +35,7 @@
 		defc	MAX_Y_POS           	= 192
 
         defc    ID_COIN					= 74
+        defc	ID_EGG					= 97
 
         defc    MAX_LEVEL_X				= 0x02
         defc    MAX_LEVEL_Y				= 0x02

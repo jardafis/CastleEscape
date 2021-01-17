@@ -1,4 +1,3 @@
-        extern  _levels
         extern  _screenTab
         extern  _tile0
 		extern	_tileMapX
@@ -8,13 +7,15 @@
         extern  _displayScore
         extern	clearAttr
         extern	clearChar
+		extern	_tileAttr
+		extern	setAttr
 
-        public  _initCoins
         public  _animateCoins
         public  _coinTables
+        public  coins
         public	setCurrentCoinTable
 		public	checkCoinCollision
-		public	removeCollectedCoins
+		public	displayCoinAttr
 
         include "defs.asm"
 
@@ -22,151 +23,6 @@
 		defc	COIN_HEIGHT			= 0x07
 
         section code_user
-        ;
-        ; Initialize the coin tables. This routine is called once
-        ; at the start of each game to initialize the coin tables.
-        ;
-        ; The routine scans each level from top right to bottom left
-        ; building up a table of coins for each level. These tables
-        ; are then used by the coin animation routines and the coin
-        ; collision routine.
-        ;
-_initCoins:
-        pushall 
-
-        ;
-        ; Build a stack frame for our variables
-        ;
-        ld      (tempSP),sp
-        ld      ix,-SIZEOF_vars
-        add     ix,sp
-        ld      sp,ix
-
-        ;
-        ; Initialize memory variables
-        ;
-        ld      (ix+levelY), MAX_LEVEL_Y
-        ld      (ix+coinCount), 0
-        ld      hl,coins
-        ld      (currentCoin),hl
-        ld      hl,_coinTables
-        ld      (currentCoinTable),hl
-
-        ld      hl,_levels
-.levelYLoop
-        ld      (currentLevel), hl
-        ld      (ix+levelX), MAX_LEVEL_X
-
-.levelXLoop
-        ld      hl,(currentCoinTable)
-        ld      de,(currentCoin)
-        ld      (hl),e
-        inc     hl
-        ld      (hl),d
-        inc     hl
-        ld      (currentCoinTable),hl
-
-        ld      hl,(currentLevel)
-        ld      (ix+tileY), 0
-        ld      c,SCREEN_HEIGHT
-
-.tileYLoop
-        ld      (ix+tileX), 0
-        ld      b,SCREEN_WIDTH
-
-.tileXLoop
-        ld      a,(hl)                  ; Get tile ID
-		cmp		ID_COIN
-        call    z,addCoin
-        inc     hl
-        inc     (ix+tileX)
-        djnz    tileXLoop
-
-        ; Next row in the tilemap
-        ld      de,SCREEN_WIDTH * MAX_LEVEL_X - SCREEN_WIDTH
-        add     hl,de
-
-        inc     (ix+tileY)
-        dec     c
-        jr      nz,tileYLoop
-
-        ;
-        ; Move the current level pointer to the next level to the right
-        ;
-        ld      hl,(currentLevel)
-        ld      de,SCREEN_WIDTH
-        add     hl,de
-        ld      (currentLevel),hl
-
-        ld      de,(currentCoin)
-        ; Flags, 0xff = end of list
-        ld      a,0xff
-        ld      (de),a
-        inc     de
-        ld      (currentCoin),de
-
-        ;
-        ; Decrement X counter and loop if not zero
-        ;
-        dec     (ix+levelX)
-        jr      nz,levelXLoop
-
-        ;
-        ; Move the current level pointer to the next level down
-        ;
-        ld      hl,(currentLevel)
-        ld      de,-SCREEN_WIDTH * MAX_LEVEL_X
-        add     hl,de
-        ld      de,SCREEN_WIDTH * MAX_LEVEL_X * SCREEN_HEIGHT
-        add     hl,de
-        ld      (currentLevel),hl
-
-        ;
-        ; Decrement Y counter and loop if not zero
-        ;
-        dec     (ix+levelY)
-        jr      nz,levelYLoop
-
-        ;
-        ; Restore the stack frame
-        ;
-.tempSP = $ + 1
-        ld      sp,0x0000
-
-        popall  
-        ret     
-
-        ;
-        ; Add a coin to the coin table
-        ;
-.addCoin
-        ld      de,(currentCoin)
-
-        ; Flags, Bit0 = visible
-        ld      a,1
-        ld      (de),a
-        inc     de
-
-        ; X screen position
-        ld      a,(ix+tileX)
-        ld      (de),a
-        inc     de
-
-        ; Y screen position
-        ld      a,(ix+tileY)
-        ld      (de),a
-        inc     de
-
-        ; Animation frame
-        ld      a,(ix+coinCount)
-        inc     (ix+coinCount)
-        ld      (de),a
-        inc     de
-
-        ld      (currentCoin),de
-
-        ret     
-
 
         ;
         ; On entry
@@ -282,6 +138,11 @@ _animateCoins:
 ;        ex      af,af'
         ret     
 
+		;
+		; Calculate the value of the current coin table based
+		; on the values of tileMapX and tileMapY and save it
+		; in currentCoinTable.
+		;
 setCurrentCoinTable:
 		ld		hl,(_tileMapX)			; Get tileMapX & tileMapY
 		ld		a,h
@@ -302,6 +163,11 @@ setCurrentCoinTable:
 		ld		(currentCoinTable),de
 		ret
 
+		;
+		; Check if the player has collided with a coin. And if so,
+		; remove the coin from the level and increase and re-display
+		; the score.
+		;
 checkCoinCollision:
 		ld		hl,(currentCoinTable)
 .nextCoin2
@@ -367,7 +233,7 @@ checkCoinCollision:
 		call	clearChar
 
 		;
-		; Add 5 to the score and re-display the score
+		; Add 5 to the score and display it
 		;
 		ld		l,5
 		call	_addScore
@@ -379,7 +245,14 @@ checkCoinCollision:
         addhl
         jp      nextCoin2
 
-removeCollectedCoins:
+		;
+		; Cycle through the coin table for the current level and
+		; if the coin is visible, update the screen with the attribute
+		; for the coin.
+		;
+		; Coins themsleves are displayed by the animate routine.
+		;
+displayCoinAttr:
 		ld		hl,(currentCoinTable)
 .nextCoin3
 		ld		a,(hl)
@@ -387,34 +260,29 @@ removeCollectedCoins:
         ret		z
 
 		or		a
-        jr      nz,visible
+        jr      z,notVisible3
 
 		push	hl
-		inc		hl
 
+		inc		hl
 		ld		c,(hl)					; Coin X position
 		inc		hl
 		ld		b,(hl)					; Coin Y position
-		push	bc
-		call	clearAttr
-		pop		bc
-		call	clearChar
+
+		ld		a,ID_COIN
+		ld		de,_tileAttr
+		addde
+		ld		a,(de)
+
+		call	setAttr
 
 		pop		hl
-.visible
+.notVisible3
         ld      a,SIZEOF_coin
         addhl
-        jp      nextCoin3
+        jr      nextCoin3
 
-		defvars 0                             ; Define the stack variables used
-		{
-			levelX			ds.b	1
-			levelY			ds.b	1
-			tileX			ds.b	1
-			tileY			ds.b	1
-			coinCount		ds.b	1
-			SIZEOF_vars
-		}
+        section bss_user
 
 		defvars 0
 		{
@@ -425,13 +293,10 @@ removeCollectedCoins:
 			SIZEOF_coin
 		}
 
-        section bss_user
-.currentLevel		dw		0
-.currentCoin		dw		0
 .currentCoinTable	dw		0
 
 _coinTables:
 		ds		MAX_LEVEL_X * MAX_LEVEL_Y * 2
 
-.coins
+coins:
 		ds		SIZEOF_coin * 8 * MAX_LEVEL_X * MAX_LEVEL_Y
