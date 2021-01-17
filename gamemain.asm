@@ -1,7 +1,7 @@
         extern  _cls
         extern  _initISR
         extern  _border
-        extern  _initCoins
+        extern  _initItems
         extern  _scrollInit
         extern  _scrollReset
         extern  _scroll
@@ -23,10 +23,11 @@
 		extern	checkXCol
 		extern	checkYCol
 		extern	_coinTables
+		extern	coins
 		extern	_animateCoins
 		extern	setCurrentCoinTable
 		extern	checkCoinCollision
-		extern	removeCollectedCoins
+		extern	displayCoinAttr
         public  _gameMain
         public  _currentTileMap
         public  _setCurrentTileMap
@@ -120,7 +121,10 @@ _gameMain:
         ;
         ; Setup the coin tables
         ;
-        call    _initCoins
+		ld		hl,_coinTables
+		ld		de,coins
+        ld		a,ID_COIN
+        call    _initItems
 
         ;
         ; Setup the scrolling message
@@ -380,7 +384,7 @@ setupScreen:
         ld      hl,(_currentTileMap)
         call    _displayScreen
 
-		call	removeCollectedCoins
+		call	displayCoinAttr
 
         call    _displayScore
         call    _scrollReset

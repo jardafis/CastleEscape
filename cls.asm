@@ -1,6 +1,7 @@
         extern	_screenTab
         public  _cls
 		public	clearAttr
+		public	setAttr
 		public	clearChar
         section code_user
 
@@ -70,17 +71,20 @@ _cls:
         ret     
 
 		;
-		; Set the screen attribute position specified by 'bc' to
-		; the attribute used to clear the screen.
+		; Set the screen attribute specified by 'bc' to
+		; the attribute passed in 'a'.
 		;
 		; Entry:
-		;		b - Attrib Y location
-		;		c - Attrib X location
+		;		b - Y location
+		;		c - X location
+		;		a - Attribute
 		;
 		; Corrupts:
 		;		af, bc, hl
 		;
 clearAttr:
+		ld		a,(clsAttrib)
+setAttr:
 		ld		l,b
 		ld		h,0
 		hlx		32
@@ -88,7 +92,6 @@ clearAttr:
 		add		hl,bc
 		ld		bc,SCREEN_ATTR_START
 		add		hl,bc
-		ld		a,(clsAttrib)
 		ld		(hl),a
 		ret
 
@@ -96,8 +99,8 @@ clearAttr:
 		; Clear the character position specified by 'bc'
 		;
 		; Entry:
-		;		b - Char Y location
-		;		c - Char X location
+		;		b - Y location
+		;		c - X location
 		;
 		; Corrupts:
 		;		af, bc, hl
