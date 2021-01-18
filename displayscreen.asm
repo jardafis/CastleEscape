@@ -57,6 +57,8 @@ _displayScreen:
         jr      z,nextTile
 		cmp		ID_EGG
         jr      z,nextTile
+		cmp		ID_HEART
+        jr      z,nextTile
 
 		;
 		; Check for lanterns

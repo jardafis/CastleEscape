@@ -38,6 +38,12 @@
 		extern	displayEggCount
 		extern	eggCount
 		extern	score
+		extern	currentHeartTable
+		extern	heartTables
+		extern	heartCount
+		extern	hearts
+		extern	displayHeartCount
+		extern	heartCollision
 
         public  _gameMain
         public  _currentTileMap
@@ -143,6 +149,13 @@ _gameMain:
 		ld		de,eggs
         ld		a,ID_EGG
         call    _initItems
+        ;
+        ; Setup the hearts tables
+        ;
+		ld		hl,heartTables
+		ld		de,hearts
+        ld		a,ID_HEART
+        call    _initItems
 
         ;
         ; Setup the scrolling message
@@ -150,14 +163,12 @@ _gameMain:
         ld      hl,0
         call    _scrollInit
 
-        ;
-        ; Initialize score to 0
-        ;
+		;
+		; Zero score and counts
+		;
         ld		(score),hl
-        ;
-        ; Initialize egg count to 0
-        ;
 		ld		(eggCount),hl
+		ld		(heartCount),hl
 
         call    setupScreen
 
@@ -311,6 +322,9 @@ _2F
 		ld		hl,(currentEggTable)
 		ld		de,eggCollision
 		call	checkItemCollision
+		ld		hl,(currentHeartTable)
+		ld		de,heartCollision
+		call	checkItemCollision
 
         ld      l,INK_WHITE
         call    _border
@@ -403,6 +417,10 @@ setupScreen:
 		ld		de,eggTables
 		call	setCurrentItemTable
 
+		ld		hl,currentHeartTable
+		ld		de,heartTables
+		call	setCurrentItemTable
+
         call    _setCurrentTileMap
 
 		halt
@@ -421,7 +439,15 @@ setupScreen:
 		ld		hl,(currentEggTable)
 		call	displayItems
 
+		ld		a,ID_HEART
+		ld		hl,(currentHeartTable)
+		call	displayItemAttr
+		ld		a,ID_HEART
+		ld		hl,(currentHeartTable)
+		call	displayItems
+
 		call	displayEggCount
+		call	displayHeartCount
         call    _displayScore
         call    _scrollReset
 
