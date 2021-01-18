@@ -5,7 +5,6 @@
         extern  _scrollInit
         extern  _scrollReset
         extern  _scroll
-        extern  _initScore
         extern  _levels
         extern  _displayScreen
         extern  _displayScore
@@ -36,6 +35,9 @@
 		extern	checkItemCollision
 		extern	coinCollision
 		extern	eggCollision
+		extern	displayEggCount
+		extern	eggCount
+		extern	score
 
         public  _gameMain
         public  _currentTileMap
@@ -149,10 +151,13 @@ _gameMain:
         call    _scrollInit
 
         ;
-        ; Initialize the core to 0
+        ; Initialize score to 0
         ;
-        call    _initScore
-
+        ld		(score),hl
+        ;
+        ; Initialize egg count to 0
+        ;
+		ld		(eggCount),hl
 
         call    setupScreen
 
@@ -384,12 +389,6 @@ _2F
         popall  
         ret     
 
-.getCoin
-		ld		l,0x05
-		call	_addScore
-		call	_displayScore
-		ret
-
 setupScreen:
         pushall 
 
@@ -422,6 +421,7 @@ setupScreen:
 		ld		hl,(currentEggTable)
 		call	displayItems
 
+		call	displayEggCount
         call    _displayScore
         call    _scrollReset
 
