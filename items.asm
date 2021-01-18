@@ -363,10 +363,10 @@ checkItemCollision:
 		rlca							; x2
 		rlca							; x4
 		rlca							; x8
-		and		%11111000				; Left side pixel offset
-		add		2
+		and		%11111000
+		add		2						; Left side pixel offset (indented a little)
 		ld		b,a
-		add		ITEM_WIDTH-5			; Right side pixel offset
+		add		ITEM_WIDTH-5			; Right side pixel offset (pulled in a little)
 		ld		c,a
 
 		ld		a,(_xPos)				; Player left side pixel position
@@ -384,9 +384,9 @@ checkItemCollision:
 		rlca							; x4
 		rlca							; x8
 		and		%11111000
-		add		2
-		ld		b,a						; Top pixel position
-		add		ITEM_HEIGHT-5			; Bottom pixel offset
+		add		2						; Top pixel offset pulled in a little
+		ld		b,a
+		add		ITEM_HEIGHT-5			; Bottom pixel offset, pushed up a little
 		ld		c,a
 
 		ld		a,(_yPos)

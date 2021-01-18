@@ -3,12 +3,13 @@
 		extern	_tileMapX
 		extern	_xPos
 		extern	_yPos
-		extern  _addScore
+		extern  addBCD
         extern  _displayScore
         extern	clearAttr
         extern	clearChar
 		extern	_tileAttr
 		extern	setAttr
+		extern	score
 
         public  _animateCoins
         public  _coinTables
@@ -141,8 +142,9 @@ _animateCoins:
 		; Add 5 to the score and display it
 		;
 coinCollision:
-		ld		l,5
-		call	_addScore
+		ld		l,0x20
+		ld		de,score
+		call	addBCD
 		call	_displayScore
 		ret
 
