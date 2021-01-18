@@ -2,6 +2,15 @@
 
         extern  _font_8x8_cpc_system
 
+		defvars 0
+		{
+			itemFlags		ds.b	1
+			itemX			ds.b	1
+			itemY			ds.b	1
+			imteFrame		ds.b	1
+			SIZEOF_item
+		}
+
         ;
         ; Tilemap definitions
         ;

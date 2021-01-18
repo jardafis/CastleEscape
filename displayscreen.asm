@@ -55,6 +55,8 @@ _displayScreen:
         ;
 		cmp		ID_COIN
         jr      z,nextTile
+		cmp		ID_EGG
+        jr      z,nextTile
 
 		;
 		; Check for lanterns
@@ -177,7 +179,8 @@ _displayScreen:
         inc     (ix+yPos)
 
         pop     bc
-        djnz    yloop
+        dec		b
+        jp		nz,yloop
 
 .tempSP = $ + 1
         ld      sp,0x0000
