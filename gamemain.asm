@@ -33,7 +33,9 @@
 		extern	currentEggTable
 		extern	setCurrentItemTable
 		extern	displayItems
-		extern	checkEggCollision
+		extern	checkItemCollision
+		extern	coinCollision
+		extern	eggCollision
 
         public  _gameMain
         public  _currentTileMap
@@ -298,8 +300,12 @@ _2F
         call    _border
         call    _scroll
 
-		call	checkCoinCollision
-		call	checkEggCollision
+		ld		hl,(currentCoinTable)
+		ld		de,coinCollision
+		call	checkItemCollision
+		ld		hl,(currentEggTable)
+		ld		de,eggCollision
+		call	checkItemCollision
 
         ld      l,INK_WHITE
         call    _border

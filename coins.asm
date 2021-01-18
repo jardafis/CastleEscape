@@ -13,8 +13,8 @@
         public  _animateCoins
         public  _coinTables
         public  coins
-		public	checkCoinCollision
 		public	currentCoinTable
+		public	coinCollision
 
         include "defs.asm"
 
@@ -138,86 +138,14 @@ _animateCoins:
         ret     
 
 		;
-		; Check if the player has collided with a coin. And if so,
-		; remove the coin from the level and increase and re-display
-		; the score.
-		;
-checkCoinCollision:
-		ld		hl,(currentCoinTable)
-.nextCoin2
-		ld		a,(hl)
-        cp      0xff
-        ret		z
-
-        cp      0x01                    ; Is the coin visible?
-        jr      nz,notVisible2
-
-		push	hl
-		inc		hl
-
-		;
-		; Collision check here
-		;
-		ld		a,(hl)					; Coin X byte position
-		rlca							; x2
-		rlca							; x4
-		rlca							; x8
-		and		%11111000				; Coin left side pixel offset
-		ld		b,a
-		add		COIN_WIDTH-1			; Coin right side pixel offset
-		ld		c,a
-
-		ld		a,(_xPos)				; Player left side pixel position
-		inc		a
-		cp		c						; Compare with coin right side
-		jr		nc,blah					; 'nc' if 'c' <= 'a'
-
-		add		PLAYER_WIDTH-4			; Get right side pixel position
-		cp		b						; Compare with coin left side
-		jr		c,blah					; 'c' if 'b' > 'a'
-
-		inc		hl
-		ld		a,(hl)					; Coin Y byte position
-		rlca							; x2
-		rlca							; x4
-		rlca							; x8
-		and		%11111000
-		ld		b,a						; Coin top pixel position
-		add		COIN_HEIGHT-1			; Coin bottom pixel offset
-		ld		c,a
-
-		ld		a,(_yPos)
-		cp		c						; Compare with coin bottom
-		jr		nc,blah					; 'nc' if 'c' <= 'a'
-
-		add		PLAYER_HEIGHT-1			; Player bottom pixel position
-		cp		b						; Compare with coin top
-		jr		c,blah					; 'c' if 'b' > 'a'
-
-		ld		b,(hl)					; Coin Y position
-		dec		hl						; Back to the coin flags
-		ld		c,(hl)					; Coin X position
-		dec		hl
-		xor		a						; Zero flags
-		ld		(hl),a
-
-		push	bc
-		call	clearAttr
-		pop		bc
-		call	clearChar
-
-		;
 		; Add 5 to the score and display it
 		;
+coinCollision:
 		ld		l,5
 		call	_addScore
 		call	_displayScore
-.blah
-		pop		hl
-.notVisible2
-        ld      a,SIZEOF_item
-        addhl
-        jp      nextCoin2
+		ret
+
 
         section bss_user
 

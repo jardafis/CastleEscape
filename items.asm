@@ -1,16 +1,24 @@
+		extern	_yPos
+		extern	_xPos
         extern  _levels
 		extern	_tileAttr
 		extern	_tileMapX
 		extern	_screenTab
 		extern	_tile0
 		extern	setAttr
+		extern	clearAttr
+		extern	clearChar
 
         public  _initItems
         public	displayItemAttr
 		public	setCurrentItemTable
 		public	displayItems
+		public	checkItemCollision
 
 		include	"defs.asm"
+
+		defc	ITEM_WIDTH			= 0x08
+		defc	ITEM_HEIGHT			= 0x08
 
         section code_user
         ;
@@ -325,6 +333,93 @@ displayItems:
         ld      a,SIZEOF_item
         addhl
         jr      nextItem2
+
+		;
+		; Check if the player has collided with an item. And if so,
+		; remove the item and attrinute from the level and call
+		; the user provided sub-routine to update socres, etc.
+		;
+		;	Entry:
+		;		hl - Pointer to current item table
+		;		de - Pointer to subroutine to call when collision is detected
+		;
+checkItemCollision:
+		ld		(updateScore),de
+.nextEgg
+		ld		a,(hl)
+        cp      0xff
+        ret		z
+
+        cp      0x00                    ; Is the item visible?
+        jr      z,notVisible3
+
+		push	hl
+		inc		hl
+
+		;
+		; Collision check here
+		;
+		ld		a,(hl)					; X byte position
+		rlca							; x2
+		rlca							; x4
+		rlca							; x8
+		and		%11111000				; Left side pixel offset
+		add		2
+		ld		b,a
+		add		ITEM_WIDTH-5			; Right side pixel offset
+		ld		c,a
+
+		ld		a,(_xPos)				; Player left side pixel position
+		inc		a
+		cp		c						; Compare with coin right side
+		jr		nc,noCollision			; 'nc' if 'c' <= 'a'
+
+		add		PLAYER_WIDTH-4			; Get right side pixel position
+		cp		b						; Compare with coin left side
+		jr		c,noCollision			; 'c' if 'b' > 'a'
+
+		inc		hl
+		ld		a,(hl)					; Y byte position
+		rlca							; x2
+		rlca							; x4
+		rlca							; x8
+		and		%11111000
+		add		2
+		ld		b,a						; Top pixel position
+		add		ITEM_HEIGHT-5			; Bottom pixel offset
+		ld		c,a
+
+		ld		a,(_yPos)
+		cp		c						; Compare with bottom
+		jr		nc,noCollision			; 'nc' if 'c' <= 'a'
+
+		add		PLAYER_HEIGHT-1			; Player bottom pixel position
+		cp		b						; Compare with top
+		jr		c,noCollision			; 'c' if 'b' > 'a'
+
+		ld		b,(hl)					; Y position
+		dec		hl						; Back to the flags
+		ld		c,(hl)					; X position
+		dec		hl
+		xor		a						; Zero flags
+		ld		(hl),a
+
+		push	bc
+		call	clearAttr
+		pop		bc
+		call	clearChar
+
+		;
+		; USer provided function to update score, etc.
+		;
+.updateScore = $ + 1
+		call	-1
+.noCollision
+		pop		hl
+.notVisible3
+        ld      a,SIZEOF_item
+        addhl
+        jp      nextEgg
 
 		section	bss_user
 		defvars 0                             ; Define the stack variables used
