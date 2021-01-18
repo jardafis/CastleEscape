@@ -106,29 +106,23 @@ setAttr:
 		;		af, bc, hl
 		;
 clearChar:
-		ld		l,b
-		ld		h,0
-		hlx		16
+		ld		l,b						; Multiply the Y offset
+		ld		h,0						; by 16 to to use with
+		hlx		16						; screenTab
 
-		di
-		ld		(clearCharSP),sp
-		ld		sp,_screenTab
-		add		hl,sp
-		ld		sp,hl
-		pop		hl
-		ld		a,l
-		add		c
-		ld		l,a
-		xor		a
-		ld		b,8
+		ld		de,_screenTab
+		add		hl,de
+		ld		a,(hl)					; Get low order screen address
+		add		c						; Add X offset
+		ld		e,a						; Store in 'e'
+		inc		hl						; Get high order screen address
+		ld		d,(hl)					; into 'd'
+		xor		a						; Clear 'a'
+		ld		b,8						; Char height count
 .clearCharLoop
-		ld		(hl),a
-		inc		h
+		ld		(de),a
+		inc		d
 		djnz	clearCharLoop
-
-.clearCharSP = $ + 1
-		ld		sp,0x0000
-		ei
 
 		ret
 
