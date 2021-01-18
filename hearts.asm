@@ -1,35 +1,26 @@
-		extern	_xPos
-		extern	_yPos
-		extern	_addScore
-		extern	_displayScore
-		extern	clearAttr
-		extern	clearChar
-		extern	_displayBCD
 		extern	addBCD
+		extern	_displayBCD
 
-		public	eggTables
-		public	eggs
-		public	currentEggTable
-		public	eggCollision
-		public	displayEggCount
-		public	eggCount
+		public	heartCount
+		public	currentHeartTable
+		public	heartTables
+		public	hearts
+		public	heartCollision
+		public	displayHeartCount
 
-        include "defs.asm"
-
-		defc	EGG_HEIGHT		= 0x07
-		defc	EGG_WIDTH		= 0x08
+		include	"defs.asm"
 
 		section	code_user
         ;
         ; Display the current score
         ;
-displayEggCount:
+displayHeartCount:
         push    af
         push    bc
         push    hl
 
-        ld      bc,0x1a01               ; x,y screen location
-        ld      hl,eggCount             ; Point to 1000's/100's of score
+        ld      bc,0x1d01               ; x,y screen location
+        ld      hl,heartCount           ; Point to 1000's/100's of score
         xor     a                       ; Zero a
 
         rld                             ; Get high order nibble from (hl)
@@ -48,23 +39,22 @@ displayEggCount:
 		;
 		; Increment and display the egg count
 		;
-eggCollision:
+heartCollision:
 		ld		l,0x01
-		ld		de,eggCount
+		ld		de,heartCount
 		call	addBCD
-		call	displayEggCount
+		call	displayHeartCount
 		ret
 
-
         section bss_user
-eggCount:                            	; BCD
+heartCount:                            	; BCD
         dw      0x0000
 
-currentEggTable:
+currentHeartTable:
 		dw		0
 
-eggTables:
+heartTables:
 		ds		MAX_LEVEL_X * MAX_LEVEL_Y * 2
 
-eggs:
+hearts:
 		ds		SIZEOF_item * 8 * MAX_LEVEL_X * MAX_LEVEL_Y
