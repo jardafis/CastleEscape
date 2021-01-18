@@ -25,9 +25,15 @@
 		extern	_coinTables
 		extern	coins
 		extern	_animateCoins
-		extern	setCurrentCoinTable
 		extern	checkCoinCollision
-		extern	displayCoinAttr
+		extern	displayItemAttr
+		extern	eggTables
+		extern	eggs
+		extern	currentCoinTable
+		extern	currentEggTable
+		extern	setCurrentItemTable
+		extern	displayItems
+
         public  _gameMain
         public  _currentTileMap
         public  _setCurrentTileMap
@@ -124,6 +130,13 @@ _gameMain:
 		ld		hl,_coinTables
 		ld		de,coins
         ld		a,ID_COIN
+        call    _initItems
+        ;
+        ; Setup the egg tables
+        ;
+		ld		hl,eggTables
+		ld		de,eggs
+        ld		a,ID_EGG
         call    _initItems
 
         ;
@@ -375,7 +388,13 @@ setupScreen:
         ld      l,INK_WHITE | PAPER_BLACK
         call    _cls
 
-		call	setCurrentCoinTable
+		ld		hl,currentCoinTable
+		ld		de,_coinTables
+		call	setCurrentItemTable
+
+		ld		hl,currentEggTable
+		ld		de,eggTables
+		call	setCurrentItemTable
 
         call    _setCurrentTileMap
 
@@ -384,7 +403,16 @@ setupScreen:
         ld      hl,(_currentTileMap)
         call    _displayScreen
 
-		call	displayCoinAttr
+		ld		a,ID_COIN
+		ld		hl,(currentCoinTable)
+		call	displayItemAttr
+
+		ld		a,ID_EGG
+		ld		hl,(currentEggTable)
+		call	displayItemAttr
+		ld		a,ID_EGG
+		ld		hl,(currentEggTable)
+		call	displayItems
 
         call    _displayScore
         call    _scrollReset

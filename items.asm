@@ -1,6 +1,14 @@
         extern  _levels
+		extern	_tileAttr
+		extern	_tileMapX
+		extern	_screenTab
+		extern	_tile0
+		extern	setAttr
 
         public  _initItems
+        public	displayItemAttr
+		public	setCurrentItemTable
+		public	displayItems
 
 		include	"defs.asm"
 
@@ -154,6 +162,169 @@ _initItems:
         ld      (currentItem),de
 
         ret
+
+		;
+		; Calculate the value of the current item table based
+		; on the values of tileMapX and tileMapY and save it
+		; in .
+		;
+		; Entry:
+		;		hl - Pointer to current item table variable
+		; 		de - Pointer to item tables
+		;
+setCurrentItemTable:
+		ld		(currItemTab),hl
+		ld		hl,(_tileMapX)			; Get tileMapX & tileMapY
+		ld		a,h
+		rla								; x2
+		rla								; x4
+		and		%11111100
+		ld		h,a
+		ld		a,l
+		sla		a						; x2
+		add		h
+		ld		l,a
+		ld		h,0
+		add		hl,de
+		ld		e,(hl)
+		inc		hl
+		ld		d,(hl)
+.currItemTab = $ + 2
+		ld		(0x0000),de
+		ret
+
+		;
+		; Cycle through the specified item table if the item is
+		; visible, update the screen with the attribute for the item.
+		;
+		; Items themsleves are not displayed here.
+		;
+		; Entry:
+		;		hl - Pointer to the current item table
+		;		a  - ID of the item
+		;
+displayItemAttr:
+		ld		(itemID2),a
+.nextItem
+		ld		a,(hl)
+        cp      0xff
+        ret		z
+
+		or		a
+        jr      z,notVisible
+
+		push	hl
+
+		inc		hl
+		ld		c,(hl)					; Item X position
+		inc		hl
+		ld		b,(hl)					; Item Y position
+
+.itemID2 = $ + 1
+		ld		a,0x00
+		ld		de,_tileAttr
+		addde
+		ld		a,(de)
+
+		call	setAttr
+
+		pop		hl
+.notVisible
+        ld      a,SIZEOF_item
+        addhl
+        jr      nextItem
+
+		;
+		;
+		; Entry:
+		;		hl - Pointer to current item table
+		;		a  - ID of item
+		;
+displayItems:
+		ld		(itemID3),a
+.nextItem2
+        ld      a,(hl)                  ; Flags
+        cp      0xff
+        ret     z
+
+        cp      0x00                    ; Is the item visible?
+        jr      z,notVisible2
+
+		push	hl
+        inc     hl
+        ; Calculate the screen address
+        ld      c,(hl)                  ; X screen position
+        inc     hl
+        ld      l,(hl)                  ; Y screen position
+        ld      h,0
+        hlx     16
+        ld      de,_screenTab
+        add     hl,de
+        ld      a,(hl)					; Screen low byte address
+        add     c                       ; Add X offset
+        ld      c,a                     ; Store result in 'c'
+        inc     hl
+        ld      b,(hl)
+
+.itemID3 = $ + 1
+        ld      l,0x00					; 0x00 is over written by the value of 'a' passed in
+        ld      h,0
+        hlx     8
+        ld      de,_tile0
+        add     hl,de
+
+        ; Display the tile. We are going to use the
+        ; stack pointer to load a 16 bit value so
+        ; we need to disable interrupts.
+        di
+        ; Save the current stack pointer
+        ld      (TempSP),sp
+        ; Point the stack at the tile data
+        ld      sp,hl
+        ; Point hl at the screen address
+        ld      hl,bc
+
+        ; Pop 2 bytes of tile data and store it
+        ; to the screen.
+        pop     bc                      ; 10
+        ld      (hl),c                  ; 7
+        inc     h                       ; Add 256 to screen address 4
+        ld      (hl),b                  ; 7
+        inc     h                       ; Add 256 to screen address 4
+
+        ; Pop 2 bytes of tile data and store it
+        ; to the screen.
+        pop     bc
+        ld      (hl),c
+        inc     h
+        ld      (hl),b
+        inc     h
+
+        ; Pop 2 bytes of tile data and store it
+        ; to the screen.
+        pop     bc
+        ld      (hl),c
+        inc     h
+        ld      (hl),b
+        inc     h
+
+        ; Pop 2 bytes of tile data and store it
+        ; to the screen.
+        pop     bc
+        ld      (hl),c
+        inc     h
+        ld      (hl),b
+
+        ; Restore the stack pointer.
+.TempSP = $+1
+        ld      sp,0x0000
+        ei
+
+        pop     hl                      ; Restore coin table pointer
+.notVisible2
+        ld      a,SIZEOF_item
+        addhl
+        jr      nextItem2
 
 		section	bss_user
 		defvars 0                             ; Define the stack variables used

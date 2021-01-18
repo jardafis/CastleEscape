@@ -13,9 +13,8 @@
         public  _animateCoins
         public  _coinTables
         public  coins
-        public	setCurrentCoinTable
 		public	checkCoinCollision
-		public	displayCoinAttr
+		public	currentCoinTable
 
         include "defs.asm"
 
@@ -129,7 +128,7 @@ _animateCoins:
         jp      nextCoin
 
 .notVisible
-        ld      a,SIZEOF_coin
+        ld      a,SIZEOF_item
         addhl   
         jp      nextCoin
 
@@ -137,31 +136,6 @@ _animateCoins:
 ;        exx
 ;        ex      af,af'
         ret     
-
-		;
-		; Calculate the value of the current coin table based
-		; on the values of tileMapX and tileMapY and save it
-		; in currentCoinTable.
-		;
-setCurrentCoinTable:
-		ld		hl,(_tileMapX)			; Get tileMapX & tileMapY
-		ld		a,h
-		rla								; x2
-		rla								; x4
-		and		%11111100
-		ld		h,a
-		ld		a,l
-		sla		a						; x2
-		add		h
-		ld		l,a
-		ld		h,0
-		ld		de,_coinTables
-		add		hl,de
-		ld		e,(hl)
-		inc		hl
-		ld		d,(hl)
-		ld		(currentCoinTable),de
-		ret
 
 		;
 		; Check if the player has collided with a coin. And if so,
@@ -241,57 +215,11 @@ checkCoinCollision:
 .blah
 		pop		hl
 .notVisible2
-        ld      a,SIZEOF_coin
+        ld      a,SIZEOF_item
         addhl
         jp      nextCoin2
 
-		;
-		; Cycle through the coin table for the current level and
-		; if the coin is visible, update the screen with the attribute
-		; for the coin.
-		;
-		; Coins themsleves are displayed by the animate routine.
-		;
-displayCoinAttr:
-		ld		hl,(currentCoinTable)
-.nextCoin3
-		ld		a,(hl)
-        cp      0xff
-        ret		z
-
-		or		a
-        jr      z,notVisible3
-
-		push	hl
-
-		inc		hl
-		ld		c,(hl)					; Coin X position
-		inc		hl
-		ld		b,(hl)					; Coin Y position
-
-		ld		a,ID_COIN
-		ld		de,_tileAttr
-		addde
-		ld		a,(de)
-
-		call	setAttr
-
-		pop		hl
-.notVisible3
-        ld      a,SIZEOF_coin
-        addhl
-        jr      nextCoin3
-
         section bss_user
-
-		defvars 0
-		{
-			coinFlags		ds.b	1
-			coinX			ds.b	1
-			coinY			ds.b	1
-			coinFrame		ds.b	1
-			SIZEOF_coin
-		}
 
 .currentCoinTable	dw		0
 
@@ -299,4 +227,4 @@ _coinTables:
 		ds		MAX_LEVEL_X * MAX_LEVEL_Y * 2
 
 coins:
-		ds		SIZEOF_coin * 8 * MAX_LEVEL_X * MAX_LEVEL_Y
+		ds		SIZEOF_item * 8 * MAX_LEVEL_X * MAX_LEVEL_Y
