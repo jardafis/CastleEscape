@@ -1,9 +1,8 @@
         extern  _screenTab
 
-		public	addBCD
-		public	incBCD
-        public  _displayBCD
-        public	display2BCD
+        public  addBCD
+        public  incBCD
+        public  display2BCD
 
         include "defs.asm"
         section code_user
@@ -13,20 +12,13 @@
         ;		bc = Character screen location b=Xpos, c=YPos
         ;
         ;		All registers are preserved
-_displayBCD:
+displayBCD:
         push    af
         push    bc
         push    de
         push    hl
 
-        ld      h,0
-        add     a                       ; x2
-        add     a                       ; x4
-        add     a                       ; x8
-        ld      l,a
-        ld      de,FONT + (('0' - 32) * 8); Start address of numbers in font
-        add     hl,de                   ; Pointer to start of character in ROM font
-        push    hl                      ; Save font pointer address
+		ex		af,af'
 
         ld      h,0
         ld      l,c
@@ -41,7 +33,14 @@ _displayBCD:
         inc     hl
         ld      d,(hl)
 
-        pop     hl                      ; Restore font pointer
+		ex		af,af'
+        ld      h,0
+        add     a                       ; x2
+        add     a                       ; x4
+        add     a                       ; x8
+        ld      l,a
+        ld      bc,FONT + (('0' - 32) * 8); Start address of numbers in font
+        add     hl,bc                   ; Pointer to start of character in ROM font
 
         ; Display a single digit 0 - 9
         ldi     
@@ -82,16 +81,16 @@ display2BCD:
         xor     a                       ; Zero a
 
         rld                             ; Get high order nibble from (hl)
-        call    _displayBCD             ; Display the character
+        call    displayBCD              ; Display the character
         inc     b                       ; Increment x screen location
         rld                             ; Get low order nibble from (hl)
-        call    _displayBCD
+        call    displayBCD
         inc     b                       ; Increment x screen location
         rld                             ; Put the low order nibble back in (hl)
 
         pop     bc
         pop     af
-        ret
+        ret     
 
         ;
         ; Add the BCD value in 'l' to the BCD value pointed to by 'de'.
@@ -108,7 +107,7 @@ addBCD:
         add     l                       ; Add the BCD value passed in
         daa                             ; Adjust result for BCD
         ld      (de),a                  ; Save the updated BCD value
-        jr      nc,addScoreDone         ; If nc, no wraparound
+        jr      nc,addBCDDone           ; If nc, no wraparound
 
         inc     de                      ; There was a wraparound
         ld      a,(de)                  ; Get high byte of BCD value
@@ -117,10 +116,10 @@ addBCD:
         daa                             ; Adjust result for BCD
         ld      (de),a                  ; Save the incremented BCD value
 
-.addScoreDone
+.addBCDDone
         pop     de
         pop     af
-        ret
+        ret     
 
         ;
         ; Increment the BCD value pointed to by 'de'
@@ -135,6 +134,6 @@ incBCD:
         call    addBCD
 
         pop     hl
-        ret
+        ret     
 
 

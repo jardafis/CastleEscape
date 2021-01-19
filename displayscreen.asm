@@ -6,10 +6,6 @@
 
         include "defs.asm"
 
-        ; Sprite ID's
-        defc    ID_LANTERN		= 88
-        defc    ID_BLANK		= 11
-
         section code_user
         ;
         ; Display a complete tile map
@@ -50,7 +46,7 @@ _displayScreen:
         cmp		ID_BLANK                   ; Check for blank
         jr      z,nextTile              ; On to the next tile
 
-		;
+        ;
         ; Don't display collectible items.
         ;
 		cmp		ID_COIN
@@ -60,9 +56,9 @@ _displayScreen:
 		cmp		ID_HEART
         jr      z,nextTile
 
-		;
-		; Check for lanterns
-		;
+        ;
+        ; Check for lanterns
+        ;
 		cmp		ID_LANTERN
         call    z,addLantern
 
@@ -181,8 +177,8 @@ _displayScreen:
         inc     (ix+yPos)
 
         pop     bc
-        dec		b
-        jp		nz,yloop
+        dec     b
+        jp      nz,yloop
 
 .tempSP = $ + 1
         ld      sp,0x0000

@@ -1,46 +1,31 @@
         extern  _screenTab
         extern  _tile0
-		extern	_tileMapX
-		extern	_xPos
-		extern	_yPos
-		extern  addBCD
+        extern  addBCD
         extern  _displayScore
-        extern	clearAttr
-        extern	clearChar
-		extern	_tileAttr
-		extern	setAttr
-		extern	score
+        extern  score
 
         public  _animateCoins
         public  _coinTables
         public  coins
-		public	currentCoinTable
-		public	coinCollision
+        public  currentCoinTable
+        public  coinCollision
 
         include "defs.asm"
-
-		defc	COIN_WIDTH			= 0x07
-		defc	COIN_HEIGHT			= 0x07
 
         section code_user
 
         ;
-        ; On entry
-        ;		hl - pointer to coin table for current level
+        ; Animate the visible coins on the current level.
+        ;
 _animateCoins:
-;        ex      af,af'
-;        push    hl
-;        exx
-;        pop     hl
-
-		ld		hl,(currentCoinTable)
+        ld      hl,(currentCoinTable)
 .nextCoin
         ld      a,(hl)                  ; Coin flags
         cp      0xff
-        jr      z,endOfList
+        ret     z
 
-        cp      0x01                    ; Is the coin visible?
-        jr      nz,notVisible
+        cp      0x00                    ; Is the coin visible?
+        jr      z,notVisible
         inc     hl
 
 
@@ -133,20 +118,15 @@ _animateCoins:
         addhl   
         jp      nextCoin
 
-.endOfList
-;        exx
-;        ex      af,af'
-        ret     
-
-		;
-		; Add 5 to the score and display it
-		;
+        ;
+        ; Add 5 to the score and display it
+        ;
 coinCollision:
-		ld		l,0x20
-		ld		de,score
-		call	addBCD
-		call	_displayScore
-		ret
+        ld      l,0x20
+        ld      de,score
+        call    addBCD
+        call    _displayScore
+        ret     
 
 
         section bss_user

@@ -1,8 +1,8 @@
-        extern	_screenTab
+        extern  _screenTab
         public  _cls
-		public	clearAttr
-		public	setAttr
-		public	clearChar
+        public  clearAttr
+        public  setAttr
+        public  clearChar
         section code_user
 
         include "defs.asm"
@@ -13,12 +13,12 @@
         ; On entry, l contains the attribute to fill the attr memory.
         ;
 _cls:
-        push	af
+        push    af
         push    bc
         push    hl
 
-		ld		a,l
-		ld		(clsAttrib),a
+        ld      a,l
+        ld      (clsAttrib),a
 
         halt    
 
@@ -67,65 +67,65 @@ _cls:
 
         pop     hl
         pop     bc
-        pop		af
+        pop     af
         ret     
 
-		;
-		; Set the screen attribute specified by 'bc' to
-		; the attribute passed in 'a'.
-		;
-		; Entry:
-		;		b - Y location
-		;		c - X location
-		;		a - Attribute
-		;
-		; Corrupts:
-		;		af, bc, hl
-		;
+        ;
+        ; Set the screen attribute specified by 'bc' to
+        ; the attribute passed in 'a'.
+        ;
+        ; Entry:
+        ;		b - Y location
+        ;		c - X location
+        ;		a - Attribute
+        ;
+        ; Corrupts:
+        ;		af, bc, hl
+        ;
 clearAttr:
-		ld		a,(clsAttrib)
+        ld      a,(clsAttrib)
 setAttr:
-		ld		l,b
-		ld		h,0
-		hlx		32
-		ld		b,0
-		add		hl,bc
-		ld		bc,SCREEN_ATTR_START
-		add		hl,bc
-		ld		(hl),a
-		ret
+        ld      l,b
+        ld      h,0
+        hlx     32
+        ld      b,0
+        add     hl,bc
+        ld      bc,SCREEN_ATTR_START
+        add     hl,bc
+        ld      (hl),a
+        ret     
 
-		;
-		; Clear the character position specified by 'bc'
-		;
-		; Entry:
-		;		b - Y location
-		;		c - X location
-		;
-		; Corrupts:
-		;		af, bc, hl
-		;
+        ;
+        ; Clear the character position specified by 'bc'
+        ;
+        ; Entry:
+        ;		b - Y location
+        ;		c - X location
+        ;
+        ; Corrupts:
+        ;		af, bc, hl
+        ;
 clearChar:
-		ld		l,b						; Multiply the Y offset
-		ld		h,0						; by 16 to to use with
-		hlx		16						; screenTab
+        ld      l,b                     ; Multiply the Y offset
+        ld      h,0                     ; by 16 to to use with
+        hlx     16                      ; screenTab
 
-		ld		de,_screenTab
-		add		hl,de
-		ld		a,(hl)					; Get low order screen address
-		add		c						; Add X offset
-		ld		e,a						; Store in 'e'
-		inc		hl						; Get high order screen address
-		ld		d,(hl)					; into 'd'
-		xor		a						; Clear 'a'
-		ld		b,8						; Char height count
+        ld      de,_screenTab
+        add     hl,de
+        ld      a,(hl)                  ; Get low order screen address
+        add     c                       ; Add X offset
+        ld      e,a                     ; Store in 'e'
+        inc     hl                      ; Get high order screen address
+        ld      d,(hl)                  ; into 'd'
+        xor     a                       ; Clear 'a'
+        ld      b,8                     ; Char height count
 .clearCharLoop
-		ld		(de),a
-		inc		d
-		djnz	clearCharLoop
+        ld      (de),a
+        inc     d
+        djnz    clearCharLoop
 
-		ret
+        ret     
 
-		section bss_user
+        section bss_user
 clsAttrib:
 		ds		1
