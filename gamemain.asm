@@ -44,6 +44,7 @@
 		extern	hearts
 		extern	displayHeartCount
 		extern	heartCollision
+		extern	display2BCD
 
         public  _gameMain
         public  _currentTileMap
@@ -446,8 +447,14 @@ setupScreen:
 		ld		hl,(currentHeartTable)
 		call	displayItems
 
-		call	displayEggCount
-		call	displayHeartCount
+        ld      bc,0x1a01               ; x,y screen location
+        ld      hl,eggCount             ; Point to 1000's/100's of score
+		call	display2BCD
+
+        ld      bc,0x1d01               ; x,y screen location
+        ld      hl,heartCount           ; Point to 1000's/100's of score
+		call	display2BCD
+
         call    _displayScore
         call    _scrollReset
 
