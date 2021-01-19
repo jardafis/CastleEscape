@@ -1,34 +1,34 @@
-		extern	addBCD
-		extern	display2BCD
+        extern  addBCD
+        extern  display2BCD
 
 
-		public	heartCount
-		public	currentHeartTable
-		public	heartTables
-		public	hearts
-		public	heartCollision
+        public  heartCount
+        public  currentHeartTable
+        public  heartTables
+        public  hearts
+        public  heartCollision
 
-		include	"defs.asm"
+        include "defs.asm"
 
-		section	code_user
-		;
-		; Increment and display the egg count
-		;
+        section code_user
+        ;
+        ; Increment and display the egg count
+        ;
 heartCollision:
-		ld		l,0x01
-		ld		de,heartCount
-		call	addBCD
+        ld      l,0x01
+        ld      de,heartCount
+        call    addBCD
         ld      bc,0x1d01               ; x,y screen location
         ld      hl,heartCount           ; Point to 1000's/100's of score
-        call	display2BCD
-		ret
+        call    display2BCD
+        ret     
 
         section bss_user
-heartCount:                            	; BCD
+heartCount:                             ; BCD
         dw      0x0000
 
 currentHeartTable:
-		dw		0
+        dw      0
 
 heartTables:
 		ds		MAX_LEVEL_X * MAX_LEVEL_Y * 2

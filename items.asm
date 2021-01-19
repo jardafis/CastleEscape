@@ -1,24 +1,24 @@
-		extern	_yPos
-		extern	_xPos
+        extern  _yPos
+        extern  _xPos
         extern  _levels
-		extern	_tileAttr
-		extern	_tileMapX
-		extern	_screenTab
-		extern	_tile0
-		extern	setAttr
-		extern	clearAttr
-		extern	clearChar
+        extern  _tileAttr
+        extern  _tileMapX
+        extern  _screenTab
+        extern  _tile0
+        extern  setAttr
+        extern  clearAttr
+        extern  clearChar
 
         public  _initItems
-        public	displayItemAttr
-		public	setCurrentItemTable
-		public	displayItems
-		public	checkItemCollision
+        public  displayItemAttr
+        public  setCurrentItemTable
+        public  displayItems
+        public  checkItemCollision
 
-		include	"defs.asm"
+        include "defs.asm"
 
-		defc	ITEM_WIDTH			= 0x08
-		defc	ITEM_HEIGHT			= 0x08
+        defc    ITEM_WIDTH			= 0x08
+        defc    ITEM_HEIGHT			= 0x08
 
         section code_user
         ;
@@ -26,18 +26,18 @@
         ;		hl - Pointer to the item table
         ;		de - Pointer to the item list
         ;		a  - Tile ID of item being initialized
-		;
+        ;
         ; This routine scans each level from top right to bottom left
         ; building up a table of items for each level. These tables
         ; are then used by animation routines and collision routines.
         ;
 _initItems:
-        pushall
+        pushall 
 
-		;
-		; Save parameters passed in registers
-		;
-		ld		(itemID),a
+        ;
+        ; Save parameters passed in registers
+        ;
+        ld      (itemID),a
         ld      (currentItem),de
         ld      (currentItemTable),hl
 
@@ -80,7 +80,7 @@ _initItems:
 .tileXLoop
         ld      a,(hl)                  ; Get tile ID
 .itemID = $ + 1
-		cp		0x00
+        cp      0x00
         call    z,addItem
         inc     hl
         inc     (ix+tileX)
@@ -137,8 +137,8 @@ _initItems:
 .tempSP = $ + 1
         ld      sp,0x0000
 
-        popall
-        ret
+        popall  
+        ret     
 
         ;
         ; Add a coin to the coin table
@@ -169,87 +169,87 @@ _initItems:
 
         ld      (currentItem),de
 
-        ret
+        ret     
 
-		;
-		; Calculate the value of the current item table based
-		; on the values of tileMapX and tileMapY and save it
-		; in .
-		;
-		; Entry:
-		;		hl - Pointer to current item table variable
-		; 		de - Pointer to item tables
-		;
+        ;
+        ; Calculate the value of the current item table based
+        ; on the values of tileMapX and tileMapY and save it
+        ; in .
+        ;
+        ; Entry:
+        ;		hl - Pointer to current item table variable
+        ; 		de - Pointer to item tables
+        ;
 setCurrentItemTable:
-		ld		(currItemTab),hl
-		ld		hl,(_tileMapX)			; Get tileMapX & tileMapY
-		ld		a,h
-		rla								; x2
-		rla								; x4
-		and		%11111100
-		ld		h,a
-		ld		a,l
-		sla		a						; x2
-		add		h
-		ld		l,a
-		ld		h,0
-		add		hl,de
-		ld		e,(hl)
-		inc		hl
-		ld		d,(hl)
+        ld      (currItemTab),hl
+        ld      hl,(_tileMapX)          ; Get tileMapX & tileMapY
+        ld      a,h
+        rla                             ; x2
+        rla                             ; x4
+        and     %11111100
+        ld      h,a
+        ld      a,l
+        sla     a                       ; x2
+        add     h
+        ld      l,a
+        ld      h,0
+        add     hl,de
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)
 .currItemTab = $ + 2
-		ld		(0x0000),de
-		ret
+        ld      (0x0000),de
+        ret     
 
-		;
-		; Cycle through the specified item table if the item is
-		; visible, update the screen with the attribute for the item.
-		;
-		; Items themsleves are not displayed here.
-		;
-		; Entry:
-		;		hl - Pointer to the current item table
-		;		a  - ID of the item
-		;
+        ;
+        ; Cycle through the specified item table if the item is
+        ; visible, update the screen with the attribute for the item.
+        ;
+        ; Items themsleves are not displayed here.
+        ;
+        ; Entry:
+        ;		hl - Pointer to the current item table
+        ;		a  - ID of the item
+        ;
 displayItemAttr:
-		ld		(itemID2),a
+        ld      (itemID2),a
 .nextItem
-		ld		a,(hl)
+        ld      a,(hl)
         cp      0xff
-        ret		z
+        ret     z
 
-		or		a
+        or      a
         jr      z,notVisible
 
-		push	hl
+        push    hl
 
-		inc		hl
-		ld		c,(hl)					; Item X position
-		inc		hl
-		ld		b,(hl)					; Item Y position
+        inc     hl
+        ld      c,(hl)                  ; Item X position
+        inc     hl
+        ld      b,(hl)                  ; Item Y position
 
 .itemID2 = $ + 1
-		ld		a,0x00
-		ld		de,_tileAttr
-		addde
-		ld		a,(de)
+        ld      a,0x00
+        ld      de,_tileAttr
+        addde   
+        ld      a,(de)
 
-		call	setAttr
+        call    setAttr
 
-		pop		hl
+        pop     hl
 .notVisible
         ld      a,SIZEOF_item
-        addhl
+        addhl   
         jr      nextItem
 
-		;
-		;
-		; Entry:
-		;		hl - Pointer to current item table
-		;		a  - ID of item
-		;
+        ;
+        ;
+        ; Entry:
+        ;		hl - Pointer to current item table
+        ;		a  - ID of item
+        ;
 displayItems:
-		ld		(itemID3),a
+        ld      (itemID3),a
 .nextItem2
         ld      a,(hl)                  ; Flags
         cp      0xff
@@ -258,7 +258,7 @@ displayItems:
         cp      0x00                    ; Is the item visible?
         jr      z,notVisible2
 
-		push	hl
+        push    hl
         inc     hl
         ; Calculate the screen address
         ld      c,(hl)                  ; X screen position
@@ -268,14 +268,14 @@ displayItems:
         hlx     16
         ld      de,_screenTab
         add     hl,de
-        ld      a,(hl)					; Screen low byte address
+        ld      a,(hl)                  ; Screen low byte address
         add     c                       ; Add X offset
         ld      c,a                     ; Store result in 'c'
         inc     hl
         ld      b,(hl)
 
 .itemID3 = $ + 1
-        ld      l,0x00					; 0x00 is over written by the value of 'a' passed in
+        ld      l,0x00                  ; 0x00 is over written by the value of 'a' passed in
         ld      h,0
         hlx     8
         ld      de,_tile0
@@ -284,7 +284,7 @@ displayItems:
         ; Display the tile. We are going to use the
         ; stack pointer to load a 16 bit value so
         ; we need to disable interrupts.
-        di
+        di      
         ; Save the current stack pointer
         ld      (TempSP),sp
         ; Point the stack at the tile data
@@ -326,102 +326,102 @@ displayItems:
         ; Restore the stack pointer.
 .TempSP = $+1
         ld      sp,0x0000
-        ei
+        ei      
 
         pop     hl                      ; Restore coin table pointer
 .notVisible2
         ld      a,SIZEOF_item
-        addhl
+        addhl   
         jr      nextItem2
 
-		;
-		; Check if the player has collided with an item. And if so,
-		; remove the item and attrinute from the level and call
-		; the user provided sub-routine to update socres, etc.
-		;
-		;	Entry:
-		;		hl - Pointer to current item table
-		;		de - Pointer to subroutine to call when collision is detected
-		;
+        ;
+        ; Check if the player has collided with an item. And if so,
+        ; remove the item and attrinute from the level and call
+        ; the user provided sub-routine to update socres, etc.
+        ;
+        ;	Entry:
+        ;		hl - Pointer to current item table
+        ;		de - Pointer to subroutine to call when collision is detected
+        ;
 checkItemCollision:
-		ld		(updateScore),de
+        ld      (updateScore),de
 .nextEgg
-		ld		a,(hl)
+        ld      a,(hl)
         cp      0xff
-        ret		z
+        ret     z
 
         cp      0x00                    ; Is the item visible?
         jr      z,notVisible3
 
-		push	hl
-		inc		hl
+        push    hl
+        inc     hl
 
-		;
-		; Collision check here
-		;
-		ld		a,(hl)					; X byte position
-		rlca							; x2
-		rlca							; x4
-		rlca							; x8
-		and		%11111000
-		add		2						; Left side pixel offset (indented a little)
-		ld		b,a
-		add		ITEM_WIDTH-5			; Right side pixel offset (pulled in a little)
-		ld		c,a
+        ;
+        ; Collision check here
+        ;
+        ld      a,(hl)                  ; X byte position
+        rlca                            ; x2
+        rlca                            ; x4
+        rlca                            ; x8
+        and     %11111000
+        add     2                       ; Left side pixel offset (indented a little)
+        ld      b,a
+        add     ITEM_WIDTH-5            ; Right side pixel offset (pulled in a little)
+        ld      c,a
 
-		ld		a,(_xPos)				; Player left side pixel position
-		inc		a
-		cp		c						; Compare with coin right side
-		jr		nc,noCollision			; 'nc' if 'c' <= 'a'
+        ld      a,(_xPos)               ; Player left side pixel position
+        inc     a
+        cp      c                       ; Compare with coin right side
+        jr      nc,noCollision          ; 'nc' if 'c' <= 'a'
 
-		add		PLAYER_WIDTH-4			; Get right side pixel position
-		cp		b						; Compare with coin left side
-		jr		c,noCollision			; 'c' if 'b' > 'a'
+        add     PLAYER_WIDTH-4          ; Get right side pixel position
+        cp      b                       ; Compare with coin left side
+        jr      c,noCollision           ; 'c' if 'b' > 'a'
 
-		inc		hl
-		ld		a,(hl)					; Y byte position
-		rlca							; x2
-		rlca							; x4
-		rlca							; x8
-		and		%11111000
-		add		2						; Top pixel offset pulled in a little
-		ld		b,a
-		add		ITEM_HEIGHT-5			; Bottom pixel offset, pushed up a little
-		ld		c,a
+        inc     hl
+        ld      a,(hl)                  ; Y byte position
+        rlca                            ; x2
+        rlca                            ; x4
+        rlca                            ; x8
+        and     %11111000
+        add     2                       ; Top pixel offset pulled in a little
+        ld      b,a
+        add     ITEM_HEIGHT-5           ; Bottom pixel offset, pushed up a little
+        ld      c,a
 
-		ld		a,(_yPos)
-		cp		c						; Compare with bottom
-		jr		nc,noCollision			; 'nc' if 'c' <= 'a'
+        ld      a,(_yPos)
+        cp      c                       ; Compare with bottom
+        jr      nc,noCollision          ; 'nc' if 'c' <= 'a'
 
-		add		PLAYER_HEIGHT-1			; Player bottom pixel position
-		cp		b						; Compare with top
-		jr		c,noCollision			; 'c' if 'b' > 'a'
+        add     PLAYER_HEIGHT-1         ; Player bottom pixel position
+        cp      b                       ; Compare with top
+        jr      c,noCollision           ; 'c' if 'b' > 'a'
 
-		ld		b,(hl)					; Y position
-		dec		hl						; Back to the flags
-		ld		c,(hl)					; X position
-		dec		hl
-		xor		a						; Zero flags
-		ld		(hl),a
+        ld      b,(hl)                  ; Y position
+        dec     hl                      ; Back to the flags
+        ld      c,(hl)                  ; X position
+        dec     hl
+        xor     a                       ; Zero flags
+        ld      (hl),a
 
-		push	bc
-		call	clearAttr
-		pop		bc
-		call	clearChar
+        push    bc
+        call    clearAttr
+        pop     bc
+        call    clearChar
 
-		;
-		; USer provided function to update score, etc.
-		;
+        ;
+        ; USer provided function to update score, etc.
+        ;
 .updateScore = $ + 1
-		call	-1
+        call    -1
 .noCollision
-		pop		hl
+        pop     hl
 .notVisible3
         ld      a,SIZEOF_item
-        addhl
+        addhl   
         jp      nextEgg
 
-		section	bss_user
+        section bss_user
 		defvars 0                             ; Define the stack variables used
 		{
 			levelX			ds.b	1

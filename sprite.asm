@@ -1,15 +1,16 @@
         extern  _screenTab
-        extern	_LeftSprite0
-        extern	_RightSprite0
-
-        section code_user
+        extern  _LeftSprite0
+        extern  _RightSprite0
 
         public  _copyScreen
         public  _pasteScreen
         public  _displaySprite
-		public	playerSprite
+        public  playerSprite
 
         include "defs.asm"
+
+        section code_user
+
         ; After entry:
         ;	ix + 0 = sprite x position in pixels
         ;	ix + 1 = sprite y position in pixels
@@ -40,11 +41,11 @@ _copyScreen:
 
 
         ld      a,(ix+X_OFFSET)         ; Get the X offset
-        rrca
-        rrca
-        rrca
-        and		%00011111
-        ld		c,a
+        rrca    
+        rrca    
+        rrca    
+        and     %00011111
+        ld      c,a
         ld      b,PLAYER_HEIGHT
 .copyloop
         pop     hl                      ; get screen row source adress
@@ -69,7 +70,7 @@ _copyScreen:
         ei      
 
         exit    
-        ret
+        ret     
 
         ; After entry:
         ;	ix + 0 = sprite x position in pixels
@@ -96,11 +97,11 @@ _pasteScreen:
 
         ld      b,PLAYER_HEIGHT
         ld      a,(ix+X_OFFSET)         ; Get the X offset
-        rrca	                        ; divide by 8 to get byte address
-        rrca
-        rrca
-        and		%00011111
-        ld		c,a
+        rrca                            ; divide by 8 to get byte address
+        rrca    
+        rrca    
+        and     %00011111
+        ld      c,a
 .pasteloop
         pop     de                      ; get screen row destination adress
         ld      a,e
@@ -130,34 +131,34 @@ _pasteScreen:
         ;	ix + 0 = sprite x position in pixels
         ;	ix + 1 = sprite y position in pixels
 _displaySprite:
-;        push    af
-;        push    bc
-;        push    de
-;        push    hl
+        ;        push    af
+        ;        push    bc
+        ;        push    de
+        ;        push    hl
 
         di      
         ld      (displaySpriteSP),sp
 
         ; Calculate the offset into the screen table
-		ld		c,h						; Save xPos
+        ld      c,h                     ; Save xPos
         ld      h,0
         add     hl,hl                   ; multiply by 2
         ld      de,_screenTab
         add     hl,de
-		ld		(screenStore),hl
+        ld      (screenStore),hl
 
-		ld		a,c
+        ld      a,c
         and     0x07                    ; Get the sprite shift index
-        ld		l,a
-        ld		h,0
+        ld      l,a
+        ld      h,0
         ; Multiple by 96
-		hlx		32
-		ld		de,hl					; Save 32x
-		hlx		2						; 64x
-		add		hl,de					; Add 32x
+        hlx     32
+        ld      de,hl                   ; Save 32x
+        hlx     2                       ; 64x
+        add     hl,de                   ; Add 32x
         ld      de,(playerSprite)
         add     hl,de
-        ld		(spriteStore),hl
+        ld      (spriteStore),hl
 
         ; c is the pixel X offset
         ; Divide by 8 to get byte address
@@ -167,49 +168,49 @@ _displaySprite:
         ld      b,PLAYER_HEIGHT         ; Sprite height
 .loop2
 .screenStore = $ + 1
-		ld		sp,0x0000				; Get the screen table pointer
-		pop		hl						; Pop screen row address
-		ld		(screenStore),sp		; Save stack pointing to next row
+        ld      sp,0x0000               ; Get the screen table pointer
+        pop     hl                      ; Pop screen row address
+        ld      (screenStore),sp        ; Save stack pointing to next row
         ld      a,l
         add     c                       ; add x offset
         ld      l,a
 .spriteStore = $ + 1
-		ld		sp,0x0000				; Get the sprite pointer
+        ld      sp,0x0000               ; Get the sprite pointer
 
-		pop		de						; Pop sprite data
-		ld		a,(hl)					; Read the screen contents
-		and		e						; and with mask
-		or		d						; or with sprite data
-		ld		(hl),a					; save it back to the screen
-		inc		l						; Next screen position to the right
+        pop     de                      ; Pop sprite data
+        ld      a,(hl)                  ; Read the screen contents
+        and     e                       ; and with mask
+        or      d                       ; or with sprite data
+        ld      (hl),a                  ; save it back to the screen
+        inc     l                       ; Next screen position to the right
 
-		pop		de
-		ld		a,(hl)
-		and		e
-		or		d
-		ld		(hl),a
-		inc		l
+        pop     de
+        ld      a,(hl)
+        and     e
+        or      d
+        ld      (hl),a
+        inc     l
 
-		pop		de
-		ld		a,(hl)
-		and		e
-		or		d
-		ld		(hl),a
-;		inc		l						; No need to inc l we will pop a new screen address at top of loop
+        pop     de
+        ld      a,(hl)
+        and     e
+        or      d
+        ld      (hl),a
+        ;		inc		l						                         ; No need to inc l we will pop a new screen address at top of loop
 
-		ld		(spriteStore),sp
+        ld      (spriteStore),sp
 
         djnz    loop2
 .displaySpriteSP = $+1
         ld      sp,0x0000
         ei      
 
-;        pop     hl
-;        pop     de
-;        pop     bc
-;        pop     af
+        ;        pop     hl
+        ;        pop     de
+        ;        pop     bc
+        ;        pop     af
         ret     
 
-		section	bss_user
+        section bss_user
 .playerSprite
-		dw		0
+        dw      0

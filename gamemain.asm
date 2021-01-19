@@ -9,42 +9,40 @@
         extern  _displayScreen
         extern  _displayScore
         extern  _updateDirection
-        extern	_addScore
         extern  _lanternFlicker
         extern  _lanternList
         extern  _copyScreen
         extern  _pasteScreen
-		extern	_displaySprite
+        extern  _displaySprite
         extern  ticks
-		extern	playerSprite
-        extern	_LeftSprite0
-        extern	_RightSprite0
-		extern	checkXCol
-		extern	checkYCol
-		extern	_coinTables
-		extern	coins
-		extern	_animateCoins
-		extern	checkCoinCollision
-		extern	displayItemAttr
-		extern	eggTables
-		extern	eggs
-		extern	currentCoinTable
-		extern	currentEggTable
-		extern	setCurrentItemTable
-		extern	displayItems
-		extern	checkItemCollision
-		extern	coinCollision
-		extern	eggCollision
-		extern	displayEggCount
-		extern	eggCount
-		extern	score
-		extern	currentHeartTable
-		extern	heartTables
-		extern	heartCount
-		extern	hearts
-		extern	displayHeartCount
-		extern	heartCollision
-		extern	display2BCD
+        extern  playerSprite
+        extern  _LeftSprite0
+        extern  _RightSprite0
+        extern  checkXCol
+        extern  checkYCol
+        extern  _coinTables
+        extern  coins
+        extern  _animateCoins
+        extern  displayItemAttr
+        extern  eggTables
+        extern  eggs
+        extern  currentCoinTable
+        extern  currentEggTable
+        extern  setCurrentItemTable
+        extern  displayItems
+        extern  checkItemCollision
+        extern  coinCollision
+        extern  eggCollision
+        extern  displayEggCount
+        extern  eggCount
+        extern  score
+        extern  currentHeartTable
+        extern  heartTables
+        extern  heartCount
+        extern  hearts
+        extern  displayHeartCount
+        extern  heartCollision
+        extern  display2BCD
 
         public  _gameMain
         public  _currentTileMap
@@ -79,7 +77,7 @@ _gameMain:
         ;
         halt    
 
-		;		call	_gameLoop
+        ;		call	_gameLoop
         ;		jp		gameLoop
 
         popall  
@@ -102,11 +100,11 @@ _gameMain:
         ret     
 
 .newGame
-		;
-		; Set the initial player sprite
-		;
-        ld		hl,_RightSprite0
-        ld		(playerSprite),hl
+        ;
+        ; Set the initial player sprite
+        ;
+        ld      hl,_RightSprite0
+        ld      (playerSprite),hl
 
         ;
         ; Starting X and Y player position
@@ -130,32 +128,32 @@ _gameMain:
         ld      (_tileMapX),a
         ld      (_tileMapY),a
 
-		;
-		; Initial coin rotate counter
-		;
-		ld		a,6
-		ld		(coinRotate),a
+        ;
+        ; Initial coin rotate counter
+        ;
+        ld      a,6
+        ld      (coinRotate),a
 
         ;
         ; Setup the coin tables
         ;
-		ld		hl,_coinTables
-		ld		de,coins
-        ld		a,ID_COIN
+        ld      hl,_coinTables
+        ld      de,coins
+        ld      a,ID_COIN
         call    _initItems
         ;
         ; Setup the egg tables
         ;
-		ld		hl,eggTables
-		ld		de,eggs
-        ld		a,ID_EGG
+        ld      hl,eggTables
+        ld      de,eggs
+        ld      a,ID_EGG
         call    _initItems
         ;
         ; Setup the hearts tables
         ;
-		ld		hl,heartTables
-		ld		de,hearts
-        ld		a,ID_HEART
+        ld      hl,heartTables
+        ld      de,hearts
+        ld      a,ID_HEART
         call    _initItems
 
         ;
@@ -164,12 +162,12 @@ _gameMain:
         ld      hl,0
         call    _scrollInit
 
-		;
-		; Zero score and counts
-		;
-        ld		(score),hl
-		ld		(eggCount),hl
-		ld		(heartCount),hl
+        ;
+        ; Zero score and counts
+        ;
+        ld      (score),hl
+        ld      (eggCount),hl
+        ld      (heartCount),hl
 
         call    setupScreen
 
@@ -206,13 +204,13 @@ _gameLoop:
 
 
 	IF	0
-		ld		b,255
+        ld      b,255
 .lo
-		push	af
-		pop		af
-		push	af
-		pop		af
-		djnz	lo
+        push    af
+        pop     af
+        push    af
+        pop     af
+        djnz    lo
 	ENDIF
 
 
@@ -250,15 +248,15 @@ _gameLoop:
         bit     LEFT_BIT,e
         jr      z,checkRight
         ld      a,LEFT_SPEED
-        ld		hl,_LeftSprite0
-        ld		(playerSprite),hl
+        ld      hl,_LeftSprite0
+        ld      (playerSprite),hl
         jr      updateXSpeedDone
 .checkRight
         bit     RIGHT_BIT,e
         jr      z,noXMovement
         ld      a,RIGHT_SPEED
-        ld		hl,_RightSprite0
-        ld		(playerSprite),hl
+        ld      hl,_RightSprite0
+        ld      (playerSprite),hl
         jr      updateXSpeedDone
 .noXMovement
         xor     a
@@ -271,7 +269,7 @@ _gameLoop:
         ld      hl,(jumpFall)           ; Falling and jumping flags
         ld      a,l                     ; must be zero before
         or      h                       ; a jump can be started
-        jr      nz,cantJump              ; If nz, falling or jumping are non-zero
+        jr      nz,cantJump             ; If nz, falling or jumping are non-zero
 
         bit     JUMP_BIT,e
         jr      z,cantJump
@@ -281,33 +279,33 @@ _gameLoop:
         ld      (_jumping),a
 .cantJump
 
-		ld		a,(_jumping)
-		or		a
+        ld      a,(_jumping)
+        or      a
 		jz		_2F
-		ld		e,a						; Save the jump counter
-		cp		JUMP_HEIGHT
-		jr		nz,_1F
-		ld		a,-JUMP_SPEED
+        ld      e,a                     ; Save the jump counter
+        cp      JUMP_HEIGHT
+        jr      nz,_1F
+        ld      a,-JUMP_SPEED
         ld      (_ySpeed),a
 _1F
-		ld		a,e						; Restore jump counter
-		dec		a
-		ld		(_jumping),a
+        ld      a,e                     ; Restore jump counter
+        dec     a
+        ld      (_jumping),a
 _2F
 
         ld      l,INK_MAGENTA
         call    _border
 
-		call	checkYCol
+        call    checkYCol
 
-		;
-		; If player is moving left or right, check for collisions.
-		;
+        ;
+        ; If player is moving left or right, check for collisions.
+        ;
         ld      l,INK_GREEN
         call    _border
-		ld		a,(_xSpeed)				; If xSpeed != 0 player is moving
-		or		a						; left or right.
-		call	nz,checkXCol			; Check for a collision.
+        ld      a,(_xSpeed)             ; If xSpeed != 0 player is moving
+        or      a                       ; left or right.
+        call    nz,checkXCol            ; Check for a collision.
 
 
         ;
@@ -317,26 +315,26 @@ _2F
         call    _border
         call    _scroll
 
-		ld		hl,(currentCoinTable)
-		ld		de,coinCollision
-		call	checkItemCollision
-		ld		hl,(currentEggTable)
-		ld		de,eggCollision
-		call	checkItemCollision
-		ld		hl,(currentHeartTable)
-		ld		de,heartCollision
-		call	checkItemCollision
+        ld      hl,(currentCoinTable)
+        ld      de,coinCollision
+        call    checkItemCollision
+        ld      hl,(currentEggTable)
+        ld      de,eggCollision
+        call    checkItemCollision
+        ld      hl,(currentHeartTable)
+        ld      de,heartCollision
+        call    checkItemCollision
 
         ld      l,INK_WHITE
         call    _border
-		ld		hl,coinRotate
-		dec		(hl)
-		jr		nz,noRotate
+        ld      hl,coinRotate
+        dec     (hl)
+        jr      nz,noRotate
 
-		ld		a,6						; Reset rotate counter
-		ld		(hl),a
+        ld      a,6                     ; Reset rotate counter
+        ld      (hl),a
 
-		call	_animateCoins
+        call    _animateCoins
 
 .noRotate
         ld      l,INK_BLUE
@@ -355,11 +353,11 @@ _2F
         ld      l,INK_RED
         call    _border
 
-		ld		a,(_xPos)
-		ld		h,a
-		ld		a,(_yPos)
-		ld		l,a
-		call	_displaySprite
+        ld      a,(_xPos)
+        ld      h,a
+        ld      a,(_yPos)
+        ld      l,a
+        call    _displaySprite
 
         ;
         ; Flicker any lanterns on the screen
@@ -369,34 +367,34 @@ _2F
         ld      hl,_lanternList
         call    _lanternFlicker
 
-		; Date: 1/15/2021 Time: 10:08pm
-		;
-		; Check for collisions with coins. But how? Sigh! :(
-		;
-		; For items that are collected by the player... Coins, eggs, hearts...
-		;
-		; Calculate the items center pixel x,y coordinates. Basically this
-		; is their x,y character position x 8 and then add 4 to x and y to
-		; get the center of the character.
-		;
-		; Then calculate the same for the player. We can store and use the player
-		; coordinates for all player/item collision checking.
-		;
-		; Using these 4 values, calculate the distance between the two objects
-		; with the following algorithm.
-		;
-		; 		a = x1 - x2;		// Easy
-		;		b = y1 - y2;		// Easy
-		;		c = sqrt((a * a) + (b * b));		// How?
-		;
-		; 'c' is the distance between the objects. If 'c' < (some value, like 4, or 6) there is a colision.
-		;
-		;	How to do a sqrt? Can be done in Z80
-		;	How long will it take? Way too slow ~360 cycles per sqrt.
-		;
-		;	Use pixel box collision detection instead. 8x8 box in the center of the player comapred with
-		; 	a 4x4 box in the center of the 8x8 item. If the boxes overlap there is a collision.
-		;
+        ; Date: 1/15/2021 Time: 10:08pm
+        ;
+        ; Check for collisions with coins. But how? Sigh! :(
+        ;
+        ; For items that are collected by the player... Coins, eggs, hearts...
+        ;
+        ; Calculate the items center pixel x,y coordinates. Basically this
+        ; is their x,y character position x 8 and then add 4 to x and y to
+        ; get the center of the character.
+        ;
+        ; Then calculate the same for the player. We can store and use the player
+        ; coordinates for all player/item collision checking.
+        ;
+        ; Using these 4 values, calculate the distance between the two objects
+        ; with the following algorithm.
+        ;
+        ; 		a = x1 - x2                         ;		// Easy
+        ;		b = y1 - y2                          ;		// Easy
+        ;		c = sqrt((a * a) + (b * b))          ;		// How?
+        ;
+        ; 'c' is the distance between the objects. If 'c' < (some value, like 4, or 6) there is a colision.
+        ;
+        ;	How to do a sqrt? Can be done in Z80
+        ;	How long will it take? Way too slow ~360 cycles per sqrt.
+        ;
+        ;	Use pixel box collision detection instead. 8x8 box in the center of the player comapred with
+        ; 	a 4x4 box in the center of the 8x8 item. If the boxes overlap there is a collision.
+        ;
 
         ld      l,INK_BLACK
         call    _border
@@ -410,50 +408,50 @@ setupScreen:
         ld      l,INK_WHITE | PAPER_BLACK
         call    _cls
 
-		ld		hl,currentCoinTable
-		ld		de,_coinTables
-		call	setCurrentItemTable
+        ld      hl,currentCoinTable
+        ld      de,_coinTables
+        call    setCurrentItemTable
 
-		ld		hl,currentEggTable
-		ld		de,eggTables
-		call	setCurrentItemTable
+        ld      hl,currentEggTable
+        ld      de,eggTables
+        call    setCurrentItemTable
 
-		ld		hl,currentHeartTable
-		ld		de,heartTables
-		call	setCurrentItemTable
+        ld      hl,currentHeartTable
+        ld      de,heartTables
+        call    setCurrentItemTable
 
         call    _setCurrentTileMap
 
-		halt
+        halt    
 
         ld      hl,(_currentTileMap)
         call    _displayScreen
 
-		ld		a,ID_COIN
-		ld		hl,(currentCoinTable)
-		call	displayItemAttr
+        ld      a,ID_COIN
+        ld      hl,(currentCoinTable)
+        call    displayItemAttr
 
-		ld		a,ID_EGG
-		ld		hl,(currentEggTable)
-		call	displayItemAttr
-		ld		a,ID_EGG
-		ld		hl,(currentEggTable)
-		call	displayItems
+        ld      a,ID_EGG
+        ld      hl,(currentEggTable)
+        call    displayItemAttr
+        ld      a,ID_EGG
+        ld      hl,(currentEggTable)
+        call    displayItems
 
-		ld		a,ID_HEART
-		ld		hl,(currentHeartTable)
-		call	displayItemAttr
-		ld		a,ID_HEART
-		ld		hl,(currentHeartTable)
-		call	displayItems
+        ld      a,ID_HEART
+        ld      hl,(currentHeartTable)
+        call    displayItemAttr
+        ld      a,ID_HEART
+        ld      hl,(currentHeartTable)
+        call    displayItems
 
         ld      bc,0x1a01               ; x,y screen location
         ld      hl,eggCount             ; Point to 1000's/100's of score
-		call	display2BCD
+        call    display2BCD
 
         ld      bc,0x1d01               ; x,y screen location
         ld      hl,heartCount           ; Point to 1000's/100's of score
-		call	display2BCD
+        call    display2BCD
 
         call    _displayScore
         call    _scrollReset
@@ -515,9 +513,9 @@ _mul_hla:
 
         section bss_user
 coinRotate:
-		db		0
+        db      0
 _currentTileMap:
-        dw		0
+        dw      0
 _tileMapX:
         db      0
 _tileMapY:
