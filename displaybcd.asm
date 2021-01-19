@@ -3,6 +3,7 @@
 		public	addBCD
 		public	incBCD
         public  _displayBCD
+        public	display2BCD
 
         include "defs.asm"
         section code_user
@@ -73,6 +74,24 @@ _displayBCD:
         pop     bc
         pop     af
         ret     
+
+display2BCD:
+        push    af
+        push    bc
+
+        xor     a                       ; Zero a
+
+        rld                             ; Get high order nibble from (hl)
+        call    _displayBCD             ; Display the character
+        inc     b                       ; Increment x screen location
+        rld                             ; Get low order nibble from (hl)
+        call    _displayBCD
+        inc     b                       ; Increment x screen location
+        rld                             ; Put the low order nibble back in (hl)
+
+        pop     bc
+        pop     af
+        ret
 
         ;
         ; Add the BCD value in 'l' to the BCD value pointed to by 'de'.
