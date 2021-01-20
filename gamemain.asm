@@ -3,11 +3,8 @@
         extern  _border
         extern  _initItems
         extern  _scrollInit
-        extern  _scrollReset
         extern  _scroll
         extern  _levels
-        extern  _displayScreen
-        extern  _displayScore
         extern  _updateDirection
         extern  _lanternFlicker
         extern  _lanternList
@@ -23,13 +20,10 @@
         extern  _coinTables
         extern  coins
         extern  _animateCoins
-        extern  displayItemAttr
         extern  eggTables
         extern  eggs
         extern  currentCoinTable
         extern  currentEggTable
-        extern  setCurrentItemTable
-        extern  displayItems
         extern  checkItemCollision
         extern  coinCollision
         extern  eggCollision
@@ -42,7 +36,8 @@
         extern  hearts
         extern  displayHeartCount
         extern  heartCollision
-        extern  display2BCD
+        extern  decrementEggs
+        extern  setupScreen
 
         public  _gameMain
         public  _currentTileMap
@@ -50,7 +45,6 @@
         public  _mul_hla
         public  _tileMapX
         public  _tileMapY
-        public  setupScreen
         public  _gameLoop
         public  _xPos
         public  _yPos
@@ -97,6 +91,28 @@ _gameMain:
         ld      l,INK_BLACK
         call    _border
 
+        ;
+        ; Initialize the coin tables
+        ;
+        ld      hl,_coinTables
+        ld      de,coins
+        ld      a,ID_COIN
+        call    _initItems
+        ;
+        ; Initialize the egg tables
+        ;
+        ld      hl,eggTables
+        ld      de,eggs
+        ld      a,ID_EGG
+        call    _initItems
+        ;
+        ; Initialize the hearts tables
+        ;
+        ld      hl,heartTables
+        ld      de,hearts
+        ld      a,ID_HEART
+        call    _initItems
+
         ret     
 
 .newGame
@@ -133,28 +149,6 @@ _gameMain:
         ;
         ld      a,6
         ld      (coinRotate),a
-
-        ;
-        ; Setup the coin tables
-        ;
-        ld      hl,_coinTables
-        ld      de,coins
-        ld      a,ID_COIN
-        call    _initItems
-        ;
-        ; Setup the egg tables
-        ;
-        ld      hl,eggTables
-        ld      de,eggs
-        ld      a,ID_EGG
-        call    _initItems
-        ;
-        ; Setup the hearts tables
-        ;
-        ld      hl,heartTables
-        ld      de,hearts
-        ld      a,ID_HEART
-        call    _initItems
 
         ;
         ; Setup the scrolling message
@@ -295,7 +289,6 @@ _2F
 
         ld      l,INK_MAGENTA
         call    _border
-
         call    checkYCol
 
         ;
@@ -315,6 +308,36 @@ _2F
         call    _border
         call    _scroll
 
+        ; Date: 1/15/2021 Time: 10:08pm
+        ;
+        ; Check for collisions with coins. But how? Sigh! :(
+        ;
+        ; For items that are collected by the player... Coins, eggs, hearts...
+        ;
+        ; Calculate the items center pixel x,y coordinates. Basically this
+        ; is their x,y character position x 8 and then add 4 to x and y to
+        ; get the center of the character.
+        ;
+        ; Then calculate the same for the player. We can store and use the player
+        ; coordinates for all player/item collision checking.
+        ;
+        ; Using these 4 values, calculate the distance between the two objects
+        ; with the following algorithm.
+        ;
+        ; 		a = x1 - x2                          ;		// Easy
+        ;		b = y1 - y2                          ;		// Easy
+        ;		c = sqrt((a * a) + (b * b))          ;		// How?
+        ;
+        ; 'c' is the distance between the objects. If 'c' < (some value, like 4, or 6) there is a colision.
+        ;
+        ;	How to do a sqrt? Can be done in Z80
+        ;	How long will it take? Way too slow ~360 cycles per sqrt.
+        ;
+        ;	Use pixel box collision detection instead. 8x8 box in the center of the player comapred with
+        ; 	a 4x4 box in the center of the 8x8 item. If the boxes overlap there is a collision.
+        ;
+        ; Check for collisions with coins, eggs, and hearts
+        ;
         ld      hl,(currentCoinTable)
         ld      de,coinCollision
         call    checkItemCollision
@@ -333,7 +356,6 @@ _2F
 
         ld      a,6                     ; Reset rotate counter
         ld      (hl),a
-
         call    _animateCoins
 
 .noRotate
@@ -367,94 +389,13 @@ _2F
         ld      hl,_lanternList
         call    _lanternFlicker
 
-        ; Date: 1/15/2021 Time: 10:08pm
         ;
-        ; Check for collisions with coins. But how? Sigh! :(
+        ; See if the egg count needs to be decremented
         ;
-        ; For items that are collected by the player... Coins, eggs, hearts...
-        ;
-        ; Calculate the items center pixel x,y coordinates. Basically this
-        ; is their x,y character position x 8 and then add 4 to x and y to
-        ; get the center of the character.
-        ;
-        ; Then calculate the same for the player. We can store and use the player
-        ; coordinates for all player/item collision checking.
-        ;
-        ; Using these 4 values, calculate the distance between the two objects
-        ; with the following algorithm.
-        ;
-        ; 		a = x1 - x2                         ;		// Easy
-        ;		b = y1 - y2                          ;		// Easy
-        ;		c = sqrt((a * a) + (b * b))          ;		// How?
-        ;
-        ; 'c' is the distance between the objects. If 'c' < (some value, like 4, or 6) there is a colision.
-        ;
-        ;	How to do a sqrt? Can be done in Z80
-        ;	How long will it take? Way too slow ~360 cycles per sqrt.
-        ;
-        ;	Use pixel box collision detection instead. 8x8 box in the center of the player comapred with
-        ; 	a 4x4 box in the center of the 8x8 item. If the boxes overlap there is a collision.
-        ;
+        call    decrementEggs
 
         ld      l,INK_BLACK
         call    _border
-
-        popall  
-        ret     
-
-setupScreen:
-        pushall 
-
-        ld      l,INK_WHITE | PAPER_BLACK
-        call    _cls
-
-        ld      hl,currentCoinTable
-        ld      de,_coinTables
-        call    setCurrentItemTable
-
-        ld      hl,currentEggTable
-        ld      de,eggTables
-        call    setCurrentItemTable
-
-        ld      hl,currentHeartTable
-        ld      de,heartTables
-        call    setCurrentItemTable
-
-        call    _setCurrentTileMap
-
-        halt    
-
-        ld      hl,(_currentTileMap)
-        call    _displayScreen
-
-        ld      a,ID_COIN
-        ld      hl,(currentCoinTable)
-        call    displayItemAttr
-
-        ld      a,ID_EGG
-        ld      hl,(currentEggTable)
-        call    displayItemAttr
-        ld      a,ID_EGG
-        ld      hl,(currentEggTable)
-        call    displayItems
-
-        ld      a,ID_HEART
-        ld      hl,(currentHeartTable)
-        call    displayItemAttr
-        ld      a,ID_HEART
-        ld      hl,(currentHeartTable)
-        call    displayItems
-
-        ld      bc,0x1a01               ; x,y screen location
-        ld      hl,eggCount             ; Point to 1000's/100's of score
-        call    display2BCD
-
-        ld      bc,0x1d01               ; x,y screen location
-        ld      hl,heartCount           ; Point to 1000's/100's of score
-        call    display2BCD
-
-        call    _displayScore
-        call    _scrollReset
 
         popall  
         ret     

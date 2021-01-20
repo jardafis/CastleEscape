@@ -122,16 +122,16 @@ _animateCoins:
         ; Add 5 to the score and display it
         ;
 coinCollision:
-        ld      l,0x20
+        ld      l,0x05
         ld      de,score
         call    addBCD
         call    _displayScore
         ret     
 
-
         section bss_user
 
-.currentCoinTable	dw		0
+currentCoinTable:
+		dw		0
 
 _coinTables:
 		ds		MAX_LEVEL_X * MAX_LEVEL_Y * 2
