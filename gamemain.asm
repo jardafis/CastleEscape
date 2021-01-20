@@ -196,7 +196,6 @@ _gameLoop:
         cp      b                       ; Has it changed?
         jr      z,wait                  ; If not, keep looping
 
-
 	IF	0
         ld      b,255
 .lo
@@ -206,7 +205,6 @@ _gameLoop:
         pop     af
         djnz    lo
 	ENDIF
-
 
         ld      l,INK_BLUE
         call    _border
@@ -224,8 +222,6 @@ _gameLoop:
         call    _pasteScreen
         pop     hl
         pop     hl
-
-
 
         ld      l,INK_RED
         call    _border
@@ -272,29 +268,29 @@ _gameLoop:
 
         ld      a,(eggCount)            ; Get egg count
         and     a                       ; Update the flags
-        ld      a,JUMP_HEIGHT			; Single jump height
-        jr      z,setJumpHeight         ; eggCount is zero
+        ld      a,JUMP_HEIGHT           ; Single jump height
+        jr      z,smallJump             ; eggCount is zero
         add     a                       ; eggCount is non-zero, double jump
-.setJumpHeight
+.smallJump
         ld      (_jumping),a            ; Save jump distance
         rrca                            ; Divide by 2 for direction change. Only works if bit 0 is 0
-        ld      (jumpHeight),a          ; Save for compare below
+        ld      (jumpMidpoint),a        ; Save for compare below
 .cantJump
 
         ld      a,(_jumping)
         or      a
-        jr      z,_2F
-        ld      e,a                     ; Save the jump counter
-.jumpHeight = $ + 1
+        jr      z,notJumping
+.jumpMidpoint = $ + 1
         cp      -1                      ; Compare value will be different if player has collected eggs
         jr      nz,_1F
-        ld      a,-JUMP_SPEED
+        ex      af,af'                  ; Save the jump counter
+        ld      a,-JUMP_SPEED           ; Change jump direction, now going down.
         ld      (_ySpeed),a
+        ex      af,af'                  ; Restore jump counter
 _1F
-        ld      a,e                     ; Restore jump counter
         dec     a
         ld      (_jumping),a
-_2F
+.notJumping
 
         ld      l,INK_MAGENTA
         call    _border
@@ -309,7 +305,6 @@ _2F
         or      a                       ; left or right.
         call    nz,checkXCol            ; Check for a collision.
 
-
         ;
         ; Update the scrolling message
         ;
@@ -317,36 +312,11 @@ _2F
         call    _border
         call    _scroll
 
-        ; Date: 1/15/2021 Time: 10:08pm
-        ;
-        ; Check for collisions with coins. But how? Sigh! :(
-        ;
-        ; For items that are collected by the player... Coins, eggs, hearts...
-        ;
-        ; Calculate the items center pixel x,y coordinates. Basically this
-        ; is their x,y character position x 8 and then add 4 to x and y to
-        ; get the center of the character.
-        ;
-        ; Then calculate the same for the player. We can store and use the player
-        ; coordinates for all player/item collision checking.
-        ;
-        ; Using these 4 values, calculate the distance between the two objects
-        ; with the following algorithm.
-        ;
-        ; 		a = x1 - x2                          ;		// Easy
-        ;		b = y1 - y2                          ;		// Easy
-        ;		c = sqrt((a * a) + (b * b))          ;		// How?
-        ;
-        ; 'c' is the distance between the objects. If 'c' < (some value, like 4, or 6) there is a colision.
-        ;
-        ;	How to do a sqrt? Can be done in Z80
-        ;	How long will it take? Way too slow ~360 cycles per sqrt.
-        ;
-        ;	Use pixel box collision detection instead. 8x8 box in the center of the player comapred with
-        ; 	a 4x4 box in the center of the 8x8 item. If the boxes overlap there is a collision.
         ;
         ; Check for collisions with coins, eggs, and hearts
         ;
+        ld      l,INK_YELLOW
+        call    _border
         ld      hl,(currentCoinTable)
         ld      de,coinCollision
         call    checkItemCollision
@@ -359,6 +329,7 @@ _2F
 
         ld      l,INK_WHITE
         call    _border
+
         ld      hl,coinRotate
         dec     (hl)
         jr      nz,noRotate
@@ -370,6 +341,7 @@ _2F
 .noRotate
         ld      l,INK_BLUE
         call    _border
+
         ld      hl,_spriteBuffer
         push    hl
         ld      a,(_xPos)
@@ -383,7 +355,6 @@ _2F
 
         ld      l,INK_RED
         call    _border
-
         ld      a,(_xPos)
         ld      h,a
         ld      a,(_yPos)
@@ -393,7 +364,7 @@ _2F
         ;
         ; Flicker any lanterns on the screen
         ;
-        ld      l,INK_YELLOW
+        ld      l,INK_MAGENTA
         call    _border
         ld      hl,_lanternList
         call    _lanternFlicker
@@ -401,6 +372,8 @@ _2F
         ;
         ; See if the egg count needs to be decremented
         ;
+        ld      l,INK_GREEN
+        call    _border
         call    decrementEggs
 
         ld      l,INK_BLACK
