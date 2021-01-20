@@ -50,6 +50,7 @@
         defc    ID_BLANK				= 11
         defc    ID_COIN					= 74
         defc	ID_EGG					= 97
+        defc	ID_EGG0					= 66
         defc	ID_HEART				= 98
 
         defc    MAX_LEVEL_X				= 0x02

@@ -18,7 +18,7 @@ heartCollision:
         ld      l,0x01
         ld      de,heartCount
         call    addBCD
-        ld      bc,0x1d01               ; x,y screen location
+        ld      bc,0x011d               ; x,y screen location
         ld      hl,heartCount           ; Point to 1000's/100's of score
         call    display2BCD
         ret     
