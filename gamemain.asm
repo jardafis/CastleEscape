@@ -269,15 +269,24 @@ _gameLoop:
         jr      z,cantJump
         ld      a,JUMP_SPEED
         ld      (_ySpeed),a
-        ld      a,JUMP_HEIGHT * 2
-        ld      (_jumping),a
+
+        ld      a,(eggCount)            ; Get egg count
+        and     a                       ; Update the flags
+        ld      a,JUMP_HEIGHT			; Single jump height
+        jr      z,setJumpHeight         ; eggCount is zero
+        add     a                       ; eggCount is non-zero, double jump
+.setJumpHeight
+        ld      (_jumping),a            ; Save jump distance
+        rrca                            ; Divide by 2 for direction change. Only works if bit 0 is 0
+        ld      (jumpHeight),a          ; Save for compare below
 .cantJump
 
         ld      a,(_jumping)
         or      a
-		jz		_2F
+        jr      z,_2F
         ld      e,a                     ; Save the jump counter
-        cp      JUMP_HEIGHT
+.jumpHeight = $ + 1
+        cp      -1                      ; Compare value will be different if player has collected eggs
         jr      nz,_1F
         ld      a,-JUMP_SPEED
         ld      (_ySpeed),a
