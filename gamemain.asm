@@ -38,6 +38,9 @@
         extern  heartCollision
         extern  decrementEggs
         extern  setupScreen
+        extern	AFXINIT
+        extern	AFXPLAY
+        extern	AFXFRAME
 
         public  _gameMain
         public  _currentTileMap
@@ -90,6 +93,9 @@ _gameMain:
         call    _cls
         ld      l,INK_BLACK
         call    _border
+
+		ld		hl,afxBank				; Effects bank address
+		call	AFXINIT
 
         ;
         ; Initialize the coin tables
@@ -264,6 +270,10 @@ _gameLoop:
 
         bit     JUMP_BIT,e
         jr      z,cantJump
+
+        ld		a,0
+		call	AFXPLAY
+
         ld      a,JUMP_SPEED
         ld      (_ySpeed),a
 
@@ -380,6 +390,8 @@ _1F
         ld      l,INK_BLACK
         call    _border
 
+		call	AFXFRAME
+
         popall  
         ret     
 
@@ -459,3 +471,7 @@ _falling:
         db      0
 _spriteBuffer:
 		ds		48
+
+		section	rodata_user
+.afxBank
+		binary	"test.afb"

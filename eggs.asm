@@ -2,6 +2,7 @@
         extern  addBCD
         extern  displayTile
         extern  decBCD
+        extern	AFXPLAY
 
         public  eggTables
         public  eggs
@@ -25,6 +26,8 @@ eggCollision:
         ld      hl,eggCount             ; Point to eggCount
         call    display2BCD
         call    updateEggImage
+        ld		a,5
+		call	AFXPLAY
         ret     
 
 updateEggImage:
