@@ -3,6 +3,7 @@
         extern  addBCD
         extern  _displayScore
         extern  score
+        extern	AFXPLAY
 
         public  _animateCoins
         public  _coinTables
@@ -126,6 +127,8 @@ coinCollision:
         ld      de,score
         call    addBCD
         call    _displayScore
+        ld		a,7
+		call	AFXPLAY
         ret     
 
         section bss_user
