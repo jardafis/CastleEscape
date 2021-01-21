@@ -1,5 +1,6 @@
 #include <arch/zx.h>
 
+#if 0
 extern unsigned char keyboardScan(void)
 __z88dk_fastcall;
 extern void cls(char attr)
@@ -248,3 +249,4 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
      */
     saveAttrib(attrib);
 }
+#endif
