@@ -161,7 +161,8 @@ _gameMain:
         ;
         ld      (score),hl
         ld      (eggCount),hl
-        ld      (heartCount),hl
+		ld		a,START_LIVES
+        ld      (heartCount),a
 
         call    setupScreen
 

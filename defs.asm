@@ -14,6 +14,8 @@
 		defc	SIZEOF_ptr				= 0x02
 		defc	SIZEOF_byte				= 0x01
 
+		defc	START_LIVES				= 0x03
+
         ;
         ; Tilemap definitions
         ;
