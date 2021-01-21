@@ -185,12 +185,10 @@ setCurrentItemTable:
         ld      (currItemTab),hl
         ld      hl,(_tileMapX)          ; Get tileMapX & tileMapY
         ld      a,h
-        rla                             ; x2
-        rla                             ; x4
-        and     %11111100
+        ax		MAX_LEVEL_X * SIZEOF_ptr
         ld      h,a
         ld      a,l
-        sla     a                       ; x2
+        ax		SIZEOF_ptr
         add     h
         ld      l,a
         ld      h,0

@@ -27,6 +27,7 @@ list="SECTION \
 	DEC \
 	DI \
 	DJNZ \
+	DS \
 	EI \
 	EX \
 	EXX \
@@ -87,7 +88,8 @@ list="SECTION \
 	EXIT \
 	ADDHL \
 	ADDDE \
-	ADDBC"
+	ADDBC \
+	AX"
 
 for file in $@
 do

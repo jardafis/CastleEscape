@@ -11,10 +11,16 @@
 			SIZEOF_item
 		}
 
+		defc	SIZEOF_ptr				= 0x02
+		defc	SIZEOF_byte				= 0x01
+
         ;
         ; Tilemap definitions
         ;
-        defc    TILEMAP_WIDTH			= 0x40
+        defc    MAX_LEVEL_X				= 0x04
+        defc    MAX_LEVEL_Y				= 0x02
+
+        defc    TILEMAP_WIDTH			= 0x20 * MAX_LEVEL_X
         defc    TILEMAP_HEIGHT			= SCREEN_HEIGHT
 
         ;
@@ -52,9 +58,6 @@
         defc	ID_EGG					= 97
         defc	ID_EGG0					= 66
         defc	ID_HEART				= 98
-
-        defc    MAX_LEVEL_X				= 0x02
-        defc    MAX_LEVEL_Y				= 0x02
 
 
         ;
@@ -132,6 +135,27 @@ hlx     macro   times
         ENDIF
         IF times >= 64
         add     hl,hl
+        ENDIF
+    	endm
+
+ax     macro   times
+        IF times >=2
+        add     a
+        ENDIF
+        IF times >= 4
+        add     a
+        ENDIF
+        IF times >= 8
+        add     a
+        ENDIF
+        IF times >= 16
+        add     a
+        ENDIF
+        IF times >= 32
+        add     a
+        ENDIF
+        IF times >= 64
+        add     a
         ENDIF
     	endm
 

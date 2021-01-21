@@ -38,7 +38,7 @@ checkXCol:
         ld      a,l
         and     %11111000               ; Remove the pixel offset within the byte (lower 3 bits)
         ld      l,a
-        hlx     8                       ; Divide by 8 and multuply by 64 -> multiply by 8
+        hlx     TILEMAP_WIDTH / 8       ; Divide by 8 to get byte offset and multiply by 128 (width of tilemap)
 
         ld      de,(_xPos)              ; Get the X pixel offset
         ld      a,b                     ; speed may be positive or negative
@@ -136,7 +136,7 @@ checkYCol:
         and     %11111000               ; Remove the pixel offset within the byte (lower 3 bits)
         ld      l,a
         ld      h,0
-        hlx     8                       ; Divide by 8 to get byte offset and multiply by 64 (width of tilemap)
+        hlx     TILEMAP_WIDTH / 8       ; Divide by 8 to get byte offset and multiply by width of tilemap
 
         ld      a,(_xPos)               ; Get the X pixel offset
         ld      b,a                     ; Save pixel offset for later
