@@ -271,7 +271,7 @@ _gameLoop:
         bit     JUMP_BIT,e
         jr      z,cantJump
 
-        ld		a,0
+        ld		a,12
 		call	AFXPLAY
 
         ld      a,JUMP_SPEED
