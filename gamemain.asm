@@ -291,14 +291,14 @@ _gameLoop:
         ld      a,(_jumping)
         or      a
         jr      z,notJumping
-.jumpMidpoint = $ + 1
+.jumpMidpoint equ $ + 1
         cp      -1                      ; Compare value will be different if player has collected eggs
-        jr      nz,_1F
+        jr      nz,notMidpoint
         ex      af,af'                  ; Save the jump counter
         ld      a,-JUMP_SPEED           ; Change jump direction, now going down.
         ld      (_ySpeed),a
         ex      af,af'                  ; Restore jump counter
-_1F
+.notMidpoint
         dec     a
         ld      (_jumping),a
 .notJumping
