@@ -156,7 +156,7 @@ _displayScreen:
         ld      (hl),b                  ; 7
 
         ; Restore the stack pointer.
-.displayScreenTempSP = $+1
+.displayScreenTempSP equ $+1
         ld      sp,0x0000
         ei      
 
@@ -180,7 +180,7 @@ _displayScreen:
         dec     b
         jp      nz,yloop
 
-.tempSP = $ + 1
+.tempSP equ $ + 1
         ld      sp,0x0000
         popall  
         ret     
@@ -209,7 +209,7 @@ _displayScreen:
         ld      de,SCREEN_ATTR_START
         add     hl,de
 
-.lanternPtr = $ + 1
+.lanternPtr equ $ + 1
         ld      (0x0000),hl             ; Self modifying code
         ld      hl,lanternPtr
         inc     (hl)

@@ -48,7 +48,7 @@ _initISR:
         inc     hl
         ld      (ticks),hl
         pop     hl                      ; Restore the registers we used
-.isrTempSP = $+1
+.isrTempSP equ $+1
         ld      sp,0x0000               ; Restore the application stack pointer
         ei                              ; Enable interrupts
         reti                            ; Acknowledge and return from interrupt
