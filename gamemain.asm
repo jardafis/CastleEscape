@@ -474,4 +474,4 @@ _spriteBuffer:
 
         section rodata_user
 afxBank:
-        binary  "test.afb"
+        binary  "soundbank.afb"
