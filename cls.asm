@@ -61,7 +61,7 @@ _cls:
         push    hl
         push    hl
         djnz    loop
-.clsTempSP = $+1
+.clsTempSP equ $+1
         ld      sp,0x0000
         ei      
 

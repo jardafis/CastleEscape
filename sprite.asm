@@ -65,7 +65,7 @@ _copyScreen:
         ; at the beginning of the loop
         djnz    copyloop
 
-.copyTempSP = $+1
+.copyTempSP equ $+1
         ld      sp,0x0000
         ei      
 
@@ -120,7 +120,7 @@ _pasteScreen:
         ; at the beginning of the loop
         djnz    pasteloop
 
-.pasteTempSP = $+1
+.pasteTempSP equ $+1
         ld      sp,0x0000
         ei      
 
@@ -167,14 +167,14 @@ _displaySprite:
         srl     c                       ; /8
         ld      b,PLAYER_HEIGHT         ; Sprite height
 .loop2
-.screenStore = $ + 1
+.screenStore equ $ + 1
         ld      sp,0x0000               ; Get the screen table pointer
         pop     hl                      ; Pop screen row address
         ld      (screenStore),sp        ; Save stack pointing to next row
         ld      a,l
         add     c                       ; add x offset
         ld      l,a
-.spriteStore = $ + 1
+.spriteStore equ $ + 1
         ld      sp,0x0000               ; Get the sprite pointer
 
         pop     de                      ; Pop sprite data
@@ -201,7 +201,7 @@ _displaySprite:
         ld      (spriteStore),sp
 
         djnz    loop2
-.displaySpriteSP = $+1
+.displaySpriteSP equ $+1
         ld      sp,0x0000
         ei      
 

@@ -80,7 +80,7 @@ _initItems:
 
 .tileXLoop
         ld      a,(hl)                  ; Get tile ID
-.itemID = $ + 1
+.itemID equ $ + 1
         cp      0x00
         call    z,addItem
         inc     hl
@@ -135,7 +135,7 @@ _initItems:
         ;
         ; Restore the stack frame
         ;
-.tempSP = $ + 1
+.tempSP equ $ + 1
         ld      sp,0x0000
 
         popall  
@@ -196,7 +196,7 @@ setCurrentItemTable:
         ld      e,(hl)
         inc     hl
         ld      d,(hl)
-.currItemTab = $ + 2
+.currItemTab equ $ + 2
         ld      (0x0000),de
         ret     
 
@@ -227,7 +227,7 @@ displayItemAttr:
         inc     hl
         ld      b,(hl)                  ; Item Y position
 
-.itemID2 = $ + 1
+.itemID2 equ $ + 1
         ld      a,0x00
         ld      de,_tileAttr
         addde   
@@ -262,7 +262,7 @@ displayTile:
         inc     hl
         ld      b,(hl)
 
-.itemID4 = $ + 1
+.itemID4 equ $ + 1
         ld      l,-1                    ; -1 is over written by the value of 'a' passed in
         ld      h,0
         hlx     8
@@ -312,7 +312,7 @@ displayTile:
         ld      (hl),b
 
         ; Restore the stack pointer.
-.TempSP2 = $+1
+.TempSP2 equ $+1
         ld      sp,0x0000
         ei      
 
@@ -349,7 +349,7 @@ displayItems:
         inc     hl
         ld      b,(hl)
 
-.itemID3 = $ + 1
+.itemID3 equ $ + 1
         ld      l,0x00                  ; 0x00 is over written by the value of 'a' passed in
         ld      h,0
         hlx     8
@@ -399,7 +399,7 @@ displayItems:
         ld      (hl),b
 
         ; Restore the stack pointer.
-.TempSP = $+1
+.TempSP equ $+1
         ld      sp,0x0000
         ei      
 
@@ -487,7 +487,7 @@ checkItemCollision:
         ;
         ; USer provided function to update score, etc.
         ;
-.updateScore = $ + 1
+.updateScore equ $ + 1
         call    -1
 .noCollision
         pop     hl

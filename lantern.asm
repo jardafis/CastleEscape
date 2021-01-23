@@ -37,7 +37,7 @@ _lanternFlicker:
         ld      (hl),a                  ; and update the attribute value
         djnz    loop                    ; Loop for all lanterns
 
-.tempSP = $ + 1
+.tempSP equ $ + 1
         ld      sp,0x0000               ; Restore the stack
         ei      
 

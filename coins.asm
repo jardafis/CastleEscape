@@ -107,7 +107,7 @@ _animateCoins:
         ld      (hl),b
 
         ; Restore the stack pointer.
-.animateTempSP = $+1
+.animateTempSP equ $+1
         ld      sp,0x0000
         ei      
 
