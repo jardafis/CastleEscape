@@ -32,6 +32,7 @@ all: $(EXEC)
 	
 $(EXEC) : $(OBJECTS) $(PRAGMA_FILE) Makefile
 	 $(LD) $(LDFLAGS) -startup=$(CRT) $(OBJECTS) -o $(EXEC_OUTPUT) -create-app
+	 @rm *.i
 	
 .PHONY: clean run dis
 
