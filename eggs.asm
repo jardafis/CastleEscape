@@ -2,7 +2,7 @@
         extern  addBCD
         extern  displayTile
         extern  decBCD
-        extern	AFXPLAY
+        extern  AFXPLAY
 
         public  eggTables
         public  eggs
@@ -19,45 +19,45 @@
         ; Increment and display the egg count
         ;
 eggCollision:
-        ld      l,0x10
-        ld      de,eggCount
+        ld      l, 0x10
+        ld      de, eggCount
         call    addBCD
-        ld      bc,0x1a01               ; x,y screen location
-        ld      hl,eggCount             ; Point to eggCount
+        ld      bc, 0x1a01              ; x,y screen location
+        ld      hl, eggCount            ; Point to eggCount
         call    display2BCD
         call    updateEggImage
-        ld		a,5
-		call	AFXPLAY
+        ld      a, 5
+        call    AFXPLAY
         ret     
 
 updateEggImage:
-        ld      a,(eggCount)
+        ld      a, (eggCount)
         rrca                            ; divide by 2
         and     %00000111
         add     ID_EGG0
-        ld      bc,0x0119
+        ld      bc, 0x0119
         call    displayTile
         ret     
 
 decrementEggs:
         push    af
 
-        ld      a,(counter)
+        ld      a, (counter)
         and     a
-        jr      nz,skip
+        jr      nz, skip
 
-        ld      a,(eggCount)
+        ld      a, (eggCount)
         and     a
-        jr      z,noEggs
+        jr      z, noEggs
 
         push    bc
         push    de
         push    hl
 
-        ld      de,eggCount
+        ld      de, eggCount
         call    decBCD
-        ld      bc,0x011a               ; x,y screen location
-        ld      hl,eggCount             ; Point to eggCount
+        ld      bc, 0x011a              ; x,y screen location
+        ld      hl, eggCount            ; Point to eggCount
         call    display2BCD
         call    updateEggImage
 
@@ -65,16 +65,16 @@ decrementEggs:
         pop     de
         pop     bc
 
-.noEggs
-        ld      a,100
-.skip
+noEggs:
+        ld      a, 100
+skip:
         dec     a
-        ld      (counter),a
+        ld      (counter), a
         pop     af
         ret     
 
         section bss_user
-.counter
+counter:
         db      0
 eggCount:                               ; BCD
         dw      0x0000
@@ -83,7 +83,7 @@ currentEggTable:
         dw      0
 
 eggTables:
-		ds		MAX_LEVEL_X * MAX_LEVEL_Y * 2
+        ds      MAX_LEVEL_X*MAX_LEVEL_Y*2
 
 eggs:
-		ds		SIZEOF_item * 8 * MAX_LEVEL_X * MAX_LEVEL_Y
+        ds      SIZEOF_item*8*MAX_LEVEL_X*MAX_LEVEL_Y

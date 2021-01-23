@@ -8,9 +8,9 @@
 _border:
         push    af                      ; Save the register we are using
 
-        ld      a,l                     ; Get the input parameter which is the color
+        ld      a, l                    ; Get the input parameter which is the color
         and     0x07                    ; Only the lower 3 bits are used
-        out     (IO_BORDER),a           ; Send it out the port
+        out     (IO_BORDER), a          ; Send it out the port
 
         pop     af                      ; Restore the register we used
         ret     

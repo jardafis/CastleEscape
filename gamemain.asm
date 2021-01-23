@@ -38,9 +38,9 @@
         extern  heartCollision
         extern  decrementEggs
         extern  setupScreen
-        extern	AFXINIT
-        extern	AFXPLAY
-        extern	AFXFRAME
+        extern  AFXINIT
+        extern  AFXPLAY
+        extern  AFXFRAME
 
         public  _gameMain
         public  _currentTileMap
@@ -59,8 +59,8 @@
 
         include "defs.asm"
 
-        defc    START_X		= 40
-        defc    START_Y		= 120
+        defc    START_X=40
+        defc    START_Y=120
 
         section code_user
 _gameMain:
@@ -68,7 +68,7 @@ _gameMain:
         call    init
 
         call    newGame
-.gameLoop
+gameLoop:
         ;
         ; Wait for refresh interrupt
         ;
@@ -80,7 +80,7 @@ _gameMain:
         popall  
         ret     
 
-.init
+init:
         ;
         ; Init ISR handling
         ;
@@ -89,95 +89,95 @@ _gameMain:
         ;
         ; Clear the screen and set the border color
         ;
-        ld      l,INK_WHITE | PAPER_BLACK
+        ld      l, INK_WHITE|PAPER_BLACK
         call    _cls
-        ld      l,INK_BLACK
+        ld      l, INK_BLACK
         call    _border
 
-		ld		hl,afxBank				; Effects bank address
-		call	AFXINIT
+        ld      hl, afxBank             ; Effects bank address
+        call    AFXINIT
 
         ;
         ; Initialize the coin tables
         ;
-        ld      hl,_coinTables
-        ld      de,coins
-        ld      a,ID_COIN
+        ld      hl, _coinTables
+        ld      de, coins
+        ld      a, ID_COIN
         call    _initItems
         ;
         ; Initialize the egg tables
         ;
-        ld      hl,eggTables
-        ld      de,eggs
-        ld      a,ID_EGG
+        ld      hl, eggTables
+        ld      de, eggs
+        ld      a, ID_EGG
         call    _initItems
         ;
         ; Initialize the hearts tables
         ;
-        ld      hl,heartTables
-        ld      de,hearts
-        ld      a,ID_HEART
+        ld      hl, heartTables
+        ld      de, hearts
+        ld      a, ID_HEART
         call    _initItems
 
         ret     
 
-.newGame
+newGame:
         ;
         ; Set the initial player sprite
         ;
-        ld      hl,_RightSprite0
-        ld      (playerSprite),hl
+        ld      hl, _RightSprite0
+        ld      (playerSprite), hl
 
         ;
         ; Starting X and Y player position
         ;
-        ld      hl,START_X
-        ld      (_xPos),hl
-        ld      hl,START_Y
-        ld      (_yPos),hl
+        ld      hl, START_X
+        ld      (_xPos), hl
+        ld      hl, START_Y
+        ld      (_yPos), hl
 
         ;
         ; Initialize the X/Y speed variables
         ;
         xor     a
-        ld      (_xSpeed),a
-        ld      (_ySpeed),a
-        ld      (_jumping),a
-        ld      (_falling),a
+        ld      (_xSpeed), a
+        ld      (_ySpeed), a
+        ld      (_jumping), a
+        ld      (_falling), a
         ;
         ; Set the current tilemap
         ;
-        ld      (_tileMapX),a
-        ld      (_tileMapY),a
+        ld      (_tileMapX), a
+        ld      (_tileMapY), a
 
         ;
         ; Initial coin rotate counter
         ;
-        ld      a,6
-        ld      (coinRotate),a
+        ld      a, 6
+        ld      (coinRotate), a
 
         ;
         ; Setup the scrolling message
         ;
-        ld      hl,0
+        ld      hl, 0
         call    _scrollInit
 
         ;
         ; Zero score and counts
         ;
-        ld      (score),hl
-        ld      (eggCount),hl
-		ld		a,START_LIVES
-        ld      (heartCount),a
+        ld      (score), hl
+        ld      (eggCount), hl
+        ld      a, START_LIVES
+        ld      (heartCount), a
 
         call    setupScreen
 
-        ld      hl,_spriteBuffer
+        ld      hl, _spriteBuffer
         push    hl
-        ld      a,(_xPos)
-        ld      l,a
-        ld      a,(_yPos)
-        ld      h,a
+        ld      a, (_xPos)
+        ld      l, a
+        ld      a, (_yPos)
+        ld      h, a
         push    hl
 
         call    _copyScreen
@@ -188,49 +188,49 @@ _gameMain:
 
 _gameLoop:
         pushall 
-		
+
         ;
         ; Wait for refresh interrupt
         ;
         ;		halt
-        ld      a,(ticks)
-        ld      b,a
-.wait
+        ld      a, (ticks)
+        ld      b, a
+wait:
         push    bc                      ; Save 'b'
         call    _updateDirection
         pop     bc                      ; Restore 'b'
-        ld      a,(ticks)               ; Get the latest 'ticks' value
+        ld      a, (ticks)              ; Get the latest 'ticks' value
         cp      b                       ; Has it changed?
-        jr      z,wait                  ; If not, keep looping
+        jr      z, wait                 ; If not, keep looping
 
-	IF	0
-        ld      b,255
-.lo
+IF  0
+        ld      b, 255
+lo:
         push    af
         pop     af
         push    af
         pop     af
         djnz    lo
-	ENDIF
+ENDIF   
 
-        ld      l,INK_BLUE
+        ld      l, INK_BLUE
         call    _border
 
         ;
         ; Re-draw the screen at the players current location
         ;
-        ld      hl,_spriteBuffer
+        ld      hl, _spriteBuffer
         push    hl
-        ld      a,(_xPos)
-        ld      l,a
-        ld      a,(_yPos)
-        ld      h,a
+        ld      a, (_xPos)
+        ld      l, a
+        ld      a, (_yPos)
+        ld      h, a
         push    hl
         call    _pasteScreen
         pop     hl
         pop     hl
 
-        ld      l,INK_RED
+        ld      l, INK_RED
         call    _border
 
         ;
@@ -242,176 +242,176 @@ _gameLoop:
         ;
         ; Update the X speed based on the user input
         ;
-        bit     LEFT_BIT,e
-        jr      z,checkRight
-        ld      a,LEFT_SPEED
-        ld      hl,_LeftSprite0
-        ld      (playerSprite),hl
+        bit     LEFT_BIT, e
+        jr      z, checkRight
+        ld      a, LEFT_SPEED
+        ld      hl, _LeftSprite0
+        ld      (playerSprite), hl
         jr      updateXSpeedDone
-.checkRight
-        bit     RIGHT_BIT,e
-        jr      z,noXMovement
-        ld      a,RIGHT_SPEED
-        ld      hl,_RightSprite0
-        ld      (playerSprite),hl
+checkRight:
+        bit     RIGHT_BIT, e
+        jr      z, noXMovement
+        ld      a, RIGHT_SPEED
+        ld      hl, _RightSprite0
+        ld      (playerSprite), hl
         jr      updateXSpeedDone
-.noXMovement
+noXMovement:
         xor     a
-.updateXSpeedDone
-        ld      (_xSpeed),a
+updateXSpeedDone:
+        ld      (_xSpeed), a
 
         ;
         ; Update the jump status
         ;
-        ld      hl,(jumpFall)           ; Falling and jumping flags
-        ld      a,l                     ; must be zero before
+        ld      hl, (jumpFall)          ; Falling and jumping flags
+        ld      a, l                    ; must be zero before
         or      h                       ; a jump can be started
-        jr      nz,cantJump             ; If nz, falling or jumping are non-zero
+        jr      nz, cantJump            ; If nz, falling or jumping are non-zero
 
-        bit     JUMP_BIT,e
-        jr      z,cantJump
+        bit     JUMP_BIT, e
+        jr      z, cantJump
 
-        ld		a,12
-		call	AFXPLAY
+        ld      a, 12
+        call    AFXPLAY
 
-        ld      a,JUMP_SPEED
-        ld      (_ySpeed),a
+        ld      a, JUMP_SPEED
+        ld      (_ySpeed), a
 
-        ld      a,(eggCount)            ; Get egg count
+        ld      a, (eggCount)           ; Get egg count
         and     a                       ; Update the flags
-        ld      a,JUMP_HEIGHT           ; Single jump height
-        jr      z,smallJump             ; eggCount is zero
+        ld      a, JUMP_HEIGHT          ; Single jump height
+        jr      z, smallJump            ; eggCount is zero
         add     a                       ; eggCount is non-zero, double jump
-.smallJump
-        ld      (_jumping),a            ; Save jump distance
+smallJump:
+        ld      (_jumping), a           ; Save jump distance
         rrca                            ; Divide by 2 for direction change. Only works if bit 0 is 0
-        ld      (jumpMidpoint),a        ; Save for compare below
-.cantJump
+        ld      (jumpMidpoint), a       ; Save for compare below
+cantJump:
 
-        ld      a,(_jumping)
+        ld      a, (_jumping)
         or      a
-        jr      z,notJumping
-.jumpMidpoint equ $ + 1
+        jr      z, notJumping
+jumpMidpoint    equ $+1
         cp      -1                      ; Compare value will be different if player has collected eggs
-        jr      nz,notMidpoint
-        ex      af,af'                  ; Save the jump counter
-        ld      a,-JUMP_SPEED           ; Change jump direction, now going down.
-        ld      (_ySpeed),a
-        ex      af,af'                  ; Restore jump counter
-.notMidpoint
+        jr      nz, notMidpoint
+        ex      af, af'                 ; Save the jump counter
+        ld      a, -JUMP_SPEED          ; Change jump direction, now going down.
+        ld      (_ySpeed), a
+        ex      af, af'                 ; Restore jump counter
+notMidpoint:
         dec     a
-        ld      (_jumping),a
-.notJumping
+        ld      (_jumping), a
+notJumping:
 
-        ld      l,INK_MAGENTA
+        ld      l, INK_MAGENTA
         call    _border
         call    checkYCol
 
         ;
         ; If player is moving left or right, check for collisions.
         ;
-        ld      l,INK_GREEN
+        ld      l, INK_GREEN
         call    _border
-        ld      a,(_xSpeed)             ; If xSpeed != 0 player is moving
+        ld      a, (_xSpeed)            ; If xSpeed != 0 player is moving
         or      a                       ; left or right.
-        call    nz,checkXCol            ; Check for a collision.
+        call    nz, checkXCol           ; Check for a collision.
 
         ;
         ; Update the scrolling message
         ;
-        ld      l,INK_CYAN
+        ld      l, INK_CYAN
         call    _border
         call    _scroll
 
         ;
         ; Check for collisions with coins, eggs, and hearts
         ;
-        ld      l,INK_YELLOW
+        ld      l, INK_YELLOW
         call    _border
-        ld      hl,(currentCoinTable)
-        ld      de,coinCollision
+        ld      hl, (currentCoinTable)
+        ld      de, coinCollision
         call    checkItemCollision
-        ld      hl,(currentEggTable)
-        ld      de,eggCollision
+        ld      hl, (currentEggTable)
+        ld      de, eggCollision
         call    checkItemCollision
-        ld      hl,(currentHeartTable)
-        ld      de,heartCollision
+        ld      hl, (currentHeartTable)
+        ld      de, heartCollision
         call    checkItemCollision
 
-        ld      l,INK_WHITE
+        ld      l, INK_WHITE
         call    _border
 
-        ld      hl,coinRotate
+        ld      hl, coinRotate
         dec     (hl)
-        jr      nz,noRotate
+        jr      nz, noRotate
 
-        ld      a,6                     ; Reset rotate counter
-        ld      (hl),a
+        ld      a, 6                    ; Reset rotate counter
+        ld      (hl), a
         call    _animateCoins
 
-.noRotate
-        ld      l,INK_BLUE
+noRotate:
+        ld      l, INK_BLUE
         call    _border
 
-        ld      hl,_spriteBuffer
+        ld      hl, _spriteBuffer
         push    hl
-        ld      a,(_xPos)
-        ld      l,a
-        ld      a,(_yPos)
-        ld      h,a
+        ld      a, (_xPos)
+        ld      l, a
+        ld      a, (_yPos)
+        ld      h, a
         push    hl
         call    _copyScreen
         pop     hl
         pop     hl
 
-        ld      l,INK_RED
+        ld      l, INK_RED
         call    _border
-        ld      a,(_xPos)
-        ld      h,a
-        ld      a,(_yPos)
-        ld      l,a
+        ld      a, (_xPos)
+        ld      h, a
+        ld      a, (_yPos)
+        ld      l, a
         call    _displaySprite
 
         ;
         ; Flicker any lanterns on the screen
         ;
-        ld      l,INK_MAGENTA
+        ld      l, INK_MAGENTA
         call    _border
-        ld      hl,_lanternList
+        ld      hl, _lanternList
         call    _lanternFlicker
 
         ;
         ; See if the egg count needs to be decremented
         ;
-        ld      l,INK_GREEN
+        ld      l, INK_GREEN
         call    _border
         call    decrementEggs
 
-        ld      l,INK_BLACK
+        ld      l, INK_BLACK
         call    _border
 
-		call	AFXFRAME
+        call    AFXFRAME
 
         popall  
         ret     
 
 _setCurrentTileMap:
-        ld      a,(_tileMapY)
-        ld      hl, TILEMAP_WIDTH * TILEMAP_HEIGHT
+        ld      a, (_tileMapY)
+        ld      hl, TILEMAP_WIDTH*TILEMAP_HEIGHT
         call    _mul_hla
 
-        ex      de,hl
+        ex      de, hl
 
-        ld      a,(_tileMapX)
-        ld      hl,SCREEN_WIDTH
+        ld      a, (_tileMapX)
+        ld      hl, SCREEN_WIDTH
         call    _mul_hla
 
-        add     hl,de
+        add     hl, de
 
-        ld      de,_levels
-        add     hl,de
+        ld      de, _levels
+        add     hl, de
 
-        ld      (_currentTileMap),hl
+        ld      (_currentTileMap), hl
 
         ret     
 
@@ -428,21 +428,21 @@ _mul_hla:
         push    bc
         push    de
 
-        ex      de,hl                   ; Save hl in de
-        ld      hl,0
+        ex      de, hl                  ; Save hl in de
+        ld      hl, 0
         or      a                       ; If multiplying by 0, result is zero
-        jr      z,mulDone
+        jr      z, mulDone
 
-        ld      b,8
-.nextMul
-        add     hl,hl
+        ld      b, 8
+nextMul:
+        add     hl, hl
         rlca    
-        jr      nc,noAdd
-        add     hl,de
-.noAdd
+        jr      nc, noAdd
+        add     hl, de
+noAdd:
         djnz    nextMul
 
-.mulDone
+mulDone:
         pop     de
         pop     bc
         ret     
@@ -464,14 +464,14 @@ _xSpeed:
         db      0
 _ySpeed:
         db      0
-.jumpFall                               ; Access jumping and falling as a single word
+jumpFall:                               ; Access jumping and falling as a single word
 _jumping:
         db      0
 _falling:
         db      0
 _spriteBuffer:
-		ds		48
+        ds      48
 
-		section	rodata_user
-.afxBank
-		binary	"test.afb"
+        section rodata_user
+afxBank:
+        binary  "test.afb"

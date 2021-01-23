@@ -13,11 +13,11 @@ _displayScore:
         push    bc
         push    hl
 
-        ld      bc,0x0103               ; x,y screen location
-        ld      hl,score+1              ; Point to 1000's/100's
+        ld      bc, 0x0103              ; x,y screen location
+        ld      hl, score+1             ; Point to 1000's/100's
         call    display2BCD
-        ld      c,0x05                  ; x screen location
-        ld      hl,score                ; Point to 10's/1's
+        ld      c, 0x05                 ; x screen location
+        ld      hl, score               ; Point to 10's/1's
         call    display2BCD
 
         pop     hl
