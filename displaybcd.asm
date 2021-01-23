@@ -21,28 +21,28 @@ displayBCD:
         push    hl
 
 
-        ld      l,b
-        ld      h,0
+        ld      l, b
+        ld      h, 0
         hlx     16                      ; x16
-        ld      de,_screenTab
-        add     hl,de                   ; Pointer to screenTab entry
+        ld      de, _screenTab
+        add     hl, de                  ; Pointer to screenTab entry
 
-        ex      af,af'
+        ex      af, af'
         ; Get the screen table entry into de
-        ld      a,(hl)                  ; Get low 8-bits of screen address
+        ld      a, (hl)                 ; Get low 8-bits of screen address
         add     c                       ; Add x position to low 8 bits of the screen address
-        ld      e,a
+        ld      e, a
         inc     hl
-        ld      d,(hl)
-        ex      af,af'
+        ld      d, (hl)
+        ex      af, af'
 
         add     a                       ; x2
         add     a                       ; x4
         add     a                       ; x8
-        ld      l,a
-        ld      h,0
-        ld      bc,FONT + (('0' - 32) * 8); Start address of numbers in font
-        add     hl,bc                   ; Pointer to start of character in ROM font
+        ld      l, a
+        ld      h, 0
+        ld      bc, FONT+(('0'-32)*8)   ; Start address of numbers in font
+        add     hl, bc                  ; Pointer to start of character in ROM font
 
         ; Display a single digit 0 - 9
         ldi     
@@ -113,20 +113,20 @@ addBCD:
         push    af
         push    de
 
-        ld      a,(de)                  ; Get low byte of BCD value
+        ld      a, (de)                 ; Get low byte of BCD value
         add     l                       ; Add the BCD value passed in
         daa                             ; Adjust result for BCD
-        ld      (de),a                  ; Save the updated BCD value
-        jr      nc,addBCDDone           ; If nc, no wraparound
+        ld      (de), a                 ; Save the updated BCD value
+        jr      nc, addBCDDone          ; If nc, no wraparound
 
         inc     de                      ; There was a wraparound
-        ld      a,(de)                  ; Get high byte of BCD value
+        ld      a, (de)                 ; Get high byte of BCD value
         or      a                       ; Clear the carry flag
         inc     a                       ; Increment the value
         daa                             ; Adjust result for BCD
-        ld      (de),a                  ; Save the incremented BCD value
+        ld      (de), a                 ; Save the incremented BCD value
 
-.addBCDDone
+addBCDDone:
         pop     de
         pop     af
         ret     
@@ -142,20 +142,20 @@ subBCD:
         push    af
         push    de
 
-        ld      a,(de)                  ; Get low byte of BCD value
+        ld      a, (de)                 ; Get low byte of BCD value
         sbc     l                       ; Add the BCD value passed in
         daa                             ; Adjust result for BCD
-        ld      (de),a                  ; Save the updated BCD value
-        jr      nc,subBCDDone           ; If nc, no wraparound
+        ld      (de), a                 ; Save the updated BCD value
+        jr      nc, subBCDDone          ; If nc, no wraparound
 
         inc     de                      ; There was a wraparound
-        ld      a,(de)                  ; Get high byte of BCD value
+        ld      a, (de)                 ; Get high byte of BCD value
         or      a                       ; Clear the carry flag
         dec     a                       ; Increment the value
         daa                             ; Adjust result for BCD
-        ld      (de),a                  ; Save the incremented BCD value
+        ld      (de), a                 ; Save the incremented BCD value
 
-.subBCDDone
+subBCDDone:
         pop     de
         pop     af
         ret     
@@ -169,7 +169,7 @@ subBCD:
 incBCD:
         push    hl
 
-        ld      l,1
+        ld      l, 1
         call    addBCD
 
         pop     hl
@@ -184,7 +184,7 @@ incBCD:
 decBCD:
         push    hl
 
-        ld      l,1
+        ld      l, 1
         call    subBCD
 
         pop     hl

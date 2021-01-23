@@ -11,9 +11,9 @@
 _lanternFlicker:
         ;        push    af
 
-        ld      a,(hl)                  ; Number of lanterns
+        ld      a, (hl)                 ; Number of lanterns
         or      a
-        jr      z,done                  ; No lanterns
+        jr      z, done                 ; No lanterns
 
         ;        push    bc                      ; Save the rest of the registers
         ;        push    hl
@@ -21,40 +21,40 @@ _lanternFlicker:
         inc     hl                      ; Point to first attribute address
 
         di      
-        ld      (tempSP),sp             ; Save stack pointer
-        ld      sp,hl                   ; Point stack at attribute address table
+        ld      (tempSP), sp            ; Save stack pointer
+        ld      sp, hl                  ; Point stack at attribute address table
 
-        ld      b,a                     ; Set loop count
+        ld      b, a                    ; Set loop count
 
-        ld      hl,colors               ; Pointer to color table
-        ld      a,(ticks)               ; Use ticks as the color table index
+        ld      hl, colors              ; Pointer to color table
+        ld      a, (ticks)              ; Use ticks as the color table index
         and     0x07                    ; Bottom 3 bits only
         addhl   
-        ld      a,(hl)                  ; Read attribute
+        ld      a, (hl)                 ; Read attribute
 
-.loop
+loop:
         pop     hl                      ; Pop the attribute address
-        ld      (hl),a                  ; and update the attribute value
+        ld      (hl), a                 ; and update the attribute value
         djnz    loop                    ; Loop for all lanterns
 
-.tempSP equ $ + 1
-        ld      sp,0x0000               ; Restore the stack
+tempSP  equ     $+1
+        ld      sp, 0x0000              ; Restore the stack
         ei      
 
         ;        pop     hl
         ;        pop     bc
-.done
+done:
         ;        pop     af
         ret     
 
         section rodata_user
-.colors
+colors:
         db      INK_YELLOW
         db      INK_RED
-        db      (INK_YELLOW | BRIGHT)
-        db      (INK_RED | BRIGHT)
-        db      (INK_YELLOW | BRIGHT)
-        db      (INK_RED | BRIGHT)
+        db      (INK_YELLOW|BRIGHT)
+        db      (INK_RED|BRIGHT)
+        db      (INK_YELLOW|BRIGHT)
+        db      (INK_RED|BRIGHT)
         db      INK_YELLOW
         db      INK_RED
 

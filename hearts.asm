@@ -1,6 +1,6 @@
         extern  addBCD
         extern  display2BCD
-        extern	AFXPLAY
+        extern  AFXPLAY
 
 
         public  heartCount
@@ -16,14 +16,14 @@
         ; Increment and display the egg count
         ;
 heartCollision:
-        ld      l,0x01
-        ld      de,heartCount
+        ld      l, 0x01
+        ld      de, heartCount
         call    addBCD
-        ld      bc,0x011d               ; x,y screen location
-        ld      hl,heartCount           ; Point to 1000's/100's of score
+        ld      bc, 0x011d              ; x,y screen location
+        ld      hl, heartCount          ; Point to 1000's/100's of score
         call    display2BCD
-        ld		a,17
-		call	AFXPLAY
+        ld      a, 17
+        call    AFXPLAY
         ret     
 
         section bss_user
@@ -34,7 +34,7 @@ currentHeartTable:
         dw      0
 
 heartTables:
-		ds		MAX_LEVEL_X * MAX_LEVEL_Y * 2
+        ds      MAX_LEVEL_X*MAX_LEVEL_Y*2
 
 hearts:
-		ds		SIZEOF_item * 8 * MAX_LEVEL_X * MAX_LEVEL_Y
+        ds      SIZEOF_item*8*MAX_LEVEL_X*MAX_LEVEL_Y
