@@ -116,13 +116,10 @@ _scrollReset:
         ret     
 
 _scroll:
-        ;        exx                             ; Save bc, de, hl
-        ;        ex      af,af'                  ; and af
-
         ; Check if we need to get the next character of the message
         ld      hl, rotate
         rlc     (hl)
-        jr      c, getNextChar
+        jp      c, getNextChar
 
 shift:
         ld      hl, (screenAddr)        ; Screen address of right hand side of message calculated by scrollInit
@@ -138,23 +135,38 @@ rowLoop:
         ; into the next character on the screen
 
         ld      a, l                    ; save l which includes the screen X starting offset
-        ld      b, WIDTH/2              ; Width of scrolling window
+        ld      b, WIDTH/8              ; Width of scrolling window
 colLoop:
         rl      (hl)                    ; Rotate left the contents of hl through the carry flag
-        dec     hl                      ; Next character to the left
+        dec     l                       ; Next character to the left
 
         rl      (hl)                    ; Rotate left the contents of hl through the carry flag
-        dec     hl                      ; Next character to the left
+        dec     l                       ; Next character to the left
 
+        rl      (hl)                    ; Rotate left the contents of hl through the carry flag
+        dec     l                       ; Next character to the left
+
+        rl      (hl)                    ; Rotate left the contents of hl through the carry flag
+        dec     l                       ; Next character to the left
+
+        rl      (hl)                    ; Rotate left the contents of hl through the carry flag
+        dec     l                       ; Next character to the left
+
+        rl      (hl)                    ; Rotate left the contents of hl through the carry flag
+        dec     l                       ; Next character to the left
+
+        rl      (hl)                    ; Rotate left the contents of hl through the carry flag
+        dec     l                       ; Next character to the left
+
+        rl      (hl)                    ; Rotate left the contents of hl through the carry flag
+        dec     l                       ; Next character to the left
         djnz    colLoop                 ; Loop for the width of the message
 
         ld      l, a                    ; Restore low order byte of screen address
         inc     h                       ; +0x100 To increment to next row
         dec     c
-        jr      nz, rowLoop
+        jp      nz, rowLoop
 
-        ;        ex      af,af'                  ; Restore af
-        ;        exx                             ; bc, de, and hl
         ret     
 
 getNextChar:
@@ -162,7 +174,7 @@ getNextChar:
         ld      hl, (messagePointer)    ; Get the message pointer
         ld      a, (hl)                 ; Read the character
         and     a                       ; Check if the end of the message has been reached
-        jr      z, resetMessagePointer  ; Reset pointer if we reach the end of the message
+        jp      z, resetMessagePointer  ; Reset pointer if we reach the end of the message
         inc     hl                      ; Otherwise increment the message pointer
         ld      (messagePointer), hl    ; and save it
 
@@ -180,8 +192,14 @@ getNextChar:
         ld      de, FONT                ; Pointer to the font
         add     hl, de                  ; hl points to the font data address
         ld      de, charBuffer          ; Point to our character buffer address
-        ld      bc, 8                   ; 8 bytes per char
-        ldir                            ; Copy font data to our buffer
+        ldi     
+        ldi     
+        ldi     
+        ldi     
+        ldi     
+        ldi     
+        ldi     
+        ldi     
         jp      shift
 
 resetMessagePointer:
