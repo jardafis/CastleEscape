@@ -112,6 +112,12 @@
         defc    IO_BANK=0x7ffd
         defc    IO_KEMPSTON=0x1f
 
+		;
+		; OpCodes
+		;
+        defc    JP_OPCODE=0xc3
+        defc    NOP_OPCODE=0x00
+
         ;
         ; Macros for use with asmpp.pl
         ;

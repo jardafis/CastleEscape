@@ -7,7 +7,6 @@
         defc    VECTOR_TABLE=(VECTOR_TABLE_HIGH<<8)
         defc    JUMP_ADDR_BYTE=0x81
         defc    JUMP_ADDR=(JUMP_ADDR_BYTE<<8)|JUMP_ADDR_BYTE
-        defc    JP_OPCODE=0xc3
 
 _initISR:
         pushall 
