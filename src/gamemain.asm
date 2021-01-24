@@ -41,6 +41,9 @@
         extern  AFXINIT
         extern  AFXPLAY
         extern  AFXFRAME
+        extern  detectKempston
+        extern  readKempston
+        extern  kjScan
 
         public  _gameMain
         public  _currentTileMap
@@ -85,6 +88,18 @@ init:
         ; Init ISR handling
         ;
         call    _initISR
+
+		;
+		; Detect Kempston joystick and modify
+		; user input scanning code to poll it.
+		;
+        call    detectKempston
+        jr      z, noKempstonDetected
+        ld      a, JP_OPCODE
+        ld      (kjScan), a
+        ld      hl, readKempston
+        ld      (kjScan+1), hl
+noKempstonDetected:
 
         ;
         ; Clear the screen and set the border color
