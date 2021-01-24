@@ -5,15 +5,8 @@
 
         public  _keyboardScan
         public  _updateDirection
-        public  _kempstonScan
+        public  kjScan
         include "defs.asm"
-
-_kempstonScan:
-        ex      af, af'
-        in      a, (IO_KEMPSTON)        ; Read the kempston IO port
-        ld      l, a                    ; Override l  ---FUDLR
-        ex      af, af'
-        ret     
 
 _keyboardScan:
         push    AF
@@ -63,11 +56,6 @@ foundKey:
 		;		e	-	Direction bits
 
 _updateDirection:
-        ;        push    af
-        ;        push    bc
-        ;        push    de
-        ;        push    hl
-
         ld      hl, scanCodes           ; Point to the scan codes
         ld      c, 0xfe                 ; Lower 8 bits of the IO port
         ld      e, 0                    ; Clear our return value
@@ -87,11 +75,15 @@ notPressed:
         dec     d                       ; Decrement scan code count
         jr      nz, nextScanCode        ; Loop until we have checked all scan codes
 
-        ;        pop     hl                      ; Restore HL
-        ;        ld      l,e
-        ;        pop     de
-        ;        pop     bc
-        ;        pop     af
+		;
+		; The 3 opcode below will be replaced with
+		; jp	readKempston if a Kempston joystick
+		; was detected during game initialization.
+		;
+kjScan:
+        nop     
+        nop     
+        nop     
         ret     
 
         section data_user
