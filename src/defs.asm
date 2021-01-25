@@ -245,7 +245,7 @@ addbc   MACRO
 mod     MACRO   val
         LOCAL   modLoop
 modLoop:
-        sbc     a, val
+        sub     a, val
         jp      p, modLoop
         add     a, val
         endm    
