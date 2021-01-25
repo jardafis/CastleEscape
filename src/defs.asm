@@ -241,3 +241,11 @@ addbc   MACRO
         sub     c
         ld      b, a
         endm    
+
+mod     MACRO   val
+        LOCAL   modLoop
+modLoop:
+        sbc     a, val
+        jp      p, modLoop
+        add     a, val
+        endm    
