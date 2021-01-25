@@ -2,33 +2,38 @@
 
         section code_user
 
-		; Fast RND
 		;
-		; An 8-bit pseudo-random number generator,
-		; using a similar method to the Spectrum ROM,
-		; - without the overhead of the Spectrum ROM.
+		; Xorshift PRNG
 		;
-		; R = random number seed
-		; an integer in the range [1, 256]
+		; https://wikiti.brandonw.net/index.php?title=Z80_Routines:Math:Random
 		;
-		; R -> (33*R) mod 257
+		; Input:
+		;		None
 		;
-		; S = R - 1
-		; an 8-bit unsigned integer
-		; http://www.z80.info/pseudo-random.txt
+		; Output:
+		; 		hl - PRN
+		;
+		; Corrupts:
+		;		a
+		;
 rand:
-        ld      a, 1
-        ld      b, a
+        ld      hl, 1                   ; seed must not be 0
 
-        rrca                            ; multiply by 32
-        rrca    
-        rrca    
-        xor     0x1f
+        ld      a, h
+        rra     
+        ld      a, l
+        rra     
+        xor     h
+        ld      h, a
+        ld      a, l
+        rra     
+        ld      a, h
+        rra     
+        xor     l
+        ld      l, a
+        xor     h
+        ld      h, a
 
-        add     a, b
-        sbc     a, 255                  ; carry
-
-        ld      (rand+1), a
-        and     %01111111               ; Ensure its positive
+        ld      (rand+1), hl
 
         ret     
