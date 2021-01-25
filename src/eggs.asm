@@ -22,7 +22,7 @@ eggCollision:
         ld      l, 0x10
         ld      de, eggCount
         call    addBCD
-        ld      bc, 0x1a01              ; x,y screen location
+        ld      bc, 0x011a              ; y,x screen location
         ld      hl, eggCount            ; Point to eggCount
         call    display2BCD
         call    updateEggImage
