@@ -19,14 +19,10 @@ _initISR:
         ld      bc, 0x100               ; bytes of the vector table
         ldir    
 
-        ld      hl, JUMP_ADDR           ; Point to the jump instruction address
         ld      a, JP_OPCODE            ; Store the opcode for JP
-        ld      (hl), a
-        inc     hl
+        ld      (JUMP_ADDR), a
         ld      de, isr                 ; Store the jump address which is the address of the
-        ld      (hl), e                 ; isr routine.
-        inc     hl
-        ld      (hl), d
+        ld      (JUMP_ADDR+1), de
 
         ld      a, VECTOR_TABLE_HIGH    ; Write the address of the vector table
         ld      i, a                    ; to the i register
