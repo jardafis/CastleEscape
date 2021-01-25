@@ -174,12 +174,12 @@ newGame:
         ;
         ; Setup the scrolling message
         ;
-        ld      hl, 0
         call    _scrollInit
 
         ;
         ; Zero score and counts
         ;
+        ld      hl, 0
         ld      (score), hl
         ld      (eggCount), hl
         ld      a, START_LIVES

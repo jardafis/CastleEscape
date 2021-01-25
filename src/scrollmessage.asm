@@ -1,4 +1,6 @@
         extern  _screenTab
+        extern  rand
+
         public  _scroll
         public  _scrollInit
         public  _scrollReset
@@ -11,25 +13,15 @@
                                         ; Attribute for the message
         include "defs.asm"
 
+        defc    MAX_MESSAGE=(messagesEnd-messages)/2
         ;
         ; Inputs:
-        ; 			hl - Pointer to message or 0 to use default message.
         ;
 _scrollInit:
         push    af
         push    bc
         push    de
         push    hl
-
-        ;
-        ; Initialize the message pointer
-        ;
-        ld      a, l                    ; If the user passed in a pointer to a message
-        or      h                       ; in hl we should use it. If hl is 0 use the
-        jr      nz, customMessage       ; default message.
-        ld      hl, defaultMessage      ; Use the default message
-customMessage:
-        ld      (messageStart), hl
 
         ;
         ; Initialize the screen address to top right corner
@@ -79,11 +71,23 @@ _scrollReset:
         push    de
         push    hl
 
+        call    rand
+        and     %00000111
+
+        mod     MAX_MESSAGE
+
+        add     a                       ; x2
+        ld      hl, messages
+        addhl   
+
+        ld      c, (hl)
+        inc     hl
+        ld      b, (hl)
         ;
         ; Reset the message pointer
         ;
-        ld      hl, (messageStart)
-        ld      (messagePointer), hl
+        ld      (messageStart), bc
+        ld      (messagePointer), bc
 
         ;
         ; Initialize the rotate counter
@@ -175,6 +179,8 @@ getNextChar:
         ld      a, (hl)                 ; Read the character
         and     a                       ; Check if the end of the message has been reached
         jp      z, resetMessagePointer  ; Reset pointer if we reach the end of the message
+        cp      0xff
+        jp      z, doPadding
         inc     hl                      ; Otherwise increment the message pointer
         ld      (messagePointer), hl    ; and save it
 
@@ -202,21 +208,37 @@ getNextChar:
         ldi     
         jp      shift
 
+doPadding:
+        ld      hl, padding
+        ld      (messagePointer), hl
+        jp      getNextChar             ; Loop to get a character
+
 resetMessagePointer:
         ld      hl, (messageStart)
         ld      (messagePointer), hl
         jp      getNextChar             ; Loop to get a character
 
         section rodata_user
+messages:
+        dw      message0, message1, message2, message3, message4, message5
+messagesEnd:
 
-        db      "Escape the castle...                ", 0x00
+message0:
+        db      "Escape the castle...", 0xff
 message1:
-        db      "Hurry...                            ", 0x00
+        db      "Hurry...", 0xff
 message2:
-        db      "Collect the coins for points...                ", 0x00
+        db      "Collect the coins for points...", 0xff
 message3:
 defaultMessage:
-        db      "Purple eggs give you wiiings...                ", 0x00
+        db      "Purple eggs give you wiiings...", 0xff
+message4:
+        db      "Prolong your life with hearts XOXO...", 0xff
+message5:
+        db      "Don't fall too far!", 0xff
+padding:
+        ds      0x10, 0x20
+        db      0x00
 
         section bss_user
 messagePointer:
