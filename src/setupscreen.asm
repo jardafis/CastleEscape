@@ -17,6 +17,7 @@
         extern  _displayScore
         extern  _scrollReset
         extern  updateEggImage
+        extern  displayBanner
 
         public  setupScreen
 
@@ -55,17 +56,11 @@ setupScreen:
         ld      hl, (_currentTileMap)
         call    _displayScreen
 
+        call    displayBanner
+
         ld      a, ID_COIN
         ld      hl, (currentCoinTable)
-        call    displayItemAttr
-
-        ld      a, ID_EGG
-        ld      hl, (currentEggTable)
-        call    displayItemAttr
-
-        ld      a, ID_HEART
-        ld      hl, (currentHeartTable)
-        call    displayItemAttr
+        call    displayItems
 
         ld      a, ID_EGG
         ld      hl, (currentEggTable)
