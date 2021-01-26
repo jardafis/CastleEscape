@@ -28,14 +28,10 @@ checkXCol:
         ld      b, a                    ; Save xSpeed
         ld      hl, (_yPos)             ; Get the yPos and add the ySpeed
         ld      a, (_ySpeed)            ; ySpeed may be positive or negative
-        or      a
-        jp      p, pos1                 ; If ySpeed is positive
-        dec     h                       ; ySpeed is negative, subtract 1 from 'h'
-pos1:
-        addhl                           ; 'hl' holds yPos + ySpeed
-        ld      c, l                    ; save it in 'c'
+        sub		24						; Subtract the delta between the screen offset and the level offset
+		add		l						; Add the current y position
+        ld      c, a                    ; save it in 'c'
 
-        ld      a, l
         and     %11111000               ; Remove the pixel offset within the byte (lower 3 bits)
         ld      l, a
         hlx     TILEMAP_WIDTH/8         ; Divide by 8 to get byte offset and multiply by 128 (width of tilemap)
@@ -132,7 +128,7 @@ checkYCol:
         jp      m, moveUp               ; move up.
 
         ld      a, (_yPos)
-        add     PLAYER_HEIGHT
+        add     PLAYER_HEIGHT - 24		; Subtract the delta between the screen offset and the level offset
         and     %11111000               ; Remove the pixel offset within the byte (lower 3 bits)
         ld      l, a
         ld      h, 0

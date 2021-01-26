@@ -23,7 +23,7 @@
         defc    MAX_LEVEL_Y=0x02
 
         defc    TILEMAP_WIDTH=0x20*MAX_LEVEL_X
-        defc    TILEMAP_HEIGHT=SCREEN_HEIGHT
+        defc    LEVEL_HEIGHT=21
 
         ;
         ; Values numbers for control keys

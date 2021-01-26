@@ -412,7 +412,7 @@ noRotate:
 
 _setCurrentTileMap:
         ld      a, (_tileMapY)
-        ld      hl, TILEMAP_WIDTH*TILEMAP_HEIGHT
+        ld      hl, TILEMAP_WIDTH*LEVEL_HEIGHT
         call    _mul_hla
 
         ex      de, hl

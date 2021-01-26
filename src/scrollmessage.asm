@@ -77,7 +77,7 @@ _scrollReset:
 
         mod     MAX_MESSAGE
 
-		ax		SIZEOF_ptr
+        ax      SIZEOF_ptr
         ld      hl, messages
         addhl   
 
