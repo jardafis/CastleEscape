@@ -123,6 +123,19 @@
         ;
 
         ;
+        ; Bank select
+        ;
+bank    MACRO   num
+        push    af
+        push    bc
+        ld      bc, IO_BANK
+        ld      a, num
+        out     (c), a
+        pop     bc
+        pop     af
+        endm    
+
+        ;
         ; Multiply hl by times where times is 2, 4, 8, 16, 32, 64
         ;
 hlx     MACRO   times

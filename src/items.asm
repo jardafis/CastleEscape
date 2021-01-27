@@ -370,7 +370,7 @@ nextItem2:
 itemID3 equ     $+1
         ld      a, -1                   ; Tile ID
         call    displayTile             ; Display tile
-        call	setTileAttr
+        call    setTileAttr
 
         pop     hl                      ; Restore coin table pointer
 notVisible2:

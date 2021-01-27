@@ -1,8 +1,8 @@
         extern  _screenTab
         extern  _tile0
         extern  _lanternList
-        extern	displayTile
-        extern	setTileAttr
+        extern  displayTile
+        extern  setTileAttr
 
         public  _displayScreen
         public  _tileAttr
@@ -33,7 +33,7 @@ _displayScreen:
         inc     de
         ld      (lanternPtr), de        ; Initialize table pointer
 
-        ld      (ix+yPos), 3			; Starting y position of level
+        ld      (ix+yPos), 3            ; Starting y position of level
 
         ld      b, LEVEL_HEIGHT
 yloop:
@@ -64,12 +64,12 @@ xloop:
         cmp     ID_LANTERN
         call    z, addLantern
 
-		push	bc
-		ld		b,(ix+yPos)
-		ld		c,(ix+xPos)
-		call	displayTile
-		call	setTileAttr
-		pop		bc
+        push    bc
+        ld      b, (ix+yPos)
+        ld      c, (ix+xPos)
+        call    displayTile
+        call    setTileAttr
+        pop     bc
 
 nextTile:
         inc     hl                      ; next tile
