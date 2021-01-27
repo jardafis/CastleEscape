@@ -90,6 +90,11 @@ init:
         call    _initISR
 
 		;
+		; Select bank 0 @ 0xc000
+        bank    0
+
+		;
+		;
 		; Detect Kempston joystick and modify
 		; user input scanning code to poll it.
 		;

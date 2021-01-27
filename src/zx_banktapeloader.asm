@@ -20,7 +20,6 @@
 
         section code_driver
 
-        defc    ZX_BANK_IOPORT=0x7ffd
         defc    ERR_SP=0x5c3d
         include "target/zx/def/sysvar.def"
         include "defs.asm"
@@ -70,7 +69,7 @@ _bankedtapeloader:
         di      
         ld      a, 0x10
         ld      (SV_BANKM), a
-        ld      bc, ZX_BANK_IOPORT
+        ld      bc, IO_BANK
         out     (c), a
         ei      
         popall  
@@ -83,7 +82,7 @@ load_block:
         ld      a, c
         di      
         ld      (SV_BANKM), a
-        ld      bc, ZX_BANK_IOPORT
+        ld      bc, IO_BANK
         out     (c), a
         ei      
         ld      hl, (ERR_SP)
