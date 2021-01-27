@@ -210,25 +210,25 @@ previousYLevel:
         ; Check for a gap in the tiles above
         ;
         ld      de, (_currentTileMap)
-		ld		hl,-TILEMAP_WIDTH		; Get previous tile row
-		add		hl,de
+        ld      hl, -TILEMAP_WIDTH      ; Get previous tile row
+        add     hl, de
 
         ld      a, (_xPos)              ; Get the X pixel offset
         ld      b, a                    ; Save pixel offset for later
         rrca                            ; Divide by 8 to get the byte offset
         rrca                            ; Faster to do rrca followed by AND rather than srl
-        rrca
+        rrca    
         and     %00011111
         addhl                           ; Add X byte offset to tile map Y index
 
         ld      a, (hl)                 ; Get tile ID
         cp      144
-        ret		nc						; 'nc' if a >= 144
+        ret     nc                      ; 'nc' if a >= 144
 
-		inc		hl
+        inc     hl
         ld      a, (hl)                 ; Get tile ID
         cp      144
-        ret		nc						; 'nc' if a >= 144
+        ret     nc                      ; 'nc' if a >= 144
 
         ld      a, b                    ; Restore X pixel offset
         and     %00000111               ; Check if any of the lower 3 bits are set
@@ -236,7 +236,7 @@ previousYLevel:
         inc     hl                      ; Check the tile to the right
         ld      a, (hl)
         cp      144
-        ret		nc						; 'nc' if a >= 144
+        ret     nc                      ; 'nc' if a >= 144
 prev:
         ld      a, (_tileMapY)
         dec     a
