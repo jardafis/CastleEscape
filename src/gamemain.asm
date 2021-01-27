@@ -90,6 +90,11 @@ init:
         call    _initISR
 
 		;
+		; Select bank 0 @ 0xc000
+        bank    0
+
+		;
+		;
 		; Detect Kempston joystick and modify
 		; user input scanning code to poll it.
 		;
@@ -412,7 +417,7 @@ noRotate:
 
 _setCurrentTileMap:
         ld      a, (_tileMapY)
-        ld      hl, TILEMAP_WIDTH*TILEMAP_HEIGHT
+        ld      hl, TILEMAP_WIDTH*LEVEL_HEIGHT
         call    _mul_hla
 
         ex      de, hl

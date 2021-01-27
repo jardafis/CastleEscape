@@ -15,6 +15,7 @@
         public  displayItems
         public  checkItemCollision
         public  displayTile
+        public  setTileAttr
 
         include "defs.asm"
 
@@ -71,8 +72,8 @@ levelXLoop:
         ld      (currentItemTable), hl
 
         ld      hl, (currentLevel)
-        ld      (ix+tileY), 0
-        ld      c, SCREEN_HEIGHT
+        ld      (ix+tileY), 3
+        ld      c, LEVEL_HEIGHT
 
 tileYLoop:
         ld      (ix+tileX), 0
@@ -122,7 +123,7 @@ itemID  equ     $+1
         ld      hl, (currentLevel)
         ld      de, -SCREEN_WIDTH*MAX_LEVEL_X
         add     hl, de
-        ld      de, SCREEN_WIDTH*MAX_LEVEL_X*SCREEN_HEIGHT
+        ld      de, SCREEN_WIDTH*MAX_LEVEL_X*LEVEL_HEIGHT
         add     hl, de
         ld      (currentLevel), hl
 
@@ -228,18 +229,36 @@ nextItem:
         ld      b, (hl)                 ; Item Y position
 
 itemID2 equ     $+1
-        ld      a, 0x00
-        ld      de, _tileAttr
-        addde   
-        ld      a, (de)
+        ld      a, -1
 
-        call    setAttr
+        call    setTileAttr
 
         pop     hl
 notVisible:
         ld      a, SIZEOF_item
         addhl   
         jr      nextItem
+
+        ;
+        ; Set the attribute for the tile at the specified location
+        ;
+        ; Entry:
+        ;		bc - y,x screen position
+        ;		a  - Tile ID
+        ;
+setTileAttr:
+        push    af
+        push    hl
+
+        ld      hl, _tileAttr
+        addhl   
+        ld      a, (hl)
+
+        call    setAttr
+
+        pop     hl
+        pop     af
+        ret     
 
         ;
         ;
@@ -249,6 +268,11 @@ notVisible:
         ;		a  - Tile ID of item
         ;
 displayTile:
+        push    af
+        push    bc
+        push    de
+        push    hl
+
         ld      (itemID4), a
         ; Calculate the screen address
         ld      l, b                    ; Y screen position
@@ -260,7 +284,7 @@ displayTile:
         add     c                       ; Add X offset
         ld      c, a                    ; Store result in 'c'
         inc     hl
-        ld      b, (hl)
+        ld      b, (hl)                 ; Screen high byte address
 
 itemID4 equ     $+1
         ld      l, -1                   ; -1 is over written by the value of 'a' passed in
@@ -316,6 +340,10 @@ TempSP2 equ     $+1
         ld      sp, 0x0000
         ei      
 
+        pop     hl
+        pop     de
+        pop     bc
+        pop     af
         ret     
         ;
         ;
@@ -334,74 +362,15 @@ nextItem2:
         jr      z, notVisible2
 
         push    hl
-        inc     hl
-        ; Calculate the screen address
-        ld      c, (hl)                 ; X screen position
-        inc     hl
-        ld      l, (hl)                 ; Y screen position
-        ld      h, 0
-        hlx     16
-        ld      de, _screenTab
-        add     hl, de
-        ld      a, (hl)                 ; Screen low byte address
-        add     c                       ; Add X offset
-        ld      c, a                    ; Store result in 'c'
-        inc     hl
-        ld      b, (hl)
 
+        inc     hl
+        ld      c, (hl)                 ; Tile x position
+        inc     hl
+        ld      b, (hl)                 ; Tile y position
 itemID3 equ     $+1
-        ld      l, 0x00                 ; 0x00 is over written by the value of 'a' passed in
-        ld      h, 0
-        hlx     8
-        ld      de, _tile0
-        add     hl, de
-
-        ; Display the tile. We are going to use the
-        ; stack pointer to load a 16 bit value so
-        ; we need to disable interrupts.
-        di      
-        ; Save the current stack pointer
-        ld      (TempSP), sp
-        ; Point the stack at the tile data
-        ld      sp, hl
-        ; Point hl at the screen address
-        ld      hl, bc
-
-        ; Pop 2 bytes of tile data and store it
-        ; to the screen.
-        pop     bc                      ; 10
-        ld      (hl), c                 ; 7
-        inc     h                       ; Add 256 to screen address 4
-        ld      (hl), b                 ; 7
-        inc     h                       ; Add 256 to screen address 4
-
-        ; Pop 2 bytes of tile data and store it
-        ; to the screen.
-        pop     bc
-        ld      (hl), c
-        inc     h
-        ld      (hl), b
-        inc     h
-
-        ; Pop 2 bytes of tile data and store it
-        ; to the screen.
-        pop     bc
-        ld      (hl), c
-        inc     h
-        ld      (hl), b
-        inc     h
-
-        ; Pop 2 bytes of tile data and store it
-        ; to the screen.
-        pop     bc
-        ld      (hl), c
-        inc     h
-        ld      (hl), b
-
-        ; Restore the stack pointer.
-TempSP  equ     $+1
-        ld      sp, 0x0000
-        ei      
+        ld      a, -1                   ; Tile ID
+        call    displayTile             ; Display tile
+        call    setTileAttr
 
         pop     hl                      ; Restore coin table pointer
 notVisible2:
