@@ -1,4 +1,4 @@
         public  _levels
-        section rodata_user
+        section BANK_0
 _levels:
         include "levels.inc"

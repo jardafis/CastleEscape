@@ -20,6 +20,7 @@ all: $(PROJ_NAME).tap
 	@grep __data_user_size $(PROJ_NAME).map | sed -e "s/;.*//"
 	@grep __rodata_user_size $(PROJ_NAME).map | sed -e "s/;.*//"
 	@grep __bss_user_size $(PROJ_NAME).map | sed -e "s/;.*//"
+	@grep __BANK_0_size $(PROJ_NAME).map | sed -e "s/;.*//"
 
 %.o: %.c $(PRAGMA_FILE) Makefile
 	$(CC) $(CFLAGS) -o $@ $<
