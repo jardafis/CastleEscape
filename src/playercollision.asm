@@ -28,8 +28,8 @@ checkXCol:
         ld      b, a                    ; Save xSpeed
         ld      hl, (_yPos)             ; Get the yPos and add the ySpeed
         ld      a, (_ySpeed)            ; ySpeed may be positive or negative
-        sub		24						; Subtract the delta between the screen offset and the level offset
-		add		l						; Add the current y position
+        sub     24                      ; Subtract the delta between the screen offset and the level offset
+        add     l                       ; Add the current y position
         ld      c, a                    ; save it in 'c'
 
         and     %11111000               ; Remove the pixel offset within the byte (lower 3 bits)
@@ -128,7 +128,7 @@ checkYCol:
         jp      m, moveUp               ; move up.
 
         ld      a, (_yPos)
-        add     PLAYER_HEIGHT - 24		; Subtract the delta between the screen offset and the level offset
+        add     PLAYER_HEIGHT-24        ; Subtract the delta between the screen offset and the level offset
         and     %11111000               ; Remove the pixel offset within the byte (lower 3 bits)
         ld      l, a
         ld      h, 0
@@ -198,8 +198,8 @@ moveDown:
 moveUp:
         ld      a, (_yPos)
         dec     a
-        cp      24
-        jr      c, previousYLevel       ; 'c' if 'a' < 24
+        cp      25
+        jr      c, previousYLevel       ; 'c' if 'a' <= 24
         ld      (_yPos), a
         ret     
 
