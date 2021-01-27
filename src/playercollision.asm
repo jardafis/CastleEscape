@@ -26,9 +26,8 @@
         ;
 checkXCol:
         ld      b, a                    ; Save xSpeed
-        ld      hl, (_yPos)             ; Get the yPos and add the ySpeed
-        ld      a, (_ySpeed)            ; ySpeed may be positive or negative
-        sub     24                      ; Subtract the delta between the screen offset and the level offset
+        ld      hl, (_yPos)             ; Get the yPos it has already been updated by checkYCol
+        ld      a, -24                  ; Subtract the delta between the screen offset and the level offset
         add     l                       ; Add the current y position
         ld      c, a                    ; save it in 'c'
 
@@ -198,8 +197,8 @@ moveDown:
 moveUp:
         ld      a, (_yPos)
         dec     a
-        cp      25
-        jr      c, previousYLevel       ; 'c' if 'a' <= 24
+        cp      24
+        jr      c, previousYLevel       ; 'c' if 'a' < 24
         ld      (_yPos), a
         ret     
 
@@ -207,6 +206,39 @@ previousYLevel:
         ld      a, (_tileMapY)
         or      a
         ret     z
+        ;
+        ; Check for a gap in the tiles above
+        ;
+        ld      de, (_currentTileMap)
+		ld		hl,-TILEMAP_WIDTH		; Get previous tile row
+		add		hl,de
+
+        ld      a, (_xPos)              ; Get the X pixel offset
+        ld      b, a                    ; Save pixel offset for later
+        rrca                            ; Divide by 8 to get the byte offset
+        rrca                            ; Faster to do rrca followed by AND rather than srl
+        rrca
+        and     %00011111
+        addhl                           ; Add X byte offset to tile map Y index
+
+        ld      a, (hl)                 ; Get tile ID
+        cp      144
+        ret		nc						; 'nc' if a >= 144
+
+		inc		hl
+        ld      a, (hl)                 ; Get tile ID
+        cp      144
+        ret		nc						; 'nc' if a >= 144
+
+        ld      a, b                    ; Restore X pixel offset
+        and     %00000111               ; Check if any of the lower 3 bits are set
+        jr      z, prev                 ; if not we are done
+        inc     hl                      ; Check the tile to the right
+        ld      a, (hl)
+        cp      144
+        ret		nc						; 'nc' if a >= 144
+prev:
+        ld      a, (_tileMapY)
         dec     a
         ld      (_tileMapY), a
         ld      a, MAX_Y_POS-PLAYER_HEIGHT
