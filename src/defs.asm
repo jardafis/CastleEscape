@@ -23,7 +23,7 @@
         defc    MAX_LEVEL_Y=0x02
 
         defc    TILEMAP_WIDTH=0x20*MAX_LEVEL_X
-        defc    TILEMAP_HEIGHT=SCREEN_HEIGHT
+        defc    LEVEL_HEIGHT=21
 
         ;
         ; Values numbers for control keys
@@ -121,6 +121,19 @@
         ;
         ; Macros for use with asmpp.pl
         ;
+
+        ;
+        ; Bank select
+        ;
+bank    MACRO   num
+        push    af
+        push    bc
+        ld      bc, IO_BANK
+        ld      a, num
+        out     (c), a
+        pop     bc
+        pop     af
+        endm    
 
         ;
         ; Multiply hl by times where times is 2, 4, 8, 16, 32, 64

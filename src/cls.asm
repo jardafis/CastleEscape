@@ -72,6 +72,21 @@ clsTempSP   equ $+1
 
         ;
         ; Set the screen attribute specified by 'bc' to
+        ; the attribute used to last clear the screen.
+        ;
+        ; Entry:
+        ;		b - Y location
+        ;		c - X location
+        ;
+clearAttr:
+        push    af
+        ld      a, (clsAttrib)
+        call    setAttr
+        pop     af
+        ret     
+
+        ;
+        ; Set the screen attribute specified by 'bc' to
         ; the attribute passed in 'a'.
         ;
         ; Entry:
@@ -79,12 +94,9 @@ clsTempSP   equ $+1
         ;		c - X location
         ;		a - Attribute
         ;
-        ; Corrupts:
-        ;		af, bc, hl
-        ;
-clearAttr:
-        ld      a, (clsAttrib)
 setAttr:
+        push    bc
+        push    hl
         ld      l, b
         ld      h, 0
         hlx     32
@@ -93,6 +105,8 @@ setAttr:
         ld      bc, SCREEN_ATTR_START
         add     hl, bc
         ld      (hl), a
+        pop     hl
+        pop     bc
         ret     
 
         ;

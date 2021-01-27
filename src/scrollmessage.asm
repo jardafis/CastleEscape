@@ -72,11 +72,12 @@ _scrollReset:
         push    hl
 
         call    rand
+        ld      a, l
         and     %00000111
 
         mod     MAX_MESSAGE
 
-        add     a                       ; x2
+        ax      SIZEOF_ptr
         ld      hl, messages
         addhl   
 
@@ -220,7 +221,7 @@ resetMessagePointer:
 
         section rodata_user
 messages:
-        dw      message0, message1, message2, message3, message4, message5
+        dw      message0, message1, message2, message3, message4, message5, message6
 messagesEnd:
 
 message0:
@@ -230,12 +231,13 @@ message1:
 message2:
         db      "Collect the coins for points...", 0xff
 message3:
-defaultMessage:
         db      "Purple eggs give you wiiings...", 0xff
 message4:
         db      "Prolong your life with hearts XOXO...", 0xff
 message5:
         db      "Don't fall too far!", 0xff
+message6:
+        db      "I am constant as the northern star...", 0xff
 padding:
         ds      0x10, 0x20
         db      0x00
