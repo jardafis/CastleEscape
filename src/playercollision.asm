@@ -125,6 +125,172 @@ changeXLevel:
         ;
         ;
 checkYCol:
+IF  1
+  IF    1
+        ld      hl, (_yPos)
+        ld      a, (_ySpeed)            ; Check if ySpeed is negative
+        ld      b, a
+        or      a
+        jp      p, pos3                 ; Moving down or stopped
+        ld      de, -25                 ; Pixel position above the player
+        jr      skip
+pos3:
+        ld      b, 1                    ; Force gravity as ySpeed could by 0
+        ld      de, PLAYER_HEIGHT-24    ; Pixel position below the player
+skip:
+        add     hl, de
+
+		;
+		; Divide hl by 8 to remove the pixel offset.
+		; It could be negative at this point.
+		;
+        ld      a, l
+        sra     h
+        rra     
+        sra     h
+        rra     
+        sra     h
+        rra     
+        ld      l, a
+		;
+		; Multiply by TILEMAP_WIDTH
+		;
+        hlx     TILEMAP_WIDTH
+
+  ELSE  
+        ld      a, (_ySpeed)            ; Check if ySpeed is negative
+        ld      b, a
+        or      a
+        ld      a, (_yPos)
+        jp      m, neg2                 ; If ySpeed is negative skip adding
+        ld      b, 1                    ; gravity
+        add     PLAYER_HEIGHT-1         ; and player height.
+neg2:
+        add     b                       ; Add y speed should be 1, or -1
+        add     -24                     ; Subtract the delta between the screen and the tilemap offset
+
+        and     %11111000               ; Remove the pixel offset within the byte (lower 3 bits)
+        ld      l, a
+        ld      h, 0
+        hlx     TILEMAP_WIDTH/8         ; Divide by 8 to get byte offset and multiply by width of tilemap
+  ENDIF 
+        ld      a, (_xPos)              ; Get the X pixel offset
+        ld      c, a                    ; Save pixel offset for later
+        rrca                            ; Divide by 8 to get the byte offset
+        rrca                            ; Faster to do rrca followed by AND rather than srl
+        rrca    
+        and     %00011111
+        addhl                           ; Add X byte offset to tile map Y index
+
+        ld      de, (_currentTileMap)
+        add     hl, de
+
+        ld      d, ID_SOLID_TILE        ; Default to ID_SOLID_TILE
+        ld      a, b
+        or      a
+        jp      m, test                 ; Player is moving upward, only check solid tiles
+										; Player is moving downward, include solid tiles also.
+        ld      d, ID_SOFT_TILE         ; Switch to ID_SOFT_TILE
+test:
+
+        ld      a, (hl)                 ; Get tile ID
+        cp      d
+        jr      nc, yCollision          ; 'nc' if a >= value
+
+        inc     hl                      ; Next tile to the right
+        ld      a, (hl)                 ; Get tile ID
+        cp      d
+        jr      nc, yCollision          ; 'nc' if a >= value
+
+        ld      a, c                    ; Restore X pixel offset
+        and     %00000111               ; Check if any of the lower 3 bits are set
+        jr      z, noYCollision         ; if not we are done
+
+        inc     hl                      ; Check the tile to the right
+        ld      a, (hl)
+        cp      d
+        jr      nc, yCollision          ; 'nc' if a >= value
+
+noYCollision:
+        ld      a, (_jumping)           ; Check if player jumping
+        or      a
+        jr      nz, updateYPos
+
+        ;
+        ; Transition to falling.
+        ;  Clear X movement.
+        ;  set ySpeed to 1 (down).
+        ;  set the falling flag.
+        xor     a
+        ld      (_xSpeed), a
+        inc     a
+        ld      (_ySpeed), a
+        ld      (_falling), a
+
+updateYPos:
+		;
+		; Update y position
+		;
+        ld      a, (_yPos)
+        add     b
+        cp      MAX_Y_POS-PLAYER_HEIGHT
+        jr      nc, nextYLevel          ; 'nc' if a >= value
+        cp      24
+        jr      c, previousYLevel       ; 'c' if 'a' < value
+        ld      (_yPos), a
+        ret     
+
+previousYLevel:
+        ld      a, (_tileMapY)
+        or      a
+        ret     z
+        dec     a
+        ld      b, MAX_Y_POS-PLAYER_HEIGHT
+        jr      changeYLevel
+nextYLevel:
+        ld      a, (_tileMapY)
+        cp      MAX_LEVEL_Y-1
+        ret     z
+        inc     a
+        ld      b, 24
+changeYLevel:
+        ld      (_tileMapY), a
+        ld      a, b
+        ld      (_yPos), a
+        call    _setupScreen
+        ret     
+
+yCollision:
+		;
+		; If player was moving down, stop moving
+		;
+        ld      a, b
+        or      a
+        jp      p, landed
+
+		;
+		; Player is going up check for ID_SOFT_TILE
+		;
+        ld      a, d
+        cp      ID_SOFT_TILE
+        jr      z, noYCollision
+        ;
+        ; Collided with ID_SOLID_TILE going up
+        ; Don't update yPos.
+        ;
+        ret     
+
+landed:
+        ;
+        ; Reset ySpeed, jumping count and falling flag
+        ;
+        xor     a
+        ld      (_ySpeed), a
+        ld      (_jumping), a
+        ld      (_falling), a
+        ret     
+
+ELSE    
         ld      a, (_ySpeed)            ; If jumping up ySpeed is negative,
         or      a                       ; there is no gravity,
         jp      m, moveUp               ; move up.
@@ -176,8 +342,8 @@ landed:
 
 gravity:
         ld      a, (_jumping)           ; Check if player is in
-        or      a                       ; downward jump and
-        jr      nz, moveDown            ; if so just return.
+        or      a                       ; downward jump
+        jr      nz, moveDown
 
         ;
         ; Transition to falling.
@@ -295,3 +461,5 @@ changeYLevel:
         ld      (_yPos), a
         call    _setupScreen
         ret     
+ENDIF   
+
