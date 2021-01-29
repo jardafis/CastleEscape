@@ -122,6 +122,7 @@
         ; Macros for use with asmpp.pl
         ;
 
+        defc    MEM_BANK_ROM=0x10
         ;
         ; Bank select
         ;
@@ -129,7 +130,7 @@ bank    MACRO   num
         push    af
         push    bc
         ld      bc, IO_BANK
-        ld      a, num
+        ld      a, num|MEM_BANK_ROM
         out     (c), a
         pop     bc
         pop     af
