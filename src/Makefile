@@ -21,6 +21,7 @@ all: $(PROJ_NAME).tap
 	@grep __rodata_user_size $(PROJ_NAME).map | sed -e "s/;.*//"
 	@grep __bss_user_size $(PROJ_NAME).map | sed -e "s/;.*//"
 	@grep __BANK_0_size $(PROJ_NAME).map | sed -e "s/;.*//"
+	@grep __BSS_UNINITIALIZED_tail $(PROJ_NAME).map | sed -e "s/;.*//"
 
 %.o: %.c $(PRAGMA_FILE) Makefile
 	$(CC) $(CFLAGS) -o $@ $<
@@ -30,7 +31,7 @@ all: $(PROJ_NAME).tap
 	
 $(PROJ_NAME).tap : $(OBJECTS) $(PRAGMA_FILE) Makefile
 	 $(LD) $(LDFLAGS) -startup=$(CRT) $(OBJECTS) -o $(PROJ_NAME).bin -create-app
-	 @rm *.i
+	 @rm -f *.i
 	
 .PHONY: clean run dis
 
