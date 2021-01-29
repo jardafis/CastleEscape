@@ -158,6 +158,9 @@ ENDIF
 IF  times>=64
         add     hl, hl
 ENDIF   
+IF  times>=128
+        add     hl, hl
+ENDIF   
         endm    
 
 ax      MACRO   times
@@ -177,6 +180,9 @@ IF  times>=32
         add     a
 ENDIF   
 IF  times>=64
+        add     a
+ENDIF   
+IF  times>=128
         add     a
 ENDIF   
         endm    
