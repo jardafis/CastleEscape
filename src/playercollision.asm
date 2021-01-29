@@ -29,11 +29,30 @@
         ;
 checkXCol:
         ld      b, a                    ; Save xSpeed
+IF  1
+        ld      hl, (_xPos)             ; Get the X pixel offset
+        or      a                       ; Update flags
+        jp      p, pos2                 ; If positive
+        dec     hl                      ; else negative, subtract 1 from xPos
+        jr      endif
+pos2:
+        ld      de, PLAYER_WIDTH        ; else add player width
+        add     hl, de
+endif:
+        ex      de, hl
+
         ld      hl, (_yPos)             ; Get the yPos it has already been updated by checkYCol
         ld      a, -24                  ; Subtract the delta between the screen offset and the level offset
         add     l                       ; Add the current y position
         ld      c, a                    ; save it in 'c'
-
+        and     %11111000               ; Remove the pixel offset within the byte (lower 3 bits)
+        ld      l, a
+        hlx     TILEMAP_WIDTH/8         ; Divide by 8 to get byte offset and multiply by 128 (width of tilemap)
+ELSE    
+        ld      hl, (_yPos)             ; Get the yPos it has already been updated by checkYCol
+        ld      a, -24                  ; Subtract the delta between the screen offset and the level offset
+        add     l                       ; Add the current y position
+        ld      c, a                    ; save it in 'c'
         and     %11111000               ; Remove the pixel offset within the byte (lower 3 bits)
         ld      l, a
         hlx     TILEMAP_WIDTH/8         ; Divide by 8 to get byte offset and multiply by 128 (width of tilemap)
@@ -52,6 +71,7 @@ pos2:
         ld      a, PLAYER_WIDTH-1       ; else add player width
         addde   
 neg1:
+ENDIF   
         ; Divide by 8 to get byte offset
         ld      a, e
         sra     d                       ; SRA leaves the sign bit (bit-7) intact. Good for signed shifts.
