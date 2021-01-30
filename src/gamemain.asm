@@ -44,7 +44,7 @@
         extern  detectKempston
         extern  readKempston
         extern  kjScan
-        extern	die
+        extern  die
 
         public  _gameMain
         public  _currentTileMap
@@ -292,8 +292,6 @@ updateXSpeedDone:
         bit     JUMP_BIT, e
         jr      z, cantJump
 
-        ld      a, AYFX_JUMP
-        call    AFXPLAY
 
         ld      a, JUMP_SPEED
         ld      (_ySpeed), a
@@ -301,12 +299,17 @@ updateXSpeedDone:
         ld      a, (eggCount)           ; Get egg count
         and     a                       ; Update the flags
         ld      a, JUMP_HEIGHT          ; Single jump height
+        ld      b, AYFX_JUMP
         jr      z, smallJump            ; eggCount is zero
-        add     a                       ; eggCount is non-zero, double jump
+
+        add     a                       ; Double jump height
+        inc     b                       ; Next jump sound index
 smallJump:
         ld      (_jumping), a           ; Save jump distance
         rrca                            ; Divide by 2 for direction change. Only works if bit 0 is 0
         ld      (jumpMidpoint), a       ; Save for compare below
+        ld      a, b
+        call    AFXPLAY
 cantJump:
 
         ld      a, (_jumping)
@@ -336,11 +339,11 @@ notJumping:
         ld      a, (_xSpeed)            ; If xSpeed != 0 player is moving
         or      a                       ; left or right.
         call    nz, checkXCol           ; Check for a collision.
-IF 0
-		ld		a,(_falling)
-		cp		32
-		call	nc,die
-ENDIF
+IF  0
+        ld      a, (_falling)
+        cp      32
+        call    nc, die
+ENDIF   
         ;
         ; Update the scrolling message
         ;
