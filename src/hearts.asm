@@ -22,7 +22,7 @@ heartCollision:
         ld      bc, 0x011d              ; y,x screen location
         ld      hl, heartCount          ; Point to 1000's/100's of score
         call    display2BCD
-        ld      a, 17
+        ld      a, AYFX_COLLECT_HEART
         call    AFXPLAY
         ret     
 
