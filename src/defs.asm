@@ -16,6 +16,14 @@
 
         defc    START_LIVES=0x03
 
+		;
+		; AYFX Indexes
+		;
+        defc    AYFX_JUMP=12
+        defc    AYFX_COLLECT_COIN=7
+        defc    AYFX_COLLECT_EGG=5
+        defc    AYFX_COLLECT_HEART=17
+
         ;
         ; Tilemap definitions
         ;

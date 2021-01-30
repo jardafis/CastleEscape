@@ -127,7 +127,7 @@ coinCollision:
         ld      de, score
         call    addBCD
         call    _displayScore
-        ld      a, 7
+        ld      a, AYFX_COLLECT_COIN
         call    AFXPLAY
         ret     
 
