@@ -44,6 +44,7 @@
         extern  detectKempston
         extern  readKempston
         extern  kjScan
+        extern	die
 
         public  _gameMain
         public  _currentTileMap
@@ -291,7 +292,7 @@ updateXSpeedDone:
         bit     JUMP_BIT, e
         jr      z, cantJump
 
-        ld      a, 12
+        ld      a, AYFX_JUMP
         call    AFXPLAY
 
         ld      a, JUMP_SPEED
@@ -335,7 +336,11 @@ notJumping:
         ld      a, (_xSpeed)            ; If xSpeed != 0 player is moving
         or      a                       ; left or right.
         call    nz, checkXCol           ; Check for a collision.
-
+IF 0
+		ld		a,(_falling)
+		cp		32
+		call	nc,die
+ENDIF
         ;
         ; Update the scrolling message
         ;
