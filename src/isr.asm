@@ -1,3 +1,5 @@
+        extern	AFXFRAME
+
         public  _initISR
         public  ticks
         section code_user
@@ -35,14 +37,26 @@ _initISR:
 isr:
         ld      (isrTempSP), sp         ; Save the application stack pointer
         ld      sp, interruptStack      ; Load the interrupt stack pointer
+        push	af
+        push	bc
+        push	de
         push    hl
+        push	ix
+
+        call    AFXFRAME
+
         ;
         ; Increment the 16-bit ticks count
         ;
         ld      hl, (ticks)
         inc     hl
         ld      (ticks), hl
-        pop     hl                      ; Restore the registers we used
+
+        pop		ix
+        pop     hl
+        pop		de
+        pop		bc
+        pop		af                      ; Restore the registers we used
 isrTempSP   equ $+1
         ld      sp, 0x0000              ; Restore the application stack pointer
         ei                              ; Enable interrupts
