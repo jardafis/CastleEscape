@@ -85,6 +85,9 @@ gameLoop:
         ret     
 
 init:
+        ld      hl, afxBank             ; Effects bank address
+        call    AFXINIT
+
         ;
         ; Init ISR handling
         ;
@@ -114,9 +117,6 @@ noKempstonDetected:
         call    _cls
         ld      l, INK_BLACK
         call    _border
-
-        ld      hl, afxBank             ; Effects bank address
-        call    AFXINIT
 
         ;
         ; Initialize the coin tables
@@ -414,8 +414,6 @@ noRotate:
 
         ld      l, INK_BLACK
         call    _border
-
-        call    AFXFRAME
 
         popall  
         ret     
