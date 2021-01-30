@@ -19,10 +19,11 @@
 		;
 		; AYFX Indexes
 		;
-        defc    AYFX_JUMP=12
-        defc    AYFX_COLLECT_COIN=7
-        defc    AYFX_COLLECT_EGG=5
-        defc    AYFX_COLLECT_HEART=17
+        defc    AYFX_JUMP=0
+        defc    AYFX_BIG_JUMP=1
+        defc    AYFX_COLLECT_COIN=2
+        defc    AYFX_COLLECT_EGG=3
+        defc    AYFX_COLLECT_HEART=4
 
         ;
         ; Tilemap definitions

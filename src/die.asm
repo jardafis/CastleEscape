@@ -1,7 +1,7 @@
-		extern	heartCount
-		extern	subBCD
-		extern	display2BCD
-		extern	_falling
+        extern  heartCount
+        extern  subBCD
+        extern  display2BCD
+        extern  _falling
 
         public  die
 
@@ -11,10 +11,10 @@
 		; Routine called when plater dies.
 		;
 die:
-		push	af
-		push	bc
-		push	de
-		push	hl
+        push    af
+        push    bc
+        push    de
+        push    hl
 		;
 		; Decrement the heart count
 		;
@@ -22,26 +22,26 @@ die:
         ld      de, heartCount
         call    subBCD
         ld      bc, 0x011d              ; y,x screen location
-		ex		de,hl
+        ex      de, hl
         call    display2BCD
 
 		;
 		; If the heart count is zero, game over!
 		;
-		ld		a,(heartCount)
-		or		a
-		jr		z, gameOver
+        ld      a, (heartCount)
+        or      a
+        jr      z, gameOver
 
-		ld		a,1
-		ld		(_falling),a
-
-
+        ld      a, 1
+        ld      (_falling), a
 
 
-		pop		hl
-		pop		de
-		pop		bc
-		pop		af
+
+
+        pop     hl
+        pop     de
+        pop     bc
+        pop     af
         ret     
 
 gameOver:
@@ -49,8 +49,8 @@ gameOver:
 
 
 
-		pop		hl
-		pop		de
-		pop		bc
-		pop		af
-		ret
+        pop     hl
+        pop     de
+        pop     bc
+        pop     af
+        ret     
