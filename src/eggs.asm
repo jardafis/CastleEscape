@@ -26,7 +26,7 @@ eggCollision:
         ld      hl, eggCount            ; Point to eggCount
         call    display2BCD
         call    updateEggImage
-        ld      a, 5
+        ld      a, AYFX_COLLECT_EGG
         call    AFXPLAY
         ret     
 
