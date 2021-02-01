@@ -8,6 +8,8 @@
         extern  _tileMapY
         extern  _jumping
         extern  _falling
+        extern  AFXPLAY
+        extern  die
 
         public  checkXCol
         public  checkYCol
@@ -17,6 +19,7 @@
 
         defc    ID_SOLID_TILE=144
         defc    ID_SOFT_TILE=139
+        defc    FALL_DISTANCE=32
 
         ;
         ; Check for player colliding with platforms on
@@ -215,7 +218,10 @@ noYCollision:
         ld      (_ySpeed), a
         ld      hl, _falling
         inc     (hl)
-
+        ld      a, FALL_DISTANCE        ; Distance before falling starts
+        cp      (hl)
+        ld      a, AYFX_FALLING
+        call    z, AFXPLAY
 updateYPos:
 		;
 		; Update y position
@@ -273,8 +279,15 @@ landed:
         ;
         ; Reset ySpeed, jumping count and falling flag
         ;
+        ld      a, (_falling)
+        cp      FALL_DISTANCE
+        ld      a, AYFX_DIE
+        call    nc, AFXPLAY
+        call    nc, die
+
         xor     a
         ld      (_ySpeed), a
         ld      (_jumping), a
         ld      (_falling), a
+
         ret     
