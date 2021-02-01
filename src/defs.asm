@@ -16,6 +16,17 @@
 
         defc    START_LIVES=0x03
 
+		;
+		; AYFX Indexes
+		;
+        defc    AYFX_JUMP=0
+        defc    AYFX_BIG_JUMP=1
+        defc    AYFX_COLLECT_COIN=2
+        defc    AYFX_COLLECT_EGG=3
+        defc    AYFX_COLLECT_HEART=4
+        defc    AYFX_FALLING=5
+        defc    AYFX_DIE=6
+
         ;
         ; Tilemap definitions
         ;
@@ -122,6 +133,7 @@
         ; Macros for use with asmpp.pl
         ;
 
+        defc    MEM_BANK_ROM=0x10
         ;
         ; Bank select
         ;
@@ -129,7 +141,7 @@ bank    MACRO   num
         push    af
         push    bc
         ld      bc, IO_BANK
-        ld      a, num
+        ld      a, num|MEM_BANK_ROM
         out     (c), a
         pop     bc
         pop     af
@@ -157,6 +169,9 @@ ENDIF
 IF  times>=64
         add     hl, hl
 ENDIF   
+IF  times>=128
+        add     hl, hl
+ENDIF   
         endm    
 
 ax      MACRO   times
@@ -176,6 +191,9 @@ IF  times>=32
         add     a
 ENDIF   
 IF  times>=64
+        add     a
+ENDIF   
+IF  times>=128
         add     a
 ENDIF   
         endm    

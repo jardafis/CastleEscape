@@ -4,7 +4,11 @@
 
         public  displayBanner
 
+        include "defs.asm"
+
         section code_user
+
+        defc    BANNER_HEIGHT=0x03
 
 		;
 		; Display the in-game banner.
@@ -12,14 +16,15 @@
 displayBanner:
         push    af
         push    bc
+        push    de
         push    hl
 
         ld      hl, bannerData
         ld      d, 0x00                 ; Initial y position
-        ld      c, 3
+        ld      c, BANNER_HEIGHT
 yLoop:
         ld      e, 0x00                 ; Initial x position
-        ld      b, 32
+        ld      b, SCREEN_WIDTH
 xLoop:
         push    bc                      ; Save the loop counts
 
@@ -39,6 +44,7 @@ xLoop:
         jr      nz, yLoop
 
         pop     hl
+        pop     de
         pop     bc
         pop     af
         ret     
