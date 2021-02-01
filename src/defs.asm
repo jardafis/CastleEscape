@@ -24,6 +24,8 @@
         defc    AYFX_COLLECT_COIN=2
         defc    AYFX_COLLECT_EGG=3
         defc    AYFX_COLLECT_HEART=4
+        defc	AYFX_FALLING=5
+        defc	AYFX_DIE=6
 
         ;
         ; Tilemap definitions
