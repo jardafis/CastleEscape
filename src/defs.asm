@@ -31,7 +31,7 @@
         ; Tilemap definitions
         ;
         defc    MAX_LEVEL_X=0x04
-        defc    MAX_LEVEL_Y=0x02
+        defc    MAX_LEVEL_Y=0x05
 
         defc    TILEMAP_WIDTH=0x20*MAX_LEVEL_X
         defc    LEVEL_HEIGHT=21

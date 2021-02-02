@@ -19,7 +19,7 @@
 
         defc    ID_SOLID_TILE=144
         defc    ID_SOFT_TILE=139
-        defc    FALL_DISTANCE=32
+        defc    FALL_DISTANCE=33
 
         ;
         ; Check for player colliding with platforms on
