@@ -65,12 +65,12 @@
 		;
         ; Sprite ID's
         ;
-        defc    ID_LANTERN=88
+        defc    ID_LANTERN=3
         defc    ID_BLANK=11
-        defc    ID_COIN=74
-        defc    ID_EGG=97
-        defc    ID_EGG0=66
-        defc    ID_HEART=98
+        defc    ID_COIN=6*12
+        defc    ID_EGG=31
+        defc    ID_EGG0=5*12
+        defc    ID_HEART=34
 
 
         ;
