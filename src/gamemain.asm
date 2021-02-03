@@ -193,18 +193,13 @@ newGame:
 
         call    _setupScreen
 
-        ld      hl, _spriteBuffer
-        push    hl
+        ld      de, _spriteBuffer
         ld      a, (_xPos)
-        ld      l, a
+        ld      c, a
         ld      a, (_yPos)
-        ld      h, a
-        push    hl
-
+        ld      b, a
         call    _copyScreen
 
-        pop     hl
-        pop     hl
         ret     
 
 _gameLoop:
@@ -213,25 +208,15 @@ _gameLoop:
         ;
         ; Wait for refresh interrupt
         ;
-        ;		halt
-        ld      a, (ticks)
-        ld      b, a
-wait:
-        push    bc                      ; Save 'b'
-        call    _updateDirection
-        pop     bc                      ; Restore 'b'
-        ld      a, (ticks)              ; Get the latest 'ticks' value
-        cp      b                       ; Has it changed?
-        jr      z, wait                 ; If not, keep looping
+        halt    
 
 IF  0
-        ld      b, 255
+        ld      bc, 0x300
 lo:
-        push    af
-        pop     af
-        push    af
-        pop     af
-        djnz    lo
+        dec     bc
+        ld      a, b
+        or      c
+        jr      nz, lo
 ENDIF   
 
         ld      l, INK_BLUE
@@ -240,19 +225,17 @@ ENDIF
         ;
         ; Re-draw the screen at the players current location
         ;
-        ld      hl, _spriteBuffer
-        push    hl
+        ld      de, _spriteBuffer
         ld      a, (_xPos)
-        ld      l, a
+        ld      c, a
         ld      a, (_yPos)
-        ld      h, a
-        push    hl
+        ld      b, a
         call    _pasteScreen
-        pop     hl
-        pop     hl
 
         ld      l, INK_RED
         call    _border
+
+        call    _updateDirection
 
         ;
         ; Handle the keyboard input from the user
@@ -339,11 +322,7 @@ notJumping:
         ld      a, (_xSpeed)            ; If xSpeed != 0 player is moving
         or      a                       ; left or right.
         call    nz, checkXCol           ; Check for a collision.
-IF  0
-        ld      a, (_falling)
-        cp      32
-        call    nc, die
-ENDIF   
+
         ;
         ; Update the scrolling message
         ;
@@ -380,24 +359,19 @@ ENDIF
 noRotate:
         ld      l, INK_BLUE
         call    _border
-
-        ld      hl, _spriteBuffer
-        push    hl
+        ld      de, _spriteBuffer
         ld      a, (_xPos)
-        ld      l, a
+        ld      c, a
         ld      a, (_yPos)
-        ld      h, a
-        push    hl
+        ld      b, a
         call    _copyScreen
-        pop     hl
-        pop     hl
 
         ld      l, INK_RED
         call    _border
         ld      a, (_xPos)
-        ld      h, a
+        ld      c, a
         ld      a, (_yPos)
-        ld      l, a
+        ld      b, a
         call    _displaySprite
 
         ;
