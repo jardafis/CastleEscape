@@ -49,6 +49,6 @@ xLoop:
         pop     af
         ret     
 
-        section BANK_0
+        section rodata_user
 bannerData:
         include "banner.inc"
