@@ -19,60 +19,51 @@
         ; Animate the visible coins on the current level.
         ;
 _animateCoins:
-        ld      hl, (currentCoinTable)
+        di      
+        ld      (coinTableEnd+1), sp
+        ld      de, (currentCoinTable)
 nextCoin:
-        ld      a, (hl)                 ; Coin flags
-        cp      0xff
-        ret     z
+        ld      a, (de)                 ; Coin flags
+        cp      0xff                    ; Check for end of coin table
+        jp      z, coinTableEnd         ; done if true.
+        or      a                       ; Is the coin visible?
+        jp      z, notVisible
 
-        cp      0x00                    ; Is the coin visible?
-        jr      z, notVisible
-        inc     hl
+        inc     de
 
+        ld      a, (de)                 ; Get x screen position
+        ld      c, a                    ; Save for later
+        inc     de
 
-        ; Calculate the screen address
-        ld      c, (hl)                 ; X screen position
-        inc     hl
-        push    hl                      ; Save coin table pointer
-
-        ld      l, (hl)                 ; Y screen position
+        ld      a, (de)                 ; Get y screen position
+        ld      l, a
         ld      h, 0
-        hlx     16
-        ld      de, _screenTab
-        add     hl, de
-        ld      a, (hl)
-        add     c                       ; Add X offset
-        ld      c, a                    ; Store result in 'c'
-        inc     hl
-        ld      b, (hl)
+        inc     de
+        ld      a, c                    ; Restore x screen position
 
-        pop     hl                      ; Restore coin table pointer
-        inc     hl
+        hlx     16
+        ld      sp, _screenTab
+        add     hl, sp
+        ld      sp, hl
+        pop     bc                      ; Pop y screen address
+        add     c
+        ld      c, a
 
         ; Calculate the tile address using the animation index
-        ld      a, (hl)                 ; Animation index
+        ld      a, (de)                 ; Animation index
+        inc     a
+        ld      (de), a
+        inc     de
         and     0x03                    ; Only 4 animations 0-3
         add     ID_COIN                 ; Index of first animation
-        inc     (hl)                    ; Increment animation index for next time
-        inc     hl
-
-        push    hl                      ; Save coin table pointer
 
         ld      l, a
         ld      h, 0
         hlx     8
-        ld      de, _tile0
-        add     hl, de
+        ld      sp, _tile0
+        add     hl, sp
 
-        ; Display the tile. We are going to use the
-        ; stack pointer to load a 16 bit value so
-        ; we need to disable interrupts.
-        di      
-        ; Save the current stack pointer
-        ld      (animateTempSP), sp
-        ; Point the stack at the tile data
         ld      sp, hl
-        ; Point hl at the screen address
         ld      hl, bc
 
         ; Pop 2 bytes of tile data and store it
@@ -106,17 +97,15 @@ nextCoin:
         inc     h
         ld      (hl), b
 
-        ; Restore the stack pointer.
-animateTempSP   equ $+1
+        jp      nextCoin
+coinTableEnd:
         ld      sp, 0x0000
         ei      
-
-        pop     hl                      ; Restore coin table pointer
-        jp      nextCoin
+        ret     
 
 notVisible:
         ld      a, SIZEOF_item
-        addhl   
+        addde   
         jp      nextCoin
 
         ;
