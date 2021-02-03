@@ -8,6 +8,14 @@
         public  kjScan
         include "defs.asm"
 
+		;
+		; Scan the keyboard for input.
+		;
+		;	Entry:
+		;		None
+		;
+		;	Exit:
+		;		l - ASCII code for key pressed
 _keyboardScan:
         push    AF
         push    BC
@@ -54,7 +62,6 @@ foundKey:
 		; Inputs: None
 		; Outputs:
 		;		e	-	Direction bits
-
 _updateDirection:
         ld      hl, scanCodes           ; Point to the scan codes
         ld      c, 0xfe                 ; Lower 8 bits of the IO port

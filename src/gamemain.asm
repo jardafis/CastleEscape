@@ -45,6 +45,7 @@
         extern  readKempston
         extern  kjScan
         extern  die
+        extern  mainMenu
 
         public  _gameMain
         public  _currentTileMap
@@ -70,6 +71,8 @@
 _gameMain:
         pushall 
         call    init
+
+        call    mainMenu
 
         call    newGame
 gameLoop:
@@ -109,14 +112,6 @@ init:
         ld      hl, readKempston
         ld      (kjScan+1), hl
 noKempstonDetected:
-
-        ;
-        ; Clear the screen and set the border color
-        ;
-        ld      l, INK_WHITE|PAPER_BLACK
-        call    _cls
-        ld      l, INK_BLACK
-        call    _border
 
         ;
         ; Initialize the coin tables

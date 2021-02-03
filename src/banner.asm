@@ -3,6 +3,7 @@
         extern  setTileAttr
 
         public  displayBanner
+        public  bannerData
 
         include "defs.asm"
 
