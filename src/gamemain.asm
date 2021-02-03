@@ -152,10 +152,8 @@ newGame:
         ;
         ; Starting X and Y player position
         ;
-        ld      hl, START_X
+        ld      hl, START_Y<<8|START_X
         ld      (_xPos), hl
-        ld      hl, START_Y
-        ld      (_yPos), hl
 
         ;
         ; Initialize the X/Y speed variables
@@ -194,10 +192,7 @@ newGame:
         call    _setupScreen
 
         ld      de, _spriteBuffer
-        ld      a, (_xPos)
-        ld      c, a
-        ld      a, (_yPos)
-        ld      b, a
+        ld      bc, (_xPos)
         call    _copyScreen
 
         ret     
@@ -226,10 +221,7 @@ ENDIF
         ; Re-draw the screen at the players current location
         ;
         ld      de, _spriteBuffer
-        ld      a, (_xPos)
-        ld      c, a
-        ld      a, (_yPos)
-        ld      b, a
+        ld      bc, (_xPos)
         call    _pasteScreen
 
         ld      l, INK_RED
@@ -360,18 +352,12 @@ noRotate:
         ld      l, INK_BLUE
         call    _border
         ld      de, _spriteBuffer
-        ld      a, (_xPos)
-        ld      c, a
-        ld      a, (_yPos)
-        ld      b, a
+        ld      bc, (_xPos)
         call    _copyScreen
 
         ld      l, INK_RED
         call    _border
-        ld      a, (_xPos)
-        ld      c, a
-        ld      a, (_yPos)
-        ld      b, a
+        ld      bc, (_xPos)
         call    _displaySprite
 
         ;
@@ -457,9 +443,9 @@ _tileMapX:
 _tileMapY:
         db      0
 _xPos:
-        dw      0
+        db      0
 _yPos:
-        dw      0
+        db      0
 _xSpeed:
         db      0
 _ySpeed:

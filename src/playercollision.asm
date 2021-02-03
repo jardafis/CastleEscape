@@ -35,8 +35,10 @@
         ;		c - yPos
         ;
 checkXCol:
-        ld      de, (_xPos)             ; Get the X pixel offset
         ld      b, a                    ; Save xSpeed
+        ld      a, (_xPos)              ; Get the X pixel offset
+        ld      e, a
+        ld      d, 0
 ;        or      a                       ; Flags were updated based on this value before we were called
         jp      p, movingRight          ; If positive moving right
         dec     de                      ; else negative, moving left. Subtract 1 from xPos.
@@ -45,7 +47,9 @@ movingRight:
         ld      a, PLAYER_WIDTH         ; else add player width
         addde   
 endif:
-        ld      hl, (_yPos)             ; Get the yPos
+        ld      a, (_yPos)              ; Get the yPos
+        ld      l, a
+        ld      h, 0
         ld      a, -24                  ; Subtract the delta between the screen offset and the level offset
         add     l                       ; Add the current y position
         ld      c, a                    ; save it in 'c'
@@ -135,7 +139,9 @@ changeXLevel:
         ;		c - xPos
         ;
 checkYCol:
-        ld      hl, (_yPos)
+        ld      a, (_yPos)
+        ld      l, a
+        ld      h, 0
         ld      a, (_ySpeed)            ; Check if ySpeed is negative
         ld      b, a
         or      a
