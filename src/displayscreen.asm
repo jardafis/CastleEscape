@@ -136,6 +136,6 @@ lanternPtr  equ $+1
         SIZEOF_vars 
         }       
 
-        section rodata_user
+        section BANK_0
 _tileAttr:
         binary  "attrib.dat"
