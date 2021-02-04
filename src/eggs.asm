@@ -12,7 +12,7 @@
         public  updateEggImage
         public  decrementEggs
 
-        include "defs.asm"
+        include "defs.inc"
 
         section code_user
         ;

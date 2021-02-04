@@ -2,6 +2,15 @@
 
         extern  _font_8x8_cpc_system
 
+		;
+		; Game Configuration
+		;
+        defc    START_X=40
+        defc    START_Y=120
+        defc    START_LIVES=0x03
+		DEFINE	ATTRIB_EDIT
+		DEFINE	TIMING_BORDER
+
         defvars 0
         {       
             itemFlags   ds.b 1
@@ -13,8 +22,6 @@
 
         defc    SIZEOF_ptr=0x02
         defc    SIZEOF_byte=0x01
-
-        defc    START_LIVES=0x03
 
 		;
 		; AYFX Indexes

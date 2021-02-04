@@ -1,7 +1,7 @@
         public  _lanternFlicker
         public  _lanternList
         extern  ticks
-        include "defs.asm"
+        include "defs.inc"
 
         section code_user
         ;

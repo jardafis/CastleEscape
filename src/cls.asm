@@ -5,7 +5,7 @@
         public  clearChar
         section code_user
 
-        include "defs.asm"
+        include "defs.inc"
 
         ;
         ; Clear the screen bitmap and attr data.

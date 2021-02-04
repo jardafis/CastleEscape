@@ -64,10 +64,7 @@
         public  newGame
         public  gameOver
 
-        include "defs.asm"
-
-        defc    START_X=40
-        defc    START_Y=120
+        include "defs.inc"
 
         section code_user
 _main:
@@ -202,8 +199,10 @@ lo:
         jr      nz, lo
 ENDIF   
 
+IFDEF   TIMING_BORDER
         ld      l, INK_BLUE
         call    _border
+ENDIF   
 
         ;
         ; Re-draw the screen at the players current location
@@ -212,9 +211,10 @@ ENDIF
         ld      bc, (_xPos)
         call    _pasteScreen
 
+IFDEF   TIMING_BORDER
         ld      l, INK_RED
         call    _border
-
+ENDIF   
         call    _updateDirection
 
         ;
@@ -290,15 +290,19 @@ notMidpoint:
         ld      (_jumping), a
 notJumping:
 
+IFDEF   TIMING_BORDER
         ld      l, INK_MAGENTA
         call    _border
+ENDIF   
         call    checkYCol
 
         ;
         ; If player is moving left or right, check for collisions.
         ;
+IFDEF   TIMING_BORDER
         ld      l, INK_GREEN
         call    _border
+ENDIF   
         ld      a, (_xSpeed)            ; If xSpeed != 0 player is moving
         or      a                       ; left or right.
         call    nz, checkXCol           ; Check for a collision.
@@ -306,15 +310,19 @@ notJumping:
         ;
         ; Update the scrolling message
         ;
+IFDEF   TIMING_BORDER
         ld      l, INK_CYAN
         call    _border
+ENDIF   
         call    _scroll
 
         ;
         ; Check for collisions with coins, eggs, and hearts
         ;
+IFDEF   TIMING_BORDER
         ld      l, INK_YELLOW
         call    _border
+ENDIF   
         ld      hl, (currentCoinTable)
         ld      de, coinCollision
         call    checkItemCollision
@@ -325,9 +333,10 @@ notJumping:
         ld      de, heartCollision
         call    checkItemCollision
 
+IFDEF   TIMING_BORDER
         ld      l, INK_WHITE
         call    _border
-
+ENDIF   
         ld      hl, coinRotate
         dec     (hl)
         jr      nz, noRotate
@@ -337,41 +346,52 @@ notJumping:
         call    _animateCoins
 
 noRotate:
+IFDEF   TIMING_BORDER
         ld      l, INK_BLUE
         call    _border
+ENDIF   
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _copyScreen
 
+IFDEF   TIMING_BORDER
         ld      l, INK_RED
         call    _border
+ENDIF   
         ld      bc, (_xPos)
         call    _displaySprite
 
         ;
         ; Flicker any lanterns on the screen
         ;
+IFDEF   TIMING_BORDER
         ld      l, INK_MAGENTA
         call    _border
+ENDIF   
         ld      hl, _lanternList
         call    _lanternFlicker
 
         ;
         ; See if the egg count needs to be decremented
         ;
+IFDEF   TIMING_BORDER
         ld      l, INK_GREEN
         call    _border
+ENDIF   
         call    decrementEggs
 
+IFDEF   TIMING_BORDER
         ld      l, INK_BLACK
         call    _border
-
+ENDIF   
         jp      gameLoop
 
 gameOver:
         ld      sp, 0x0000
+IFDEF   TIMING_BORDER
         ld      l, INK_BLACK
         call    _border
+ENDIF   
         ret     
 
 _setCurrentTileMap:

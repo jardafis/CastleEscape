@@ -7,7 +7,7 @@
         public  _displayScreen
         public  _tileAttr
 
-        include "defs.asm"
+        include "defs.inc"
 
         section code_user
         ;

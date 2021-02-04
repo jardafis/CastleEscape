@@ -22,7 +22,7 @@
 
         defc    ERR_SP=0x5c3d
         include "target/zx/def/sysvar.def"
-        include "defs.asm"
+        include "defs.inc"
 
         public  _bankedtapeloader
 _bankedtapeloader:

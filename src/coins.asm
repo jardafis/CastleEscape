@@ -11,7 +11,7 @@
         public  currentCoinTable
         public  coinCollision
 
-        include "defs.asm"
+        include "defs.inc"
 
         section code_user
 

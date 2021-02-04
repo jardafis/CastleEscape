@@ -5,7 +5,7 @@
 
         section code_user
 
-        include "defs.asm"
+        include "defs.inc"
 
 		;
 		; C Wrapper.

@@ -4,7 +4,7 @@
 
         section code_user
 
-        include "defs.asm"
+        include "defs.inc"
 
 		;
 		; Display a string.

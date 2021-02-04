@@ -15,7 +15,7 @@
 
         section code_user
 
-        include "defs.asm"
+        include "defs.inc"
 
         defc    BORDER_COLOR=INK_YELLOW
 		;
@@ -26,11 +26,13 @@ mainMenu:
         screen  1
 
 getKey:
+        halt    
         call    waitKey
 
         cp      '1'
         call    z, noop
 
+IFDEF   ATTRIB_EDIT
         cp      '2'
         jr      nz, opt0
         ld      hl, _tileAttr
@@ -41,7 +43,7 @@ getKey:
         call    _attribEdit
         pop     hl
         pop     hl
-
+ENDIF   
 opt0:
         cp      '0'
         call    z, newGame
