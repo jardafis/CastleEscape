@@ -47,13 +47,11 @@
         extern  die
         extern  mainMenu
 
-        public  _gameMain
         public  _currentTileMap
         public  _setCurrentTileMap
         public  _mul_hla
         public  _tileMapX
         public  _tileMapY
-        public  _gameLoop
         public  _xPos
         public  _yPos
         public  _xSpeed
@@ -61,6 +59,9 @@
         public  _spriteBuffer
         public  _jumping
         public  _falling
+        public	_main
+        public	newGame
+        public	gameOver
 
         include "defs.asm"
 
@@ -68,25 +69,10 @@
         defc    START_Y=120
 
         section code_user
-_gameMain:
-        pushall 
+_main:
         call    init
-
         call    mainMenu
-
-        call    newGame
-gameLoop:
-        ;
-        ; Wait for refresh interrupt
-        ;
-        halt    
-
-        ;		call	_gameLoop
-        ;		jp		gameLoop
-
-        popall  
-        ret     
-
+		; Never reached
 init:
         ld      hl, afxBank             ; Effects bank address
         call    AFXINIT
@@ -101,17 +87,19 @@ init:
         bank    0
 
 		;
-		;
 		; Detect Kempston joystick and modify
 		; user input scanning code to poll it.
 		;
         call    detectKempston
-        jr      z, noKempstonDetected
+        ret     z
         ld      a, JP_OPCODE
         ld      (kjScan), a
         ld      hl, readKempston
         ld      (kjScan+1), hl
-noKempstonDetected:
+        ret
+
+newGame:
+		ld		(gameOver+1), sp
 
         ;
         ; Initialize the coin tables
@@ -135,9 +123,6 @@ noKempstonDetected:
         ld      a, ID_HEART
         call    _initItems
 
-        ret     
-
-newGame:
         ;
         ; Set the initial player sprite
         ;
@@ -190,11 +175,7 @@ newGame:
         ld      bc, (_xPos)
         call    _copyScreen
 
-        ret     
-
-_gameLoop:
-        pushall 
-
+gameLoop:
         ;
         ; Wait for refresh interrupt
         ;
@@ -373,7 +354,10 @@ noRotate:
         ld      l, INK_BLACK
         call    _border
 
-        popall  
+		jp		gameLoop
+
+gameOver:
+		ld		sp, 0x0000
         ret     
 
 _setCurrentTileMap:
