@@ -8,7 +8,7 @@
         extern  _tile0
         extern  _tileAttr
         extern  waitKey
-        extern	newGame
+        extern  newGame
 
 
         public  mainMenu
@@ -23,32 +23,7 @@
 		; the game are on this screen.
 		;
 mainMenu:
-		;
-        ; Clear the screen and set the border color
-        ;
-        ld      l, INK_WHITE|PAPER_BLACK
-        call    _cls
-        ld      l, INK_BLACK
-        call    _border
-
-        halt    
-
-        call    displayBorder
-
-        ld      hl, opts
-        ld      b, (hl)                 ; Count of menu options
-        inc     hl
-printOpt:
-        push    bc                      ; Save loop counter
-
-        ld      c, (hl)                 ; Screen X starting position
-        inc     hl
-        ld      b, (hl)                 ; Screen Y starting position
-        inc     hl
-        call    print                   ; Display the string
-
-        pop     bc                      ; Restore loop counter
-        djnz    printOpt
+        screen  1
 
 getKey:
         call    waitKey
@@ -57,14 +32,12 @@ getKey:
         call    z, noop
 
         cp      '2'
-        call    z, noop
-
-        cp      '3'
         jr      nz, opt0
         ld      hl, _tileAttr
         push    hl
         ld      hl, _tile0
         push    hl
+        screen  0
         call    _attribEdit
         pop     hl
         pop     hl
@@ -73,7 +46,7 @@ opt0:
         cp      '0'
         call    z, newGame
 
-        jr      mainMenu
+        jp      mainMenu
 startGame:
 
         ret     
@@ -164,19 +137,16 @@ noop:
 
         call    displayBorder
 
-        ld      bc, 0x0c03
+        ld      bc, 0x0c05
         ld      hl, dummy
         call    print
+
+        screen  0
 
         call    waitKey
 
         ret     
 
         section rodata_user
-opts:   db      4
-        db      0x06, 0x0a, "0 - Start Game", 0x00
-        db      0x06, 0x0c, "1 - Redefine Keys", 0x00
-        db      0x06, 0x0e, "2 - Difficulty Level", 0x00
-        db      0x06, 0x10, "3 - Edit Tile Attrib.", 0x00
 
-dummy:  db      "NOP Press any key to return", 0x00
+dummy:  db      "Press any key to return", 0x00

@@ -2,7 +2,7 @@
         extern  subBCD
         extern  display2BCD
         extern  _falling
-        extern	gameOver
+        extern  gameOver
 
         public  die
 

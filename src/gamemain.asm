@@ -46,6 +46,7 @@
         extern  kjScan
         extern  die
         extern  mainMenu
+        extern  print
 
         public  _currentTileMap
         public  _setCurrentTileMap
@@ -59,9 +60,9 @@
         public  _spriteBuffer
         public  _jumping
         public  _falling
-        public	_main
-        public	newGame
-        public	gameOver
+        public  _main
+        public  newGame
+        public  gameOver
 
         include "defs.asm"
 
@@ -74,6 +75,9 @@ _main:
         call    mainMenu
 		; Never reached
 init:
+        ld      l, INK_BLACK
+        call    _border
+
         ld      hl, afxBank             ; Effects bank address
         call    AFXINIT
 
@@ -81,10 +85,6 @@ init:
         ; Init ISR handling
         ;
         call    _initISR
-
-		;
-		; Select bank 0 @ 0xc000
-        bank    0
 
 		;
 		; Detect Kempston joystick and modify
@@ -96,10 +96,22 @@ init:
         ld      (kjScan), a
         ld      hl, readKempston
         ld      (kjScan+1), hl
-        ret
+        ret     
 
 newGame:
-		ld		(gameOver+1), sp
+        ld      (gameOver+1), sp
+
+        ld      l, INK_WHITE|PAPER_BLACK
+        call    _cls
+
+        ld      bc, 0x0b0c
+        ld      hl, ready
+        call    print
+
+        screen  0
+		;
+		; Select bank 0 @ 0xc000
+        bank    0
 
         ;
         ; Initialize the coin tables
@@ -354,10 +366,12 @@ noRotate:
         ld      l, INK_BLACK
         call    _border
 
-		jp		gameLoop
+        jp      gameLoop
 
 gameOver:
-		ld		sp, 0x0000
+        ld      sp, 0x0000
+        ld      l, INK_BLACK
+        call    _border
         ret     
 
 _setCurrentTileMap:
@@ -438,5 +452,9 @@ _spriteBuffer:
         ds      48
 
         section rodata_user
+currentBank:
+        db      MEM_BANK_ROM
 afxBank:
         binary  "soundbank.afb"
+ready:
+        db      "Ready?", 0x00

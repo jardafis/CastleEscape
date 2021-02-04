@@ -103,7 +103,7 @@ notPressed:
 		; was detected during game initialization.
 		;
 kjScan:
-        ret
+        ret     
         nop     
         nop     
         ret     
