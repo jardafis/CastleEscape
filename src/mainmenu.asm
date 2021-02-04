@@ -8,6 +8,7 @@
         extern  _tile0
         extern  _tileAttr
         extern  waitKey
+        extern	newGame
 
 
         public  mainMenu
@@ -70,7 +71,7 @@ getKey:
 
 opt0:
         cp      '0'
-        jr      z, startGame
+        call    z, newGame
 
         jr      mainMenu
 startGame:
