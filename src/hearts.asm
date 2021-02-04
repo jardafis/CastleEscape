@@ -9,7 +9,7 @@
         public  hearts
         public  heartCollision
 
-        include "defs.asm"
+        include "defs.inc"
 
         section code_user
         ;

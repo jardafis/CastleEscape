@@ -1,7 +1,7 @@
         public  detectKempston
         public  readKempston
 
-        include "defs.asm"
+        include "defs.inc"
 
         section code_user
 		;

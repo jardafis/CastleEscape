@@ -17,7 +17,7 @@
         public  displayTile
         public  setTileAttr
 
-        include "defs.asm"
+        include "defs.inc"
 
         defc    ITEM_WIDTH=0x08
         defc    ITEM_HEIGHT=0x08

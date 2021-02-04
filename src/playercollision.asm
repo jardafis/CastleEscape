@@ -14,7 +14,7 @@
         public  checkXCol
         public  checkYCol
 
-        include "defs.asm"
+        include "defs.inc"
         section code_user
 
         defc    ID_SOLID_TILE=144

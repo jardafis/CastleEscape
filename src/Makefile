@@ -6,6 +6,7 @@ CRT=31
 
 PROJ_NAME=CastleEscape
 PRAGMA_FILE=zpragma.inc
+ASMDEPS=$(wildcard *.inc) $(wildcard *.scr) $(wildcard *.afb) $(wildcard *.dat)
 
 C_OPT_FLAGS=-SO2
 
@@ -27,7 +28,7 @@ all: $(PROJ_NAME).tap
 %.o: %.c $(PRAGMA_FILE) Makefile
 	$(CC) $(CFLAGS) -o $@ $<
 
-%.o: %.asm $(PRAGMA_FILE) Makefile
+%.o: %.asm $(PRAGMA_FILE) Makefile $(ASMDEPS)
 	$(AS) $(ASFLAGS) $<
 	
 $(PROJ_NAME).tap : $(OBJECTS) $(PRAGMA_FILE) Makefile

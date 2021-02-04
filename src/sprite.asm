@@ -5,7 +5,7 @@
         public  _displaySprite
         public  playerSprite
 
-        include "defs.asm"
+        include "defs.inc"
 
         section code_user
 
