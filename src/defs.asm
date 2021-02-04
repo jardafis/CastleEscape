@@ -138,10 +138,29 @@
         ; Bank select
         ;
 bank    MACRO   num
+        extern  currentBank
         push    af
         push    bc
         ld      bc, IO_BANK
-        ld      a, num|MEM_BANK_ROM
+        ld      a, (currentBank)
+        and     %11111000
+        or      num
+        ld      (currentBank), a
+        out     (c), a
+        pop     bc
+        pop     af
+        endm    
+
+screen  MACRO   num
+        extern  currentBank
+        push    af
+        push    bc
+        ld      bc, IO_BANK
+        ld      a, (currentBank)
+        and     %11110111
+        or      num<<3
+        ld      (currentBank), a
+        halt    
         out     (c), a
         pop     bc
         pop     af
