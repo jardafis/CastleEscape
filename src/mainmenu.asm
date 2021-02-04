@@ -1,9 +1,14 @@
         extern  bannerData
         extern  _border
         extern  _cls
-        extern  _keyboardScan
         extern  displayTile
         extern  setAttr
+        extern  print
+        extern  _attribEdit
+        extern  _tile0
+        extern  _tileAttr
+        extern  waitKey
+
 
         public  mainMenu
 
@@ -29,11 +34,46 @@ mainMenu:
 
         call    displayBorder
 
+        ld      hl, opts
+        ld      b, (hl)                 ; Count of menu options
+        inc     hl
+printOpt:
+        push    bc                      ; Save loop counter
+
+        ld      c, (hl)                 ; Screen X starting position
+        inc     hl
+        ld      b, (hl)                 ; Screen Y starting position
+        inc     hl
+        call    print                   ; Display the string
+
+        pop     bc                      ; Restore loop counter
+        djnz    printOpt
+
 getKey:
-        call    _keyboardScan
-        ld      a, l
-        cp      10
-        jr      nz, getKey
+        call    waitKey
+
+        cp      '1'
+        call    z, noop
+
+        cp      '2'
+        call    z, noop
+
+        cp      '3'
+        jr      nz, opt0
+        ld      hl, _tileAttr
+        push    hl
+        ld      hl, _tile0
+        push    hl
+        call    _attribEdit
+        pop     hl
+        pop     hl
+
+opt0:
+        cp      '0'
+        jr      z, startGame
+
+        jr      mainMenu
+startGame:
 
         ret     
 
@@ -73,7 +113,7 @@ sides:
         ret     
 
 		;
-		; Display a screen row of tile data
+		; Display a row of tile data
 		;
 		;	Entry:
 		;		hl - Pointer to tile data
@@ -106,3 +146,36 @@ display:
         pop     bc
         pop     af
         ret     
+
+		;
+		; Dummy screen to be displayed when options are selected from main menu.
+		;
+noop:
+		;
+        ; Clear the screen and set the border color
+        ;
+        ld      l, INK_WHITE|PAPER_BLACK
+        call    _cls
+        ld      l, INK_BLACK
+        call    _border
+
+        halt    
+
+        call    displayBorder
+
+        ld      bc, 0x0c03
+        ld      hl, dummy
+        call    print
+
+        call    waitKey
+
+        ret     
+
+        section rodata_user
+opts:   db      4
+        db      0x06, 0x0a, "0 - Start Game", 0x00
+        db      0x06, 0x0c, "1 - Redefine Keys", 0x00
+        db      0x06, 0x0e, "2 - Difficulty Level", 0x00
+        db      0x06, 0x10, "3 - Edit Tile Attrib.", 0x00
+
+dummy:  db      "NOP Press any key to return", 0x00
