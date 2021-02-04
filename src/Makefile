@@ -21,6 +21,7 @@ all: $(PROJ_NAME).tap
 	@grep __rodata_user_size $(PROJ_NAME).map | sed -e "s/;.*//"
 	@grep __bss_user_size $(PROJ_NAME).map | sed -e "s/;.*//"
 	@grep __BANK_0_size $(PROJ_NAME).map | sed -e "s/;.*//"
+	@grep __BANK_7_size $(PROJ_NAME).map | sed -e "s/;.*//"
 	@grep __BSS_UNINITIALIZED_tail $(PROJ_NAME).map | sed -e "s/;.*//"
 
 %.o: %.c $(PRAGMA_FILE) Makefile
