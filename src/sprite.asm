@@ -1,6 +1,4 @@
         extern  _screenTab
-        extern  _LeftSprite0
-        extern  _RightSprite0
 
         public  _copyScreen
         public  _pasteScreen
@@ -11,41 +9,30 @@
 
         section code_user
 
-        ; After entry:
-        ;	ix + 0 = sprite x position in pixels
-        ;	ix + 1 = sprite y position in pixels
-        ;	ix + 2 = buffer pointer lo byte
-        ;	ix + 3 = buffer pointer hi byte
-        defc    X_OFFSET=0x00
-        defc    Y_OFFSET=0x01
-        defc    BUFFER_LO=0x02
-        defc    BUFFER_HI=0x03
-_copyScreen:
-        entry   
+calculateRow    MACRO   row
+        ld      l, row                  ; Get the screen y pixel position
+        ld      h, 0
+        add     hl, hl                  ; Multiply it by 2
+        ld      sp, _screenTab          ; and add it to the screen
+        add     hl, sp                  ; table address.
+        ld      sp, hl                  ; Save the result in sp.
+        ENDM    
 
+		;
+		; Entry:
+		;		de - Pointer to buffer
+		;		b  - Start screen y location
+		;		c  - Start screen x location
+		;
+_copyScreen:
         di      
         ld      (copyTempSP), sp        ; Optimization, self modifying code
 
-        ; Claculate the screen Y address
-        ld      h, 0
-        ld      l, (ix+Y_OFFSET)        ; get the y position
-        add     hl, hl                  ; multiply by 2
-        ld      sp, _screenTab
-        add     hl, sp
-        ld      sp, hl
+        calculateRow    b
 
-
-        ; Get buffer destination address
-        ld      e, (ix+BUFFER_LO)
-        ld      d, (ix+BUFFER_HI)
-
-
-        ld      a, (ix+X_OFFSET)        ; Get the X offset
-        rrca    
-        rrca    
-        rrca    
-        and     %00011111
-        ld      c, a
+        srl     c                       ; Divide the screen x pixel
+        srl     c                       ; position by 8 to get the
+        srl     c                       ; byte address.
         ld      b, PLAYER_HEIGHT
 copyloop:
         pop     hl                      ; get screen row source adress
@@ -61,47 +48,31 @@ copyloop:
         ld      a, (hl)
         ld      (de), a
         inc     de
-        ; No need to increment hl because we will pop a new one
-        ; at the beginning of the loop
         djnz    copyloop
 
 copyTempSP  equ $+1
         ld      sp, 0x0000
         ei      
-
-        exit    
         ret     
 
-        ; After entry:
-        ;	ix + 0 = sprite x position in pixels
-        ;	ix + 1 = sprite y position in pixels
-        ;	ix + 2 = buffer pointer lo byte
-        ;	ix + 3 = buffer pointer hi byte
+		;
+		; Entry:
+		;		de - Pointer to buffer
+		;		b  - Start screen y location
+		;		c  - Start screen x location
+		;
 _pasteScreen:
-        entry   
-
         di      
-        ld      (pasteTempSP), sp
+        ld      (pasteTempSP), sp       ; Optimization, self modifying code
 
-        ; Claculate the screen Y address
-        ld      h, 0
-        ld      l, (ix+Y_OFFSET)        ; get the y position
-        add     hl, hl                  ; multiply by 2
-        ld      sp, _screenTab
-        add     hl, sp
-        ld      sp, hl
+        calculateRow    b
 
-        ; Get buffer source address
-        ld      l, (ix+BUFFER_LO)
-        ld      h, (ix+BUFFER_HI)
+        ex      de, hl                  ; Buffer address into hl
 
+        srl     c                       ; Divide the screen x pixel
+        srl     c                       ; position by 8 to get the
+        srl     c                       ; byte address.
         ld      b, PLAYER_HEIGHT
-        ld      a, (ix+X_OFFSET)        ; Get the X offset
-        rrca                            ; divide by 8 to get byte address
-        rrca    
-        rrca    
-        and     %00011111
-        ld      c, a
 pasteloop:
         pop     de                      ; get screen row destination adress
         ld      a, e
@@ -116,36 +87,33 @@ pasteloop:
         ld      a, (hl)
         ld      (de), a
         inc     hl
-        ; No need to increment de because we will pop a new one
-        ; at the beginning of the loop
         djnz    pasteloop
 
 pasteTempSP equ $+1
         ld      sp, 0x0000
         ei      
 
-        exit    
         ret     
 
-        ; After entry:
-        ;	ix + 0 = sprite x position in pixels
-        ;	ix + 1 = sprite y position in pixels
+        ;
+        ; Entry:
+		;		b  - Screen y location
+		;		c  - Screen x location
+        ;
 _displaySprite:
-        ;        push    af
-        ;        push    bc
-        ;        push    de
-        ;        push    hl
-
         di      
         ld      (displaySpriteSP), sp
 
         ; Calculate the offset into the screen table
-        ld      c, h                    ; Save xPos
+        ld      l, b
         ld      h, 0
         add     hl, hl                  ; multiply by 2
         ld      de, _screenTab
         add     hl, de
-        ld      (screenStore), hl
+        push    hl
+        exx     
+        pop     hl
+        exx     
 
         ld      a, c
         and     0x07                    ; Get the sprite shift index
@@ -160,20 +128,21 @@ _displaySprite:
         add     hl, de
         ld      (spriteStore), hl
 
-        ; c is the pixel X offset
-        ; Divide by 8 to get byte address
-        srl     c                       ; /2
-        srl     c                       ; /4
-        srl     c                       ; /8
-        ld      b, PLAYER_HEIGHT        ; Sprite height
+        srl     c                       ; Divide the screen x pixel
+        srl     c                       ; position by 8 to get the
+        srl     c                       ; byte address.
+        ld      b, PLAYER_HEIGHT
 loop2:
-screenStore equ $+1
-        ld      sp, 0x0000              ; Get the screen table pointer
-        pop     hl                      ; Pop screen row address
-        ld      (screenStore), sp       ; Save stack pointing to next row
+        exx     
+        ld      sp, hl
+        inc     hl
+        inc     hl
+        exx     
+        pop     hl
         ld      a, l
         add     c                       ; add x offset
         ld      l, a
+
 spriteStore equ $+1
         ld      sp, 0x0000              ; Get the sprite pointer
 
@@ -196,7 +165,6 @@ spriteStore equ $+1
         and     e
         or      d
         ld      (hl), a
-        ;		inc		l						                         ; No need to inc l we will pop a new screen address at top of loop
 
         ld      (spriteStore), sp
 
@@ -205,10 +173,6 @@ displaySpriteSP equ $+1
         ld      sp, 0x0000
         ei      
 
-        ;        pop     hl
-        ;        pop     de
-        ;        pop     bc
-        ;        pop     af
         ret     
 
         section bss_user

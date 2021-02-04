@@ -2,6 +2,7 @@
         extern  subBCD
         extern  display2BCD
         extern  _falling
+        extern  gameOver
 
         public  die
 
@@ -30,21 +31,10 @@ die:
 		;
         ld      a, (heartCount)
         or      a
-        jr      z, gameOver
+        jp      z, gameOver
 
         ld      a, 1
         ld      (_falling), a
-
-
-
-
-        pop     hl
-        pop     de
-        pop     bc
-        pop     af
-        ret     
-
-gameOver:
 
 
 

@@ -45,14 +45,14 @@
         extern  readKempston
         extern  kjScan
         extern  die
+        extern  mainMenu
+        extern  print
 
-        public  _gameMain
         public  _currentTileMap
         public  _setCurrentTileMap
         public  _mul_hla
         public  _tileMapX
         public  _tileMapY
-        public  _gameLoop
         public  _xPos
         public  _yPos
         public  _xSpeed
@@ -60,6 +60,9 @@
         public  _spriteBuffer
         public  _jumping
         public  _falling
+        public  _main
+        public  newGame
+        public  gameOver
 
         include "defs.asm"
 
@@ -67,24 +70,14 @@
         defc    START_Y=120
 
         section code_user
-_gameMain:
-        pushall 
+_main:
         call    init
-
-        call    newGame
-gameLoop:
-        ;
-        ; Wait for refresh interrupt
-        ;
-        halt    
-
-        ;		call	_gameLoop
-        ;		jp		gameLoop
-
-        popall  
-        ret     
-
+        call    mainMenu
+		; Never reached
 init:
+        ld      l, INK_BLACK
+        call    _border
+
         ld      hl, afxBank             ; Effects bank address
         call    AFXINIT
 
@@ -94,29 +87,31 @@ init:
         call    _initISR
 
 		;
-		; Select bank 0 @ 0xc000
-        bank    0
-
-		;
-		;
 		; Detect Kempston joystick and modify
 		; user input scanning code to poll it.
 		;
         call    detectKempston
-        jr      z, noKempstonDetected
+        ret     z
         ld      a, JP_OPCODE
         ld      (kjScan), a
         ld      hl, readKempston
         ld      (kjScan+1), hl
-noKempstonDetected:
+        ret     
 
-        ;
-        ; Clear the screen and set the border color
-        ;
+newGame:
+        ld      (gameOver+1), sp
+
         ld      l, INK_WHITE|PAPER_BLACK
         call    _cls
-        ld      l, INK_BLACK
-        call    _border
+
+        ld      bc, 0x0b0c
+        ld      hl, ready
+        call    print
+
+        screen  0
+		;
+		; Select bank 0 @ 0xc000
+        bank    0
 
         ;
         ; Initialize the coin tables
@@ -140,9 +135,6 @@ noKempstonDetected:
         ld      a, ID_HEART
         call    _initItems
 
-        ret     
-
-newGame:
         ;
         ; Set the initial player sprite
         ;
@@ -152,10 +144,8 @@ newGame:
         ;
         ; Starting X and Y player position
         ;
-        ld      hl, START_X
+        ld      hl, START_Y<<8|START_X
         ld      (_xPos), hl
-        ld      hl, START_Y
-        ld      (_yPos), hl
 
         ;
         ; Initialize the X/Y speed variables
@@ -193,45 +183,23 @@ newGame:
 
         call    _setupScreen
 
-        ld      hl, _spriteBuffer
-        push    hl
-        ld      a, (_xPos)
-        ld      l, a
-        ld      a, (_yPos)
-        ld      h, a
-        push    hl
-
+        ld      de, _spriteBuffer
+        ld      bc, (_xPos)
         call    _copyScreen
 
-        pop     hl
-        pop     hl
-        ret     
-
-_gameLoop:
-        pushall 
-
+gameLoop:
         ;
         ; Wait for refresh interrupt
         ;
-        ;		halt
-        ld      a, (ticks)
-        ld      b, a
-wait:
-        push    bc                      ; Save 'b'
-        call    _updateDirection
-        pop     bc                      ; Restore 'b'
-        ld      a, (ticks)              ; Get the latest 'ticks' value
-        cp      b                       ; Has it changed?
-        jr      z, wait                 ; If not, keep looping
+        halt    
 
 IF  0
-        ld      b, 255
+        ld      bc, 0x300
 lo:
-        push    af
-        pop     af
-        push    af
-        pop     af
-        djnz    lo
+        dec     bc
+        ld      a, b
+        or      c
+        jr      nz, lo
 ENDIF   
 
         ld      l, INK_BLUE
@@ -240,19 +208,14 @@ ENDIF
         ;
         ; Re-draw the screen at the players current location
         ;
-        ld      hl, _spriteBuffer
-        push    hl
-        ld      a, (_xPos)
-        ld      l, a
-        ld      a, (_yPos)
-        ld      h, a
-        push    hl
+        ld      de, _spriteBuffer
+        ld      bc, (_xPos)
         call    _pasteScreen
-        pop     hl
-        pop     hl
 
         ld      l, INK_RED
         call    _border
+
+        call    _updateDirection
 
         ;
         ; Handle the keyboard input from the user
@@ -339,11 +302,7 @@ notJumping:
         ld      a, (_xSpeed)            ; If xSpeed != 0 player is moving
         or      a                       ; left or right.
         call    nz, checkXCol           ; Check for a collision.
-IF  0
-        ld      a, (_falling)
-        cp      32
-        call    nc, die
-ENDIF   
+
         ;
         ; Update the scrolling message
         ;
@@ -380,24 +339,13 @@ ENDIF
 noRotate:
         ld      l, INK_BLUE
         call    _border
-
-        ld      hl, _spriteBuffer
-        push    hl
-        ld      a, (_xPos)
-        ld      l, a
-        ld      a, (_yPos)
-        ld      h, a
-        push    hl
+        ld      de, _spriteBuffer
+        ld      bc, (_xPos)
         call    _copyScreen
-        pop     hl
-        pop     hl
 
         ld      l, INK_RED
         call    _border
-        ld      a, (_xPos)
-        ld      h, a
-        ld      a, (_yPos)
-        ld      l, a
+        ld      bc, (_xPos)
         call    _displaySprite
 
         ;
@@ -418,7 +366,12 @@ noRotate:
         ld      l, INK_BLACK
         call    _border
 
-        popall  
+        jp      gameLoop
+
+gameOver:
+        ld      sp, 0x0000
+        ld      l, INK_BLACK
+        call    _border
         ret     
 
 _setCurrentTileMap:
@@ -483,9 +436,9 @@ _tileMapX:
 _tileMapY:
         db      0
 _xPos:
-        dw      0
+        db      0
 _yPos:
-        dw      0
+        db      0
 _xSpeed:
         db      0
 _ySpeed:
@@ -499,5 +452,9 @@ _spriteBuffer:
         ds      48
 
         section rodata_user
+currentBank:
+        db      MEM_BANK_ROM
 afxBank:
         binary  "soundbank.afb"
+ready:
+        db      "Ready?", 0x00

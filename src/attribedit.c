@@ -16,6 +16,11 @@ static char cursorX = 0;
 static char cursorY = 0;
 
 /*
+ * Hex characters.
+ */
+static const char hex[] = "0123456789ABCDEF";
+
+/*
  * Set the location for the next character printed to the screen.
  */
 void setCursor(char x, char y)
@@ -41,6 +46,17 @@ void printChar(unsigned char c, unsigned char x, unsigned char y)
     for (char n = 0; n < 8; n++)
     {
         *(screenTab[(y << 3) + n] + x) = font[((c - ' ') << 3) + n];
+    }
+}
+
+/*
+ * Output a 16-bit hex value.
+ */
+void putHex(unsigned int value)
+{
+    for(signed char n = 12; n>=0; n-=4)
+    {
+        printChar(hex[(value >> n) & 0xf], cursorX++, cursorY);
     }
 }
 
@@ -175,6 +191,10 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
     putString("Reset       - 'r'\n");
     putString("Ink color   - 0 - 7\n");
     putString("Exit        - <SPACE>\n");
+    putString("Attr. address/len = 0x");
+    putHex((unsigned int) attrib);
+    putString("/");
+    putHex(TILE_WIDTH * TILE_HEIGHT);
 
     loadAttrib(attrib);
 
@@ -238,11 +258,6 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
         while (keyboardScan() != 0)
             ;
     } while (key != ' ');                   // SPACE to exit
-    /*
-     * Copy the attributes to spare memory so they can be dumped.
-     */
-    saveAttrib((unsigned char*) 0xb000);
-
     /*
      * Copy the attributes back to their original location so
      * they can be reflected in the game.

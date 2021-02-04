@@ -31,7 +31,7 @@
         ; Tilemap definitions
         ;
         defc    MAX_LEVEL_X=0x04
-        defc    MAX_LEVEL_Y=0x02
+        defc    MAX_LEVEL_Y=0x06
 
         defc    TILEMAP_WIDTH=0x20*MAX_LEVEL_X
         defc    LEVEL_HEIGHT=21
@@ -65,12 +65,12 @@
 		;
         ; Sprite ID's
         ;
-        defc    ID_LANTERN=88
+        defc    ID_LANTERN=3
         defc    ID_BLANK=11
-        defc    ID_COIN=74
-        defc    ID_EGG=97
-        defc    ID_EGG0=66
-        defc    ID_HEART=98
+        defc    ID_COIN=6*12
+        defc    ID_EGG=31
+        defc    ID_EGG0=5*12
+        defc    ID_HEART=34
 
 
         ;
@@ -138,10 +138,29 @@
         ; Bank select
         ;
 bank    MACRO   num
+        extern  currentBank
         push    af
         push    bc
         ld      bc, IO_BANK
-        ld      a, num|MEM_BANK_ROM
+        ld      a, (currentBank)
+        and     %11111000
+        or      num
+        ld      (currentBank), a
+        out     (c), a
+        pop     bc
+        pop     af
+        endm    
+
+screen  MACRO   num
+        extern  currentBank
+        push    af
+        push    bc
+        ld      bc, IO_BANK
+        ld      a, (currentBank)
+        and     %11110111
+        or      num<<3
+        ld      (currentBank), a
+        halt    
         out     (c), a
         pop     bc
         pop     af

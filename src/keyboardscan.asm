@@ -1,15 +1,41 @@
-        ;
-        ; Taken from http://www.breakintoprogram.co.uk/computers/zx-spectrum/keyboard
-        ;
-        section code_user
-
         public  _keyboardScan
         public  _updateDirection
         public  kjScan
+        public  waitKey
+
+        section code_user
+
         include "defs.asm"
 
+		;
+		; C Wrapper.
+		; Scan the keyboard for input.
+		;
+		;	Entry:
+		;		None
+		;
+		;	Exit:
+		;		l - ASCII code for key pressed or 0 if no keys are pressed
+		;
 _keyboardScan:
-        push    AF
+        push    af
+        call    keyboardScan
+        ld      l, a
+        pop     af
+        ret     
+
+		;
+		; Scan the keyboard for input.
+		;
+		;	Entry:
+		;		None
+		;
+		;	Exit:
+		;		a - ASCII code for key pressed or 0 if no keys are pressed
+        ;
+        ; Taken from http://www.breakintoprogram.co.uk/computers/zx-spectrum/keyboard
+        ;
+keyboardScan:
         push    BC
         push    DE
         push    HL                      ; Preserve H, L will be our return value
@@ -35,26 +61,22 @@ nextKey:
 
         xor     A                       ; Clear A (no key found)
         pop     HL                      ; Restore H
-        ld      L, A                    ; Overwrite L
         pop     DE
         pop     BC
-        pop     AF
         ret     
 
 foundKey:
         ld      A, (HL)                 ; We've found a key at this point; fetch the character code!
         pop     HL                      ; Restore HL
-        ld      L, A                    ; Override L
         pop     DE
         pop     BC
-        pop     AF
         ret     
 
 		;
 		; Inputs: None
 		; Outputs:
 		;		e	-	Direction bits
-
+		;
 _updateDirection:
         ld      hl, scanCodes           ; Point to the scan codes
         ld      c, 0xfe                 ; Lower 8 bits of the IO port
@@ -81,9 +103,34 @@ notPressed:
 		; was detected during game initialization.
 		;
 kjScan:
+        ret     
         nop     
         nop     
-        nop     
+        ret     
+
+		;
+		; Wait for a key to be pressed.
+		;
+		;	Exit:
+		;		a - ASCII code for the key pressed
+		;
+waitKey:
+        push    bc
+
+waitKeyPress:
+        call    keyboardScan
+        or      a
+        jr      z, waitKeyPress
+
+        ld      b, a                    ; Save the value of the key pressed
+waitKeyRelease:
+        call    keyboardScan
+        or      a
+        jr      nz, waitKeyRelease
+
+        ld      a, b                    ; Restore the value of the key pressed
+
+        pop     bc
         ret     
 
         section data_user
