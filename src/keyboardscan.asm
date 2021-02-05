@@ -1,4 +1,5 @@
         public  _keyboardScan
+        public  keyboardScan
         public  _updateDirection
         public  kjScan
         public  waitKey
