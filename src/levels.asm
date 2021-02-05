@@ -1,5 +1,5 @@
         public  _levels
-        public	_tileAttr
+        public  _tileAttr
 
         section BANK_0
 _levels:

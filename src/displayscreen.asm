@@ -3,7 +3,7 @@
         extern  _lanternList
         extern  displayTile
         extern  setTileAttr
-        extern	_tileAttr
+        extern  _tileAttr
 
         public  _displayScreen
 

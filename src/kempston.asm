@@ -1,6 +1,6 @@
         public  detectKempston
         public  readKempston
-        public	kjPresent
+        public  kjPresent
 
         include "defs.inc"
 
@@ -17,7 +17,7 @@ detectKempston:
         in      a, (IO_KEMPSTON)
         inc     a
         or      a
-        ld		(kjPresent), a
+        ld      (kjPresent), a
         ret     
 
 		;
@@ -34,6 +34,6 @@ readKempston:
         ld      e, a
         ret     
 
-		section	bss_user
+        section bss_user
 kjPresent:
-		db		0
+        db      0
