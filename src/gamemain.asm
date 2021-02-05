@@ -47,7 +47,7 @@
         extern  die
         extern  mainMenu
         extern  print
-        extern	waitKey
+        extern  waitKey
 
         public  _currentTileMap
         public  _setCurrentTileMap
@@ -70,7 +70,7 @@
         section code_user
 _main:
         call    init
-        call	waitKey
+        call    waitKey
         call    mainMenu
 		; Never reached
 init:

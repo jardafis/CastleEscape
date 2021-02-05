@@ -9,9 +9,9 @@
         extern  _tileAttr
         extern  waitKey
         extern  newGame
-        extern	keyboardScan
-        extern	readKempston
-        extern	kjPresent
+        extern  keyboardScan
+        extern  readKempston
+        extern  kjPresent
 
 
         public  mainMenu
@@ -26,24 +26,24 @@
 		; the game are on this screen.
 		;
 mainMenu:
-        screen  1						; Display the main menu
+        screen  1                       ; Display the main menu
 
 getKey:
-        call    keyboardScan			; Read the keyboard
-        or      a						; If a key has been presses
-        jr    	nz, keyPressed			; jump to process it.
+        call    keyboardScan            ; Read the keyboard
+        or      a                       ; If a key has been presses
+        jr      nz, keyPressed          ; jump to process it.
 
-		ld		a,(kjPresent)			; Check if the kempston joystick
-		or		a						; is present, if not
-		jr		z, getKey				; continue polling.
+        ld      a, (kjPresent)          ; Check if the kempston joystick
+        or      a                       ; is present, if not
+        jr      z, getKey               ; continue polling.
 
-		call	readKempston			; Read the joystick
-		ld		a, e					; Check if fire has been pressed
-		and		JUMP
-		jr		z, getKey				; If not, continue polling
+        call    readKempston            ; Read the joystick
+        ld      a, e                    ; Check if fire has been pressed
+        and     JUMP
+        jr      z, getKey               ; If not, continue polling
 
-		ld		a, '0'					; Force '0'
-		jr		opt0					; Jump to process action when '0' is pressed
+        ld      a, '0'                  ; Force '0'
+        jr      opt0                    ; Jump to process action when '0' is pressed
 keyPressed:
         call    waitKey
 
@@ -154,9 +154,9 @@ noop:
         ld      hl, dummy
         call    print
 
-        screen  0						; Now it's setup switch to screen 0
+        screen  0                       ; Now it's setup switch to screen 0
 
-        call    waitKey					; Do nothing.
+        call    waitKey                 ; Do nothing.
 
         ret     
 
