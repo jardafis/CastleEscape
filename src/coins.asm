@@ -32,10 +32,22 @@ nextCoin:
         inc     de
 
         ld      a, (de)                 ; Get x screen position
+IFDEF   PIXEL_POS
+        rrca    
+        rrca    
+        rrca    
+        and     %00011111
+ENDIF   
         ld      c, a                    ; Save for later
         inc     de
 
         ld      a, (de)                 ; Get y screen position
+IFDEF   PIXEL_POS
+        rrca    
+        rrca    
+        rrca    
+        and     %00011111
+ENDIF   
         ld      l, a
         ld      h, 0
         inc     de

@@ -9,7 +9,6 @@
         extern  _setCurrentTileMap
         extern  _currentTileMap
         extern  _displayScreen
-        extern  displayItemAttr
         extern  displayItems
         extern  eggCount
         extern  display2BCD

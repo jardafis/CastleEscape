@@ -10,6 +10,7 @@
         defc    START_LIVES=0x03
 		DEFINE	ATTRIB_EDIT
 		DEFINE	TIMING_BORDER
+		DEFINE	PIXEL_POS
 
         defvars 0
         {       
