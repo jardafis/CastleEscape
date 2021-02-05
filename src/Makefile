@@ -11,7 +11,7 @@ ASMDEPS=$(wildcard *.inc) $(wildcard *.scr) $(wildcard *.afb) $(wildcard *.dat)
 C_OPT_FLAGS=-SO3
 
 CFLAGS=+$(TARGET) $(C_OPT_FLAGS) --constsegrodata_user -compiler=sdcc -I$(Z88DK)/include/_DEVELOPMENT/sdcc --legacy-banking -c -pragma-include:$(PRAGMA_FILE)
-LDFLAGS=+$(TARGET) --constsegrodata_user -m -clib=sdcc_iy -pragma-include:$(PRAGMA_FILE) -Cz--clearaddr -Cz32767
+LDFLAGS=+$(TARGET) --constsegrodata_user -m -clib=sdcc_iy -pragma-include:$(PRAGMA_FILE) -Cz--clearaddr -Cz32767 -Cz--screen -Cztitle.scr
 ASFLAGS=-I$(Z88DK)/lib
 
 OBJECTS =	$(patsubst %.c,%.o,$(wildcard *.c)) \
