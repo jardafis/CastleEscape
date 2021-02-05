@@ -9,6 +9,9 @@
         extern  _tileAttr
         extern  waitKey
         extern  newGame
+        extern	keyboardScan
+        extern	readKempston
+        extern	kjPresent
 
 
         public  mainMenu
@@ -27,6 +30,23 @@ mainMenu:
 
 getKey:
         halt    
+
+        call    keyboardScan			; Read the keyboard
+        or      a						; If a key has been presses
+        jr    	nz, keyPressed			; jump to process it.
+
+		ld		a,(kjPresent)			; Check if the kempston joystick
+		or		a						; is present, if not
+		jr		z, getKey				; continue polling.
+
+		call	readKempston			; Read the joystick
+		ld		a, e					; Check if fire has been pressed
+		and		JUMP
+		jr		z, getKey				; If not, continue polling
+
+		ld		a, '0'					; Force '0'
+		jr		opt0					; Jump to process action when '0' is pressed
+keyPressed:
         call    waitKey
 
         cp      '1'
