@@ -3,9 +3,9 @@
         extern  _lanternList
         extern  displayTile
         extern  setTileAttr
+        extern	_tileAttr
 
         public  _displayScreen
-        public  _tileAttr
 
         include "defs.inc"
 
@@ -135,7 +135,3 @@ lanternPtr  equ $+1
             yPos        ds.b 1
         SIZEOF_vars 
         }       
-
-        section BANK_0
-_tileAttr:
-        binary  "attrib.dat"
