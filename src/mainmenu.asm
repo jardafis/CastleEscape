@@ -26,11 +26,9 @@
 		; the game are on this screen.
 		;
 mainMenu:
-        screen  1
+        screen  1						; Display the main menu
 
 getKey:
-        halt    
-
         call    keyboardScan			; Read the keyboard
         or      a						; If a key has been presses
         jr    	nz, keyPressed			; jump to process it.
@@ -69,9 +67,6 @@ opt0:
         call    z, newGame
 
         jp      mainMenu
-startGame:
-
-        ret     
 
 displayBorder:
         ld      hl, bannerData
@@ -148,14 +143,10 @@ display:
 		;
 noop:
 		;
-        ; Clear the screen and set the border color
+        ; Clear the screen
         ;
         ld      l, INK_WHITE|PAPER_BLACK
         call    _cls
-        ld      l, INK_BLACK
-        call    _border
-
-        halt    
 
         call    displayBorder
 
@@ -163,9 +154,9 @@ noop:
         ld      hl, dummy
         call    print
 
-        screen  0
+        screen  0						; Now it's setup switch to screen 0
 
-        call    waitKey
+        call    waitKey					; Do nothing.
 
         ret     
 
