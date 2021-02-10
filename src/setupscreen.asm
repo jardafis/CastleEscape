@@ -17,6 +17,10 @@
         extern  _scrollReset
         extern  updateEggImage
         extern  displayBanner
+        extern  spiderTables
+        extern  currentSpiderTable
+        extern  xyPos
+        extern  xyStartPos
 
         public  _setupScreen
 
@@ -46,6 +50,10 @@ _setupScreen:
 
         ld      hl, currentHeartTable
         ld      de, heartTables
+        call    setCurrentItemTable
+
+        ld      hl, currentSpiderTable
+        ld      de, spiderTables
         call    setCurrentItemTable
 
         call    _setCurrentTileMap
@@ -82,6 +90,12 @@ _setupScreen:
         call    _scrollReset
 
         call    updateEggImage
+
+		; Save the location where the player entered
+		; the level. This is used as the starting
+		; location when they die.
+        ld      hl, (xyPos)
+        ld      (xyStartPos), hl
 
         popall  
         ret     
