@@ -142,6 +142,7 @@ display:
 		; Dummy screen to be displayed when options are selected from main menu.
 		;
 noop:
+        push    af
 		;
         ; Clear the screen
         ;
@@ -158,6 +159,7 @@ noop:
 
         call    waitKey                 ; Do nothing.
 
+        pop     af
         ret     
 
         section rodata_user

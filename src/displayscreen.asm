@@ -57,6 +57,8 @@ xloop:
         jr      z, nextTile
         cmp     ID_HEART
         jr      z, nextTile
+        cmp     ID_SPIDER
+        jr      z, nextTile
 
         ;
         ; Check for lanterns

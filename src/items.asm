@@ -7,7 +7,6 @@
         extern  _tile0
         extern  setAttr
         extern  clearAttr
-        extern  clearChar
 
         public  _initItems
         public  setCurrentItemTable
@@ -15,6 +14,8 @@
         public  checkItemCollision
         public  displayTile
         public  setTileAttr
+        public  removeItem
+        public  displayItems_pixel
 
         include "defs.inc"
 
@@ -148,23 +149,19 @@ addItem:
 
         ; X screen position
         ld      a, (ix+tileX)
-IFDEF   PIXEL_POS
         rlca                            ; x2
         rlca                            ; x4
         rlca                            ; x8
         and     %11111000
-ENDIF   
         ld      (de), a
         inc     de
 
         ; Y screen position
         ld      a, (ix+tileY)
-IFDEF   PIXEL_POS
         rlca                            ; x2
         rlca                            ; x4
         rlca                            ; x8
         and     %11111000
-ENDIF   
         ld      (de), a
         inc     de
 
@@ -313,7 +310,8 @@ TempSP2:
         ;
         ; Display the visible items pointed to by hl. Typically
         ; called when the level changes to display the items
-        ; which have not yet been collected.
+        ; which have not yet been collected or to display items
+        ; in their new position if they are moving.
         ;
         ; Entry:
         ;		hl - Pointer to item table
@@ -333,22 +331,18 @@ nextItem2:
 
         inc     hl
         ld      a, (hl)                 ; Tile x position
-IFDEF   PIXEL_POS
         rrca    
         rrca    
         rrca    
         and     %00011111
         ld      c, a
-ENDIF   
         inc     hl
         ld      a, (hl)                 ; Tile y position
-IFDEF   PIXEL_POS
         rrca    
         rrca    
         rrca    
         and     %00011111
         ld      b, a
-ENDIF   
         ld      a, d                    ; Tile ID
         call    displayTile             ; Display tile
         call    setTileAttr
@@ -358,6 +352,145 @@ notVisible2:
         ld      a, SIZEOF_item
         addhl   
         jr      nextItem2
+
+        ;
+        ; Clear the visible items pointed to by hl. Typically
+        ; called to remove the items from the screen before
+        ; their position is updating.
+        ;
+        ; Entry:
+        ;		hl - Pointer to item table
+        ;		a  - Tile ID
+        ;
+displayItems_pixel:
+        ld      d, a                    ; Save tile ID
+nextItem3:
+        ld      a, (hl)                 ; Flags
+        cp      0xff
+        ret     z
+
+        cp      0x00                    ; Is the item visible?
+        jr      z, notVisible4
+
+        push    hl
+
+        inc     hl
+        ld      a, (hl)                 ; Item x pixel position
+        rrca    
+        rrca    
+        rrca    
+        and     %00011111
+        ld      c, a
+
+        inc     hl
+        ld      b, (hl)                 ; Tile y pixel position
+
+        push    de
+
+        di      
+        ld      (clearTileSP+1), sp
+
+        calculateRow    b
+
+        ld      a, d
+        cp      ID_BLANK
+        jr      z, blankTile
+
+        ld      a, b
+        and     %00000001
+        add     d
+
+        ld      l, a                    ; Tile ID
+        ld      h, 0
+        hlx     8
+        ld      de, _tile0
+        add     hl, de
+        jr      other
+
+blankTile:
+        ld      l, d                    ; Tile ID
+        ld      h, 0
+        hlx     8
+        ld      de, _tile0
+        add     hl, de
+
+other:
+        pop     de
+        ld      a, e
+        add     c
+        ld      e, a
+        ld      a, (hl)
+        ld      (de), a
+        inc     hl
+
+        pop     de
+        ld      a, e
+        add     c
+        ld      e, a
+        ld      a, (hl)
+        ld      (de), a
+        inc     hl
+
+        pop     de
+        ld      a, e
+        add     c
+        ld      e, a
+        ld      a, (hl)
+        ld      (de), a
+        inc     hl
+
+        pop     de
+        ld      a, e
+        add     c
+        ld      e, a
+        ld      a, (hl)
+        ld      (de), a
+        inc     hl
+
+        pop     de
+        ld      a, e
+        add     c
+        ld      e, a
+        ld      a, (hl)
+        ld      (de), a
+        inc     hl
+
+        pop     de
+        ld      a, e
+        add     c
+        ld      e, a
+        ld      a, (hl)
+        ld      (de), a
+        inc     hl
+
+        pop     de
+        ld      a, e
+        add     c
+        ld      e, a
+        ld      a, (hl)
+        ld      (de), a
+        inc     hl
+
+        pop     de
+        ld      a, e
+        add     c
+        ld      e, a
+        ld      a, (hl)
+        ld      (de), a
+        inc     hl
+
+clearTileSP:
+        ld      sp, -1
+        ei      
+        pop     de
+
+;        call    setTileAttr
+
+        pop     hl                      ; Restore coin table pointer
+notVisible4:
+        ld      a, SIZEOF_item
+        addhl   
+        jp      nextItem3
 
         ;
         ; Check if the player has collided with an item. And if so,
@@ -370,7 +503,7 @@ notVisible2:
         ;
 checkItemCollision:
         ld      (itemCollision+1), de
-nextEgg:
+nextItem:
         ld      a, (hl)
         cp      0xff
         ret     z
@@ -385,12 +518,7 @@ nextEgg:
         ; Collision check here
         ;
         ld      a, (hl)                 ; X byte position
-IFNDEF  PIXEL_POS
-        rlca                            ; x2
-        rlca                            ; x4
-        rlca                            ; x8
-        and     %11111000
-ENDIF   
+
         add     2                       ; Left side pixel offset (indented a little)
         ld      b, a
         add     ITEM_WIDTH-5            ; Right side pixel offset (pulled in a little)
@@ -407,12 +535,7 @@ ENDIF
 
         inc     hl
         ld      a, (hl)                 ; Y byte position
-IFNDEF  PIXEL_POS
-        rlca                            ; x2
-        rlca                            ; x4
-        rlca                            ; x8
-        and     %11111000
-ENDIF   
+
         add     2                       ; Top pixel offset pulled in a little
         ld      b, a
         add     ITEM_HEIGHT-5           ; Bottom pixel offset, pushed up a little
@@ -427,29 +550,18 @@ ENDIF
         jr      c, noCollision          ; 'c' if 'b' > 'a'
 
         ld      b, (hl)                 ; Y position
-IFDEF   PIXEL_POS
         srl     b
         srl     b
         srl     b
-ENDIF   
         dec     hl                      ; Back to the flags
         ld      c, (hl)                 ; X position
-IFDEF   PIXEL_POS
         srl     c
         srl     c
         srl     c
-ENDIF   
-        dec     hl
-        xor     a                       ; Zero flags
-        ld      (hl), a
-
-        push    bc
-        call    clearAttr
-        pop     bc
-        call    clearChar
+        dec     hl                      ; hl points to item flags
 
         ;
-        ; USer provided function to update score, etc.
+        ; User provided function to update score, etc.
         ;
 itemCollision:
         call    -1
@@ -458,7 +570,24 @@ noCollision:
 notVisible3:
         ld      a, SIZEOF_item
         addhl   
-        jp      nextEgg
+        jp      nextItem
+
+		;
+		; Remove an item from the screen and change
+		; it's flags so that it is no longer visible.
+		;
+		;	Entry:
+		;		hl - Pointer to items flags
+		;		b  - Screen y character position
+		;		c  - screen x character position
+		;
+removeItem:
+        xor     a                       ; Zero flags
+        ld      (hl), a                 ; Save in item table
+        call    clearAttr               ; Remove the item and attribute
+        ld      a, ID_BLANK
+        call    displayTile
+        ret     
 
         section bss_user
         defvars 0                       ; Define the stack variables used
