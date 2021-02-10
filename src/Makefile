@@ -10,7 +10,7 @@ ASMDEPS=$(wildcard *.inc) $(wildcard *.scr) $(wildcard *.afb) $(wildcard *.dat)
 
 C_OPT_FLAGS=-SO3
 
-CFLAGS=+$(TARGET) $(C_OPT_FLAGS) --codesegcode_user --constseg$(RODATA) -compiler=sdcc -I$(Z88DK)/include/_DEVELOPMENT/sdcc --legacy-banking -c -pragma-include:$(PRAGMA_FILE)
+CFLAGS=+$(TARGET) $(C_OPT_FLAGS) --codesegcode_user --constseg$(RODATA) -compiler=sdcc -I$(Z88DK)/include/_DEVELOPMENT/sdcc -c -pragma-include:$(PRAGMA_FILE)
 LDFLAGS=+$(TARGET) --codesegcode_user --constseg$(RODATA) -m -clib=sdcc_iy -pragma-include:$(PRAGMA_FILE) -Cz--clearaddr -Cz32767 -Cz--screen -Cztitle.scr
 ASFLAGS=-I$(Z88DK)/lib
 
