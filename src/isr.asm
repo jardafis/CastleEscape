@@ -1,4 +1,5 @@
         extern  AFXFRAME
+        extern  afxEnable
 
         public  _initISR
         public  ticks
@@ -43,7 +44,9 @@ isr:
         push    hl
         push    ix
 
-        call    AFXFRAME
+        ld      a, (afxEnable)
+        or      a
+        call    nz, AFXFRAME
 
         ;
         ; Increment the 16-bit ticks count

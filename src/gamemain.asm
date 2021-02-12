@@ -54,6 +54,12 @@
         extern  displayItems_pixel
         extern  updateSpiderPos
         extern  printAttr
+        extern  musicInit
+        extern  PLAYER_INIT
+        extern  LOAD_SONG
+        extern  START_SONG
+        extern  PLAYER_OFF
+        extern  afxEnable
 
         public  _currentTileMap
         public  _setCurrentTileMap
@@ -75,7 +81,7 @@
 
         include "defs.inc"
 
-        section BANK_5					; Set the base address of BANK_5
+        section BANK_5                  ; Set the base address of BANK_5
         org     0x4000+0x1b00           ; Skip over the screen memory
 
         section code_user
@@ -87,11 +93,18 @@ _main:
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT|FLASH
         call    printAttr
 
+        LD      A, GOTHIC
+        CALL    LOAD_SONG
+
 waitJump:
+        halt    
+        call    START_SONG
         call    _updateDirection
         ld      a, e
         or      a
         jr      z, waitJump
+
+        call    PLAYER_OFF
 
 waitNoJump:
         call    _updateDirection
@@ -104,6 +117,8 @@ waitNoJump:
 init:
         ld      l, INK_BLACK
         call    _border
+
+        call    PLAYER_INIT
 
         ld      hl, afxBank             ; Effects bank address
         call    AFXINIT
@@ -135,6 +150,9 @@ newGame:
         ld      hl, readyMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT
         call    printAttr
+
+        ld      a, 1
+        ld      (afxEnable), a
 
         screen  0
 		;
@@ -529,6 +547,8 @@ ENDIF
 
         delay   200
 
+        xor     a
+        ld      (afxEnable), a
         ret     
 
 _setCurrentTileMap:

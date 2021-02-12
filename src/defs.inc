@@ -3,6 +3,12 @@
         extern  _font_8x8_cpc_system
         extern  currentBank
 
+        ;
+        ; WYZTracker Songs
+        ;
+        defc    GOTHIC=0
+        defc    JINJ_MED=1
+
 		;
 		; Game Configuration
 		;

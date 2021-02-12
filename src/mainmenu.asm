@@ -12,6 +12,10 @@
         extern  keyboardScan
         extern  readKempston
         extern  kjPresent
+        extern  LOAD_SONG
+        extern  START_SONG
+        extern  PLAYER_OFF
+        extern  afxEnable
 
 
         public  mainMenu
@@ -28,7 +32,13 @@
 mainMenu:
         screen  1                       ; Display the main menu
 
+        LD      A, JINJ_MED
+        CALL    LOAD_SONG
+
 getKey:
+        halt    
+        call    START_SONG
+
         call    keyboardScan            ; Read the keyboard
         or      a                       ; If a key has been presses
         jr      nz, keyPressed          ; jump to process it.
@@ -37,14 +47,18 @@ getKey:
         or      a                       ; is present, if not
         jr      z, getKey               ; continue polling.
 
+        ld      e, 0                    ; No direction keys pressed
         call    readKempston            ; Read the joystick
         ld      a, e                    ; Check if fire has been pressed
         and     JUMP
         jr      z, getKey               ; If not, continue polling
 
+        call    PLAYER_OFF
+
         ld      a, '0'                  ; Force '0'
         jr      opt0                    ; Jump to process action when '0' is pressed
 keyPressed:
+        call    PLAYER_OFF
         call    waitKey
 
         cp      '1'
