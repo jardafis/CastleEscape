@@ -16,7 +16,6 @@ ASFLAGS=-I$(Z88DK)/lib
 
 OBJECTS =	$(patsubst %.c,%.o,$(wildcard *.c)) \
 			$(patsubst %.asm,%.o,$(wildcard *.asm)) \
-			tiles/tiles.o \
 			sprite/LeftSprite.o \
 			sprite/RightSprite.o
 
