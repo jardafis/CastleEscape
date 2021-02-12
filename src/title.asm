@@ -55,7 +55,7 @@ noAnimate:
 
         call    _updateDirection
         ld      a, e
-        or      a
+        and     JUMP
         jr      z, waitJump
 
         call    PLAYER_OFF
