@@ -2,6 +2,7 @@
         public  PLAYER_OFF
         public  LOAD_SONG
         public  START_SONG
+        public  INTERR
 
         section BANK_5
 
