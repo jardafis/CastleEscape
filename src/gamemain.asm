@@ -57,7 +57,6 @@
         extern  musicInit
         extern  PLAYER_INIT
         extern  LOAD_SONG
-        extern  START_SONG
         extern  PLAYER_OFF
         extern  afxEnable
 
@@ -97,8 +96,6 @@ _main:
         CALL    LOAD_SONG
 
 waitJump:
-        halt    
-        call    START_SONG
         call    _updateDirection
         ld      a, e
         or      a

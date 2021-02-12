@@ -1,5 +1,7 @@
         extern  AFXFRAME
         extern  afxEnable
+        extern  INTERR
+        extern  START_SONG
 
         public  _initISR
         public  ticks
@@ -43,6 +45,10 @@ isr:
         push    de
         push    hl
         push    ix
+
+        ld      a, (INTERR)
+        and     %00000010
+        call    nz, START_SONG
 
         ld      a, (afxEnable)
         or      a

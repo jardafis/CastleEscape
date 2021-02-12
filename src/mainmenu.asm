@@ -13,7 +13,6 @@
         extern  readKempston
         extern  kjPresent
         extern  LOAD_SONG
-        extern  START_SONG
         extern  PLAYER_OFF
         extern  afxEnable
 
@@ -30,15 +29,11 @@
 		; the game are on this screen.
 		;
 mainMenu:
-        screen  1                       ; Display the main menu
-
         LD      A, JINJ_MED
         CALL    LOAD_SONG
-
+displayScreen:
+        screen  1                       ; Display the main menu
 getKey:
-        halt    
-        call    START_SONG
-
         call    keyboardScan            ; Read the keyboard
         or      a                       ; If a key has been presses
         jr      nz, keyPressed          ; jump to process it.
@@ -53,17 +48,17 @@ getKey:
         and     JUMP
         jr      z, getKey               ; If not, continue polling
 
-        call    PLAYER_OFF
-
         ld      a, '0'                  ; Force '0'
         jr      opt0                    ; Jump to process action when '0' is pressed
 keyPressed:
-        call    PLAYER_OFF
         call    waitKey
 
         cp      '1'
-        call    z, noop
+        jr      nz, opt2
+        call    noop
+        jr      displayScreen
 
+opt2:
 IFDEF   ATTRIB_EDIT
         cp      '2'
         jr      nz, opt0
@@ -75,12 +70,14 @@ IFDEF   ATTRIB_EDIT
         call    _attribEdit
         pop     hl
         pop     hl
+        jr      displayScreen
 ENDIF   
 opt0:
         cp      '0'
-        call    z, newGame
-
-        jp      mainMenu
+        jr      nz, displayScreen
+        call    PLAYER_OFF
+        call    newGame
+        jr      mainMenu
 
 displayBorder:
         ld      hl, bannerData
