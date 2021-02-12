@@ -59,6 +59,7 @@
         extern  LOAD_SONG
         extern  PLAYER_OFF
         extern  afxEnable
+        extern  bank7Screen
 
         public  _currentTileMap
         public  _setCurrentTileMap
@@ -151,9 +152,21 @@ newGame:
         ld      a, 1
         ld      (afxEnable), a
 
+        ;
+        ; Patch the animate coins routine to access
+        ; the screen memory at 0x4000
+        ;
+        ld      hl, 0x0000              ; nop, nop
+        ld      (bank7Screen), hl
+
+        ;
+        ; Point the ULA at screen 0
+        ;
         screen  0
+
 		;
 		; Select bank 0 @ 0xc000
+		;
         bank    0
 
         ;

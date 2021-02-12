@@ -23,7 +23,7 @@
             itemFlags   ds.b 1
             itemX       ds.b 1
             itemY       ds.b 1
-            imteFrame   ds.b 1
+            itemFrame   ds.b 1
         SIZEOF_item 
         }       
 
