@@ -15,6 +15,7 @@
         defc    START_X=40
         defc    START_Y=120
         defc    START_LIVES=0x03
+        defc    ROTATE_COUNT=6
 		DEFINE	ATTRIB_EDIT
 		DEFINE	TIMING_BORDER
 

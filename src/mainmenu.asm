@@ -22,6 +22,7 @@
 
 
         public  mainMenu
+        public  rotateCount
 
         section code_user
 
@@ -78,7 +79,7 @@ getKey:
         dec     (hl)
         jp      p, noAnimate
 
-        ld      a, 6
+        ld      a, ROTATE_COUNT
         ld      (hl), a
         call    _animateCoins
 noAnimate:
