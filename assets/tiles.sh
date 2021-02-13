@@ -48,4 +48,5 @@ sed -i -e "/^\s*[C_LINE|SECTION|MODULE|INCLUDE|GLOBAL]/d" ${tileDir}/tiles.inc
 
 asmstyle.pl ${tileDir}/tiles.inc
 
+cp -i ${tileDir}/tiles.inc ../src
 echo "Done"
