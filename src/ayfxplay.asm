@@ -209,12 +209,6 @@ afxNseMix:
         ; ------------------------------------------------- -------------;
 
 AFXPLAY:
-        push    af
-        push    bc
-        push    de
-        push    hl
-        push    ix
-
         ld      de, 0                   ; in DE, longest search time
         ld      h, e
         ld      l, a
@@ -254,10 +248,4 @@ afxPlay1:
         ld      (ix-2), d
         ld      (ix-1), b               ; set the sound time to zero
         ld      (ix-0), b
-
-        pop     ix
-        pop     hl
-        pop     de
-        pop     bc
-        pop     af
         ret     

@@ -45,6 +45,7 @@ isr:
         push    de
         push    hl
         push    ix
+        push    iy
 
         ld      a, (INTERR)
         and     %00000010
@@ -61,6 +62,7 @@ isr:
         inc     hl
         ld      (ticks), hl
 
+        pop     iy
         pop     ix
         pop     hl
         pop     de
