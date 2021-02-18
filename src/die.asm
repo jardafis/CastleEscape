@@ -6,6 +6,7 @@
         extern  xyPos
         extern  xyStartPos
         extern  _jumping
+        extern  _ySpeed
         extern  LOAD_SONG
         extern  afxEnable
         extern  AFXSTOP
@@ -62,6 +63,7 @@ die:
         ld      (xyPos), hl
         xor     a
         ld      (_jumping), a
+        ld      (_ySpeed), a
 
         pop     hl
         pop     de

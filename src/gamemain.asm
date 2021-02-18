@@ -619,10 +619,10 @@ xyStartPos:                             ; Position where player entered the leve
         ds      2
 _spriteBuffer:
         ds      48
-
-        section rodata_user
 currentBank:
         db      MEM_BANK_ROM
+
+        section rodata_user
 afxBank:
         binary  "soundbank.afb"
 readyMsg:
