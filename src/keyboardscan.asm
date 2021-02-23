@@ -1,8 +1,12 @@
+        extern  assert
+
         public  _keyboardScan
         public  keyboardScan
         public  _updateDirection
         public  kjScan
         public  waitKey
+        public  lookupScanCode
+        public  scanCodes
 
         section code_user
 
@@ -41,7 +45,7 @@ keyboardScan:
         push    DE
         push    HL                      ; Preserve H, L will be our return value
 
-        ld      HL, Keyboard_Map        ; Point HL at the keyboard list
+        ld      HL, keyMap              ; Point HL at the keyboard list
         ld      D, 8                    ; This is the number of ports (rows) to check
         ld      C, 0xFE                 ; C is always FEh for reading keyboard ports
 
@@ -135,6 +139,46 @@ waitKeyRelease:
         pop     bc
         ret     
 
+        ;
+        ; Lookup the scan code for the ASCII character passed in 'a'
+        ;
+        ;   Input:
+        ;       a - ASCII key code
+        ;
+        ;   Output:
+        ;       de - Scan code; e = I/O port, d = bit mask
+        ;
+lookupScanCode:
+        push    af
+        push    bc
+        push    hl
+
+        ld      hl, keyMap
+
+        ld      c, 8
+rowLoop:
+        ld      e, (hl)
+        inc     hl
+
+        ld      d, 1
+        ld      b, 5
+keyLoop:
+        cp      (hl)
+        jr      z, foundScanCode
+        inc     hl
+        sla     d
+        djnz    keyLoop
+
+        dec     c
+        jr      nz, rowLoop
+        assert  
+
+foundScanCode:
+        pop     hl
+        pop     bc
+        pop     af
+        ret     
+
         section data_user
 
         ; Port upper 8 bits, key mask, direction bit
@@ -148,12 +192,12 @@ scanCodes:
 
         section rodata_user
 
-Keyboard_Map:                           ;Bit 0,  1,  2,  3,  4
-        db      0xFE, "#", "Z", "X", "C", "V"
+keyMap:                                 ;Bit 0,  1,  2,  3,  4
+        db      0xFE, 0x00, "Z", "X", "C", "V"
         db      0xFD, "A", "S", "D", "F", "G"
         db      0xFB, "Q", "W", "E", "R", "T"
         db      0xF7, "1", "2", "3", "4", "5"
         db      0xEF, "0", "9", "8", "7", "6"
         db      0xDF, "P", "O", "I", "U", "Y"
-        db      0xBF, 13, "L", "K", "J", "H"
-        db      0x7F, " ", "#", "M", "N", "B"
+        db      0xBF, 0x0d, "L", "K", "J", "H"
+        db      0x7F, " ", 0x00, "M", "N", "B"
