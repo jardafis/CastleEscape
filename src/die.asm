@@ -45,7 +45,21 @@ die:
         LD      A, DEATH
         CALL    LOAD_SONG
 
-        delay   200
+        ;
+        ; Delay for 200 1/50's of a second (4 seconds) and flash
+        ; the border while the music plays.
+        ;
+        ld      b, 200
+delayLoop:
+        ld      a, b
+        and     0x07
+        border  a
+        halt    
+        djnz    delayLoop
+        ;
+        ; Ensure border is black
+        ;
+        border  INK_BLACK
 
         ld      a, 1
         ld      (afxEnable), a

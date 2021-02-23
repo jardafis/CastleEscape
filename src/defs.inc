@@ -16,7 +16,8 @@
         defc    START_LIVES=0x03
         defc    ROTATE_COUNT=6
 		DEFINE	ATTRIB_EDIT
-		DEFINE	TIMING_BORDER
+;		DEFINE	TIMING_BORDER
+        DEFINE  MUSIC
 
         defvars 0
         {       
@@ -351,5 +352,12 @@ delayLoop:
 		pop		bc
 		ENDM
 
+assert  MACRO
+        di
+        halt
+        ENDM
 
-
+border  MACRO   color
+        ld      a, color
+        out     (IO_BORDER), a
+        ENDM
