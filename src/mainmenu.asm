@@ -1,5 +1,4 @@
         extern  bannerData
-        extern  _border
         extern  _cls
         extern  displayTile
         extern  setAttr
@@ -19,10 +18,11 @@
         extern  currentCoinTable
         extern  _animateCoins
         extern  bank7Screen
-
+        extern  defineKeys
 
         public  mainMenu
         public  rotateCount
+        public  displayBorder
 
         section BANK_5
 
@@ -105,7 +105,7 @@ keyPressed:
 
         cp      '1'
         jr      nz, opt2
-        call    noop
+        call    defineKeys
         jr      displayScreen
 
 opt2:
@@ -203,31 +203,7 @@ display:
         pop     af
         ret     
 
-		;
-		; Dummy screen to be displayed when options are selected from main menu.
-		;
-noop:
-        push    af
-		;
-        ; Clear the screen
-        ;
-        ld      l, INK_WHITE|PAPER_BLACK
-        call    _cls
-
-        call    displayBorder
-
-        ld      bc, 0x0c05
-        ld      hl, dummy
-        call    print
-
-        screen  0                       ; Now it's setup switch to screen 0
-
-        call    waitKey                 ; Do nothing.
-
-        pop     af
-        ret     
-
-        section BSS_UNINITIALIZED
+        section bss_user
 
         ;
         ; Counter so coins are not rotated every frame

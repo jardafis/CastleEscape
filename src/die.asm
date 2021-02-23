@@ -6,6 +6,7 @@
         extern  xyPos
         extern  xyStartPos
         extern  _jumping
+        extern  _ySpeed
         extern  LOAD_SONG
         extern  afxEnable
         extern  AFXSTOP
@@ -44,7 +45,21 @@ die:
         LD      A, DEATH
         CALL    LOAD_SONG
 
-        delay   200
+        ;
+        ; Delay for 200 1/50's of a second (4 seconds) and flash
+        ; the border while the music plays.
+        ;
+        ld      b, 200
+delayLoop:
+        ld      a, b
+        and     0x07
+        border  a
+        halt    
+        djnz    delayLoop
+        ;
+        ; Ensure border is black
+        ;
+        border  INK_BLACK
 
         ld      a, 1
         ld      (afxEnable), a
@@ -62,6 +77,7 @@ die:
         ld      (xyPos), hl
         xor     a
         ld      (_jumping), a
+        ld      (_ySpeed), a
 
         pop     hl
         pop     de

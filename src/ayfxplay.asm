@@ -50,7 +50,7 @@ AFXINIT:
 AFXSTOP:
         ld      hl, afxChDesc           ; mark all channels as empty
         ld      de, #00ff
-        ld      bc, #03fd				; Original value was 0cfd looks like a bug. Changed to 03fd
+        ld      bc, #03fd               ; Original value was 0cfd looks like a bug. Changed to 03fd
 afxInit0:
         ld      (hl), d
         inc     hl
@@ -138,9 +138,7 @@ afxFrame1:
         sub     #20
         jr      c, afxFrame2            ; less than # 20, play on
         ld      h, a                    ; otherwise end of effect
-        ld      b, #ff
-		; Line below changed from ld b,c -> ld c,b
-        ld      c, b                    ; in BC we enter the longest time
+        ld      bc, #ffff               ; in BC we enter the longest time
         jr      afxFrame6
 
 afxFrame2:
@@ -209,12 +207,6 @@ afxNseMix:
         ; ------------------------------------------------- -------------;
 
 AFXPLAY:
-        push    af
-        push    bc
-        push    de
-        push    hl
-        push    ix
-
         ld      de, 0                   ; in DE, longest search time
         ld      h, e
         ld      l, a
@@ -254,10 +246,4 @@ afxPlay1:
         ld      (ix-2), d
         ld      (ix-1), b               ; set the sound time to zero
         ld      (ix-0), b
-
-        pop     ix
-        pop     hl
-        pop     de
-        pop     bc
-        pop     af
         ret     

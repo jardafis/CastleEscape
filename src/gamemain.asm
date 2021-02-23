@@ -1,6 +1,5 @@
         extern  _cls
         extern  _initISR
-        extern  _border
         extern  _initItems
         extern  _scrollInit
         extern  _scroll
@@ -54,6 +53,8 @@
         extern  afxEnable
         extern  bank7Screen
         extern  titleScreen
+        extern  __bss_user_head
+        extern  __bss_user_size
 
         public  _currentTileMap
         public  _setCurrentTileMap
@@ -75,6 +76,9 @@
 
         include "defs.inc"
 
+        section bss_user
+        org     -1                      ; Create a seperate output binary for this section
+
         section BANK_5                  ; Set the base address of BANK_5
         org     0x4000+0x1b00           ; Skip over the screen memory
 
@@ -86,9 +90,20 @@ _main:
 
         call    mainMenu
 		; Never reached
+        assert  
+
 init:
-        ld      l, INK_BLACK
-        call    _border
+        border  INK_BLACK
+
+        ;
+        ; Zero the BSS section
+        ;
+        ld      bc, __bss_user_size-1
+        ld      hl, __bss_user_head     ; Src address
+        ld      de, __bss_user_head+1   ; Dest address
+        xor     a
+        ld      (hl), a
+        ldir    
 
 		;
 		; Initialize the WYZ Player
@@ -116,6 +131,7 @@ init:
         ld      (kjScan), a
         ld      hl, readKempston
         ld      (kjScan+1), hl
+
         ret     
 
 newGame:
@@ -256,8 +272,7 @@ lo:
 ENDIF   
 
 IFDEF   TIMING_BORDER
-        ld      l, INK_BLUE
-        call    _border
+        border  INK_BLUE
 ENDIF   
 
 		; ######################################
@@ -296,8 +311,7 @@ oddFrame2:
 		;
 		; ######################################
 IFDEF   TIMING_BORDER
-        ld      l, INK_RED
-        call    _border
+        border  INK_RED
 ENDIF   
         call    _updateDirection
 
@@ -381,8 +395,7 @@ notJumping:
 		;
 		; ######################################
 IFDEF   TIMING_BORDER
-        ld      l, INK_MAGENTA
-        call    _border
+        border  INK_MAGENTA
 ENDIF   
         call    checkYCol
 
@@ -393,8 +406,7 @@ ENDIF
 		;
 		; ######################################
 IFDEF   TIMING_BORDER
-        ld      l, INK_GREEN
-        call    _border
+        border  INK_GREEN
 ENDIF   
         ld      a, (_xSpeed)            ; If xSpeed != 0 player is moving
         or      a                       ; left or right.
@@ -406,8 +418,7 @@ ENDIF
         ;
 		; ######################################
 IFDEF   TIMING_BORDER
-        ld      l, INK_CYAN
-        call    _border
+        border  INK_CYAN
 ENDIF   
         call    _scroll
 
@@ -418,8 +429,7 @@ ENDIF
         ;
 		; ######################################
 IFDEF   TIMING_BORDER
-        ld      l, INK_YELLOW
-        call    _border
+        border  INK_YELLOW
 ENDIF   
         ld      hl, (currentCoinTable)
         ld      de, coinCollision
@@ -450,8 +460,7 @@ ENDIF
 		;
 		; ######################################
 IFDEF   TIMING_BORDER
-        ld      l, INK_WHITE
-        call    _border
+        border  INK_WHITE
 ENDIF   
         ld      hl, coinRotate
         dec     (hl)
@@ -469,16 +478,14 @@ noAnimate:
 		; ######################################
 
 IFDEF   TIMING_BORDER
-        ld      l, INK_BLUE
-        call    _border
+        border  INK_BLUE
 ENDIF   
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _copyScreen
 
 IFDEF   TIMING_BORDER
-        ld      l, INK_RED
-        call    _border
+        border  INK_RED
 ENDIF   
         ld      bc, (_xPos)
         call    _displaySprite
@@ -501,8 +508,7 @@ ENDIF
         ; Flicker any lanterns on the screen
         ;
 IFDEF   TIMING_BORDER
-        ld      l, INK_MAGENTA
-        call    _border
+        border  INK_MAGENTA
 ENDIF   
         ld      hl, _lanternList
         call    _lanternFlicker
@@ -512,22 +518,19 @@ oddFrame:
         ; See if the egg count needs to be decremented
         ;
 IFDEF   TIMING_BORDER
-        ld      l, INK_GREEN
-        call    _border
+        border  INK_GREEN
 ENDIF   
         call    decrementEggs
 
 IFDEF   TIMING_BORDER
-        ld      l, INK_BLACK
-        call    _border
+        border  INK_BLACK
 ENDIF   
         jp      gameLoop
 
 gameOver:
         ld      sp, -1
 IFDEF   TIMING_BORDER
-        ld      l, INK_BLACK
-        call    _border
+        border  INK_BLACK
 ENDIF   
         ld      bc, 0x0b0a
         ld      hl, gameOverMsg
@@ -620,9 +623,11 @@ xyStartPos:                             ; Position where player entered the leve
 _spriteBuffer:
         ds      48
 
-        section rodata_user
+        section data_user
 currentBank:
         db      MEM_BANK_ROM
+
+        section rodata_user
 afxBank:
         binary  "soundbank.afb"
 readyMsg:

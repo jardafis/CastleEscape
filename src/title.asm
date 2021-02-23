@@ -8,6 +8,7 @@
         extern  _animateCoins
 
         public  titleScreen
+        public  pressJumpMsg
 
         section BANK_5
         include "defs.inc"

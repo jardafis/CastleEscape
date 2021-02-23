@@ -45,10 +45,13 @@ isr:
         push    de
         push    hl
         push    ix
+        push    iy
 
+IFDEF   MUSIC
         ld      a, (INTERR)
         and     %00000010
         call    nz, START_SONG
+ENDIF   
 
         ld      a, (afxEnable)
         or      a
@@ -61,6 +64,7 @@ isr:
         inc     hl
         ld      (ticks), hl
 
+        pop     iy
         pop     ix
         pop     hl
         pop     de
