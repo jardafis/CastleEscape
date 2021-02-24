@@ -168,4 +168,4 @@ displaySpriteSP equ $+1
 
         section bss_user
 playerSprite:
-        dw      0
+        ds      2

@@ -26,4 +26,4 @@ _displayScore:
 
         section bss_user
 score:                                  ; Score in BCD
-        dw      0x0000
+        ds      2

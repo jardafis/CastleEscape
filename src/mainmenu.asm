@@ -25,6 +25,7 @@
         public  displayBorder
         public  rotateCount
         public  animateMenu
+        public  waitReleaseKey
 
         section BANK_5
 
@@ -38,7 +39,8 @@
 mainMenu:
         ;
         ; Start main menu song
-        ;
+        ;        pop     hl
+        
         LD      A, JINJ_MED
         CALL    LOAD_SONG
 
@@ -92,7 +94,8 @@ getKey:
         ld      a, '0'                  ; Force '0'
         jr      opt0                    ; Jump to process action when '0' is pressed
 keyPressed:
-        call    waitKey
+        ld      hl, lanternList
+        call    waitReleaseKey
 
         cp      '1'
         jr      nz, opt2
@@ -194,18 +197,48 @@ display:
         pop     af
         ret     
 
+        ;
+        ; Animate the menu items.
+        ;
+        ;   Input:
+        ;       hl - Pointer to lantern list
+        ;
+        ;   Notes:
+        ;       'hl' is preserved.
+        ;
 animateMenu:
-        halt
+        push    hl
+        halt    
 
         call    _lanternFlicker
 
         ld      hl, rotateCount
         dec     (hl)
-        ret     p
+        jp      p, noRotate
 
         ld      a, ROTATE_COUNT
         ld      (hl), a
         call    _animateCoins
+noRotate:
+        pop     hl
+        ret     
+
+        ;
+        ; Wait for a key to be released and animate the menu items.
+        ;
+        ;   Input:
+        ;       hl - Pointer to the lantern list
+        ;
+        ;   Notes:
+        ;       'af' is preserved.
+waitReleaseKey:
+        push    af
+releaseKey:
+        call    animateMenu
+        call    keyboardScan            ; Read the keyboard
+        or      a                       ; If a key is pressed
+        jr      nz, releaseKey          ; continue looping
+        pop     af
         ret
 
         section bss_user

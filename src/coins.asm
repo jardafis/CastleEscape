@@ -134,7 +134,7 @@ coinCollision:
         section bss_user
 
 currentCoinTable:
-        dw      0
+        ds      2
 
 _coinTables:
         ds      MAX_LEVEL_X*MAX_LEVEL_Y*SIZEOF_ptr

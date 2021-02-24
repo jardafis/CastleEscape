@@ -30,10 +30,10 @@ heartCollision:
 
         section bss_user
 heartCount:                             ; BCD
-        dw      0x0000
+        ds      2
 
 currentHeartTable:
-        dw      0
+        ds      2
 
 heartTables:
         ds      MAX_LEVEL_X*MAX_LEVEL_Y*SIZEOF_ptr

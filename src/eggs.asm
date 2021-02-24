@@ -78,12 +78,12 @@ skip:
 
         section bss_user
 counter:
-        db      0
+        ds      1
 eggCount:                               ; BCD
-        dw      0x0000
+        ds      2
 
 currentEggTable:
-        dw      0
+        ds      2
 
 eggTables:
         ds      MAX_LEVEL_X*MAX_LEVEL_Y*SIZEOF_ptr

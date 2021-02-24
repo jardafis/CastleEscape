@@ -6,6 +6,7 @@
         extern  rotateCount
         extern  currentCoinTable
         extern  _animateCoins
+        extern  animateMenu
 
         public  titleScreen
         public  pressJumpMsg
@@ -40,32 +41,23 @@ titleScreen:
         xor     a
         ld      (rotateCount), a
 waitJump:
-        halt    
-
-        ld      hl, rotateCount
-        dec     (hl)
-        jp      p, noAnimate
-
-        ld      a, ROTATE_COUNT
-        ld      (hl), a
-        call    _animateCoins
-noAnimate:
-
         ld      hl, lanternList
-        call    _lanternFlicker
-
+        call    animateMenu
         call    _updateDirection
         ld      a, e
         and     JUMP
         jr      z, waitJump
 
-        call    PLAYER_OFF
-
 waitNoJump:
+        ld      hl, lanternList
+        call    animateMenu
+
         call    _updateDirection
         ld      a, e
-        or      a
+        and     JUMP
         jr      nz, waitNoJump
+
+        call    PLAYER_OFF
 
         ret     
 
