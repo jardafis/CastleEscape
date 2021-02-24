@@ -23,6 +23,8 @@
         public  mainMenu
         public  rotateCount
         public  displayBorder
+        public  rotateCount
+        public  animateMenu
 
         section BANK_5
 
@@ -47,18 +49,18 @@ mainMenu:
         ld      (currentCoinTable), hl
 
         ;
+        ; Reset counter used for coin rotation
+        ;
+        xor     a
+        ld      (rotateCount), a
+displayScreen:
+        ;
         ; Patch the animate coins routine to access
         ; memory @ 0xc000
         ;
         ld      hl, 0xf8cb              ; set 7, b
         ld      (bank7Screen), hl
 
-        ;
-        ; Reset counter used for coin rotation
-        ;
-        xor     a
-        ld      (rotateCount), a
-displayScreen:
         ;
         ; Point the ULA at screen 1
         ;
@@ -70,19 +72,8 @@ displayScreen:
         ;
         bank    7
 getKey:
-        halt    
-
         ld      hl, lanternList
-        call    _lanternFlicker
-
-        ld      hl, rotateCount
-        dec     (hl)
-        jp      p, noAnimate
-
-        ld      a, ROTATE_COUNT
-        ld      (hl), a
-        call    _animateCoins
-noAnimate:
+        call    animateMenu
 
         call    keyboardScan            ; Read the keyboard
         or      a                       ; If a key has been presses
@@ -202,6 +193,20 @@ display:
         pop     bc
         pop     af
         ret     
+
+animateMenu:
+        halt
+
+        call    _lanternFlicker
+
+        ld      hl, rotateCount
+        dec     (hl)
+        ret     p
+
+        ld      a, ROTATE_COUNT
+        ld      (hl), a
+        call    _animateCoins
+        ret
 
         section bss_user
 
