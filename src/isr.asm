@@ -16,12 +16,11 @@
 _initISR:
         pushall 
 
+        ld      bc, 0x100               ; bytes of the vector table
         ld      hl, VECTOR_TABLE        ; Get vector table address
+        ld      de, VECTOR_TABLE+1
         ld      a, JUMP_ADDR_BYTE       ; High order byte of jump adress
         ld      (hl), a                 ; Store JUMP_ADDR in first byte of vector table
-        ld      de, hl                  ; Fill the same data
-        inc     de                      ; in the next 256
-        ld      bc, 0x100               ; bytes of the vector table
         ldir    
 
         ld      a, JP_OPCODE            ; Store the opcode for JP
@@ -77,7 +76,6 @@ isrTempSP   equ $+1
 
         section bss_user
 ticks:
-        dw      0
-
-        ds      0x40, 0x55              ; 64 bytes for interrupt stack
+        ds      2
+        ds      0x40                    ; 64 bytes for interrupt stack
 interruptStack:

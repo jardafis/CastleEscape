@@ -103,7 +103,7 @@ init:
         ld      de, __bss_user_head+1   ; Dest address
         xor     a
         ld      (hl), a
-        ldir    
+        ldir
 
 		;
 		; Initialize the WYZ Player
@@ -597,27 +597,27 @@ mulDone:
 
         section bss_user
 coinRotate:
-        db      0
+        ds      1
 _currentTileMap:
-        dw      0
+        ds      2
 _tileMapX:
-        db      0
+        ds      1
 _tileMapY:
-        db      0
+        ds      1
 xyPos:
 _xPos:
-        db      0
+        ds      1
 _yPos:
-        db      0
+        ds      1
 _xSpeed:
-        db      0
+        ds      1
 _ySpeed:
-        db      0
+        ds      1
 jumpFall:                               ; Access jumping and falling as a single word
 _jumping:
-        db      0
+        ds      1
 _falling:
-        db      0
+        ds      1
 xyStartPos:                             ; Position where player entered the level
         ds      2
 _spriteBuffer:

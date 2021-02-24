@@ -244,12 +244,12 @@ padding:
 
         section bss_user
 messagePointer:
-        dw      0                       ; Pointer to the current location in the message
+        ds      2                       ; Pointer to the current location in the message
 messageStart:
-        dw      0                       ; Pointer to the start of the message
+        ds      2                       ; Pointer to the start of the message
 screenAddr:
-        dw      0                       ; Pointer to the top right-hand location on the screen
+        ds      2                       ; Pointer to the top right-hand location on the screen
 charBuffer:
         ds      8                       ; Buffer to store font data while we are rotating it
 rotate:
-        db      0                       ; Counter so we know when to get the next character from the message
+        ds      1                       ; Counter so we know when to get the next character from the message

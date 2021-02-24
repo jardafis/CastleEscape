@@ -15,6 +15,7 @@
         extern  keyboardScan
         extern  bank7Screen
         extern  animateMenu
+        extern  waitReleaseKey
 
         public  defineKeys
 
@@ -28,17 +29,20 @@ defineKeys:
 
         ;
         ; Patch the animate coins routine to access
-        ; memory @ 0xc000
+        ; memory @ 0x4000
         ;
         ld      hl, 0x0000              ; nop/nop
         ld      (bank7Screen), hl
 
 
-        ld      de, SCREEN_START
-        ld      hl, 0xc000
-        ld      bc, SCREEN_LENGTH + SCREEN_ATTR_LENGTH
-        ldir
+        ld      de, SCREEN_START        ; Destination address
+        ld      hl, 0xc000              ; Source address
+        ld      bc, SCREEN_LENGTH+SCREEN_ATTR_LENGTH
+        ldir                            ; Copy
 
+        ;
+        ; Clear the text in the bricks
+        ;
         ;       b - Y location
         ;       c - X location
         ;       a  - Tile ID of item
@@ -59,11 +63,11 @@ defineKeys:
         call    displayTile
 
         ld      d, 0x0d                 ; Start Y position to clear
-        ld      c, 8
+        ld      c, 8                    ; Number of rows to clear
 yLoop:
 
         ld      e, 0x06                 ; Starting X position to clear
-        ld      b, 0x13
+        ld      b, 0x13                 ; Number of columns to clear
 xLoop:
         push    bc
 
@@ -126,6 +130,16 @@ waitJump:
         and     JUMP
         jr      z, waitJump
 
+waitJumpRelease:
+        ld      hl, lanternList
+        call    animateMenu
+
+        call    _updateDirection
+        ld      a, e
+        and     JUMP
+        jr      nz, waitJumpRelease
+
+
         ret     
 
         ;
@@ -151,11 +165,12 @@ getKey:
         call    animateMenu
 
         call    keyboardScan            ; Read the keyboard
-        or      a                       ; If a key has been presses
-        jr      z, getKey          ; jump to process it.
-
-        call    waitKey
+        or      a                       ; If a key has been pressed
+        jr      z, getKey               ; jump to process it.
         ld      (key), a
+
+        ld      hl, lanternList
+        call    waitReleaseKey
 
         pop     bc
 
@@ -181,7 +196,7 @@ printKey:
 
         section bss_user
 key:
-        db      " ", 0x00
+        ds      2
 
         section rodata_user
         ;

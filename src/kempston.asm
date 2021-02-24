@@ -36,4 +36,4 @@ readKempston:
 
         section bss_user
 kjPresent:
-        db      0
+        ds      1

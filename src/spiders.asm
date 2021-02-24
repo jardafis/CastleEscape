@@ -158,10 +158,10 @@ spiderCollision:
 
         section bss_user
 changeSpiderDir:
-        db      0
+        ds      1
 
 currentSpiderTable:
-        dw      0
+        ds      2
 
 spiderTables:
         ds      MAX_LEVEL_X*MAX_LEVEL_Y*SIZEOF_ptr
