@@ -8,6 +8,13 @@
         extern  lookupScanCode
         extern  scanCodes
         extern  setAttr
+        extern  displayTile
+        extern  _lanternFlicker
+        extern  rotateCount
+        extern  _animateCoins
+        extern  keyboardScan
+        extern  bank7Screen
+        extern  animateMenu
 
         public  defineKeys
 
@@ -18,12 +25,60 @@ defineKeys:
         ;
         ; Setup the screen
         ;
-        ld      l, INK_WHITE|PAPER_BLACK
-        call    _cls
 
-        call    displayBorder
+        ;
+        ; Patch the animate coins routine to access
+        ; memory @ 0xc000
+        ;
+        ld      hl, 0x0000              ; nop/nop
+        ld      (bank7Screen), hl
 
-        ld      bc, 0x040a
+
+        ld      de, SCREEN_START
+        ld      hl, 0xc000
+        ld      bc, SCREEN_LENGTH + SCREEN_ATTR_LENGTH
+        ldir
+
+        ;       b - Y location
+        ;       c - X location
+        ;       a  - Tile ID of item
+        ld      a, 0x0b
+        ld      bc, 0x0c06
+        call    displayTile
+        inc     c
+        call    displayTile
+        ld      c, 0x0a
+        call    displayTile
+        inc     c
+        call    displayTile
+        inc     c
+        call    displayTile
+        ld      c, 0x10
+        call    displayTile
+        inc     c
+        call    displayTile
+
+        ld      d, 0x0d                 ; Start Y position to clear
+        ld      c, 8
+yLoop:
+
+        ld      e, 0x06                 ; Starting X position to clear
+        ld      b, 0x13
+xLoop:
+        push    bc
+
+        ld      bc, de
+        call    displayTile
+        inc     e
+
+        pop     bc
+        djnz    xLoop
+
+        inc     d
+        dec     c
+        jr      nz, yLoop
+
+        ld      bc, 0x0d0a
         ld      hl, defineKeyMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT
         call    printAttr
@@ -33,7 +88,7 @@ defineKeys:
         ;
         ; Get key for left
         ;
-        ld      bc, 0x070a
+        ld      bc, 0x0f0a
         ld      hl, leftMsg
         call    getInput
         ld      (scanCodes), de
@@ -41,7 +96,7 @@ defineKeys:
         ;
         ; Get key for right
         ;
-        ld      bc, 0x090a
+        ld      bc, 0x110a
         ld      hl, rightMsg
         call    getInput
         ld      (scanCodes+3), de
@@ -49,7 +104,7 @@ defineKeys:
         ;
         ; Get key for jump
         ;
-        ld      bc, 0x0b0a
+        ld      bc, 0x130a
         ld      hl, jumpMsg
         call    getInput
         ld      (scanCodes+6), de
@@ -63,6 +118,9 @@ defineKeys:
         call    printAttr
 
 waitJump:
+        ld      hl, lanternList
+        call    animateMenu
+
         call    _updateDirection
         ld      a, e
         and     JUMP
@@ -82,12 +140,24 @@ waitJump:
         ;   Output:
         ;       de - Scan code for the key pressed
 getInput:
-        call    print
+        ld      a, PAPER_BLACK|INK_WHITE
+        call    printAttr
         ld      a, PAPER_BLACK|INK_GREEN|BRIGHT|FLASH
         call    setAttr
 
+        push    bc
+getKey:
+        ld      hl, lanternList
+        call    animateMenu
+
+        call    keyboardScan            ; Read the keyboard
+        or      a                       ; If a key has been presses
+        jr      z, getKey          ; jump to process it.
+
         call    waitKey
         ld      (key), a
+
+        pop     bc
 
         cp      0x20
         jr      nz, notSpace
@@ -114,6 +184,16 @@ key:
         db      " ", 0x00
 
         section rodata_user
+        ;
+        ; List of lanterns on the this menu
+        ;
+lanternList:
+        db      4
+        dw      SCREEN_ATTR_START+(7*32)+12
+        dw      SCREEN_ATTR_START+(7*32)+13
+        dw      SCREEN_ATTR_START+(7*32)+18
+        dw      SCREEN_ATTR_START+(7*32)+19
+
 defineKeyMsg:
         db      "Define Keys", 0x00
 leftMsg:
