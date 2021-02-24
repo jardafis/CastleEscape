@@ -53,8 +53,6 @@
         extern  afxEnable
         extern  bank7Screen
         extern  titleScreen
-        extern  __bss_user_head
-        extern  __bss_user_size
 
         public  _currentTileMap
         public  _setCurrentTileMap
@@ -94,16 +92,6 @@ _main:
 
 init:
         border  INK_BLACK
-
-        ;
-        ; Zero the BSS section
-        ;
-        ld      bc, __bss_user_size-1
-        ld      hl, __bss_user_head     ; Src address
-        ld      de, __bss_user_head+1   ; Dest address
-        xor     a
-        ld      (hl), a
-        ldir
 
 		;
 		; Initialize the WYZ Player
