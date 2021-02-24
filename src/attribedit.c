@@ -206,7 +206,7 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
     {
         // Wait for key press
         while ((key = keyboardScan()) == 0)
-            ;
+            __asm__("halt");
 
         switch (key)
         {
@@ -256,7 +256,7 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
 
         // Wait for key release
         while (keyboardScan() != 0)
-            ;
+            __asm__("halt");
     } while (key != ' ');                   // SPACE to exit
     /*
      * Copy the attributes back to their original location so
