@@ -4,6 +4,7 @@
 #pragma output CRT_ORG_CODE = 0x8184
 #pragma output CRT_ON_EXIT = 0
 #pragma output CRT_INTERRUPT_MODE_EXIT = -1
+#pragma output CRT_INITIALIZE_BSS = 1
 
 #pragma output CRT_ORG_BANK_0 = 0x0C000
 #pragma output CRT_ORG_BANK_1 = 0x1C000
