@@ -40,7 +40,7 @@ mainMenu:
         ;
         ; Start main menu song
         ;        pop     hl
-        
+
         LD      A, JINJ_MED
         CALL    LOAD_SONG
 
@@ -239,7 +239,7 @@ releaseKey:
         or      a                       ; If a key is pressed
         jr      nz, releaseKey          ; continue looping
         pop     af
-        ret
+        ret     
 
         section bss_user
 
@@ -270,5 +270,3 @@ coinTable:
         db      0x01, 0x17*8, 0x06*8, 0x01
         db      0x01, 0x18*8, 0x08*8, 0x02
         db      0xff
-
-dummy:  db      "Press any key to return", 0x00
