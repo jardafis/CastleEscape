@@ -26,7 +26,7 @@
 
         include "defs.inc"
 
-        section code_user
+        section BANK_5
 
         ;
         ; Display the current level and any uncollected items.
