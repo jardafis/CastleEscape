@@ -241,15 +241,15 @@ releaseKey:
         pop     af
         ret     
 
-        section bss_user
+;        section bss_user
 
         ;
         ; Counter so coins are not rotated every frame
         ;
 rotateCount:
-        ds      1
+        db      0
 
-        section rodata_user
+;        section rodata_user
 
         ;
         ; List of lanterns on the main menu

@@ -61,7 +61,7 @@ waitNoJump:
 
         ret     
 
-        section rodata_user
+;        section rodata_user
 pressJumpMsg:
         db      "Press Jump to Continue", 0x00
 
