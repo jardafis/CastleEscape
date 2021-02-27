@@ -18,7 +18,7 @@ titleScreen:
         ;
         ; Start the title song
         ;
-        LD      A, GOTHIC
+        LD      A, TITLE_MUSIC
         CALL    LOAD_SONG
 
         ;
