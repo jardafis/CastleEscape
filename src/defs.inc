@@ -4,9 +4,9 @@
         ;
         ; WYZTracker Songs
         ;
-        defc    GOTHIC=0
-        defc    JINJ_MED=1
-        defc    DEATH=2
+        defc    TITLE_MUSIC=0
+        defc    MAIN_MENU_MUSIC=1
+        defc    DEATH_MARCH=2
 
 		;
 		; Game Configuration

@@ -41,7 +41,7 @@ mainMenu:
         ; Start main menu song
         ;        pop     hl
 
-        LD      A, JINJ_MED
+        LD      A, MAIN_MENU_MUSIC
         CALL    LOAD_SONG
 
         ;

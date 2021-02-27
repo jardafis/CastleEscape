@@ -42,7 +42,7 @@ die:
         ;
         ; Start the title song
         ;
-        LD      A, DEATH
+        LD      A, DEATH_MARCH
         CALL    LOAD_SONG
 
         ;
