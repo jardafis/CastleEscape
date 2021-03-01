@@ -194,11 +194,11 @@ printKey:
         call    lookupScanCode
         ret     
 
-;        section bss_user
+        section bss_user
 key:
-        db      0, 0
+        ds      2
 
-;        section rodata_user
+        section rodata_user
         ;
         ; List of lanterns on the this menu
         ;

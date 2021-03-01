@@ -2,6 +2,7 @@
         public  PLAYER_OFF
         public  LOAD_SONG
         public  START_SONG
+        public  START_SOUND
         public  INTERR
 
         section BANK_5
@@ -13,6 +14,7 @@
 		;
         include "wyzproplay47c_zx.inc"
 
+        section rodata_user
 		;
 		; Table of songs...
 		;
