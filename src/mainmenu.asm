@@ -60,7 +60,7 @@ displayScreen:
         ; Patch the animate coins routine to access
         ; memory @ 0xc000
         ;
-        ld      hl, 0xf8cb              ; set 7, b
+        ld      hl, SET_7_B_OPCODE
         ld      (bank7Screen), hl
 
         ;

@@ -129,7 +129,7 @@ newGame:
         ; Patch the animate coins routine to access
         ; the screen memory at 0x4000
         ;
-        ld      hl, 0x0000              ; nop, nop
+        ld      hl, NOP_OPCODE << 8 | NOP_OPCODE
         ld      (bank7Screen), hl
 
         ;
