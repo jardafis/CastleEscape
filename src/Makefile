@@ -53,5 +53,8 @@ clean:
 run: all
 	fuse.exe $(PROJ_NAME).tap
 
+BANK ?= CODE
+HEAD=$(shell grep __$(BANK)_head *.map | awk '{print $$3}' | sed -e 's/^\$$/0x/g')
+
 dis: all
-	z88dk-dis -o 0x8184 -x $(PROJ_NAME).map $(PROJ_NAME)_CODE.bin | less
+	z88dk-dis -o $(HEAD) -x $(PROJ_NAME).map $(PROJ_NAME)_$(BANK).bin | less
