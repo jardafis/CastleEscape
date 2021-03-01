@@ -97,6 +97,7 @@
         defc    ID_EGG0=5*12
         defc    ID_HEART=34
         defc	ID_SPIDER=4*12+3
+        defc    ID_PLATFORM=11*12+9
 
 
         ;
@@ -154,6 +155,7 @@
 		;
         defc    JP_OPCODE=0xc3
         defc    NOP_OPCODE=0x00
+        defc    SET_7_B_OPCODE=0xf8cb
 
         ;
         ; Macros for use with asmpp.pl

@@ -1,7 +1,3 @@
-        extern  _cls
-        extern  displayBorder
-        extern  waitKey
-        extern  print
         extern  printAttr
         extern  pressJumpMsg
         extern  _updateDirection
@@ -16,6 +12,8 @@
         extern  bank7Screen
         extern  animateMenu
         extern  waitReleaseKey
+        extern  setTileAttr
+        extern  __BANK_7_head
 
         public  defineKeys
 
@@ -29,65 +27,62 @@ defineKeys:
 
         ;
         ; Patch the animate coins routine to access
-        ; memory @ 0x4000
+        ; memory @ 0x4000 (screen 0)
         ;
-        ld      hl, 0x0000              ; nop/nop
+        ld      hl, NOP_OPCODE << 8 | NOP_OPCODE
         ld      (bank7Screen), hl
 
-
+        ;
+        ; Copy screen 1 to screen 0
+        ;
         ld      de, SCREEN_START        ; Destination address
-        ld      hl, 0xc000              ; Source address
+        ld      hl, __BANK_7_head       ; Source address, bank 7 must be mapped
         ld      bc, SCREEN_LENGTH+SCREEN_ATTR_LENGTH
         ldir                            ; Copy
 
-        ;
-        ; Clear the text in the bricks
-        ;
-        ;       b - Y location
-        ;       c - X location
-        ;       a  - Tile ID of item
-        ld      a, 0x0b
-        ld      bc, 0x0c06
-        call    displayTile
-        inc     c
-        call    displayTile
-        ld      c, 0x0a
-        call    displayTile
-        inc     c
-        call    displayTile
-        inc     c
-        call    displayTile
-        ld      c, 0x10
-        call    displayTile
-        inc     c
-        call    displayTile
+        BANK    0                       ; Bank 0 contains the tile attributes
 
-        ld      d, 0x0d                 ; Start Y position to clear
-        ld      c, 8                    ; Number of rows to clear
+        ;
+        ; Clear the text from the main menu
+        ;
+        ld      a, ID_BLANK             ; ID of tile to use
+        ld      b, 0x0d                 ; Start Y position
+        ld      e, 8                    ; Number of rows
 yLoop:
-
-        ld      e, 0x06                 ; Starting X position to clear
-        ld      b, 0x13                 ; Number of columns to clear
+        ld      c, 0x06                 ; Starting X position
+        ld      d, 0x13                 ; Number of columns
 xLoop:
-        push    bc
+        call    displayTile             ; Display the tile
+        inc     c                       ; Increment the screen X position
+        dec     d                       ; Decrement column counter
+        jr      nz, xLoop               ; and loop if not zero
 
-        ld      bc, de
-        call    displayTile
-        inc     e
+        inc     b                       ; Increment the screen Y position
+        dec     e                       ; Decrement row counter
+        jr      nz, yLoop               ; and loop if not zero
 
-        pop     bc
-        djnz    xLoop
-
-        inc     d
-        dec     c
-        jr      nz, yLoop
-
+        ;
+        ; Display screen title
+        ;
         ld      bc, 0x0d0a
         ld      hl, defineKeyMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT
         call    printAttr
 
-        screen  0                       ; Now it's setup switch to screen 0
+        ;
+        ; Underline the title
+        ;
+        ld      a, ID_PLATFORM
+        ld      bc, 0x0e0a              ; Starting screen Y/X location
+        ld      e, 11
+underline:
+        call    displayTile
+        call    setTileAttr             ; Requires attributes in BANK 0
+        inc     c                       ; Increment the X screen location
+        dec     e                       ; Decrement loop count
+        jr      nz, underline           ; and loop if not zero
+
+        screen  0                       ; Display screen 0
 
         ;
         ; Get key for left
