@@ -7,6 +7,16 @@
         defc    TITLE_MUSIC=0
         defc    MAIN_MENU_MUSIC=1
         defc    DEATH_MARCH=2
+        ;
+        ; WYZTracker AYFX Indexes
+        ;
+        defc    AYFX_JUMP=0
+        defc    AYFX_BIG_JUMP=1
+        defc    AYFX_COLLECT_COIN=2
+        defc    AYFX_COLLECT_EGG=3
+        defc    AYFX_COLLECT_HEART=4
+        defc    AYFX_FALLING=5
+        defc    AYFX_DIE=6
 
 		;
 		; Game Configuration
@@ -17,7 +27,7 @@
         defc    ROTATE_COUNT=6
 		DEFINE	ATTRIB_EDIT
 ;		DEFINE	TIMING_BORDER
-        DEFINE  MUSIC
+        DEFINE  SOUND
 
         defvars 0
         {       
@@ -32,16 +42,6 @@
         defc    SIZEOF_ptr=0x02
         defc    SIZEOF_byte=0x01
 
-		;
-		; AYFX Indexes
-		;
-        defc    AYFX_JUMP=0
-        defc    AYFX_BIG_JUMP=1
-        defc    AYFX_COLLECT_COIN=2
-        defc    AYFX_COLLECT_EGG=3
-        defc    AYFX_COLLECT_HEART=4
-        defc    AYFX_FALLING=5
-        defc    AYFX_DIE=6
 
 		;
 		; Max items per level

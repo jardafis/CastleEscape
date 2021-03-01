@@ -36,8 +36,6 @@
         extern  heartCollision
         extern  decrementEggs
         extern  _setupScreen
-        extern  AFXINIT
-        extern  AFXPLAY
         extern  detectKempston
         extern  readKempston
         extern  kjScan
@@ -50,9 +48,9 @@
         extern  updateSpiderPos
         extern  printAttr
         extern  PLAYER_INIT
-        extern  afxEnable
         extern  bank7Screen
         extern  titleScreen
+        extern  START_SOUND
 
         public  _currentTileMap
         public  _setCurrentTileMap
@@ -98,12 +96,6 @@ init:
 		;
         call    PLAYER_INIT
 
-		;
-		; Initialize the afx player
-		;
-        ld      hl, afxBank
-        call    AFXINIT
-
         ;
         ; Init ISR handling
         ;
@@ -132,9 +124,6 @@ newGame:
         ld      hl, readyMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT
         call    printAttr
-
-        ld      a, 1
-        ld      (afxEnable), a
 
         ;
         ; Patch the animate coins routine to access
@@ -358,7 +347,7 @@ smallJump:
         rrca                            ; Divide by 2 for direction change. Only works if bit 0 is 0
         ld      (jumpMidpoint), a       ; Save for compare below
         ld      a, b
-        call    AFXPLAY
+        call    START_SOUND
 cantJump:
 
         ld      a, (_jumping)
@@ -527,8 +516,6 @@ ENDIF
 
         delay   200
 
-        xor     a
-        ld      (afxEnable), a
         ret     
 
 _setCurrentTileMap:
@@ -616,8 +603,6 @@ currentBank:
         db      MEM_BANK_ROM
 
         section rodata_user
-afxBank:
-        binary  "soundbank.afb"
 readyMsg:
         db      "Ready?", 0x00
 gameOverMsg:

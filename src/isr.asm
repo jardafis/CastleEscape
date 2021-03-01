@@ -46,15 +46,9 @@ isr:
         push    ix
         push    iy
 
-IFDEF   MUSIC
-        ld      a, (INTERR)
-        and     %00000010
-        call    nz, START_SONG
+IFDEF   SOUND
+        call    START_SONG
 ENDIF   
-
-        ld      a, (afxEnable)
-        or      a
-        call    nz, AFXFRAME
 
         ;
         ; Increment the 16-bit ticks count

@@ -2,7 +2,7 @@
         extern  addBCD
         extern  displayTile
         extern  decBCD
-        extern  AFXPLAY
+        extern  START_SOUND
         extern  removeItem
 
         public  eggTables
@@ -30,7 +30,7 @@ eggCollision:
         call    display2BCD
         call    updateEggImage
         ld      a, AYFX_COLLECT_EGG
-        call    AFXPLAY
+        call    START_SOUND
         ret     
 
 updateEggImage:
