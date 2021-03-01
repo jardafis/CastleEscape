@@ -2,10 +2,10 @@
 A ZX Spectrum game written for [FUSE](https://en.wikipedia.org/wiki/Fuse_(emulator)) (but should work on a real ZX Spectrum 128K) using [Z88DK](https://en.wikipedia.org/wiki/Z88DK).
 
 ## Credits
-* Coding - [Iratahack](mailto:iratahack@digitalxfer.com)
+* Coding - [IrataHack](mailto:iratahack@digitalxfer.com)
 * Graphics - Supported by [Carnivac](https://zxart.ee/eng/authors/c/carnivac/)
 * Music - Borrowed from [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
-* Sound Effects - Created with [ayfx_improved](https://github.com/Threetwosevensixseven/ayfxedit-improved)
+* Sound Effects - Using [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
 * Levels - Designed with [Tiled](https://www.mapeditor.org/)
 
 ## Synopsis
