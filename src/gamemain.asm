@@ -26,7 +26,6 @@
         extern  checkItemCollision
         extern  coinCollision
         extern  eggCollision
-        extern  displayEggCount
         extern  eggCount
         extern  score
         extern  currentHeartTable

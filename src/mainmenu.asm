@@ -22,7 +22,6 @@
 
         public  mainMenu
         public  rotateCount
-        public  displayBorder
         public  rotateCount
         public  animateMenu
         public  waitReleaseKey
@@ -39,11 +38,11 @@
 mainMenu:
         ;
         ; Start main menu song
-        ;        pop     hl
-
+        ;
         LD      A, MAIN_MENU_MUSIC
         CALL    LOAD_SONG
 
+displayScreen:
         ;
         ; Setup the coin table for the main menu
         ;
@@ -55,7 +54,7 @@ mainMenu:
         ;
         xor     a
         ld      (rotateCount), a
-displayScreen:
+
         ;
         ; Patch the animate coins routine to access
         ; memory @ 0xc000
@@ -92,110 +91,20 @@ getKey:
         jr      z, getKey               ; If not, continue polling
 
         ld      a, '0'                  ; Force '0'
-        jr      opt0                    ; Jump to process action when '0' is pressed
+        jr      jumpPressed
 keyPressed:
         ld      hl, lanternList
         call    waitReleaseKey
-
+jumpPressed:
+        cp      '0'
+        call    z, play
         cp      '1'
-        jr      nz, opt2
-        call    defineKeys
-        jr      displayScreen
-
-opt2:
+        call    z, defineKeys
 IFDEF   ATTRIB_EDIT
         cp      '2'
-        jr      nz, opt0
-		;
-		; Page bank 0 to 0xc000 since it has the attributes
-		;
-        bank    0
-        ld      hl, _tileAttr
-        push    hl
-        ld      hl, _tile0
-        push    hl
-        screen  0
-        call    _attribEdit
-        pop     hl
-        pop     hl
-        jp      displayScreen
+        call    z, attribEdit
 ENDIF   
-opt0:
-        cp      '0'
-        jp      nz, displayScreen
-        call    PLAYER_OFF
-        call    newGame
-        jp      mainMenu
-
-displayBorder:
-        ld      hl, bannerData
-        ld      de, 0x0000              ; Starting Y/X position
-        call    displayRow
-
-        ld      hl, bannerData+0x40
-        ld      de, 0x1700              ; Starting Y/X position
-        call    displayRow
-
-        ld      b, SCREEN_HEIGHT-2
-        ld      d, 0x01                 ; Starting Y position
-sides:
-        push    bc                      ; Save the loop counter
-
-        ld      b, d                    ; Set Y position for displayTile
-
-        ld      c, 0x00
-        ld      a, 10*12                ; Left side tile ID
-        call    displayTile             ; Display the tile
-        ld      a, BORDER_COLOR
-        call    setAttr                 ; Set the attribute for the tile
-
-        ld      c, SCREEN_WIDTH-1
-        ld      a, 10*12+5              ; Right side tile ID
-        call    displayTile             ; Display the tile
-        ld      a, BORDER_COLOR
-        call    setAttr                 ; Set the attribute for the tile
-
-        inc     d                       ; Increment Y screen position
-
-        pop     bc                      ; Restore the loop counter
-        djnz    sides
-
-        ret     
-
-		;
-		; Display a row of tile data
-		;
-		;	Entry:
-		;		hl - Pointer to tile data
-		;		b  - Start screen Y position
-		;		c  - Start screen X position
-		;
-displayRow:
-        push    af
-        push    bc
-        push    de
-        push    hl
-
-        ld      b, SCREEN_WIDTH
-display:
-        push    bc
-
-        ld      a, (hl)                 ; Get the tile ID
-        inc     hl                      ; Point to next tile ID
-        ld      bc, de                  ; Set Y/X position for displayTile
-        call    displayTile             ; Display the tile
-        ld      a, BORDER_COLOR
-        call    setAttr                 ; Set the attribute for the tile
-        inc     e                       ; Increment X screen position
-
-        pop     bc
-        djnz    display
-
-        pop     hl
-        pop     de
-        pop     bc
-        pop     af
-        ret     
+        jp      displayScreen
 
         ;
         ; Animate the menu items.
@@ -241,6 +150,49 @@ releaseKey:
         pop     af
         ret     
 
+        ;
+        ; Wrapper to call attribute edit function in 'C'
+        ;
+        ;   Notes:
+        ;       'af' is preserved.
+attribEdit:
+        push    af
+        ;
+        ; Page bank 0 to 0xc000 since it has the attributes
+        ;
+        bank    0
+        screen  0
+
+        ld      hl, _tileAttr
+        push    hl
+        ld      hl, _tile0
+        push    hl
+        call    _attribEdit
+        pop     hl
+        pop     hl
+
+        pop     af
+        ret     
+
+        ;
+        ; Stop menu music and start a new game. Upon return
+        ; restart menu music.
+        ;
+        ;   Notes:
+        ;       'af' is preserved.
+play:
+        push    af
+
+        call    PLAYER_OFF
+
+        call    newGame
+
+        LD      A, MAIN_MENU_MUSIC
+        CALL    LOAD_SONG
+
+        pop     af
+        ret     
+
         section bss_user
 
         ;
@@ -250,7 +202,6 @@ rotateCount:
         ds      1
 
         section rodata_user
-
         ;
         ; List of lanterns on the main menu
         ;
