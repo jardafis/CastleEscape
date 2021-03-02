@@ -5,6 +5,7 @@
         public  incBCD
         public  decBCD
         public  display2BCD
+        public  displayBCD
 
         include "defs.inc"
         section code_user

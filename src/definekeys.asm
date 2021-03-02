@@ -29,7 +29,7 @@ defineKeys:
         ; Patch the animate coins routine to access
         ; memory @ 0x4000 (screen 0)
         ;
-        ld      hl, NOP_OPCODE << 8 | NOP_OPCODE
+        ld      hl, NOP_OPCODE<<8|NOP_OPCODE
         ld      (bank7Screen), hl
 
         ;
