@@ -26,7 +26,6 @@ eggCollision:
         ld      l, 0x10
         ld      de, eggCount
         call    addBCD
-        ld      bc, 0x0119              ; Y/X screen location
         call    displayEggCount
         ld      a, AYFX_COLLECT_EGG
         call    START_SOUND
@@ -58,7 +57,6 @@ decrementEggs:
 
         ld      de, eggCount
         call    decBCD
-        ld      bc, 0x0119              ; Y/X screen location
         call    displayEggCount
 
         pop     hl
@@ -74,6 +72,7 @@ skip:
         ret     
 
 displayEggCount:
+        ld      bc, 0x0119              ; Y/X screen location
         ld      a, (eggCount)
         rrca    
         rrca    

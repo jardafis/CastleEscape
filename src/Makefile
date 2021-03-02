@@ -26,14 +26,14 @@ OBJECTS =	$(patsubst %.c,%.o,$(wildcard *.c)) \
 			sprite/RightSprite.o
 
 all: $(PROJ_NAME).tap
-	@grep __code_user_ $(PROJ_NAME).map | awk '{print $$1 "\t = " $$3}'
-	@grep __data_user_ $(PROJ_NAME).map | awk '{print $$1 "\t = " $$3}'
-	@grep __rodata_user_ $(PROJ_NAME).map | awk '{print $$1 "\t = " $$3}'
-	@grep __bss_user_ $(PROJ_NAME).map | awk '{print $$1 "\t = " $$3}'
-	@grep __BANK_0_ $(PROJ_NAME).map | awk '{print $$1 "\t = " $$3}'
-	@grep __BANK_5_ $(PROJ_NAME).map | awk '{print $$1 "\t = " $$3}'
-	@grep __BANK_7_ $(PROJ_NAME).map | awk '{print $$1 "\t = " $$3}'
-	@grep __BSS_UNINITIALIZED_tail $(PROJ_NAME).map | awk '{print $$1 "\t = " $$3}'
+	@grep __code_user_ $(PROJ_NAME).map | 	awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep __data_user_ $(PROJ_NAME).map | 	awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep __rodata_user_ $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep __bss_user_ $(PROJ_NAME).map | 	awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep __BANK_0_ $(PROJ_NAME).map | 		awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep __BANK_5_ $(PROJ_NAME).map | 		awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep __BANK_7_ $(PROJ_NAME).map | 		awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep __BSS_UNINITIALIZED_tail $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
 
 %.o: %.c $(PRAGMA_FILE) Makefile
 	$(CC) $(CFLAGS) -o $@ $<
@@ -54,7 +54,7 @@ run: all
 	fuse.exe $(PROJ_NAME).tap
 
 BANK ?= CODE
-HEAD=$(shell grep __$(BANK)_head *.map | awk '{print $$3}' | sed -e 's/^\$$/0x/g')
+HEAD=$(shell grep __$(BANK)_head *.map | awk '{gsub("^.", "0x", $$3); print $$3}')
 
 dis: all
 	z88dk-dis -o $(HEAD) -x $(PROJ_NAME).map $(PROJ_NAME)_$(BANK).bin | less

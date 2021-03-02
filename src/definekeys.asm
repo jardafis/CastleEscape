@@ -21,6 +21,7 @@
         include "defs.inc"
 
 defineKeys:
+        push    af
         ;
         ; Setup the screen
         ;
@@ -134,7 +135,7 @@ waitJumpRelease:
         and     JUMP
         jr      nz, waitJumpRelease
 
-
+        pop     af
         ret     
 
         ;

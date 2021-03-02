@@ -78,7 +78,6 @@ _setupScreen:
         ld      hl, (currentHeartTable)
         call    displayItems
 
-        ld      bc, 0x0119              ; Y/X screen location
         call    displayEggCount
 
         ld      bc, 0x011d              ; y,x screen location

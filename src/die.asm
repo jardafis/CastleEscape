@@ -7,6 +7,7 @@
         extern  xyStartPos
         extern  _jumping
         extern  _ySpeed
+        extern  _falling
         extern  LOAD_SONG
         extern  AFXSTOP
 
@@ -70,6 +71,7 @@ delayLoop:
         xor     a
         ld      (_jumping), a
         ld      (_ySpeed), a
+        ld      (_falling), a
 
         pop     hl
         pop     de
