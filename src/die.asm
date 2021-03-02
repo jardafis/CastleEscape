@@ -7,8 +7,8 @@
         extern  xyStartPos
         extern  _jumping
         extern  _ySpeed
+        extern  _falling
         extern  LOAD_SONG
-        extern  afxEnable
         extern  AFXSTOP
 
         public  die
@@ -35,14 +35,10 @@ die:
         ex      de, hl
         call    display2BCD
 
-        xor     a
-        ld      (afxEnable), a
-        call    AFXSTOP
-
         ;
         ; Start the title song
         ;
-        LD      A, DEATH
+        LD      A, DEATH_MARCH
         CALL    LOAD_SONG
 
         ;
@@ -61,9 +57,6 @@ delayLoop:
         ;
         border  INK_BLACK
 
-        ld      a, 1
-        ld      (afxEnable), a
-
 		;
 		; If the heart count is zero, game over!
 		;
@@ -78,6 +71,7 @@ delayLoop:
         xor     a
         ld      (_jumping), a
         ld      (_ySpeed), a
+        ld      (_falling), a
 
         pop     hl
         pop     de

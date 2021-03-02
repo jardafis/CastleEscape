@@ -1,13 +1,19 @@
-        extern  _cls
-        extern  displayBorder
-        extern  waitKey
-        extern  print
         extern  printAttr
         extern  pressJumpMsg
         extern  _updateDirection
         extern  lookupScanCode
         extern  scanCodes
         extern  setAttr
+        extern  displayTile
+        extern  _lanternFlicker
+        extern  rotateCount
+        extern  _animateCoins
+        extern  keyboardScan
+        extern  bank7Screen
+        extern  animateMenu
+        extern  waitReleaseKey
+        extern  setTileAttr
+        extern  __BANK_7_head
 
         public  defineKeys
 
@@ -15,25 +21,74 @@
         include "defs.inc"
 
 defineKeys:
+        push    af
         ;
         ; Setup the screen
         ;
-        ld      l, INK_WHITE|PAPER_BLACK
-        call    _cls
 
-        call    displayBorder
+        ;
+        ; Patch the animate coins routine to access
+        ; memory @ 0x4000 (screen 0)
+        ;
+        ld      hl, NOP_OPCODE<<8|NOP_OPCODE
+        ld      (bank7Screen), hl
 
-        ld      bc, 0x040a
+        ;
+        ; Copy screen 1 to screen 0
+        ;
+        ld      de, SCREEN_START        ; Destination address
+        ld      hl, __BANK_7_head       ; Source address, bank 7 must be mapped
+        ld      bc, SCREEN_LENGTH+SCREEN_ATTR_LENGTH
+        ldir                            ; Copy
+
+        BANK    0                       ; Bank 0 contains the tile attributes
+
+        ;
+        ; Clear the text from the main menu
+        ;
+        ld      a, ID_BLANK             ; ID of tile to use
+        ld      b, 0x0d                 ; Start Y position
+        ld      e, 8                    ; Number of rows
+yLoop:
+        ld      c, 0x06                 ; Starting X position
+        ld      d, 0x13                 ; Number of columns
+xLoop:
+        call    displayTile             ; Display the tile
+        inc     c                       ; Increment the screen X position
+        dec     d                       ; Decrement column counter
+        jr      nz, xLoop               ; and loop if not zero
+
+        inc     b                       ; Increment the screen Y position
+        dec     e                       ; Decrement row counter
+        jr      nz, yLoop               ; and loop if not zero
+
+        ;
+        ; Display screen title
+        ;
+        ld      bc, 0x0d0a
         ld      hl, defineKeyMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT
         call    printAttr
 
-        screen  0                       ; Now it's setup switch to screen 0
+        ;
+        ; Underline the title
+        ;
+        ld      a, ID_PLATFORM
+        ld      bc, 0x0e0a              ; Starting screen Y/X location
+        ld      e, 11
+underline:
+        call    displayTile
+        call    setTileAttr             ; Requires attributes in BANK 0
+        inc     c                       ; Increment the X screen location
+        dec     e                       ; Decrement loop count
+        jr      nz, underline           ; and loop if not zero
+
+        screen  0                       ; Display screen 0
 
         ;
         ; Get key for left
         ;
-        ld      bc, 0x070a
+        ld      bc, 0x0f0a
         ld      hl, leftMsg
         call    getInput
         ld      (scanCodes), de
@@ -41,7 +96,7 @@ defineKeys:
         ;
         ; Get key for right
         ;
-        ld      bc, 0x090a
+        ld      bc, 0x110a
         ld      hl, rightMsg
         call    getInput
         ld      (scanCodes+3), de
@@ -49,7 +104,7 @@ defineKeys:
         ;
         ; Get key for jump
         ;
-        ld      bc, 0x0b0a
+        ld      bc, 0x130a
         ld      hl, jumpMsg
         call    getInput
         ld      (scanCodes+6), de
@@ -63,11 +118,24 @@ defineKeys:
         call    printAttr
 
 waitJump:
+        ld      hl, lanternList
+        call    animateMenu
+
         call    _updateDirection
         ld      a, e
         and     JUMP
         jr      z, waitJump
 
+waitJumpRelease:
+        ld      hl, lanternList
+        call    animateMenu
+
+        call    _updateDirection
+        ld      a, e
+        and     JUMP
+        jr      nz, waitJumpRelease
+
+        pop     af
         ret     
 
         ;
@@ -82,12 +150,25 @@ waitJump:
         ;   Output:
         ;       de - Scan code for the key pressed
 getInput:
-        call    print
+        ld      a, PAPER_BLACK|INK_WHITE
+        call    printAttr
         ld      a, PAPER_BLACK|INK_GREEN|BRIGHT|FLASH
         call    setAttr
 
-        call    waitKey
+        push    bc
+getKey:
+        ld      hl, lanternList
+        call    animateMenu
+
+        call    keyboardScan            ; Read the keyboard
+        or      a                       ; If a key has been pressed
+        jr      z, getKey               ; jump to process it.
         ld      (key), a
+
+        ld      hl, lanternList
+        call    waitReleaseKey
+
+        pop     bc
 
         cp      0x20
         jr      nz, notSpace
@@ -111,9 +192,19 @@ printKey:
 
         section bss_user
 key:
-        db      " ", 0x00
+        ds      2
 
         section rodata_user
+        ;
+        ; List of lanterns on the this menu
+        ;
+lanternList:
+        db      4
+        dw      SCREEN_ATTR_START+(7*32)+12
+        dw      SCREEN_ATTR_START+(7*32)+13
+        dw      SCREEN_ATTR_START+(7*32)+18
+        dw      SCREEN_ATTR_START+(7*32)+19
+
 defineKeyMsg:
         db      "Define Keys", 0x00
 leftMsg:

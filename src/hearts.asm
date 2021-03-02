@@ -1,6 +1,6 @@
         extern  addBCD
         extern  display2BCD
-        extern  AFXPLAY
+        extern  START_SOUND
         extern  removeItem
 
         public  heartCount
@@ -25,15 +25,15 @@ heartCollision:
         ld      hl, heartCount          ; Point to 1000's/100's of score
         call    display2BCD
         ld      a, AYFX_COLLECT_HEART
-        call    AFXPLAY
+        call    START_SOUND
         ret     
 
         section bss_user
 heartCount:                             ; BCD
-        dw      0x0000
+        ds      2
 
 currentHeartTable:
-        dw      0
+        ds      2
 
 heartTables:
         ds      MAX_LEVEL_X*MAX_LEVEL_Y*SIZEOF_ptr

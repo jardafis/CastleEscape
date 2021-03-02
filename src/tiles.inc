@@ -539,36 +539,36 @@ _tile59:
         defb    0
         defb    0
 _tile60:
-        defb    24
-        defb    36
-        defb    36
-        defb    66
-        defb    66
-        defb    66
-        defb    60
+        defb    0
+        defb    0
+        defb    0
+        defb    0
+        defb    0
+        defb    0
+        defb    44
         defb    0
 _tile61:
-        defb    24
-        defb    36
-        defb    36
-        defb    66
+        defb    0
+        defb    0
+        defb    0
+        defb    0
         defb    66
         defb    118
         defb    60
         defb    0
 _tile62:
-        defb    24
-        defb    36
-        defb    36
+        defb    0
+        defb    0
+        defb    0
         defb    66
         defb    122
         defb    118
         defb    60
         defb    0
 _tile63:
-        defb    24
+        defb    0
         defb    36
-        defb    36
+        defb    60
         defb    94
         defb    122
         defb    118
@@ -576,7 +576,7 @@ _tile63:
         defb    0
 _tile64:
         defb    24
-        defb    36
+        defb    52
         defb    60
         defb    94
         defb    122

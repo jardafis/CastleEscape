@@ -3,7 +3,7 @@
         extern  addBCD
         extern  _displayScore
         extern  score
-        extern  AFXPLAY
+        extern  START_SOUND
         extern  removeItem
 
         public  _animateCoins
@@ -128,13 +128,13 @@ coinCollision:
         call    addBCD
         call    _displayScore
         ld      a, AYFX_COLLECT_COIN
-        call    AFXPLAY
+        call    START_SOUND
         ret     
 
         section bss_user
 
 currentCoinTable:
-        dw      0
+        ds      2
 
 _coinTables:
         ds      MAX_LEVEL_X*MAX_LEVEL_Y*SIZEOF_ptr

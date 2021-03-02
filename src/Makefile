@@ -16,7 +16,7 @@ ASMDEPS=	\
 
 C_OPT_FLAGS=-SO3
 
-CFLAGS=+$(TARGET) $(C_OPT_FLAGS) --codesegcode_user --constseg$(RODATA) -compiler=sdcc -I$(Z88DK)/include/_DEVELOPMENT/sdcc -c -pragma-include:$(PRAGMA_FILE)
+CFLAGS=+$(TARGET) $(C_OPT_FLAGS) --codesegBANK_5 --constseg$(RODATA) -compiler=sdcc -I$(Z88DK)/include/_DEVELOPMENT/sdcc -c -pragma-include:$(PRAGMA_FILE)
 LDFLAGS=+$(TARGET) --codesegcode_user --constseg$(RODATA) -m -clib=sdcc_iy -pragma-include:$(PRAGMA_FILE) -Cz"--clearaddr 32767 --screen title.scr --exclude-sections bss_user"
 ASFLAGS=-I$(Z88DK)/lib
 
@@ -26,14 +26,14 @@ OBJECTS =	$(patsubst %.c,%.o,$(wildcard *.c)) \
 			sprite/RightSprite.o
 
 all: $(PROJ_NAME).tap
-	@grep __code_user_size $(PROJ_NAME).map | sed -e "s/;.*//"
-	@grep __data_user_size $(PROJ_NAME).map | sed -e "s/;.*//"
-	@grep __rodata_user_size $(PROJ_NAME).map | sed -e "s/;.*//"
-	@grep __bss_user_size $(PROJ_NAME).map | sed -e "s/;.*//"
-	@grep __BANK_0_size $(PROJ_NAME).map | sed -e "s/;.*//"
-	@grep __BANK_5_size $(PROJ_NAME).map | sed -e "s/;.*//"
-	@grep __BANK_7_size $(PROJ_NAME).map | sed -e "s/;.*//"
-	@grep __BSS_UNINITIALIZED_tail $(PROJ_NAME).map | sed -e "s/;.*//"
+	@grep __code_user_ $(PROJ_NAME).map | 	awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep __data_user_ $(PROJ_NAME).map | 	awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep __rodata_user_ $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep __bss_user_ $(PROJ_NAME).map | 	awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep __BANK_0_ $(PROJ_NAME).map | 		awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep __BANK_5_ $(PROJ_NAME).map | 		awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep __BANK_7_ $(PROJ_NAME).map | 		awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep __BSS_UNINITIALIZED_tail $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
 
 %.o: %.c $(PRAGMA_FILE) Makefile
 	$(CC) $(CFLAGS) -o $@ $<
@@ -53,5 +53,8 @@ clean:
 run: all
 	fuse.exe $(PROJ_NAME).tap
 
+BANK ?= CODE
+HEAD=$(shell grep __$(BANK)_head *.map | awk '{gsub("^.", "0x", $$3); print $$3}')
+
 dis: all
-	z88dk-dis -o 0x8184 -x $(PROJ_NAME).map $(PROJ_NAME)_CODE.bin | less
+	z88dk-dis -o $(HEAD) -x $(PROJ_NAME).map $(PROJ_NAME)_$(BANK).bin | less

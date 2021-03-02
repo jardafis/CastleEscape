@@ -22,7 +22,9 @@
 
         public  mainMenu
         public  rotateCount
-        public  displayBorder
+        public  rotateCount
+        public  animateMenu
+        public  waitReleaseKey
 
         section BANK_5
 
@@ -37,9 +39,10 @@ mainMenu:
         ;
         ; Start main menu song
         ;
-        LD      A, JINJ_MED
+        LD      A, MAIN_MENU_MUSIC
         CALL    LOAD_SONG
 
+displayScreen:
         ;
         ; Setup the coin table for the main menu
         ;
@@ -47,18 +50,18 @@ mainMenu:
         ld      (currentCoinTable), hl
 
         ;
-        ; Patch the animate coins routine to access
-        ; memory @ 0xc000
-        ;
-        ld      hl, 0xf8cb              ; set 7, b
-        ld      (bank7Screen), hl
-
-        ;
         ; Reset counter used for coin rotation
         ;
         xor     a
         ld      (rotateCount), a
-displayScreen:
+
+        ;
+        ; Patch the animate coins routine to access
+        ; memory @ 0xc000
+        ;
+        ld      hl, SET_7_B_OPCODE
+        ld      (bank7Screen), hl
+
         ;
         ; Point the ULA at screen 1
         ;
@@ -70,19 +73,8 @@ displayScreen:
         ;
         bank    7
 getKey:
-        halt    
-
         ld      hl, lanternList
-        call    _lanternFlicker
-
-        ld      hl, rotateCount
-        dec     (hl)
-        jp      p, noAnimate
-
-        ld      a, ROTATE_COUNT
-        ld      (hl), a
-        call    _animateCoins
-noAnimate:
+        call    animateMenu
 
         call    keyboardScan            ; Read the keyboard
         or      a                       ; If a key has been presses
@@ -99,107 +91,105 @@ noAnimate:
         jr      z, getKey               ; If not, continue polling
 
         ld      a, '0'                  ; Force '0'
-        jr      opt0                    ; Jump to process action when '0' is pressed
+        jr      jumpPressed
 keyPressed:
-        call    waitKey
-
+        ld      hl, lanternList
+        call    waitReleaseKey
+jumpPressed:
+        cp      '0'
+        call    z, play
         cp      '1'
-        jr      nz, opt2
-        call    defineKeys
-        jr      displayScreen
-
-opt2:
+        call    z, defineKeys
 IFDEF   ATTRIB_EDIT
         cp      '2'
-        jr      nz, opt0
-		;
-		; Page bank 0 to 0xc000 since it has the attributes
-		;
+        call    z, attribEdit
+ENDIF   
+        jp      displayScreen
+
+        ;
+        ; Animate the menu items.
+        ;
+        ;   Input:
+        ;       hl - Pointer to lantern list
+        ;
+        ;   Notes:
+        ;       'hl' is preserved.
+        ;
+animateMenu:
+        push    hl
+        halt    
+
+        call    _lanternFlicker
+
+        ld      hl, rotateCount
+        dec     (hl)
+        jp      p, noRotate
+
+        ld      a, ROTATE_COUNT
+        ld      (hl), a
+        call    _animateCoins
+noRotate:
+        pop     hl
+        ret     
+
+        ;
+        ; Wait for a key to be released and animate the menu items.
+        ;
+        ;   Input:
+        ;       hl - Pointer to the lantern list
+        ;
+        ;   Notes:
+        ;       'af' is preserved.
+waitReleaseKey:
+        push    af
+releaseKey:
+        call    animateMenu
+        call    keyboardScan            ; Read the keyboard
+        or      a                       ; If a key is pressed
+        jr      nz, releaseKey          ; continue looping
+        pop     af
+        ret     
+
+        ;
+        ; Wrapper to call attribute edit function in 'C'
+        ;
+        ;   Notes:
+        ;       'af' is preserved.
+attribEdit:
+        push    af
+        ;
+        ; Page bank 0 to 0xc000 since it has the attributes
+        ;
         bank    0
+        screen  0
+
         ld      hl, _tileAttr
         push    hl
         ld      hl, _tile0
         push    hl
-        screen  0
         call    _attribEdit
         pop     hl
         pop     hl
-        jp      displayScreen
-ENDIF   
-opt0:
-        cp      '0'
-        jp      nz, displayScreen
-        call    PLAYER_OFF
-        call    newGame
-        jp      mainMenu
 
-displayBorder:
-        ld      hl, bannerData
-        ld      de, 0x0000              ; Starting Y/X position
-        call    displayRow
-
-        ld      hl, bannerData+0x40
-        ld      de, 0x1700              ; Starting Y/X position
-        call    displayRow
-
-        ld      b, SCREEN_HEIGHT-2
-        ld      d, 0x01                 ; Starting Y position
-sides:
-        push    bc                      ; Save the loop counter
-
-        ld      b, d                    ; Set Y position for displayTile
-
-        ld      c, 0x00
-        ld      a, 10*12                ; Left side tile ID
-        call    displayTile             ; Display the tile
-        ld      a, BORDER_COLOR
-        call    setAttr                 ; Set the attribute for the tile
-
-        ld      c, SCREEN_WIDTH-1
-        ld      a, 10*12+5              ; Right side tile ID
-        call    displayTile             ; Display the tile
-        ld      a, BORDER_COLOR
-        call    setAttr                 ; Set the attribute for the tile
-
-        inc     d                       ; Increment Y screen position
-
-        pop     bc                      ; Restore the loop counter
-        djnz    sides
-
+        pop     af
         ret     
 
-		;
-		; Display a row of tile data
-		;
-		;	Entry:
-		;		hl - Pointer to tile data
-		;		b  - Start screen Y position
-		;		c  - Start screen X position
-		;
-displayRow:
+        ;
+        ; Stop menu music and start a new game. Upon return
+        ; restart menu music.
+        ;
+        ;   Notes:
+        ;       'af' is preserved.
+play:
         push    af
-        push    bc
-        push    de
-        push    hl
 
-        ld      b, SCREEN_WIDTH
-display:
-        push    bc
+        call    PLAYER_OFF
 
-        ld      a, (hl)                 ; Get the tile ID
-        inc     hl                      ; Point to next tile ID
-        ld      bc, de                  ; Set Y/X position for displayTile
-        call    displayTile             ; Display the tile
-        ld      a, BORDER_COLOR
-        call    setAttr                 ; Set the attribute for the tile
-        inc     e                       ; Increment X screen position
+        call    newGame
 
-        pop     bc
-        djnz    display
+        LD      A, MAIN_MENU_MUSIC
+        CALL    LOAD_SONG
 
-        pop     hl
-        pop     de
-        pop     bc
         pop     af
         ret     
 
@@ -212,7 +202,6 @@ rotateCount:
         ds      1
 
         section rodata_user
-
         ;
         ; List of lanterns on the main menu
         ;
@@ -232,5 +221,3 @@ coinTable:
         db      0x01, 0x17*8, 0x06*8, 0x01
         db      0x01, 0x18*8, 0x08*8, 0x02
         db      0xff
-
-dummy:  db      "Press any key to return", 0x00

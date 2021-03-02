@@ -17,7 +17,8 @@
 ;______________________________________________________
 
 
-START_SONG: CALL    ROUT
+START_SONG:
+        CALL    ROUT
 
         LD      HL, PSG_REG
         LD      DE, PSG_REG_SEC
@@ -154,7 +155,7 @@ LOUT:   OUT     (C), A
 
 ;INICIA EL SONIDO N� (A)
 
-INICIA_SONIDO:                          ;CP	8		;SFX SPEECH
+START_SOUND:                          ;CP	8		;SFX SPEECH
 		;JP	Z,SLOOP		;
 
         LD      HL, TABLA_SONIDOS
@@ -242,11 +243,10 @@ DECODE_SONG:
         INC     DE                      ;LOOP 1=ON/0=OFF?
         LD      A, (DE)
         BIT     0, A
-        JR      Z, NPTJP0
         LD      HL, INTERR
-        SET     4, (HL)
-
-
+        RES     4, (HL)                 ; Reset loop bit by default
+        JR      Z, NPTJP0
+        SET     4, (HL)                 ; Set loop bit
 
 ;SELECCION DEL CANAL DE EFECTOS DE RITMO
 
@@ -600,7 +600,7 @@ COM_EFECTO:
         INC     HL
         LD      (IX+PUNTERO_A-PUNTERO_A), L
         LD      (IX+PUNTERO_A-PUNTERO_A+1), H
-        JP      INICIA_SONIDO
+        JP      START_SOUND
 
 COM_ENVOLVENTE:
         BIT     2, A
@@ -715,7 +715,7 @@ LOCALIZA_EFECTO:
         INC     HL
         LD      (IX+00), L
         LD      (IX+01), H
-        JP      INICIA_SONIDO
+        JP      START_SOUND
 
 
 LEJP0:  INC     HL
@@ -961,6 +961,7 @@ EXT_WORD:
         LD      D, (HL)
         RET     
 
+        section rodata_user
 ;TABLA DE DATOS DEL SELECTOR DEL CANAL DE EFECTOS DE RITMO
 
 TABLA_DATOS_CANAL_SFX:
@@ -987,6 +988,7 @@ SELECT_CANAL_C:
 
 
 ;____________________________________
+        section bss_user
 
 
 INTERR: DB      0                       ;INTERRUPTORES 1=ON 0=OFF

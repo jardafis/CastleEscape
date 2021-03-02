@@ -1,8 +1,8 @@
-        extern  display2BCD
+        extern  displayBCD
         extern  addBCD
         extern  displayTile
         extern  decBCD
-        extern  AFXPLAY
+        extern  START_SOUND
         extern  removeItem
 
         public  eggTables
@@ -12,6 +12,7 @@
         public  eggCount
         public  updateEggImage
         public  decrementEggs
+        public  displayEggCount
 
         include "defs.inc"
 
@@ -25,12 +26,9 @@ eggCollision:
         ld      l, 0x10
         ld      de, eggCount
         call    addBCD
-        ld      bc, 0x011a              ; y,x screen location
-        ld      hl, eggCount            ; Point to eggCount
-        call    display2BCD
-        call    updateEggImage
+        call    displayEggCount
         ld      a, AYFX_COLLECT_EGG
-        call    AFXPLAY
+        call    START_SOUND
         ret     
 
 updateEggImage:
@@ -38,7 +36,7 @@ updateEggImage:
         rrca                            ; divide by 2
         and     %00000111
         add     ID_EGG0
-        ld      bc, 0x0119
+        ld      bc, 0x011a
         call    displayTile
         ret     
 
@@ -59,10 +57,7 @@ decrementEggs:
 
         ld      de, eggCount
         call    decBCD
-        ld      bc, 0x011a              ; x,y screen location
-        ld      hl, eggCount            ; Point to eggCount
-        call    display2BCD
-        call    updateEggImage
+        call    displayEggCount
 
         pop     hl
         pop     de
@@ -76,14 +71,26 @@ skip:
         pop     af
         ret     
 
+displayEggCount:
+        ld      bc, 0x0119              ; Y/X screen location
+        ld      a, (eggCount)
+        rrca    
+        rrca    
+        rrca    
+        rrca    
+        and     %00001111
+        call    displayBCD
+        call    updateEggImage
+        ret     
+
         section bss_user
 counter:
-        db      0
+        ds      1
 eggCount:                               ; BCD
-        dw      0x0000
+        ds      2
 
 currentEggTable:
-        dw      0
+        ds      2
 
 eggTables:
         ds      MAX_LEVEL_X*MAX_LEVEL_Y*SIZEOF_ptr

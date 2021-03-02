@@ -21,12 +21,13 @@
         extern  currentSpiderTable
         extern  xyPos
         extern  xyStartPos
+        extern  displayEggCount
 
         public  _setupScreen
 
         include "defs.inc"
 
-        section code_user
+        section BANK_5
 
         ;
         ; Display the current level and any uncollected items.
@@ -77,9 +78,7 @@ _setupScreen:
         ld      hl, (currentHeartTable)
         call    displayItems
 
-        ld      bc, 0x011a              ; y,x screen location
-        ld      hl, eggCount            ; Point to 10's/1's
-        call    display2BCD
+        call    displayEggCount
 
         ld      bc, 0x011d              ; y,x screen location
         ld      hl, heartCount          ; Point to 10's/1's
@@ -88,8 +87,6 @@ _setupScreen:
         call    _displayScore
 
         call    _scrollReset
-
-        call    updateEggImage
 
 		; Save the location where the player entered
 		; the level. This is used as the starting

@@ -601,6 +601,6 @@ removeItem:
         }       
 
 currentItemTable:
-        dw      0
+        ds      2
 
 

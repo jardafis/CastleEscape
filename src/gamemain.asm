@@ -26,7 +26,6 @@
         extern  checkItemCollision
         extern  coinCollision
         extern  eggCollision
-        extern  displayEggCount
         extern  eggCount
         extern  score
         extern  currentHeartTable
@@ -36,8 +35,6 @@
         extern  heartCollision
         extern  decrementEggs
         extern  _setupScreen
-        extern  AFXINIT
-        extern  AFXPLAY
         extern  detectKempston
         extern  readKempston
         extern  kjScan
@@ -50,11 +47,9 @@
         extern  updateSpiderPos
         extern  printAttr
         extern  PLAYER_INIT
-        extern  afxEnable
         extern  bank7Screen
         extern  titleScreen
-        extern  __bss_user_head
-        extern  __bss_user_size
+        extern  START_SOUND
 
         public  _currentTileMap
         public  _setCurrentTileMap
@@ -95,26 +90,10 @@ _main:
 init:
         border  INK_BLACK
 
-        ;
-        ; Zero the BSS section
-        ;
-        ld      bc, __bss_user_size-1
-        ld      hl, __bss_user_head     ; Src address
-        ld      de, __bss_user_head+1   ; Dest address
-        xor     a
-        ld      (hl), a
-        ldir    
-
 		;
 		; Initialize the WYZ Player
 		;
         call    PLAYER_INIT
-
-		;
-		; Initialize the afx player
-		;
-        ld      hl, afxBank
-        call    AFXINIT
 
         ;
         ; Init ISR handling
@@ -145,14 +124,11 @@ newGame:
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT
         call    printAttr
 
-        ld      a, 1
-        ld      (afxEnable), a
-
         ;
         ; Patch the animate coins routine to access
         ; the screen memory at 0x4000
         ;
-        ld      hl, 0x0000              ; nop, nop
+        ld      hl, NOP_OPCODE<<8|NOP_OPCODE
         ld      (bank7Screen), hl
 
         ;
@@ -370,7 +346,7 @@ smallJump:
         rrca                            ; Divide by 2 for direction change. Only works if bit 0 is 0
         ld      (jumpMidpoint), a       ; Save for compare below
         ld      a, b
-        call    AFXPLAY
+        call    START_SOUND
 cantJump:
 
         ld      a, (_jumping)
@@ -539,8 +515,6 @@ ENDIF
 
         delay   200
 
-        xor     a
-        ld      (afxEnable), a
         ret     
 
 _setCurrentTileMap:
@@ -597,27 +571,27 @@ mulDone:
 
         section bss_user
 coinRotate:
-        db      0
+        ds      1
 _currentTileMap:
-        dw      0
+        ds      2
 _tileMapX:
-        db      0
+        ds      1
 _tileMapY:
-        db      0
+        ds      1
 xyPos:
 _xPos:
-        db      0
+        ds      1
 _yPos:
-        db      0
+        ds      1
 _xSpeed:
-        db      0
+        ds      1
 _ySpeed:
-        db      0
+        ds      1
 jumpFall:                               ; Access jumping and falling as a single word
 _jumping:
-        db      0
+        ds      1
 _falling:
-        db      0
+        ds      1
 xyStartPos:                             ; Position where player entered the level
         ds      2
 _spriteBuffer:
@@ -628,8 +602,6 @@ currentBank:
         db      MEM_BANK_ROM
 
         section rodata_user
-afxBank:
-        binary  "soundbank.afb"
 readyMsg:
         db      "Ready?", 0x00
 gameOverMsg:
