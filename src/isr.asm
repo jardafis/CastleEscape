@@ -19,8 +19,7 @@ _initISR:
         ld      bc, 0x100               ; bytes of the vector table
         ld      hl, VECTOR_TABLE        ; Get vector table address
         ld      de, VECTOR_TABLE+1
-        ld      a, JUMP_ADDR_BYTE       ; High order byte of jump adress
-        ld      (hl), a                 ; Store JUMP_ADDR in first byte of vector table
+        ld      (hl), JUMP_ADDR_BYTE    ; Store JUMP_ADDR in first byte of vector table
         ldir    
 
         ld      a, JP_OPCODE            ; Store the opcode for JP

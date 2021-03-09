@@ -97,7 +97,6 @@ underline:
         ; Get key for right
         ;
         ld      bc, 0x110a
-        ld      hl, rightMsg
         call    getInput
         ld      (scanCodes+3), de
 
@@ -105,7 +104,6 @@ underline:
         ; Get key for jump
         ;
         ld      bc, 0x130a
-        ld      hl, jumpMsg
         call    getInput
         ld      (scanCodes+6), de
 
@@ -152,6 +150,8 @@ waitJumpRelease:
 getInput:
         ld      a, PAPER_BLACK|INK_WHITE
         call    printAttr
+        push    hl
+
         ld      a, PAPER_BLACK|INK_GREEN|BRIGHT|FLASH
         call    setAttr
 
@@ -188,6 +188,7 @@ printKey:
 
         ld      a, (key)
         call    lookupScanCode
+        pop     hl
         ret     
 
         section bss_user

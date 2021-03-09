@@ -582,8 +582,7 @@ notVisible3:
 		;		c  - screen x character position
 		;
 removeItem:
-        xor     a                       ; Zero flags
-        ld      (hl), a                 ; Save in item table
+        ld      (hl), 0                 ; Zero flags and save in item table
         call    clearAttr               ; Remove the item and attribute
         ld      a, ID_BLANK
         call    displayTile

@@ -146,7 +146,12 @@ subBCD:
         ld      a, (de)                 ; Get low byte of BCD value
         sbc     l                       ; Add the BCD value passed in
         daa                             ; Adjust result for BCD
+cheat:
+IFNDEF  CHEAT
         ld      (de), a                 ; Save the updated BCD value
+ELSE
+        nop                             ; Cheat enabled, do not update
+ENDIF
         jr      nc, subBCDDone          ; If nc, no wraparound
 
         inc     de                      ; There was a wraparound
