@@ -441,7 +441,7 @@ ENDIF
         ld      hl, coinRotate
         dec     (hl)
         jp      p, noAnimate
-        ld      (hl), ROTATE_COUNT/2       ; Reset rotate counter
+        ld      (hl), ROTATE_COUNT/2    ; Reset rotate counter
         call    _animateCoins
 noAnimate:
 

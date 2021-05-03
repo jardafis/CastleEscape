@@ -149,9 +149,9 @@ subBCD:
 cheat:
 IFNDEF  CHEAT
         ld      (de), a                 ; Save the updated BCD value
-ELSE
+ELSE    
         nop                             ; Cheat enabled, do not update
-ENDIF
+ENDIF   
         jr      nc, subBCDDone          ; If nc, no wraparound
 
         inc     de                      ; There was a wraparound
