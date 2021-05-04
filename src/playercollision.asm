@@ -18,7 +18,7 @@
         section code_user
 
         defc    ID_SOLID_TILE=144
-        defc    ID_SOFT_TILE=139
+        defc    ID_SOFT_TILE=135
         defc    FALL_DISTANCE=33
 
         ;

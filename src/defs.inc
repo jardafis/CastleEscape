@@ -28,6 +28,7 @@
 		DEFINE	ATTRIB_EDIT
 ;		DEFINE	TIMING_BORDER
         DEFINE  SOUND
+;        DEFINE  CHEAT
 
         defvars 0
         {       

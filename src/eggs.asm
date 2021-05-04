@@ -41,37 +41,35 @@ updateEggImage:
         ret     
 
 decrementEggs:
-        push    af
+        push    hl
 
-        ld      a, (counter)
-        and     a
-        jr      nz, skip
+        ld      hl, counter
+        dec     (hl)
+        jp      p, skip
+        ld      (hl), 99
+
+        push    af
 
         ld      a, (eggCount)
         and     a
         jr      z, noEggs
 
-        push    bc
         push    de
-        push    hl
 
         ld      de, eggCount
         call    decBCD
         call    displayEggCount
 
-        pop     hl
         pop     de
-        pop     bc
 
 noEggs:
-        ld      a, 100
-skip:
-        dec     a
-        ld      (counter), a
         pop     af
+skip:
+        pop     hl
         ret     
 
 displayEggCount:
+        push    bc
         ld      bc, 0x0119              ; Y/X screen location
         ld      a, (eggCount)
         rrca    
@@ -81,6 +79,7 @@ displayEggCount:
         and     %00001111
         call    displayBCD
         call    updateEggImage
+        pop     bc
         ret     
 
         section bss_user

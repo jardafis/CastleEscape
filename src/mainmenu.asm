@@ -124,9 +124,7 @@ animateMenu:
         ld      hl, rotateCount
         dec     (hl)
         jp      p, noRotate
-
-        ld      a, ROTATE_COUNT
-        ld      (hl), a
+        ld      (hl), ROTATE_COUNT
         call    _animateCoins
 noRotate:
         pop     hl
