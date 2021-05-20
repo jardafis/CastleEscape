@@ -21,7 +21,7 @@ do
 	do
 		let tx=$x*8
 		let ty=$y*8
-		echo "$tx,$ty tile${tile}.png -> tile${tile}.h"
+		echo "Tile X=$tx,Y=$ty -> ${tileDir}/tile${tile}.h"
 		convert ${tileSheet} -colorspace Gray -threshold 1% -crop 8x8+$tx+$ty ${tileDir}/tile${tile}.png
 		convert ${tileDir}/tile${tile}.png -negate -alpha off ${tileDir}/tile${tile}.h
 		sed -i s/MagickImage/tile${tile}/ ${tileDir}/tile${tile}.h
