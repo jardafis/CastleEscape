@@ -10,12 +10,10 @@
         extern  _currentTileMap
         extern  _displayScreen
         extern  displayItems
-        extern  eggCount
         extern  display2BCD
         extern  heartCount
         extern  _displayScore
         extern  _scrollReset
-        extern  updateEggImage
         extern  displayBanner
         extern  spiderTables
         extern  currentSpiderTable

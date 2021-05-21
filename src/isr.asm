@@ -1,6 +1,3 @@
-        extern  AFXFRAME
-        extern  afxEnable
-        extern  INTERR
         extern  START_SONG
 
         public  _initISR

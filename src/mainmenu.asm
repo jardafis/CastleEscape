@@ -1,19 +1,12 @@
-        extern  bannerData
-        extern  _cls
-        extern  displayTile
-        extern  setAttr
-        extern  print
         extern  _attribEdit
         extern  _tile0
         extern  _tileAttr
-        extern  waitKey
         extern  newGame
         extern  keyboardScan
         extern  readKempston
         extern  kjPresent
         extern  LOAD_SONG
         extern  PLAYER_OFF
-        extern  afxEnable
         extern  _lanternFlicker
         extern  currentCoinTable
         extern  _animateCoins

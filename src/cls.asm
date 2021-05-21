@@ -1,4 +1,3 @@
-        extern  _screenTab
         public  _cls
         public  clearAttr
         public  setAttr

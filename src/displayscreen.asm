@@ -1,9 +1,6 @@
-        extern  _screenTab
-        extern  _tile0
         extern  _lanternList
         extern  displayTile
         extern  setTileAttr
-        extern  _tileAttr
 
         public  _displayScreen
 

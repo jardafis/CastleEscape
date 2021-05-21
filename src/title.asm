@@ -2,10 +2,8 @@
         extern  LOAD_SONG
         extern  PLAYER_OFF
         extern  _updateDirection
-        extern  _lanternFlicker
         extern  rotateCount
         extern  currentCoinTable
-        extern  _animateCoins
         extern  animateMenu
 
         public  titleScreen

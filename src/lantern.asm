@@ -1,6 +1,5 @@
         public  _lanternFlicker
         public  _lanternList
-        extern  ticks
         include "defs.inc"
 
         section code_user

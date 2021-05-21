@@ -5,9 +5,6 @@
         extern  scanCodes
         extern  setAttr
         extern  displayTile
-        extern  _lanternFlicker
-        extern  rotateCount
-        extern  _animateCoins
         extern  keyboardScan
         extern  bank7Screen
         extern  animateMenu

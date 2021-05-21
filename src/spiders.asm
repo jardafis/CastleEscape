@@ -1,4 +1,3 @@
-        extern  AFXPLAY
         extern  die
         extern  rand
         extern  _currentTileMap

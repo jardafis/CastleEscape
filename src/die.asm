@@ -2,14 +2,12 @@
         extern  subBCD
         extern  display2BCD
         extern  gameOver
-        extern  AFXPLAY
         extern  xyPos
         extern  xyStartPos
         extern  _jumping
         extern  _ySpeed
         extern  _falling
         extern  LOAD_SONG
-        extern  AFXSTOP
 
         public  die
 
