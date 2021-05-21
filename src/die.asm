@@ -50,7 +50,7 @@ delayLoop:
         ld      a, b
         and     0x07
         border  a
-        halt    
+        halt
         djnz    delayLoop
         ;
         ; Ensure border is black
@@ -77,4 +77,4 @@ delayLoop:
         pop     de
         pop     bc
         pop     af
-        ret     
+        ret

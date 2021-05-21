@@ -29,7 +29,7 @@ eggCollision:
         call    displayEggCount
         ld      a, AYFX_COLLECT_EGG
         call    START_SOUND
-        ret     
+        ret
 
 updateEggImage:
         ld      a, (eggCount)
@@ -38,7 +38,7 @@ updateEggImage:
         add     ID_EGG0
         ld      bc, 0x011a
         call    displayTile
-        ret     
+        ret
 
 decrementEggs:
         push    hl
@@ -66,21 +66,21 @@ noEggs:
         pop     af
 skip:
         pop     hl
-        ret     
+        ret
 
 displayEggCount:
         push    bc
         ld      bc, 0x0119              ; Y/X screen location
         ld      a, (eggCount)
-        rrca    
-        rrca    
-        rrca    
-        rrca    
+        rrca
+        rrca
+        rrca
+        rrca
         and     %00001111
         call    displayBCD
         call    updateEggImage
         pop     bc
-        ret     
+        ret
 
         section bss_user
 counter:

@@ -128,9 +128,9 @@ checkCollision:
         srl     c
         srl     c
 
-        rrca    
-        rrca    
-        rrca    
+        rrca
+        rrca
+        rrca
         and     %00011111
 
         ld      l, a
@@ -150,11 +150,11 @@ checkCollision:
         cp      ID_SPIDER               ; IF not blank is it a spider?
 noCollision:
         pop     hl
-        ret     
+        ret
 
 spiderCollision:
         call    die
-        ret     
+        ret
 
         section bss_user
 changeSpiderDir:

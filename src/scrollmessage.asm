@@ -63,7 +63,7 @@ clearCol:
         pop     de
         pop     bc
         pop     af
-        ret     
+        ret
 
 _scrollReset:
         push    af
@@ -79,7 +79,7 @@ _scrollReset:
 
         ax      SIZEOF_ptr
         ld      hl, messages
-        addhl   
+        addhl
 
         ld      c, (hl)
         inc     hl
@@ -112,13 +112,13 @@ _scrollReset:
 
         ld      (hl), MESSAGE_ATTR
         ld      bc, WIDTH-1
-        ldir    
+        ldir
 
         pop     hl
         pop     de
         pop     bc
         pop     af
-        ret     
+        ret
 
 _scroll:
         ; Check if we need to get the next character of the message
@@ -172,7 +172,7 @@ colLoop:
         dec     c
         jp      nz, rowLoop
 
-        ret     
+        ret
 
 getNextChar:
         ; Need to get the next character from the message
@@ -199,14 +199,14 @@ getNextChar:
         ld      de, FONT                ; Pointer to the font
         add     hl, de                  ; hl points to the font data address
         ld      de, charBuffer          ; Point to our character buffer address
-        ldi     
-        ldi     
-        ldi     
-        ldi     
-        ldi     
-        ldi     
-        ldi     
-        ldi     
+        ldi
+        ldi
+        ldi
+        ldi
+        ldi
+        ldi
+        ldi
+        ldi
         jp      shift
 
 doPadding:

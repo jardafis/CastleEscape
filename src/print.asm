@@ -43,7 +43,7 @@ L1b:
 L1f:
         pop     de
         pop     af
-        ret     
+        ret
 
 		;
 		; Display a string.
@@ -72,7 +72,7 @@ L2b:
         jr      L2b
 L2f:
         pop     af
-        ret     
+        ret
 
 printChar:
         push    af
@@ -80,7 +80,7 @@ printChar:
         push    de
         push    hl
 
-        di      
+        di
         ld      (TempSP), sp
 
         sub     ' '                     ; Font data starts at SPACE
@@ -144,10 +144,10 @@ printChar:
         ; Restore the stack pointer.
 TempSP  equ     $+1
         ld      sp, 0x0000
-        ei      
+        ei
 
         pop     hl
         pop     de
         pop     bc
         pop     af
-        ret     
+        ret

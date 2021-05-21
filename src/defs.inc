@@ -25,19 +25,19 @@
         defc    START_Y=120
         defc    START_LIVES=0x03
         defc    ROTATE_COUNT=6
-		DEFINE	ATTRIB_EDIT
+        DEFINE  ATTRIB_EDIT
 ;		DEFINE	TIMING_BORDER
         DEFINE  SOUND
 ;        DEFINE  CHEAT
 
         defvars 0
-        {       
+        {
             itemFlags   ds.b 1
             itemX       ds.b 1
             itemY       ds.b 1
             itemFrame   ds.b 1
-        SIZEOF_item 
-        }       
+        SIZEOF_item
+        }
 
         defc    SIZEOF_int=0x02
         defc    SIZEOF_ptr=0x02
@@ -47,11 +47,11 @@
 		;
 		; Max items per level
 		;
-		defc	MAX_LANTERNS=8
-		defc	MAX_HEARTS=8
-		defc	MAX_EGGS=8
-		defc	MAX_COINS=8
-		defc	MAX_SPIDERS=4
+        defc    MAX_LANTERNS=8
+        defc    MAX_HEARTS=8
+        defc    MAX_EGGS=8
+        defc    MAX_COINS=8
+        defc    MAX_SPIDERS=4
 
         ;
         ; Tilemap definitions
@@ -97,7 +97,7 @@
         defc    ID_EGG=31
         defc    ID_EGG0=5*12
         defc    ID_HEART=34
-        defc	ID_SPIDER=4*12+3
+        defc    ID_SPIDER=4*12+3
         defc    ID_PLATFORM=11*12+9
 
 
@@ -177,7 +177,7 @@ bank    MACRO   num
         out     (c), a
         pop     bc
         pop     af
-        endm    
+        ENDM
 
 screen  MACRO   num
         extern  currentBank
@@ -188,11 +188,11 @@ screen  MACRO   num
         and     %11110111
         or      num<<3
         ld      (currentBank), a
-        halt    
+        halt
         out     (c), a
         pop     bc
         pop     af
-        endm    
+        ENDM
 
         ;
         ; Multiply hl by times where times is 2, 4, 8, 16, 32, 64
@@ -200,50 +200,50 @@ screen  MACRO   num
 hlx     MACRO   times
 IF  times>=2
         add     hl, hl
-ENDIF   
+ENDIF
 IF  times>=4
         add     hl, hl
-ENDIF   
+ENDIF
 IF  times>=8
         add     hl, hl
-ENDIF   
+ENDIF
 IF  times>=16
         add     hl, hl
-ENDIF   
+ENDIF
 IF  times>=32
         add     hl, hl
-ENDIF   
+ENDIF
 IF  times>=64
         add     hl, hl
-ENDIF   
+ENDIF
 IF  times>=128
         add     hl, hl
-ENDIF   
-        endm    
+ENDIF
+        ENDM
 
 ax      MACRO   times
 IF  times>=2
         add     a
-ENDIF   
+ENDIF
 IF  times>=4
         add     a
-ENDIF   
+ENDIF
 IF  times>=8
         add     a
-ENDIF   
+ENDIF
 IF  times>=16
         add     a
-ENDIF   
+ENDIF
 IF  times>=32
         add     a
-ENDIF   
+ENDIF
 IF  times>=64
         add     a
-ENDIF   
+ENDIF
 IF  times>=128
         add     a
-ENDIF   
-        endm    
+ENDIF
+        ENDM
 
 entry   MACRO   
         push    af
@@ -253,7 +253,7 @@ entry   MACRO
         push    ix
         ld      ix, 12                  ; the 6 pushes above plus return address
         add     ix, sp
-        endm    
+        ENDM
 
 exit    MACRO   
         pop     ix
@@ -261,7 +261,7 @@ exit    MACRO
         pop     de
         pop     bc
         pop     af
-        endm    
+        ENDM
 
         ;
         ; Push af-hl onto the stack
@@ -273,7 +273,7 @@ pushall MACRO
         push    hl
         push    ix
         push    iy
-        endm    
+        ENDM
 
         ;
         ; Pop hl-af off the stack
@@ -285,7 +285,7 @@ popall  MACRO
         pop     de
         pop     bc
         pop     af
-        endm    
+        ENDM
 
         ;
         ; Add 'a' to 'hl'
@@ -296,7 +296,7 @@ addhl   MACRO
         adc     h
         sub     l
         ld      h, a
-        endm    
+        ENDM
 
         ;
         ; Add 'a' to 'de'
@@ -307,7 +307,7 @@ addde   MACRO
         adc     d
         sub     e
         ld      d, a
-        endm    
+        ENDM
 
         ;
         ; Add 'a' to 'bc'
@@ -318,7 +318,7 @@ addbc   MACRO
         adc     b
         sub     c
         ld      b, a
-        endm    
+        ENDM
 
 mod     MACRO   val
         LOCAL   modLoop
@@ -326,7 +326,7 @@ modLoop:
         sub     a, val
         jp      p, modLoop
         add     a, val
-        endm    
+        ENDM
 
 		;
 		; Calculate screen row address
@@ -345,17 +345,17 @@ calculateRow    MACRO   row
 		;
 		; Interrupts must be enabled!
 		;
-delay	MACRO	val
-		LOCAL	delayLoop
-		push	bc
-		ld		b, val
+delay   MACRO   val
+        LOCAL   delayLoop
+        push    bc
+        ld      b, val
 delayLoop:
-		halt
-		djnz	delayLoop
-		pop		bc
-		ENDM
+        halt
+        djnz    delayLoop
+        pop     bc
+        ENDM
 
-assert  MACRO
+assert  MACRO   
         di
         halt
         ENDM

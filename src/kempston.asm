@@ -13,12 +13,12 @@
 		;		Z - No Kempston present
 		;		NZ - Kempston present
 detectKempston:
-        halt    
+        halt
         in      a, (IO_KEMPSTON)
         inc     a
         or      a
         ld      (kjPresent), a
-        ret     
+        ret
 
 		;
 		; 	Input:
@@ -32,7 +32,7 @@ readKempston:
         and     JUMP|UP|DOWN|LEFT|RIGHT
         or      e
         ld      e, a
-        ret     
+        ret
 
         section bss_user
 kjPresent:

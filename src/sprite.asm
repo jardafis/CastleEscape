@@ -16,7 +16,7 @@
 		;		c  - Start screen x location
 		;
 _copyScreen:
-        di      
+        di
         ld      (copyTempSP), sp        ; Optimization, self modifying code
 
         calculateRow    b
@@ -43,8 +43,8 @@ copyloop:
 
 copyTempSP  equ $+1
         ld      sp, 0x0000
-        ei      
-        ret     
+        ei
+        ret
 
 		;
 		; Entry:
@@ -53,7 +53,7 @@ copyTempSP  equ $+1
 		;		c  - Start screen x location
 		;
 _pasteScreen:
-        di      
+        di
         ld      (pasteTempSP), sp       ; Optimization, self modifying code
 
         calculateRow    b
@@ -82,9 +82,9 @@ pasteloop:
 
 pasteTempSP equ $+1
         ld      sp, 0x0000
-        ei      
+        ei
 
-        ret     
+        ret
 
         ;
         ; Entry:
@@ -92,7 +92,7 @@ pasteTempSP equ $+1
 		;		c  - Screen x location
         ;
 _displaySprite:
-        di      
+        di
         ld      (displaySpriteSP), sp
 
         ; Calculate the offset into the screen table
@@ -102,9 +102,9 @@ _displaySprite:
         ld      de, _screenTab
         add     hl, de
         push    hl
-        exx     
+        exx
         pop     hl
-        exx     
+        exx
 
         ld      a, c
         and     0x07                    ; Get the sprite shift index
@@ -124,11 +124,11 @@ _displaySprite:
         srl     c                       ; byte address.
         ld      b, PLAYER_HEIGHT
 loop2:
-        exx     
+        exx
         ld      sp, hl
         inc     hl
         inc     hl
-        exx     
+        exx
         pop     hl
         ld      a, l
         add     c                       ; add x offset
@@ -162,9 +162,9 @@ spriteStore equ $+1
         djnz    loop2
 displaySpriteSP equ $+1
         ld      sp, 0x0000
-        ei      
+        ei
 
-        ret     
+        ret
 
         section bss_user
 playerSprite:

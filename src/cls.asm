@@ -19,9 +19,9 @@ _cls:
         ld      a, l
         ld      (clsAttrib), a
 
-        halt    
+        halt
 
-        di      
+        di
         ld      (clsTempSP), sp
 
         ld      sp, SCREEN_ATTR_END
@@ -62,12 +62,12 @@ loop:
         djnz    loop
 clsTempSP   equ $+1
         ld      sp, 0x0000
-        ei      
+        ei
 
         pop     hl
         pop     bc
         pop     af
-        ret     
+        ret
 
         ;
         ; Set the screen attribute specified by 'bc' to
@@ -82,7 +82,7 @@ clearAttr:
         ld      a, (clsAttrib)
         call    setAttr
         pop     af
-        ret     
+        ret
 
         ;
         ; Set the screen attribute specified by 'bc' to
@@ -106,7 +106,7 @@ setAttr:
         ld      (hl), a
         pop     hl
         pop     bc
-        ret     
+        ret
 
         section bss_user
 clsAttrib:

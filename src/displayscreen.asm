@@ -17,7 +17,7 @@
         ;
 _displayScreen:
         ; Save the registers and setup ix to point to variable space
-        pushall 
+        pushall
 
         ;
         ; Build a stack frame for our variables
@@ -93,8 +93,8 @@ nextTile:
 
 tempSP  equ     $+1
         ld      sp, 0x0000
-        popall  
-        ret     
+        popall
+        ret
 
         ;
         ; Add a lantern to the lantern list
@@ -129,11 +129,11 @@ lanternPtr  equ $+1
         pop     hl
         pop     de
         pop     af
-        ret     
+        ret
 
         defvars 0
-        {       
+        {
             xPos        ds.b 1
             yPos        ds.b 1
-        SIZEOF_vars 
-        }       
+        SIZEOF_vars
+        }

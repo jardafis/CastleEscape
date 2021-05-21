@@ -22,14 +22,14 @@
 
 IF  1
         defc    SV_BANKM=currentBank
-ELSE    
+ELSE
         include "target/zx/def/sysvar.def"
-ENDIF   
+ENDIF
         include "defs.inc"
 
         public  _bankedtapeloader
 _bankedtapeloader:
-        pushall 
+        pushall
         ld      ix, __BANK_0_head
         ld      de, __BANK_0_tail-__BANK_0_head
         ld      c, MEM_BANK_ROM|0x0     ; Bank 0
@@ -69,28 +69,28 @@ _bankedtapeloader:
         ld      de, __BANK_7_tail-__BANK_7_head
         ld      c, MEM_BANK_ROM|0x7     ;Bank 7
         call    load_block
-        di      
+        di
         ld      a, MEM_BANK_ROM
         ld      (SV_BANKM), a
         ld      bc, IO_BANK
         out     (c), a
-        ei      
-        popall  
-        ret     
+        ei
+        popall
+        ret
 
 load_block:
         ld      a, d
         or      e
         ret     z                       ;Nothing to load
         ld      a, c
-        di      
+        di
         ld      (SV_BANKM), a
         ld      bc, IO_BANK
         out     (c), a
-        ei      
+        ei
         ld      a, 255                  ;Data block
         scf                             ;Load
         call    0x556                   ; call the tape loader in ROM
         and     a
-        ret     
+        ret
 

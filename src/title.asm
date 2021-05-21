@@ -59,7 +59,7 @@ waitNoJump:
 
         call    PLAYER_OFF
 
-        ret     
+        ret
 
 ;        section rodata_user
 pressJumpMsg:

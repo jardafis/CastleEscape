@@ -14,7 +14,7 @@ _lanternFlicker:
         jr      z, done                 ; No lanterns
         inc     hl                      ; Point to first attribute address
 
-        di      
+        di
         ld      (tempSP+1), sp          ; Save stack pointer
         ld      sp, hl                  ; Point stack at attribute address table
 
@@ -23,7 +23,7 @@ _lanternFlicker:
         ld      hl, colors              ; Pointer to color table
         ld      a, r                    ; Use 'r' as the color table index
         and     0x07                    ; Bottom 3 bits only
-        addhl   
+        addhl
         ld      a, (hl)                 ; Read attribute
 
 loop:
@@ -33,9 +33,9 @@ loop:
 
 tempSP:
         ld      sp, 0x0000              ; Restore the stack
-        ei      
+        ei
 done:
-        ret     
+        ret
 
         section rodata_user
 colors:

@@ -134,7 +134,7 @@ waitJumpRelease:
         jr      nz, waitJumpRelease
 
         pop     af
-        ret     
+        ret
 
         ;
         ; Display a prompt asking to input a direction key.
@@ -189,7 +189,7 @@ printKey:
         ld      a, (key)
         call    lookupScanCode
         pop     hl
-        ret     
+        ret
 
         section bss_user
 key:
