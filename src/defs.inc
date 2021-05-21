@@ -36,7 +36,7 @@
             itemX       ds.b 1
             itemY       ds.b 1
             itemFrame   ds.b 1
-        SIZEOF_item
+            SIZEOF_item
         }
 
         defc    SIZEOF_int=0x02

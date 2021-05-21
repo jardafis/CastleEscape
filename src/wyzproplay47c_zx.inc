@@ -23,7 +23,7 @@ START_SONG:
         LD      HL, PSG_REG
         LD      DE, PSG_REG_SEC
         LD      BC, 14
-        LDIR    
+        LDIR
         CALL    REPRODUCE_SONIDO
         JP      PLAY
 		; CALL	REPRODUCE_EFECTO
@@ -46,10 +46,10 @@ REPRODUCE_SONIDO:
         LD      (DE), A
         INC     HL
         LD      A, (HL)
-        RRCA    
-        RRCA    
-        RRCA    
-        RRCA    
+        RRCA
+        RRCA
+        RRCA
+        RRCA
         AND     00001111B
         LD      DE, (SFX_H)
         LD      (DE), A
@@ -97,7 +97,7 @@ SI_RUIDO:
 
         INC     HL
         LD      (PUNTERO_SONIDO), HL
-        RET     
+        RET
 FIN_SONIDO:
         LD      HL, INTERR
         RES     2, (HL)
@@ -111,7 +111,7 @@ FIN_NOPLAYER:
         LD      A, 10111000B
         LD      (PSG_REG_SEC+7), A
 
-        RET     
+        RET
 
 
 
@@ -136,7 +136,7 @@ ROUT_A0:
         LD      HL, PSG_REG_SEC
 LOUT:   OUT     (C), A
         LD      B, E
-        OUTI    
+        OUTI
         LD      B, D
         INC     A
         CP      13
@@ -146,16 +146,16 @@ LOUT:   OUT     (C), A
         AND     A
         RET     Z
         LD      B, E
-        OUTI    
+        OUTI
         XOR     A
         LD      (PSG_REG_SEC+13), A
         LD      (PSG_REG+13), A
-        RET     
+        RET
 
 
 ;INICIA EL SONIDO N� (A)
 
-START_SOUND:                          ;CP	8		;SFX SPEECH
+START_SOUND:                            ;CP	8		;SFX SPEECH
 		;JP	Z,SLOOP		;
 
         LD      HL, TABLA_SONIDOS
@@ -163,7 +163,7 @@ START_SOUND:                          ;CP	8		;SFX SPEECH
         LD      (PUNTERO_SONIDO), DE
         LD      HL, INTERR
         SET     2, (HL)
-        RET     
+        RET
 
 ;PLAYER INIT
 
@@ -192,7 +192,7 @@ CLEAR_PSG_BUFFER:
         LD      DE, PSG_REG+1
         LD      BC, 14
         LD      (HL), A
-        LDIR    
+        LDIR
 
         LD      A, 10111000B            ; **** POR SI ACASO ****
         LD      (PSG_REG+7), A
@@ -200,7 +200,7 @@ CLEAR_PSG_BUFFER:
         LD      HL, PSG_REG
         LD      DE, PSG_REG_SEC
         LD      BC, 14
-        LDIR    
+        LDIR
 
         JP      ROUT
 
@@ -251,7 +251,7 @@ DECODE_SONG:
 ;SELECCION DEL CANAL DE EFECTOS DE RITMO
 
 NPTJP0: AND     00000110B
-        RRA     
+        RRA
 		;LD	(SELECT_CANAL_P),A
 
         PUSH    DE
@@ -345,7 +345,7 @@ INIT_DECODER:
         CALL    DECODE_CANAL            ;CANAL P
         LD      (PUNTERO_DECP), HL
 
-        RET     
+        RET
 
 ;BUSCA INICIO DEL CANAL
 
@@ -354,7 +354,7 @@ BGICMODBC1:
 BGICMODBC2:
         XOR     A                       ;BUSCA EL BYTE 0
         LD      B, $FF                  ;EL MODULO DEBE TENER UNA LONGITUD MENOR DE $FF00 ... o_O!
-        CPIR    
+        CPIR
 
         DEC     HL
         DEC     HL
@@ -373,7 +373,7 @@ BGICMODBC2:
         INC     HL
         INC     HL
         JR      Z, BGICMODBC2
-        RET     
+        RET
 
 ;DECODIFICA NOTAS DE UN CANAL
 ;IN (DE)=DIRECCION DESTINO
@@ -459,23 +459,23 @@ FIN_DEC_CANAL:
         or      $80                     ; SET	7,A
         LD      (DE), A
         INC     DE
-        RET     
+        RET
 
 GETLEN: LD      B, A
         AND     00111111B
         PUSH    AF
         LD      A, B
         AND     11000000B
-        RLCA    
-        RLCA    
+        RLCA
+        RLCA
         INC     A
         LD      B, A
         LD      A, 10000000B
-DCBC0:  RLCA    
+DCBC0:  RLCA
         DJNZ    DCBC0
         LD      B, A
         POP     AF
-        RET     
+        RET
 
 
 
@@ -674,7 +674,7 @@ NO_FIN_CANAL_A:
         LD      (BC), A                 ;RESET VOLUMEN DEL CORRESPODIENTE CHIP
         LD      (IY+0), A
         LD      (IY+1), A
-        RET     
+        RET
 
 SILENCIO_ENVOLVENTE:
         LD      A, $FF
@@ -684,7 +684,7 @@ SILENCIO_ENVOLVENTE:
         LD      (PSG_REG+13), A
         LD      (IY+0), A
         LD      (IY+1), A
-        RET     
+        RET
 
 NO_SILENCIO_A:
         LD      (IX+REG_NOTA_A-PUNTERO_A), A
@@ -697,7 +697,7 @@ NO_SILENCIO_A:
                                         ;(PUNTERO_P_A)=HL
         LD      (IX+PUNTERO_P_A-PUNTERO_A+1), H
 FIN_RUTINA:
-        RET     
+        RET
 
 
 ;LOCALIZA EFECTO
@@ -742,7 +742,7 @@ FIN_CANAL_P:
 NO_FIN_CANAL_P:
         LD      (IX+0), L               ;(PUNTERO_A_B_C)=HL GUARDA PUNTERO
         LD      (IX+1), H
-        RET     
+        RET
 
 ; PAUTA DE LOS 3 CANALES
 ; IN:(IX):PUNTERO DE LA PAUTA
@@ -863,7 +863,7 @@ PCAJP5: POP     HL
         LD      A, 1                    ;NO SE EXTIGUE EL VOLUMEN
 PCAJP7: AND     00001111B               ;VOLUMEN FINAL MODULADO
         LD      (HL), A
-        RET     
+        RET
 
 
 
@@ -883,7 +883,7 @@ TABLA_NOTAS:
         CALL    EXT_WORD
         LD      (IY+0), E
         LD      (IY+1), D
-        RET     
+        RET
 
 
 
@@ -904,7 +904,7 @@ EVOLVENTES:
 
         PUSH    DE
         LD      A, (ENVOLVENTE)         ;FRECUENCIA DEL CANAL ON/OFF
-        RRA     
+        RRA
         JR      NC, FRECUENCIA_OFF
         LD      (IY+0), E
         LD      (IY+1), D
@@ -938,12 +938,12 @@ CRTBC0:                                 ;AND	A			;1/4 - 1/8 - 1/16
         POP     BC
         POP     AF                      ;SELECCION FORMA DE ENVOLVENTE
 
-        RRA     
+        RRA
         AND     00000110B               ;$08,$0A,$0C,$0E
         ADD     A, 8
         LD      (PSG_REG+13), A
         LD      (ENVOLVENTE_BACK), A
-        RET     
+        RET
 
 
 ;EXTRAE UN WORD DE UNA TABLA
@@ -953,13 +953,13 @@ CRTBC0:                                 ;AND	A			;1/4 - 1/8 - 1/16
 
 EXT_WORD:
         LD      D, 0
-        RLCA    
+        RLCA
         LD      E, A
         ADD     HL, DE
         LD      E, (HL)
         INC     HL
         LD      D, (HL)
-        RET     
+        RET
 
         section rodata_user
 ;TABLA DE DATOS DEL SELECTOR DEL CANAL DE EFECTOS DE RITMO

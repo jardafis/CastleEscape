@@ -596,7 +596,7 @@ removeItem:
             tileX       ds.b 1
             tileY       ds.b 1
             itemCount   ds.b 1
-        SIZEOF_vars
+            SIZEOF_vars
         }
 
 currentItemTable:

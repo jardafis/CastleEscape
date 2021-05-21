@@ -132,5 +132,5 @@ lanternPtr  equ $+1
         {
             xPos        ds.b 1
             yPos        ds.b 1
-        SIZEOF_vars
+            SIZEOF_vars
         }
