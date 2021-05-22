@@ -66,7 +66,7 @@ sed -i -e "/^$/d" ${outDir}/${tileSheet%.png}.inc
 # Remove lines containing unneeded directives
 sed -i -e "/^\s*[C_LINE|SECTION|MODULE|INCLUDE|GLOBAL]/d" ${outDir}/${tileSheet%.png}.inc
 # Remove underscores
-#sed -i -e "s/._/./" ${outDir}/tiles.inc
+#sed -i -e "s/._/./" ${outDir}/${tileSheet%.png}.inc
 
 asmstyle.pl ${outDir}/${tileSheet%.png}.inc
 
