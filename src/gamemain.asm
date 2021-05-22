@@ -12,8 +12,8 @@
         extern  _displaySprite
         extern  ticks
         extern  playerSprite
-        extern  _LeftSprite0
-        extern  _RightSprite0
+        extern  _LeftKnight0
+        extern  _RightKnight0
         extern  checkXCol
         extern  checkYCol
         extern  _coinTables
@@ -173,7 +173,7 @@ newGame:
         ;
         ; Set the initial player sprite
         ;
-        ld      hl, _RightSprite0
+        ld      hl, _RightKnight0
         ld      (playerSprite), hl
 
         ;
@@ -303,14 +303,14 @@ ENDIF
         bit     LEFT_BIT, e
         jr      z, checkRight
         ld      a, LEFT_SPEED
-        ld      hl, _LeftSprite0
+        ld      hl, _LeftKnight0
         ld      (playerSprite), hl
         jr      updateXSpeedDone
 checkRight:
         bit     RIGHT_BIT, e
         jr      z, noXMovement
         ld      a, RIGHT_SPEED
-        ld      hl, _RightSprite0
+        ld      hl, _RightKnight0
         ld      (playerSprite), hl
         jr      updateXSpeedDone
 noXMovement:
