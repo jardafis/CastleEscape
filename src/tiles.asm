@@ -7,7 +7,7 @@
         ;
         ; Include the auto generated tile data
         ;
-        include "tiles.inc"
+        include "sprite/tiles.inc"
         include "sprite/RightKnight.inc"
         include "sprite/LeftKnight.inc"
 
