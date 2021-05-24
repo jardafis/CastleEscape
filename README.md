@@ -1,5 +1,5 @@
 # Castle Escape - An IrataHack Production
-A ZX Spectrum game written for [FUSE](https://en.wikipedia.org/wiki/Fuse_(emulator)) (but should work on a real ZX Spectrum 128K) using [Z88DK](https://en.wikipedia.org/wiki/Z88DK).
+A ZX Spectrum game written using [Z88DK](https://en.wikipedia.org/wiki/Z88DK) for [FUSE](https://en.wikipedia.org/wiki/Fuse_(emulator)) (but should work on a real ZX Spectrum 128K).
 
 ## Credits
 * Coding - [IrataHack](mailto:iratahack@digitalxfer.com)

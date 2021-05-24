@@ -6,6 +6,8 @@ then
 	exit
 fi
 
+mkdir -p $(dirname -- $2)
+
 # Convert -1 to 11
 sed -i "s/-1/11/g" $1
 

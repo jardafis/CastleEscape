@@ -15,6 +15,8 @@ function c_to_asm() {
 	inputFile=$1
 	outputFile=$2
 
+	mkdir -p $(dirname -- $outputFile)
+
 	echo "Converting to assembly..."
 	zcc +zx -S $inputFile -o $outputFile
 
@@ -29,6 +31,8 @@ function c_to_asm() {
 	sed -i -e "s/._/./" $outputFile
 
 	asmstyle.pl $outputFile
+	
+	rm ${outputFile}.bak
 	
 	return 0
 }

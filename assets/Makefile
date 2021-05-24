@@ -1,26 +1,26 @@
-.PHONY: clean all
+.PHONY: clean all install
 all: build/levels.inc build/banner.inc build/tilesheet.inc build/RightKnight.inc build/LeftKnight.inc
 
 clean:
 	rm -rf build
 
+install:
+	cp build/*Knight.inc ../src/sprite
+	cp build/tilesheet.inc ../src/sprite
+	cp build/levels.inc ../src
+	cp build/banner.inc ../src
+
 build/%.inc: tiled/%.tmx
-	mkdir -p $(@D)
 	tiled --export-map csv $< $<.tmp
 	./scripts/csv2asm.sh $<.tmp $@
 	rm $<.tmp
 
 build/tilesheet.inc: gimp/tilesheet.png
-	mkdir -p $(@D)
 	./scripts/tilesheet.sh $< $@
 
 build/RightKnight.inc: gimp/RightKnight.png gimp/RightMasks.png
-	mkdir -p $(@D)
-	./scripts/genSprites.sh gimp/RightKnight.png gimp/RightMasks.png -o $@
-	rm ./build/*.bak
+	./scripts/genSprites.sh $^ -o $@
 
 build/LeftKnight.inc: gimp/LeftKnight.png gimp/LeftMasks.png
-	mkdir -p $(@D)
-	./scripts/genSprites.sh gimp/LeftKnight.png gimp/LeftMasks.png -o $@
-	rm ./build/*.bak
+	./scripts/genSprites.sh $^ -o $@
 
