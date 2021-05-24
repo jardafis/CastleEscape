@@ -1,4 +1,4 @@
-_tile0:
+tile0:
         defb    0
         defb    0
         defb    1
@@ -7,7 +7,7 @@ _tile0:
         defb    0
         defb    62
         defb    30
-_tile1:
+tile1:
         defb    0
         defb    0
         defb    213
@@ -16,7 +16,7 @@ _tile1:
         defb    0
         defb    147
         defb    41
-_tile2:
+tile2:
         defb    0
         defb    0
         defb    128
@@ -25,7 +25,7 @@ _tile2:
         defb    0
         defb    94
         defb    124
-_tile3:
+tile3:
         defb    0
         defb    0
         defb    130
@@ -34,7 +34,7 @@ _tile3:
         defb    231
         defb    66
         defb    0
-_tile4:
+tile4:
         defb    99
         defb    99
         defb    95
@@ -43,7 +43,7 @@ _tile4:
         defb    48
         defb    54
         defb    54
-_tile5:
+tile5:
         defb    32
         defb    52
         defb    84
@@ -52,7 +52,7 @@ _tile5:
         defb    219
         defb    178
         defb    165
-_tile6:
+tile6:
         defb    4
         defb    44
         defb    42
@@ -61,7 +61,7 @@ _tile6:
         defb    219
         defb    77
         defb    165
-_tile7:
+tile7:
         defb    2
         defb    5
         defb    15
@@ -70,7 +70,7 @@ _tile7:
         defb    24
         defb    12
         defb    1
-_tile8:
+tile8:
         defb    192
         defb    144
         defb    120
@@ -79,7 +79,7 @@ _tile8:
         defb    176
         defb    77
         defb    46
-_tile9:
+tile9:
         defb    1
         defb    4
         defb    15
@@ -88,7 +88,7 @@ _tile9:
         defb    6
         defb    217
         defb    186
-_tile10:
+tile10:
         defb    160
         defb    208
         defb    120
@@ -97,7 +97,7 @@ _tile10:
         defb    140
         defb    24
         defb    64
-_tile11:
+tile11:
         defb    0
         defb    0
         defb    0
@@ -106,7 +106,7 @@ _tile11:
         defb    0
         defb    0
         defb    0
-_tile12:
+tile12:
         defb    62
         defb    0
         defb    249
@@ -115,7 +115,7 @@ _tile12:
         defb    4
         defb    116
         defb    52
-_tile13:
+tile13:
         defb    68
         defb    130
         defb    69
@@ -124,7 +124,7 @@ _tile13:
         defb    16
         defb    16
         defb    16
-_tile14:
+tile14:
         defb    122
         defb    0
         defb    30
@@ -133,7 +133,7 @@ _tile14:
         defb    64
         defb    76
         defb    72
-_tile15:
+tile15:
         defb    66
         defb    0
         defb    231
@@ -142,7 +142,7 @@ _tile15:
         defb    66
         defb    0
         defb    0
-_tile16:
+tile16:
         defb    54
         defb    48
         defb    54
@@ -151,7 +151,7 @@ _tile16:
         defb    99
         defb    99
         defb    99
-_tile17:
+tile17:
         defb    200
         defb    204
         defb    151
@@ -160,7 +160,7 @@ _tile17:
         defb    17
         defb    24
         defb    112
-_tile18:
+tile18:
         defb    35
         defb    35
         defb    105
@@ -169,7 +169,7 @@ _tile18:
         defb    76
         defb    24
         defb    14
-_tile19:
+tile19:
         defb    4
         defb    0
         defb    98
@@ -178,7 +178,7 @@ _tile19:
         defb    13
         defb    0
         defb    0
-_tile20:
+tile20:
         defb    7
         defb    186
         defb    75
@@ -187,7 +187,7 @@ _tile20:
         defb    17
         defb    13
         defb    2
-_tile21:
+tile21:
         defb    112
         defb    46
         defb    233
@@ -196,7 +196,7 @@ _tile21:
         defb    196
         defb    216
         defb    160
-_tile22:
+tile22:
         defb    16
         defb    128
         defb    35
@@ -205,7 +205,7 @@ _tile22:
         defb    88
         defb    0
         defb    0
-_tile23:
+tile23:
         defb    0
         defb    0
         defb    0
@@ -214,7 +214,7 @@ _tile23:
         defb    0
         defb    0
         defb    0
-_tile24:
+tile24:
         defb    84
         defb    7
         defb    116
@@ -223,7 +223,7 @@ _tile24:
         defb    4
         defb    52
         defb    23
-_tile25:
+tile25:
         defb    16
         defb    255
         defb    16
@@ -232,7 +232,7 @@ _tile25:
         defb    16
         defb    16
         defb    255
-_tile26:
+tile26:
         defb    76
         defb    192
         defb    79
@@ -241,7 +241,7 @@ _tile26:
         defb    64
         defb    78
         defb    204
-_tile27:
+tile27:
         defb    3
         defb    1
         defb    3
@@ -250,7 +250,7 @@ _tile27:
         defb    7
         defb    11
         defb    0
-_tile28:
+tile28:
         defb    224
         defb    192
         defb    160
@@ -259,7 +259,7 @@ _tile28:
         defb    208
         defb    168
         defb    0
-_tile29:
+tile29:
         defb    0
         defb    7
         defb    15
@@ -268,7 +268,7 @@ _tile29:
         defb    43
         defb    42
         defb    42
-_tile30:
+tile30:
         defb    0
         defb    212
         defb    238
@@ -277,7 +277,7 @@ _tile30:
         defb    178
         defb    210
         defb    160
-_tile31:
+tile31:
         defb    24
         defb    52
         defb    60
@@ -286,7 +286,7 @@ _tile31:
         defb    118
         defb    60
         defb    0
-_tile32:
+tile32:
         defb    6
         defb    4
         defb    2
@@ -295,7 +295,7 @@ _tile32:
         defb    2
         defb    1
         defb    0
-_tile33:
+tile33:
         defb    176
         defb    144
         defb    32
@@ -304,7 +304,7 @@ _tile33:
         defb    32
         defb    64
         defb    0
-_tile34:
+tile34:
         defb    0
         defb    108
         defb    222
@@ -313,7 +313,7 @@ _tile34:
         defb    56
         defb    16
         defb    0
-_tile35:
+tile35:
         defb    0
         defb    0
         defb    0
@@ -322,7 +322,7 @@ _tile35:
         defb    0
         defb    0
         defb    0
-_tile36:
+tile36:
         defb    52
         defb    4
         defb    244
@@ -331,7 +331,7 @@ _tile36:
         defb    7
         defb    112
         defb    55
-_tile37:
+tile37:
         defb    16
         defb    16
         defb    16
@@ -340,7 +340,7 @@ _tile37:
         defb    255
         defb    0
         defb    255
-_tile38:
+tile38:
         defb    74
         defb    64
         defb    78
@@ -349,7 +349,7 @@ _tile38:
         defb    192
         defb    12
         defb    72
-_tile39:
+tile39:
         defb    7
         defb    3
         defb    5
@@ -358,7 +358,7 @@ _tile39:
         defb    11
         defb    21
         defb    0
-_tile40:
+tile40:
         defb    192
         defb    128
         defb    192
@@ -367,7 +367,7 @@ _tile40:
         defb    224
         defb    208
         defb    0
-_tile41:
+tile41:
         defb    27
         defb    12
         defb    0
@@ -376,7 +376,7 @@ _tile41:
         defb    0
         defb    1
         defb    7
-_tile42:
+tile42:
         defb    72
         defb    180
         defb    118
@@ -385,7 +385,7 @@ _tile42:
         defb    166
         defb    18
         defb    56
-_tile43:
+tile43:
         defb    0
         defb    31
         defb    0
@@ -394,7 +394,7 @@ _tile43:
         defb    0
         defb    127
         defb    0
-_tile44:
+tile44:
         defb    0
         defb    200
         defb    0
@@ -403,7 +403,7 @@ _tile44:
         defb    0
         defb    226
         defb    0
-_tile45:
+tile45:
         defb    99
         defb    99
         defb    99
@@ -412,7 +412,7 @@ _tile45:
         defb    0
         defb    0
         defb    0
-_tile46:
+tile46:
         defb    0
         defb    0
         defb    0
@@ -421,7 +421,7 @@ _tile46:
         defb    0
         defb    0
         defb    0
-_tile47:
+tile47:
         defb    0
         defb    0
         defb    0
@@ -430,7 +430,7 @@ _tile47:
         defb    0
         defb    0
         defb    0
-_tile48:
+tile48:
         defb    87
         defb    0
         defb    112
@@ -439,7 +439,7 @@ _tile48:
         defb    0
         defb    0
         defb    0
-_tile49:
+tile49:
         defb    250
         defb    0
         defb    0
@@ -448,7 +448,7 @@ _tile49:
         defb    0
         defb    0
         defb    0
-_tile50:
+tile50:
         defb    140
         defb    0
         defb    63
@@ -457,7 +457,7 @@ _tile50:
         defb    0
         defb    0
         defb    0
-_tile51:
+tile51:
         defb    4
         defb    84
         defb    48
@@ -466,7 +466,7 @@ _tile51:
         defb    84
         defb    68
         defb    4
-_tile52:
+tile52:
         defb    64
         defb    84
         defb    48
@@ -475,7 +475,7 @@ _tile52:
         defb    84
         defb    68
         defb    64
-_tile53:
+tile53:
         defb    1
         defb    3
         defb    6
@@ -484,7 +484,7 @@ _tile53:
         defb    31
         defb    19
         defb    33
-_tile54:
+tile54:
         defb    128
         defb    192
         defb    224
@@ -493,7 +493,7 @@ _tile54:
         defb    248
         defb    248
         defb    252
-_tile55:
+tile55:
         defb    93
         defb    0
         defb    127
@@ -502,7 +502,7 @@ _tile55:
         defb    54
         defb    0
         defb    31
-_tile56:
+tile56:
         defb    194
         defb    0
         defb    226
@@ -511,7 +511,7 @@ _tile56:
         defb    132
         defb    0
         defb    200
-_tile57:
+tile57:
         defb    0
         defb    0
         defb    0
@@ -520,7 +520,7 @@ _tile57:
         defb    0
         defb    0
         defb    0
-_tile58:
+tile58:
         defb    0
         defb    0
         defb    0
@@ -529,7 +529,7 @@ _tile58:
         defb    0
         defb    0
         defb    0
-_tile59:
+tile59:
         defb    0
         defb    0
         defb    0
@@ -538,7 +538,7 @@ _tile59:
         defb    0
         defb    0
         defb    0
-_tile60:
+tile60:
         defb    0
         defb    0
         defb    0
@@ -547,7 +547,7 @@ _tile60:
         defb    0
         defb    44
         defb    0
-_tile61:
+tile61:
         defb    0
         defb    0
         defb    0
@@ -556,7 +556,7 @@ _tile61:
         defb    118
         defb    60
         defb    0
-_tile62:
+tile62:
         defb    0
         defb    0
         defb    0
@@ -565,7 +565,7 @@ _tile62:
         defb    118
         defb    60
         defb    0
-_tile63:
+tile63:
         defb    0
         defb    36
         defb    60
@@ -574,7 +574,7 @@ _tile63:
         defb    118
         defb    60
         defb    0
-_tile64:
+tile64:
         defb    24
         defb    52
         defb    60
@@ -583,7 +583,7 @@ _tile64:
         defb    118
         defb    60
         defb    0
-_tile65:
+tile65:
         defb    33
         defb    51
         defb    63
@@ -592,7 +592,7 @@ _tile65:
         defb    12
         defb    3
         defb    0
-_tile66:
+tile66:
         defb    204
         defb    132
         defb    132
@@ -601,7 +601,7 @@ _tile66:
         defb    240
         defb    192
         defb    0
-_tile67:
+tile67:
         defb    0
         defb    0
         defb    0
@@ -610,7 +610,7 @@ _tile67:
         defb    0
         defb    0
         defb    0
-_tile68:
+tile68:
         defb    0
         defb    0
         defb    0
@@ -619,7 +619,7 @@ _tile68:
         defb    0
         defb    0
         defb    0
-_tile69:
+tile69:
         defb    0
         defb    0
         defb    0
@@ -628,7 +628,7 @@ _tile69:
         defb    0
         defb    0
         defb    0
-_tile70:
+tile70:
         defb    0
         defb    0
         defb    0
@@ -637,7 +637,7 @@ _tile70:
         defb    0
         defb    0
         defb    0
-_tile71:
+tile71:
         defb    0
         defb    0
         defb    0
@@ -646,7 +646,7 @@ _tile71:
         defb    0
         defb    0
         defb    0
-_tile72:
+tile72:
         defb    56
         defb    68
         defb    186
@@ -655,7 +655,7 @@ _tile72:
         defb    68
         defb    56
         defb    0
-_tile73:
+tile73:
         defb    56
         defb    76
         defb    84
@@ -664,7 +664,7 @@ _tile73:
         defb    76
         defb    56
         defb    0
-_tile74:
+tile74:
         defb    16
         defb    56
         defb    56
@@ -673,7 +673,7 @@ _tile74:
         defb    56
         defb    16
         defb    0
-_tile75:
+tile75:
         defb    56
         defb    100
         defb    84
@@ -682,7 +682,7 @@ _tile75:
         defb    100
         defb    56
         defb    0
-_tile76:
+tile76:
         defb    0
         defb    127
         defb    61
@@ -691,7 +691,7 @@ _tile76:
         defb    0
         defb    15
         defb    31
-_tile77:
+tile77:
         defb    0
         defb    178
         defb    66
@@ -700,7 +700,7 @@ _tile77:
         defb    0
         defb    128
         defb    196
-_tile78:
+tile78:
         defb    63
         defb    127
         defb    225
@@ -709,7 +709,7 @@ _tile78:
         defb    204
         defb    193
         defb    227
-_tile79:
+tile79:
         defb    7
         defb    143
         defb    220
@@ -718,7 +718,7 @@ _tile79:
         defb    232
         defb    223
         defb    143
-_tile80:
+tile80:
         defb    252
         defb    254
         defb    7
@@ -727,7 +727,7 @@ _tile80:
         defb    3
         defb    255
         defb    254
-_tile81:
+tile81:
         defb    31
         defb    63
         defb    112
@@ -736,7 +736,7 @@ _tile81:
         defb    160
         defb    127
         defb    63
-_tile82:
+tile82:
         defb    224
         defb    241
         defb    59
@@ -745,7 +745,7 @@ _tile82:
         defb    29
         defb    251
         defb    241
-_tile83:
+tile83:
         defb    252
         defb    254
         defb    135
@@ -754,7 +754,7 @@ _tile83:
         defb    51
         defb    131
         defb    199
-_tile84:
+tile84:
         defb    191
         defb    0
         defb    86
@@ -763,7 +763,7 @@ _tile84:
         defb    44
         defb    88
         defb    80
-_tile85:
+tile85:
         defb    255
         defb    0
         defb    125
@@ -772,7 +772,7 @@ _tile85:
         defb    0
         defb    0
         defb    0
-_tile86:
+tile86:
         defb    255
         defb    0
         defb    190
@@ -781,7 +781,7 @@ _tile86:
         defb    0
         defb    0
         defb    0
-_tile87:
+tile87:
         defb    253
         defb    0
         defb    106
@@ -790,7 +790,7 @@ _tile87:
         defb    52
         defb    26
         defb    10
-_tile88:
+tile88:
         defb    47
         defb    19
         defb    44
@@ -799,7 +799,7 @@ _tile88:
         defb    31
         defb    63
         defb    31
-_tile89:
+tile89:
         defb    132
         defb    64
         defb    132
@@ -808,7 +808,7 @@ _tile89:
         defb    0
         defb    132
         defb    196
-_tile90:
+tile90:
         defb    219
         defb    203
         defb    227
@@ -817,7 +817,7 @@ _tile90:
         defb    28
         defb    46
         defb    119
-_tile91:
+tile91:
         defb    4
         defb    9
         defb    24
@@ -826,7 +826,7 @@ _tile91:
         defb    43
         defb    33
         defb    0
-_tile92:
+tile92:
         defb    16
         defb    72
         defb    140
@@ -835,7 +835,7 @@ _tile92:
         defb    106
         defb    194
         defb    128
-_tile93:
+tile93:
         defb    0
         defb    0
         defb    0
@@ -844,7 +844,7 @@ _tile93:
         defb    0
         defb    0
         defb    0
-_tile94:
+tile94:
         defb    0
         defb    0
         defb    0
@@ -853,7 +853,7 @@ _tile94:
         defb    0
         defb    0
         defb    0
-_tile95:
+tile95:
         defb    238
         defb    92
         defb    56
@@ -862,7 +862,7 @@ _tile95:
         defb    199
         defb    211
         defb    219
-_tile96:
+tile96:
         defb    48
         defb    48
         defb    8
@@ -871,7 +871,7 @@ _tile96:
         defb    16
         defb    48
         defb    0
-_tile97:
+tile97:
         defb    0
         defb    0
         defb    0
@@ -880,7 +880,7 @@ _tile97:
         defb    0
         defb    0
         defb    0
-_tile98:
+tile98:
         defb    0
         defb    0
         defb    0
@@ -889,7 +889,7 @@ _tile98:
         defb    0
         defb    0
         defb    0
-_tile99:
+tile99:
         defb    12
         defb    12
         defb    16
@@ -898,7 +898,7 @@ _tile99:
         defb    8
         defb    12
         defb    0
-_tile100:
+tile100:
         defb    47
         defb    19
         defb    44
@@ -907,7 +907,7 @@ _tile100:
         defb    127
         defb    61
         defb    90
-_tile101:
+tile101:
         defb    132
         defb    64
         defb    132
@@ -916,7 +916,7 @@ _tile101:
         defb    178
         defb    66
         defb    162
-_tile102:
+tile102:
         defb    227
         defb    193
         defb    204
@@ -925,7 +925,7 @@ _tile102:
         defb    225
         defb    127
         defb    63
-_tile103:
+tile103:
         defb    143
         defb    223
         defb    232
@@ -934,7 +934,7 @@ _tile103:
         defb    220
         defb    143
         defb    7
-_tile104:
+tile104:
         defb    254
         defb    255
         defb    3
@@ -943,7 +943,7 @@ _tile104:
         defb    7
         defb    254
         defb    252
-_tile105:
+tile105:
         defb    63
         defb    127
         defb    160
@@ -952,7 +952,7 @@ _tile105:
         defb    112
         defb    63
         defb    31
-_tile106:
+tile106:
         defb    241
         defb    251
         defb    29
@@ -961,7 +961,7 @@ _tile106:
         defb    59
         defb    241
         defb    224
-_tile107:
+tile107:
         defb    199
         defb    131
         defb    51
@@ -970,7 +970,7 @@ _tile107:
         defb    135
         defb    254
         defb    252
-_tile108:
+tile108:
         defb    0
         defb    0
         defb    0
@@ -979,7 +979,7 @@ _tile108:
         defb    0
         defb    0
         defb    0
-_tile109:
+tile109:
         defb    0
         defb    0
         defb    0
@@ -988,7 +988,7 @@ _tile109:
         defb    0
         defb    0
         defb    0
-_tile110:
+tile110:
         defb    0
         defb    0
         defb    0
@@ -997,7 +997,7 @@ _tile110:
         defb    0
         defb    0
         defb    0
-_tile111:
+tile111:
         defb    0
         defb    0
         defb    0
@@ -1006,7 +1006,7 @@ _tile111:
         defb    0
         defb    0
         defb    0
-_tile112:
+tile112:
         defb    0
         defb    0
         defb    0
@@ -1015,7 +1015,7 @@ _tile112:
         defb    0
         defb    0
         defb    0
-_tile113:
+tile113:
         defb    0
         defb    0
         defb    0
@@ -1024,7 +1024,7 @@ _tile113:
         defb    0
         defb    0
         defb    0
-_tile114:
+tile114:
         defb    0
         defb    0
         defb    0
@@ -1033,7 +1033,7 @@ _tile114:
         defb    0
         defb    0
         defb    0
-_tile115:
+tile115:
         defb    0
         defb    0
         defb    0
@@ -1042,7 +1042,7 @@ _tile115:
         defb    0
         defb    0
         defb    0
-_tile116:
+tile116:
         defb    0
         defb    0
         defb    0
@@ -1051,7 +1051,7 @@ _tile116:
         defb    0
         defb    0
         defb    0
-_tile117:
+tile117:
         defb    0
         defb    0
         defb    0
@@ -1060,7 +1060,7 @@ _tile117:
         defb    0
         defb    0
         defb    0
-_tile118:
+tile118:
         defb    0
         defb    0
         defb    0
@@ -1069,7 +1069,7 @@ _tile118:
         defb    0
         defb    0
         defb    0
-_tile119:
+tile119:
         defb    0
         defb    0
         defb    0
@@ -1078,7 +1078,7 @@ _tile119:
         defb    0
         defb    0
         defb    0
-_tile120:
+tile120:
         defb    0
         defb    0
         defb    0
@@ -1087,7 +1087,7 @@ _tile120:
         defb    0
         defb    0
         defb    0
-_tile121:
+tile121:
         defb    0
         defb    0
         defb    0
@@ -1096,7 +1096,7 @@ _tile121:
         defb    0
         defb    0
         defb    0
-_tile122:
+tile122:
         defb    0
         defb    0
         defb    0
@@ -1105,7 +1105,7 @@ _tile122:
         defb    0
         defb    0
         defb    0
-_tile123:
+tile123:
         defb    0
         defb    0
         defb    0
@@ -1114,7 +1114,7 @@ _tile123:
         defb    0
         defb    0
         defb    0
-_tile124:
+tile124:
         defb    0
         defb    0
         defb    0
@@ -1123,7 +1123,7 @@ _tile124:
         defb    0
         defb    0
         defb    0
-_tile125:
+tile125:
         defb    0
         defb    0
         defb    0
@@ -1132,7 +1132,7 @@ _tile125:
         defb    0
         defb    0
         defb    0
-_tile126:
+tile126:
         defb    0
         defb    0
         defb    0
@@ -1141,7 +1141,7 @@ _tile126:
         defb    0
         defb    0
         defb    0
-_tile127:
+tile127:
         defb    0
         defb    0
         defb    0
@@ -1150,7 +1150,7 @@ _tile127:
         defb    0
         defb    0
         defb    0
-_tile128:
+tile128:
         defb    0
         defb    0
         defb    0
@@ -1159,7 +1159,7 @@ _tile128:
         defb    0
         defb    0
         defb    0
-_tile129:
+tile129:
         defb    0
         defb    0
         defb    0
@@ -1168,7 +1168,7 @@ _tile129:
         defb    0
         defb    0
         defb    0
-_tile130:
+tile130:
         defb    0
         defb    0
         defb    0
@@ -1177,7 +1177,7 @@ _tile130:
         defb    0
         defb    0
         defb    0
-_tile131:
+tile131:
         defb    0
         defb    0
         defb    0
@@ -1186,7 +1186,7 @@ _tile131:
         defb    0
         defb    0
         defb    0
-_tile132:
+tile132:
         defb    0
         defb    0
         defb    0
@@ -1195,7 +1195,7 @@ _tile132:
         defb    0
         defb    0
         defb    0
-_tile133:
+tile133:
         defb    0
         defb    0
         defb    0
@@ -1204,7 +1204,7 @@ _tile133:
         defb    0
         defb    0
         defb    0
-_tile134:
+tile134:
         defb    0
         defb    0
         defb    0
@@ -1213,7 +1213,7 @@ _tile134:
         defb    0
         defb    0
         defb    0
-_tile135:
+tile135:
         defb    0
         defb    127
         defb    61
@@ -1222,7 +1222,7 @@ _tile135:
         defb    0
         defb    15
         defb    31
-_tile136:
+tile136:
         defb    0
         defb    178
         defb    66
@@ -1231,7 +1231,7 @@ _tile136:
         defb    0
         defb    128
         defb    196
-_tile137:
+tile137:
         defb    127
         defb    192
         defb    138
@@ -1240,7 +1240,7 @@ _tile137:
         defb    149
         defb    90
         defb    0
-_tile138:
+tile138:
         defb    252
         defb    2
         defb    162
@@ -1249,7 +1249,7 @@ _tile138:
         defb    162
         defb    84
         defb    0
-_tile139:
+tile139:
         defb    127
         defb    192
         defb    138
@@ -1258,7 +1258,7 @@ _tile139:
         defb    149
         defb    90
         defb    0
-_tile140:
+tile140:
         defb    252
         defb    2
         defb    162
@@ -1267,7 +1267,7 @@ _tile140:
         defb    162
         defb    84
         defb    0
-_tile141:
+tile141:
         defb    205
         defb    187
         defb    221
@@ -1276,7 +1276,7 @@ _tile141:
         defb    0
         defb    0
         defb    0
-_tile142:
+tile142:
         defb    255
         defb    255
         defb    255
@@ -1285,7 +1285,7 @@ _tile142:
         defb    109
         defb    128
         defb    0
-_tile143:
+tile143:
         defb    252
         defb    248
         defb    124
@@ -1294,7 +1294,7 @@ _tile143:
         defb    160
         defb    0
         defb    0
-_tile144:
+tile144:
         defb    255
         defb    255
         defb    255
@@ -1303,7 +1303,7 @@ _tile144:
         defb    109
         defb    128
         defb    0
-_tile145:
+tile145:
         defb    252
         defb    248
         defb    124
@@ -1312,7 +1312,7 @@ _tile145:
         defb    160
         defb    0
         defb    0
-_tile146:
+tile146:
         defb    127
         defb    192
         defb    138
@@ -1321,7 +1321,7 @@ _tile146:
         defb    149
         defb    90
         defb    0
-_tile147:
+tile147:
         defb    252
         defb    2
         defb    162
@@ -1330,7 +1330,7 @@ _tile147:
         defb    162
         defb    84
         defb    0
-_tile148:
+tile148:
         defb    124
         defb    194
         defb    146
@@ -1339,7 +1339,7 @@ _tile148:
         defb    162
         defb    84
         defb    0
-_tile149:
+tile149:
         defb    127
         defb    192
         defb    138
@@ -1348,7 +1348,7 @@ _tile149:
         defb    215
         defb    159
         defb    191
-_tile150:
+tile150:
         defb    252
         defb    2
         defb    162
@@ -1357,7 +1357,7 @@ _tile150:
         defb    182
         defb    250
         defb    242
-_tile151:
+tile151:
         defb    205
         defb    187
         defb    221
@@ -1366,7 +1366,7 @@ _tile151:
         defb    0
         defb    0
         defb    0
-_tile152:
+tile152:
         defb    0
         defb    0
         defb    0
@@ -1375,7 +1375,7 @@ _tile152:
         defb    0
         defb    0
         defb    0
-_tile153:
+tile153:
         defb    0
         defb    0
         defb    0
@@ -1384,7 +1384,7 @@ _tile153:
         defb    0
         defb    0
         defb    0
-_tile154:
+tile154:
         defb    0
         defb    0
         defb    0
@@ -1393,7 +1393,7 @@ _tile154:
         defb    0
         defb    0
         defb    0
-_tile155:
+tile155:
         defb    0
         defb    0
         defb    0
@@ -1402,7 +1402,7 @@ _tile155:
         defb    0
         defb    0
         defb    0
-_tile156:
+tile156:
         defb    255
         defb    255
         defb    255
@@ -1411,7 +1411,7 @@ _tile156:
         defb    109
         defb    128
         defb    0
-_tile157:
+tile157:
         defb    252
         defb    248
         defb    124
@@ -1420,7 +1420,7 @@ _tile157:
         defb    160
         defb    0
         defb    0
-_tile158:
+tile158:
         defb    127
         defb    192
         defb    138
@@ -1429,7 +1429,7 @@ _tile158:
         defb    149
         defb    90
         defb    0
-_tile159:
+tile159:
         defb    252
         defb    2
         defb    162
@@ -1438,7 +1438,7 @@ _tile159:
         defb    162
         defb    84
         defb    0
-_tile160:
+tile160:
         defb    124
         defb    194
         defb    146
@@ -1447,7 +1447,7 @@ _tile160:
         defb    162
         defb    84
         defb    0
-_tile161:
+tile161:
         defb    222
         defb    191
         defb    223
@@ -1456,7 +1456,7 @@ _tile161:
         defb    149
         defb    90
         defb    0
-_tile162:
+tile162:
         defb    250
         defb    218
         defb    246
@@ -1465,7 +1465,7 @@ _tile162:
         defb    162
         defb    84
         defb    0
-_tile163:
+tile163:
         defb    0
         defb    0
         defb    0
@@ -1474,7 +1474,7 @@ _tile163:
         defb    0
         defb    0
         defb    0
-_tile164:
+tile164:
         defb    0
         defb    0
         defb    0
@@ -1483,7 +1483,7 @@ _tile164:
         defb    0
         defb    0
         defb    0
-_tile165:
+tile165:
         defb    0
         defb    0
         defb    0
@@ -1492,7 +1492,7 @@ _tile165:
         defb    0
         defb    0
         defb    0
-_tile166:
+tile166:
         defb    0
         defb    0
         defb    0
@@ -1501,7 +1501,7 @@ _tile166:
         defb    0
         defb    0
         defb    0
-_tile167:
+tile167:
         defb    0
         defb    0
         defb    0

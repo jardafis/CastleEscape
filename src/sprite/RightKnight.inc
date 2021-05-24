@@ -1,4 +1,4 @@
-_RightKnight0:
+RightKnight0:
         defb    192
         defb    0
         defb    7
@@ -79,23 +79,23 @@ _RightKnight0:
         defb    0
         defb    128
         defb    49
-        defb    3
+        defb    67
         defb    0
         defb    255
         defb    0
-        defb    128
+        defb    132
         defb    33
         defb    63
         defb    0
         defb    255
         defb    0
-        defb    128
+        defb    140
         defb    1
         defb    63
         defb    128
         defb    255
         defb    0
-_RightKnight1:
+RightKnight1:
         defb    224
         defb    0
         defb    3
@@ -186,13 +186,13 @@ _RightKnight1:
         defb    64
         defb    255
         defb    0
-        defb    192
+        defb    196
         defb    1
         defb    15
         defb    224
         defb    255
         defb    0
-_RightKnight2:
+RightKnight2:
         defb    240
         defb    0
         defb    1
@@ -289,7 +289,7 @@ _RightKnight2:
         defb    152
         defb    255
         defb    0
-_RightKnight3:
+RightKnight3:
         defb    248
         defb    0
         defb    0
@@ -380,13 +380,13 @@ _RightKnight3:
         defb    80
         defb    255
         defb    0
-        defb    240
+        defb    241
         defb    0
         defb    3
         defb    120
         defb    255
         defb    0
-_RightKnight4:
+RightKnight4:
         defb    252
         defb    0
         defb    0
@@ -467,23 +467,23 @@ _RightKnight4:
         defb    128
         defb    248
         defb    3
-        defb    0
+        defb    4
         defb    16
         defb    63
         defb    0
         defb    248
         defb    2
-        defb    3
+        defb    67
         defb    16
         defb    255
         defb    0
         defb    248
         defb    0
-        defb    3
+        defb    195
         defb    24
         defb    255
         defb    0
-_RightKnight5:
+RightKnight5:
         defb    254
         defb    0
         defb    0
@@ -576,11 +576,11 @@ _RightKnight5:
         defb    0
         defb    252
         defb    0
-        defb    0
+        defb    64
         defb    30
         defb    255
         defb    0
-_RightKnight6:
+RightKnight6:
         defb    255
         defb    0
         defb    0
@@ -677,7 +677,7 @@ _RightKnight6:
         defb    25
         defb    63
         defb    128
-_RightKnight7:
+RightKnight7:
         defb    255
         defb    0
         defb    128
@@ -770,7 +770,7 @@ _RightKnight7:
         defb    0
         defb    255
         defb    0
-        defb    0
+        defb    16
         defb    7
         defb    63
         defb    128
