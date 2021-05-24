@@ -4,7 +4,7 @@
   <export target="levels.csv" format="csv"/>
  </editorsettings>
  <tileset firstgid="1" name="sprites" tilewidth="8" tileheight="8" tilecount="168" columns="12">
-  <image source="sprites.png" trans="000000" width="96" height="112"/>
+  <image source="../gimp/tilesheet.png" trans="000000" width="96" height="112"/>
  </tileset>
  <layer id="1" name="Tile Layer 1" width="128" height="126">
   <data encoding="csv">
