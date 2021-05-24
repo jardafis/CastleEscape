@@ -1,5 +1,5 @@
 .PHONY: clean all
-all: build/levels.inc build/banner.inc build/tilesheet.inc build/RightKnight.inc
+all: build/levels.inc build/banner.inc build/tilesheet.inc build/RightKnight.inc build/LeftKnight.inc
 
 clean:
 	rm -rf build
@@ -18,3 +18,9 @@ build/RightKnight.inc: gimp/RightKnight.png gimp/RightMasks.png
 	mkdir -p $(@D)
 	./scripts/genSprites.sh gimp/RightKnight.png gimp/RightMasks.png -o $@
 	rm ./build/*.bak
+
+build/LeftKnight.inc: gimp/LeftKnight.png gimp/LeftMasks.png
+	mkdir -p $(@D)
+	./scripts/genSprites.sh gimp/LeftKnight.png gimp/LeftMasks.png -o $@
+	rm ./build/*.bak
+

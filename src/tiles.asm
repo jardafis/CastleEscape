@@ -11,5 +11,6 @@ _tile0:
         include "sprite/tilesheet.inc"
 _RightKnight0:
         include "sprite/RightKnight.inc"
+_LeftKnight0:
         include "sprite/LeftKnight.inc"
 

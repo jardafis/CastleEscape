@@ -1,101 +1,4 @@
-_LeftKnight0:
-        defb    224
-        defb    0
-        defb    3
-        defb    0
-        defb    255
-        defb    0
-        defb    192
-        defb    15
-        defb    1
-        defb    168
-        defb    255
-        defb    0
-        defb    128
-        defb    31
-        defb    1
-        defb    220
-        defb    255
-        defb    0
-        defb    0
-        defb    35
-        defb    1
-        defb    236
-        defb    255
-        defb    0
-        defb    0
-        defb    124
-        defb    1
-        defb    236
-        defb    255
-        defb    0
-        defb    0
-        defb    87
-        defb    1
-        defb    100
-        defb    255
-        defb    0
-        defb    0
-        defb    85
-        defb    1
-        defb    164
-        defb    255
-        defb    0
-        defb    0
-        defb    85
-        defb    1
-        defb    64
-        defb    255
-        defb    0
-        defb    0
-        defb    54
-        defb    3
-        defb    144
-        defb    255
-        defb    0
-        defb    128
-        defb    25
-        defb    1
-        defb    104
-        defb    255
-        defb    0
-        defb    192
-        defb    0
-        defb    1
-        defb    236
-        defb    255
-        defb    0
-        defb    192
-        defb    29
-        defb    1
-        defb    204
-        defb    255
-        defb    0
-        defb    192
-        defb    24
-        defb    1
-        defb    44
-        defb    255
-        defb    0
-        defb    192
-        defb    1
-        defb    1
-        defb    76
-        defb    255
-        defb    0
-        defb    224
-        defb    2
-        defb    1
-        defb    36
-        defb    255
-        defb    0
-        defb    224
-        defb    14
-        defb    1
-        defb    112
-        defb    255
-        defb    0
-_LeftKnight1:
+LeftKnight0:
         defb    240
         defb    0
         defb    1
@@ -177,22 +80,22 @@ _LeftKnight1:
         defb    224
         defb    0
         defb    0
-        defb    166
+        defb    70
         defb    255
         defb    0
-        defb    240
+        defb    252
+        defb    0
+        defb    0
+        defb    162
+        defb    255
+        defb    0
+        defb    252
         defb    1
-        defb    0
-        defb    18
+        defb    8
+        defb    224
         defb    255
         defb    0
-        defb    240
-        defb    7
-        defb    0
-        defb    56
-        defb    255
-        defb    0
-_LeftKnight2:
+LeftKnight1:
         defb    248
         defb    0
         defb    0
@@ -277,19 +180,19 @@ _LeftKnight2:
         defb    83
         defb    127
         defb    0
-        defb    248
+        defb    252
         defb    0
         defb    0
         defb    137
         defb    127
         defb    0
-        defb    248
-        defb    3
+        defb    252
+        defb    1
         defb    0
-        defb    156
+        defb    152
         defb    127
         defb    0
-_LeftKnight3:
+LeftKnight2:
         defb    252
         defb    0
         defb    0
@@ -371,22 +274,22 @@ _LeftKnight3:
         defb    248
         defb    0
         defb    0
-        defb    41
+        defb    17
         defb    63
         defb    128
-        defb    252
+        defb    255
         defb    0
         defb    0
-        defb    68
+        defb    40
         defb    63
         defb    128
-        defb    252
-        defb    1
+        defb    255
         defb    0
-        defb    206
+        defb    2
+        defb    120
         defb    63
         defb    0
-_LeftKnight4:
+LeftKnight3:
         defb    254
         defb    0
         defb    0
@@ -467,23 +370,23 @@ _LeftKnight4:
         defb    192
         defb    252
         defb    0
-        defb    0
-        defb    20
+        defb    32
+        defb    8
         defb    31
         defb    192
-        defb    254
+        defb    255
         defb    0
-        defb    0
-        defb    34
+        defb    194
+        defb    8
         defb    31
         defb    64
-        defb    254
+        defb    255
         defb    0
-        defb    0
-        defb    231
+        defb    195
+        defb    24
         defb    31
         defb    0
-_LeftKnight5:
+LeftKnight4:
         defb    255
         defb    0
         defb    0
@@ -565,22 +468,22 @@ _LeftKnight5:
         defb    254
         defb    0
         defb    0
-        defb    10
+        defb    4
         defb    15
         defb    96
         defb    255
         defb    0
-        defb    0
-        defb    17
+        defb    192
+        defb    10
         defb    15
         defb    32
         defb    255
         defb    0
+        defb    192
+        defb    30
+        defb    143
         defb    0
-        defb    115
-        defb    15
-        defb    128
-_LeftKnight6:
+LeftKnight5:
         defb    255
         defb    0
         defb    128
@@ -667,17 +570,17 @@ _LeftKnight6:
         defb    48
         defb    255
         defb    0
-        defb    128
+        defb    192
         defb    8
         defb    7
         defb    144
         defb    255
         defb    0
-        defb    128
-        defb    57
-        defb    7
         defb    192
-_LeftKnight7:
+        defb    25
+        defb    7
+        defb    128
+LeftKnight6:
         defb    255
         defb    0
         defb    192
@@ -759,18 +662,115 @@ _LeftKnight7:
         defb    255
         defb    0
         defb    128
+        defb    1
+        defb    3
+        defb    24
+        defb    255
+        defb    0
+        defb    240
         defb    2
         defb    3
-        defb    152
+        defb    136
         defb    255
         defb    0
-        defb    192
-        defb    4
-        defb    3
-        defb    72
+        defb    240
+        defb    7
+        defb    35
+        defb    128
+LeftKnight7:
         defb    255
         defb    0
-        defb    192
-        defb    28
-        defb    3
         defb    224
+        defb    0
+        defb    3
+        defb    0
+        defb    255
+        defb    0
+        defb    192
+        defb    15
+        defb    1
+        defb    168
+        defb    255
+        defb    0
+        defb    128
+        defb    31
+        defb    1
+        defb    220
+        defb    255
+        defb    0
+        defb    0
+        defb    35
+        defb    1
+        defb    236
+        defb    255
+        defb    0
+        defb    0
+        defb    124
+        defb    1
+        defb    236
+        defb    255
+        defb    0
+        defb    0
+        defb    87
+        defb    1
+        defb    100
+        defb    255
+        defb    0
+        defb    0
+        defb    85
+        defb    1
+        defb    164
+        defb    255
+        defb    0
+        defb    0
+        defb    85
+        defb    1
+        defb    64
+        defb    255
+        defb    0
+        defb    0
+        defb    54
+        defb    3
+        defb    144
+        defb    255
+        defb    0
+        defb    128
+        defb    25
+        defb    1
+        defb    104
+        defb    255
+        defb    0
+        defb    192
+        defb    0
+        defb    1
+        defb    236
+        defb    255
+        defb    0
+        defb    192
+        defb    29
+        defb    1
+        defb    204
+        defb    255
+        defb    0
+        defb    192
+        defb    24
+        defb    1
+        defb    44
+        defb    255
+        defb    0
+        defb    194
+        defb    0
+        defb    1
+        defb    140
+        defb    255
+        defb    0
+        defb    252
+        defb    0
+        defb    33
+        defb    132
+        defb    255
+        defb    0
+        defb    252
+        defb    1
+        defb    49
+        defb    128
