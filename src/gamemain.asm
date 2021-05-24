@@ -603,4 +603,4 @@ currentBank:
 readyMsg:
         db      "Ready?", 0x00
 gameOverMsg:
-        db      " Game Over!:( ", 0x00
+        db      " Game Over! ", 0x80, " ", 0x00
