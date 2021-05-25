@@ -11,9 +11,7 @@ install: all
 	cp build/banner.inc ../src
 
 build/%.inc: tiled/%.tmx
-	tiled --export-map csv $< $<.tmp
-	./scripts/csv2asm.sh $<.tmp $@
-	rm $<.tmp
+	./scripts/tmx2asm.sh $< $@
 
 build/tilesheet.inc: gimp/tilesheet.png
 	./scripts/tilesheet.sh $< $@
