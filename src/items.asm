@@ -34,7 +34,7 @@
         ; are then used by animation routines and collision routines.
         ;
 _initItems:
-        pushall 
+        pushall
 
         ;
         ; Save parameters passed in registers
@@ -135,8 +135,8 @@ itemID:
 tempSP:
         ld      sp, -1
 
-        popall  
-        ret     
+        popall
+        ret
 
         ;
         ; Add a coin to the coin table
@@ -171,7 +171,7 @@ addItem:
         ld      (de), a
         inc     de
 
-        ret     
+        ret
 
         ;
         ; Calculate the value of the current item table based
@@ -199,7 +199,7 @@ setCurrentItemTable:
         ld      d, (hl)
 currItemTab:
         ld      (-1), de
-        ret     
+        ret
 
         ;
         ; Set the attribute for the tile at the specified location
@@ -214,14 +214,14 @@ setTileAttr:
         push    hl
 
         ld      hl, _tileAttr
-        addhl   
+        addhl
         ld      a, (hl)
 
         call    setAttr
 
         pop     hl
         pop     af
-        ret     
+        ret
 
         ;
         ; Display the specified tile at the specified location.
@@ -237,7 +237,7 @@ displayTile:
         push    de
         push    hl
 
-        di      
+        di
         ; Save the current stack pointer
         ld      (TempSP2+1), sp
 
@@ -299,13 +299,13 @@ displayTile:
         ; Restore the stack pointer.
 TempSP2:
         ld      sp, -1
-        ei      
+        ei
 
         pop     hl
         pop     de
         pop     bc
         pop     af
-        ret     
+        ret
 
         ;
         ; Display the visible items pointed to by hl. Typically
@@ -331,16 +331,16 @@ nextItem2:
 
         inc     hl
         ld      a, (hl)                 ; Tile x position
-        rrca    
-        rrca    
-        rrca    
+        rrca
+        rrca
+        rrca
         and     %00011111
         ld      c, a
         inc     hl
         ld      a, (hl)                 ; Tile y position
-        rrca    
-        rrca    
-        rrca    
+        rrca
+        rrca
+        rrca
         and     %00011111
         ld      b, a
         ld      a, d                    ; Tile ID
@@ -350,7 +350,7 @@ nextItem2:
         pop     hl                      ; Restore coin table pointer
 notVisible2:
         ld      a, SIZEOF_item
-        addhl   
+        addhl
         jr      nextItem2
 
         ;
@@ -376,9 +376,9 @@ nextItem3:
 
         inc     hl
         ld      a, (hl)                 ; Item x pixel position
-        rrca    
-        rrca    
-        rrca    
+        rrca
+        rrca
+        rrca
         and     %00011111
         ld      c, a
 
@@ -387,7 +387,7 @@ nextItem3:
 
         push    de
 
-        di      
+        di
         ld      (clearTileSP+1), sp
 
         calculateRow    b
@@ -481,7 +481,7 @@ other:
 
 clearTileSP:
         ld      sp, -1
-        ei      
+        ei
         pop     de
 
 ;        call    setTileAttr
@@ -489,7 +489,7 @@ clearTileSP:
         pop     hl                      ; Restore coin table pointer
 notVisible4:
         ld      a, SIZEOF_item
-        addhl   
+        addhl
         jp      nextItem3
 
         ;
@@ -569,7 +569,7 @@ noCollision:
         pop     hl
 notVisible3:
         ld      a, SIZEOF_item
-        addhl   
+        addhl
         jp      nextItem
 
 		;
@@ -586,18 +586,18 @@ removeItem:
         call    clearAttr               ; Remove the item and attribute
         ld      a, ID_BLANK
         call    displayTile
-        ret     
+        ret
 
         section bss_user
         defvars 0                       ; Define the stack variables used
-        {       
+        {
             levelX      ds.b 1
             levelY      ds.b 1
             tileX       ds.b 1
             tileY       ds.b 1
             itemCount   ds.b 1
-        SIZEOF_vars 
-        }       
+            SIZEOF_vars
+        }
 
 currentItemTable:
         ds      2

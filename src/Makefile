@@ -12,7 +12,8 @@ ASMDEPS=	\
 			$(wildcard *.afb) \
 			$(wildcard *.dat) \
 			$(wildcard music/*.mus) \
-			$(wildcard music/*.inc)
+			$(wildcard music/*.inc) \
+			$(wildcard sprite/*.inc)
 
 C_OPT_FLAGS=-SO3
 
@@ -21,9 +22,7 @@ LDFLAGS=+$(TARGET) --codesegBANK_5 --constseg$(RODATA) -m -clib=sdcc_iy -pragma-
 ASFLAGS=-I$(Z88DK)/lib
 
 OBJECTS =	$(patsubst %.c,%.o,$(wildcard *.c)) \
-			$(patsubst %.asm,%.o,$(wildcard *.asm)) \
-			sprite/LeftSprite.o \
-			sprite/RightSprite.o
+			$(patsubst %.asm,%.o,$(wildcard *.asm))
 
 all: $(PROJ_NAME).tap
 	@grep __BANK_5_ $(PROJ_NAME).map | 		awk '{printf "%-24s = %s\n", $$1, $$3}'
@@ -48,7 +47,7 @@ $(PROJ_NAME).tap : $(OBJECTS) $(PRAGMA_FILE) Makefile
 .PHONY: clean run dis
 
 clean:
-	rm -f *.[oi] *.tap *.bin *.map *.lis *.sym sprite/*.o
+	rm -f *.[oi] *.tap *.bin *.map *.lis *.sym
 
 run: all
 	fuse.exe $(PROJ_NAME).tap

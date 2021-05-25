@@ -1,6 +1,3 @@
-        extern  AFXFRAME
-        extern  afxEnable
-        extern  INTERR
         extern  START_SONG
 
         public  _initISR
@@ -14,13 +11,13 @@
         defc    JUMP_ADDR=(JUMP_ADDR_BYTE<<8)|JUMP_ADDR_BYTE
 
 _initISR:
-        pushall 
+        pushall
 
         ld      bc, 0x100               ; bytes of the vector table
         ld      hl, VECTOR_TABLE        ; Get vector table address
         ld      de, VECTOR_TABLE+1
         ld      (hl), JUMP_ADDR_BYTE    ; Store JUMP_ADDR in first byte of vector table
-        ldir    
+        ldir
 
         ld      a, JP_OPCODE            ; Store the opcode for JP
         ld      (JUMP_ADDR), a
@@ -32,8 +29,8 @@ _initISR:
         im      2                       ; Enable interrupt mode 2
         ei                              ; Enable interrupts
 
-        popall  
-        ret     
+        popall
+        ret
 
 isr:
         ld      (isrTempSP), sp         ; Save the application stack pointer
@@ -47,7 +44,7 @@ isr:
 
 IFDEF   SOUND
         call    START_SONG
-ENDIF   
+ENDIF
 
         ;
         ; Increment the 16-bit ticks count

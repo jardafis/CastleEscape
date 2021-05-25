@@ -12,8 +12,8 @@
         extern  _displaySprite
         extern  ticks
         extern  playerSprite
-        extern  _LeftSprite0
-        extern  _RightSprite0
+        extern  _LeftKnight0
+        extern  _RightKnight0
         extern  checkXCol
         extern  checkYCol
         extern  _coinTables
@@ -85,7 +85,7 @@ _main:
 
         call    mainMenu
 		; Never reached
-        assert  
+        assert
 
 init:
         border  INK_BLACK
@@ -111,7 +111,7 @@ init:
         ld      hl, readKempston
         ld      (kjScan+1), hl
 
-        ret     
+        ret
 
 newGame:
         ld      (gameOver+1), sp
@@ -173,7 +173,7 @@ newGame:
         ;
         ; Set the initial player sprite
         ;
-        ld      hl, _RightSprite0
+        ld      hl, _RightKnight0
         ld      (playerSprite), hl
 
         ;
@@ -236,7 +236,7 @@ gameLoop:
         ;
         ; Wait for refresh interrupt
         ;
-        halt    
+        halt
 
 IF  0
         ld      bc, 0x300
@@ -245,11 +245,11 @@ lo:
         ld      a, b
         or      c
         jr      nz, lo
-ENDIF   
+ENDIF
 
 IFDEF   TIMING_BORDER
         border  INK_BLUE
-ENDIF   
+ENDIF
 
 		; ######################################
 		;
@@ -288,7 +288,7 @@ oddFrame2:
 		; ######################################
 IFDEF   TIMING_BORDER
         border  INK_RED
-ENDIF   
+ENDIF
         call    _updateDirection
 
         ;
@@ -303,14 +303,14 @@ ENDIF
         bit     LEFT_BIT, e
         jr      z, checkRight
         ld      a, LEFT_SPEED
-        ld      hl, _LeftSprite0
+        ld      hl, _LeftKnight0
         ld      (playerSprite), hl
         jr      updateXSpeedDone
 checkRight:
         bit     RIGHT_BIT, e
         jr      z, noXMovement
         ld      a, RIGHT_SPEED
-        ld      hl, _RightSprite0
+        ld      hl, _RightKnight0
         ld      (playerSprite), hl
         jr      updateXSpeedDone
 noXMovement:
@@ -372,7 +372,7 @@ notJumping:
 		; ######################################
 IFDEF   TIMING_BORDER
         border  INK_MAGENTA
-ENDIF   
+ENDIF
         call    checkYCol
 
 		; ######################################
@@ -383,7 +383,7 @@ ENDIF
 		; ######################################
 IFDEF   TIMING_BORDER
         border  INK_GREEN
-ENDIF   
+ENDIF
         ld      a, (_xSpeed)            ; If xSpeed != 0 player is moving
         or      a                       ; left or right.
         call    nz, checkXCol           ; Check for a collision.
@@ -395,7 +395,7 @@ ENDIF
 		; ######################################
 IFDEF   TIMING_BORDER
         border  INK_CYAN
-ENDIF   
+ENDIF
         call    _scroll
 
 		; ######################################
@@ -406,7 +406,7 @@ ENDIF
 		; ######################################
 IFDEF   TIMING_BORDER
         border  INK_YELLOW
-ENDIF   
+ENDIF
         ld      hl, (currentCoinTable)
         ld      de, coinCollision
         call    checkItemCollision
@@ -437,7 +437,7 @@ ENDIF
 		; ######################################
 IFDEF   TIMING_BORDER
         border  INK_WHITE
-ENDIF   
+ENDIF
         ld      hl, coinRotate
         dec     (hl)
         jp      p, noAnimate
@@ -453,14 +453,14 @@ noAnimate:
 
 IFDEF   TIMING_BORDER
         border  INK_BLUE
-ENDIF   
+ENDIF
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _copyScreen
 
 IFDEF   TIMING_BORDER
         border  INK_RED
-ENDIF   
+ENDIF
         ld      bc, (_xPos)
         call    _displaySprite
 
@@ -483,7 +483,7 @@ ENDIF
         ;
 IFDEF   TIMING_BORDER
         border  INK_MAGENTA
-ENDIF   
+ENDIF
         ld      hl, _lanternList
         call    _lanternFlicker
 
@@ -493,19 +493,19 @@ oddFrame:
         ;
 IFDEF   TIMING_BORDER
         border  INK_GREEN
-ENDIF   
+ENDIF
         call    decrementEggs
 
 IFDEF   TIMING_BORDER
         border  INK_BLACK
-ENDIF   
+ENDIF
         jp      gameLoop
 
 gameOver:
         ld      sp, -1
 IFDEF   TIMING_BORDER
         border  INK_BLACK
-ENDIF   
+ENDIF
         ld      bc, 0x0b0a
         ld      hl, gameOverMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT
@@ -513,7 +513,7 @@ ENDIF
 
         delay   200
 
-        ret     
+        ret
 
 _setCurrentTileMap:
         ld      a, (_tileMapY)
@@ -533,7 +533,7 @@ _setCurrentTileMap:
 
         ld      (_currentTileMap), hl
 
-        ret     
+        ret
 
         ;
         ; On input:
@@ -556,7 +556,7 @@ _mul_hla:
         ld      b, 8
 nextMul:
         add     hl, hl
-        rlca    
+        rlca
         jr      nc, noAdd
         add     hl, de
 noAdd:
@@ -565,7 +565,7 @@ noAdd:
 mulDone:
         pop     de
         pop     bc
-        ret     
+        ret
 
         section bss_user
 coinRotate:
@@ -603,4 +603,4 @@ currentBank:
 readyMsg:
         db      "Ready?", 0x00
 gameOverMsg:
-        db      " Game Over!:( ", 0x00
+        db      " Game Over! ", 0x80, " ", 0x00

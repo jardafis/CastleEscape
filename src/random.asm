@@ -20,15 +20,15 @@ rand:
         ld      hl, 1                   ; seed must not be 0
 
         ld      a, h
-        rra     
+        rra
         ld      a, l
-        rra     
+        rra
         xor     h
         ld      h, a
         ld      a, l
-        rra     
+        rra
         ld      a, h
-        rra     
+        rra
         xor     l
         ld      l, a
         xor     h
@@ -36,4 +36,4 @@ rand:
 
         ld      (rand+1), hl
 
-        ret     
+        ret

@@ -10,12 +10,10 @@
         extern  _currentTileMap
         extern  _displayScreen
         extern  displayItems
-        extern  eggCount
         extern  display2BCD
         extern  heartCount
         extern  _displayScore
         extern  _scrollReset
-        extern  updateEggImage
         extern  displayBanner
         extern  spiderTables
         extern  currentSpiderTable
@@ -33,7 +31,7 @@
         ; Display the current level and any uncollected items.
         ;
 _setupScreen:
-        pushall 
+        pushall
 
         ld      l, INK_WHITE|PAPER_BLACK
         call    _cls
@@ -59,7 +57,7 @@ _setupScreen:
 
         call    _setCurrentTileMap
 
-        halt    
+        halt
 
         ld      hl, (_currentTileMap)
         call    _displayScreen
@@ -94,5 +92,5 @@ _setupScreen:
         ld      hl, (xyPos)
         ld      (xyStartPos), hl
 
-        popall  
-        ret     
+        popall
+        ret

@@ -1,9 +1,16 @@
         public  _tile0
+        public  _RightKnight0
+        public  _LeftKnight0
 
         section rodata_user
 
         ;
         ; Include the auto generated tile data
         ;
-        include "tiles.inc"
+_tile0:
+        include "sprite/tilesheet.inc"
+_RightKnight0:
+        include "sprite/RightKnight.inc"
+_LeftKnight0:
+        include "sprite/LeftKnight.inc"
 

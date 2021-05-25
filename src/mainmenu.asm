@@ -1,19 +1,12 @@
-        extern  bannerData
-        extern  _cls
-        extern  displayTile
-        extern  setAttr
-        extern  print
         extern  _attribEdit
         extern  _tile0
         extern  _tileAttr
-        extern  waitKey
         extern  newGame
         extern  keyboardScan
         extern  readKempston
         extern  kjPresent
         extern  LOAD_SONG
         extern  PLAYER_OFF
-        extern  afxEnable
         extern  _lanternFlicker
         extern  currentCoinTable
         extern  _animateCoins
@@ -103,7 +96,7 @@ jumpPressed:
 IFDEF   ATTRIB_EDIT
         cp      '2'
         call    z, attribEdit
-ENDIF   
+ENDIF
         jp      displayScreen
 
         ;
@@ -117,7 +110,7 @@ ENDIF
         ;
 animateMenu:
         push    hl
-        halt    
+        halt
 
         call    _lanternFlicker
 
@@ -128,7 +121,7 @@ animateMenu:
         call    _animateCoins
 noRotate:
         pop     hl
-        ret     
+        ret
 
         ;
         ; Wait for a key to be released and animate the menu items.
@@ -146,7 +139,7 @@ releaseKey:
         or      a                       ; If a key is pressed
         jr      nz, releaseKey          ; continue looping
         pop     af
-        ret     
+        ret
 
         ;
         ; Wrapper to call attribute edit function in 'C'
@@ -170,7 +163,7 @@ attribEdit:
         pop     hl
 
         pop     af
-        ret     
+        ret
 
         ;
         ; Stop menu music and start a new game. Upon return
@@ -189,7 +182,7 @@ play:
         CALL    LOAD_SONG
 
         pop     af
-        ret     
+        ret
 
         section bss_user
 

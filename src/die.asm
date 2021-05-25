@@ -2,14 +2,12 @@
         extern  subBCD
         extern  display2BCD
         extern  gameOver
-        extern  AFXPLAY
         extern  xyPos
         extern  xyStartPos
         extern  _jumping
         extern  _ySpeed
         extern  _falling
         extern  LOAD_SONG
-        extern  AFXSTOP
 
         public  die
 
@@ -50,7 +48,7 @@ delayLoop:
         ld      a, b
         and     0x07
         border  a
-        halt    
+        halt
         djnz    delayLoop
         ;
         ; Ensure border is black
@@ -77,4 +75,4 @@ delayLoop:
         pop     de
         pop     bc
         pop     af
-        ret     
+        ret

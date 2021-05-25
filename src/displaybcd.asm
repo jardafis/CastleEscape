@@ -46,28 +46,28 @@ displayBCD:
         add     hl, bc                  ; Pointer to start of character in ROM font
 
         ; Display a single digit 0 - 9
-        ldi     
+        ldi
         dec     e                       ; Incremented by ldi so decrement it
         inc     d                       ; Add 256 for next screen row
-        ldi     
+        ldi
         dec     e
         inc     d
-        ldi     
+        ldi
         dec     e
         inc     d
-        ldi     
+        ldi
         dec     e
         inc     d
-        ldi     
+        ldi
         dec     e
         inc     d
-        ldi     
+        ldi
         dec     e
         inc     d
-        ldi     
+        ldi
         dec     e
         inc     d
-        ldi     
+        ldi
         dec     e
         inc     d
 
@@ -75,7 +75,7 @@ displayBCD:
         pop     de
         pop     bc
         pop     af
-        ret     
+        ret
 
         ;
         ; Display 2 BCD digits
@@ -101,7 +101,7 @@ display2BCD:
 
         pop     bc
         pop     af
-        ret     
+        ret
 
         ;
         ; Add the BCD value in 'l' to the BCD value pointed to by 'de'.
@@ -130,7 +130,7 @@ addBCD:
 addBCDDone:
         pop     de
         pop     af
-        ret     
+        ret
 
         ;
         ; Subtract the BCD value in 'l' from the BCD value pointed to by 'de'.
@@ -149,9 +149,9 @@ subBCD:
 cheat:
 IFNDEF  CHEAT
         ld      (de), a                 ; Save the updated BCD value
-ELSE    
+ELSE
         nop                             ; Cheat enabled, do not update
-ENDIF   
+ENDIF
         jr      nc, subBCDDone          ; If nc, no wraparound
 
         inc     de                      ; There was a wraparound
@@ -164,7 +164,7 @@ ENDIF
 subBCDDone:
         pop     de
         pop     af
-        ret     
+        ret
 
         ;
         ; Increment the BCD value pointed to by 'de'
@@ -179,7 +179,7 @@ incBCD:
         call    addBCD
 
         pop     hl
-        ret     
+        ret
 
         ;
         ; Decrement the BCD value pointed to by 'de'
@@ -194,5 +194,5 @@ decBCD:
         call    subBCD
 
         pop     hl
-        ret     
+        ret
 

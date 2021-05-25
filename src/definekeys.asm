@@ -5,9 +5,6 @@
         extern  scanCodes
         extern  setAttr
         extern  displayTile
-        extern  _lanternFlicker
-        extern  rotateCount
-        extern  _animateCoins
         extern  keyboardScan
         extern  bank7Screen
         extern  animateMenu
@@ -134,7 +131,7 @@ waitJumpRelease:
         jr      nz, waitJumpRelease
 
         pop     af
-        ret     
+        ret
 
         ;
         ; Display a prompt asking to input a direction key.
@@ -189,7 +186,7 @@ printKey:
         ld      a, (key)
         call    lookupScanCode
         pop     hl
-        ret     
+        ret
 
         section bss_user
 key:

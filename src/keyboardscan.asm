@@ -27,7 +27,7 @@ _keyboardScan:
         call    keyboardScan
         ld      l, a
         pop     af
-        ret     
+        ret
 
 		;
 		; Scan the keyboard for input.
@@ -68,14 +68,14 @@ nextKey:
         pop     HL                      ; Restore H
         pop     DE
         pop     BC
-        ret     
+        ret
 
 foundKey:
         ld      A, (HL)                 ; We've found a key at this point; fetch the character code!
         pop     HL                      ; Restore HL
         pop     DE
         pop     BC
-        ret     
+        ret
 
 		;
 		; Inputs: None
@@ -109,10 +109,10 @@ notPressed:
 		; was detected during game initialization.
 		;
 kjScan:
-        ret     
-        nop     
-        nop     
-        ret     
+        ret
+        nop
+        nop
+        ret
 
 		;
 		; Wait for a key to be pressed.
@@ -137,7 +137,7 @@ waitKeyRelease:
         ld      a, b                    ; Restore the value of the key pressed
 
         pop     bc
-        ret     
+        ret
 
         ;
         ; Lookup the scan code for the ASCII character passed in 'a'
@@ -171,13 +171,13 @@ keyLoop:
 
         dec     c
         jr      nz, rowLoop
-        assert  
+        assert
 
 foundScanCode:
         pop     hl
         pop     bc
         pop     af
-        ret     
+        ret
 
         section data_user
 

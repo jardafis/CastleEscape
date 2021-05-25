@@ -26,7 +26,7 @@ heartCollision:
         call    display2BCD
         ld      a, AYFX_COLLECT_HEART
         call    START_SOUND
-        ret     
+        ret
 
         section bss_user
 heartCount:                             ; BCD
