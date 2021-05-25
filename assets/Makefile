@@ -4,7 +4,7 @@ all: build/levels.inc build/banner.inc build/tilesheet.inc build/RightKnight.inc
 clean:
 	rm -rf build
 
-install:
+install: all
 	cp build/*Knight.inc ../src/sprite
 	cp build/tilesheet.inc ../src/sprite
 	cp build/levels.inc ../src

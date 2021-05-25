@@ -12,7 +12,7 @@ A ZX Spectrum game written using [Z88DK](https://en.wikipedia.org/wiki/Z88DK) fo
 Wee Knight must escape the haunted castle collecting gold coins and dodging the castles deadly inhabitants as he goes. Due to the enormous weight of his armor, Wee Knight cannot jump very high unless he consumes the purple eggs found within the castle. But beware, the anti-gravity effects of the eggs do not last long leaving Wee Knight at risk of missing out on the castles many treasures. Prolong life by collecting the hearts and don’t let Wee Knight fall too far or he'll be crushed by the weight of his own armor.
 
 ## User Controls
-* Keys
+* Default Keys (can be redefined)
   * O - Left
   * P - Right
   * SPACE - Jump
@@ -30,10 +30,18 @@ Easy, run _make_ from the _src_ directory. The latest version of Z88DK must be i
 
 ## Game Images
 The larger images include the ZX Spectrum border, smaller images do not.
-### Loading Screen
+
+### Screen$
 ![Title](assets/title.png)
+
 ### Main Menu
 ![Main Menu](assets/mainmenu.png)
+
 ### In-game Play
 ![Level 1](assets/level1.png)
 ![Level 2](assets/level2.png)
+
+### Level Map
+The game consists 24 levels arranged in a 4x6 grid.
+
+![Level Map](assets/tiled/levels.png)
