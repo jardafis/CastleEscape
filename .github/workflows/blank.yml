@@ -28,7 +28,11 @@ jobs:
       - name: Update apt
         run: |
           sudo apt update
-          sudo apt install tiled
+          sudo apt upgrade -y
+
+      - name: Update apt
+        run: |
+          sudo apt install -y tiled
           tiled --help
 
       # Runs a single command using the runners shell
