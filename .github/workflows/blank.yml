@@ -35,4 +35,5 @@ jobs:
           pwd
           ls -al
           cat /etc/os-release
+          snap install z88dk
           make -C assets
