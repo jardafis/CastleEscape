@@ -30,9 +30,12 @@ function c_to_asm() {
 	# Remove underscores
 	sed -i -e "s/._/./" $outputFile
 
-	asmstyle.pl $outputFile
-	
-	rm ${outputFile}.bak
+	which asmstyle.pl > /dev/null
+	if [ ! $? ]
+	then
+		asmstyle.pl $outputFile
+		rm ${outputFile}.bak
+	fi
 	
 	return 0
 }
@@ -92,7 +95,7 @@ do
    n=$((n+1))
 done
 
-temp=`mktemp -d`
+temp=`mktemp -d $PWD/tmp.XXXXX`
 #temp=temp
 #mkdir temp
 echo "Creating $temp"
