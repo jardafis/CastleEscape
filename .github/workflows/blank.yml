@@ -27,10 +27,11 @@ jobs:
 
       - name: Install z88dk
         run: |
-        sudo snap install --edge z88dk
-        sudo snap alias z88dk.zcc zcc
-        export PATH=$PWD/assets/scripts:$PATH
+          sudo snap install --edge z88dk
+          sudo snap alias z88dk.zcc zcc
 
       - name: Build assets
         run: |
+          export PATH=$PWD/assets/scripts:$PATH
           make -C assets
+          make -C src all
