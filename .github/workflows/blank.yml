@@ -25,15 +25,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Update apt
-        run: |
-          sudo apt update
-          sudo apt upgrade -y
-
-      - name: Install tiled
-        run: |
-          sudo apt install -y xcb tiled
-
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
@@ -44,5 +35,4 @@ jobs:
           pwd
           ls -al
           cat /etc/os-release
-          which tiled make gcc
           make -C assets
