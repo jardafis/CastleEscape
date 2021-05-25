@@ -5,7 +5,6 @@
 #
 set -u
 set -e
-set -x
 
 function usage() {
 	echo "Usage: $0 <tile sheet> <asm file>"
@@ -19,6 +18,7 @@ function c_to_asm() {
 	mkdir -p $(dirname -- $outputFile)
 
 	echo "Converting to assembly..."
+	ls -al $inputFile
 	zcc +zx -S "$inputFile" -o "$outputFile"
 
 	echo "Formatting..."
