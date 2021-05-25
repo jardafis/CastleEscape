@@ -30,7 +30,7 @@ jobs:
           sudo snap install --edge z88dk
           sudo snap alias z88dk.zcc zcc
           ls -al /snap/bin
-          ls -al /snap/z88dk/current
+          ls -al /snap/z88dk/current/
 
       - name: Build assets
         run: |
