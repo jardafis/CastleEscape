@@ -18,7 +18,8 @@ function c_to_asm() {
 	mkdir -p $(dirname -- $outputFile)
 
 	echo "Converting to assembly..."
-	zcc +zx -S $inputFile -o $outputFile
+	ls -al $inputFile
+	zcc +zx -S "$inputFile" -o "$outputFile"
 
 	echo "Formatting..."
 	# Remove comments
@@ -45,7 +46,7 @@ fi
 
 tileSheet=$1
 
-temp=`mktemp -d`
+temp=`mktemp -d $PWD/tmp.XXXXX`
 #mkdir -p temp
 #temp=temp
 
@@ -86,9 +87,7 @@ do
 	y=$(($y+1))
 done
 
-c_to_asm "$temp/$tileSet" "$temp/tiles.inc"
-
-cp -i $temp/tiles.inc $2
+c_to_asm "$temp/$tileSet" "$2"
 
 rm -rf $temp
 echo "Done"
