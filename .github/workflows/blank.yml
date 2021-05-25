@@ -37,4 +37,5 @@ jobs:
           cat /etc/os-release
           sudo snap install --edge z88dk
           sudo snap alias z88dk.zcc zcc
+          zcc -h
           make -C assets
