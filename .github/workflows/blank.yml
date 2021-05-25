@@ -30,10 +30,9 @@ jobs:
           sudo apt update
           sudo apt upgrade -y
 
-      - name: Update apt
+      - name: Install tiled
         run: |
           sudo apt install -y tiled
-          tiled --help
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
