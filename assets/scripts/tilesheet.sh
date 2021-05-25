@@ -86,6 +86,7 @@ do
 	y=$(($y+1))
 done
 
+ls -al $temp
 c_to_asm "$temp/$tileSet" "$temp/tiles.inc"
 
 cp -i $temp/tiles.inc $2
