@@ -87,6 +87,7 @@ do
 done
 
 ls -al $temp
+cat $temp/$tileSet
 c_to_asm "$temp/$tileSet" "$temp/tiles.inc"
 
 cp -i $temp/tiles.inc $2
