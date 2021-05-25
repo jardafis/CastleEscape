@@ -5,6 +5,7 @@
 #
 set -u
 set -e
+set -x
 
 function usage() {
 	echo "Usage: $0 <tile sheet> <asm file>"
