@@ -32,7 +32,7 @@ jobs:
 
       - name: Install tiled
         run: |
-          sudo apt install -y tiled
+          sudo apt install -y xcb tiled
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
