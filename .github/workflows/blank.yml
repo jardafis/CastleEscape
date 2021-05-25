@@ -28,6 +28,7 @@ jobs:
       - name: Install z88dk
         run: |
           sudo snap install --edge z88dk
+          find /snap/z88dk -name "zx.h"
 
       - name: Build assets
         run: |
