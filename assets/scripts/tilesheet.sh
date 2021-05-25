@@ -4,7 +4,7 @@
 # an asm file.
 #
 set -u
-set -e
+#set -e
 
 function usage() {
 	echo "Usage: $0 <tile sheet> <asm file>"
@@ -18,7 +18,6 @@ function c_to_asm() {
 	mkdir -p $(dirname -- $outputFile)
 
 	echo "Converting to assembly..."
-	ls -al $inputFile
 	zcc +zx -S "$inputFile" -o "$outputFile"
 
 	echo "Formatting..."
@@ -31,13 +30,12 @@ function c_to_asm() {
 	# Remove underscores
 	sed -i -e "s/._/./" $outputFile
 
-	
-	if [ ! `which asmstyle.pl` ]
+	which asmstyle.pl > /dev/null
+	if [ ! $? ]
 	then
 		asmstyle.pl $outputFile
+		rm ${outputFile}.bak
 	fi
-	
-	rm ${outputFile}.bak
 	
 	return 0
 }
