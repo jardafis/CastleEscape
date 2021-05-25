@@ -46,7 +46,7 @@ fi
 
 tileSheet=$1
 
-temp=`mktemp -d`
+temp=`mktemp -d $PWD/tmp.XXXXX`
 #mkdir -p temp
 #temp=temp
 
