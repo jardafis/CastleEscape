@@ -4,7 +4,7 @@
 # an asm file.
 #
 set -u
-set -e
+#set -e
 
 function usage() {
 	echo "Usage: $0 <tile sheet> <asm file>"
@@ -18,7 +18,6 @@ function c_to_asm() {
 	mkdir -p $(dirname -- $outputFile)
 
 	echo "Converting to assembly..."
-	ls -al $inputFile
 	zcc +zx -S "$inputFile" -o "$outputFile"
 
 	echo "Formatting..."
@@ -32,7 +31,6 @@ function c_to_asm() {
 	sed -i -e "s/._/./" $outputFile
 
 	asmstyle.pl $outputFile
-	
 	rm ${outputFile}.bak
 	
 	return 0
@@ -71,7 +69,7 @@ do
 	do
 		tx=$(($x*$tileWidth))
 		ty=$(($y*$tileHeight))
-		echo "Tile X=$tx,Y=$ty -> $temp/tile${tile}.h"
+#		echo "Tile X=$tx,Y=$ty -> $temp/tile${tile}.h"
 
 		convert $tileSheet -colorspace Gray -threshold 1% -crop ${tileWidth}x${tileHeight}+$tx+$ty $temp/tile${tile}.png
 		convert -set comment "" $temp/tile${tile}.png -negate -alpha off $temp/tile${tile}.h

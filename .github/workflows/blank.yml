@@ -25,18 +25,16 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Install perl prerequisites
+        run: sudo cpan install Capture::Tiny File::Basename IO::File File::Spec Iterator::Simple Iterator::Simple::Lookahead Regexp::Common FindBin Data::Dump Modern::Perl Path::Tiny File::Copy
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Install z88dk
+        run: sudo snap install --edge z88dk
+
+      - name: Build all
         run: |
-          pwd
-          ls -al
-          cat /etc/os-release
-          sudo snap install --edge z88dk
-          sudo snap alias z88dk.zcc zcc
-          which zcc
-          dirname -- `which zcc` | xargs ls -al
+          export Z88DK=/snap/z88dk/current/share/z88dk
+          export ZCCCFG=${Z88DK}/lib/config
+          export PATH=/snap/z88dk/current/bin:$PATH
           make -C assets
+          make -C src all
