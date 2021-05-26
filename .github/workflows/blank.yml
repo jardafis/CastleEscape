@@ -26,15 +26,16 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install perl prerequisites
-        run: sudo cpan install App::Prove Modern::Perl Capture::Tiny Capture::Tiny::Extended Path::Tiny File::Path Template Template::Plugin::YAML Test::Differences Text::Table CPU::Z80::Assembler Test::Cmd::Common Test::HexDifferences Data::HexDump Object::Tiny::RW Regexp::Common List::Uniq Clone
+        run: sudo cpan install Capture::Tiny File::Basename IO::File File::Spec Iterator::Simple Iterator::Simple::Lookahead Regexp::Common FindBin Data::Dump Modern::Perl Path::Tiny File::Copy
 
       - name: Install z88dk
-        run: sudo snap install --edge z88dk
-
-      - name: Build assets
         run: |
+          sudo snap install --edge z88dk
           export Z88DK=/snap/z88dk/current/share/z88dk
           export ZCCCFG=${Z88DK}/lib/config
           export PATH=/snap/z88dk/current/bin:$PATH
+
+      - name: Build assets
+        run: |
           make -C assets
           make -C src all
