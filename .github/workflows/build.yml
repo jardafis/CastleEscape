@@ -38,3 +38,12 @@ jobs:
           export PATH=/snap/z88dk/current/bin:$PATH
           make -C assets install
           make -C src all
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            src/*.tap
