@@ -30,12 +30,8 @@ function c_to_asm() {
 	# Remove underscores
 	sed -i -e "s/._/./" $outputFile
 
-	which asmstyle.pl > /dev/null
-	if [ ! $? ]
-	then
-		asmstyle.pl $outputFile
-		rm ${outputFile}.bak
-	fi
+	asmstyle.pl $outputFile
+	rm ${outputFile}.bak
 	
 	return 0
 }
@@ -73,7 +69,7 @@ do
 	do
 		tx=$(($x*$tileWidth))
 		ty=$(($y*$tileHeight))
-		echo "Tile X=$tx,Y=$ty -> $temp/tile${tile}.h"
+#		echo "Tile X=$tx,Y=$ty -> $temp/tile${tile}.h"
 
 		convert $tileSheet -colorspace Gray -threshold 1% -crop ${tileWidth}x${tileHeight}+$tx+$ty $temp/tile${tile}.png
 		convert -set comment "" $temp/tile${tile}.png -negate -alpha off $temp/tile${tile}.h
