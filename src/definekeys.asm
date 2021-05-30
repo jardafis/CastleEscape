@@ -188,7 +188,7 @@ printKey:
         pop     hl
         ret
 
-        section bss_user
+        section BSS_5
 key:
         ds      2
 

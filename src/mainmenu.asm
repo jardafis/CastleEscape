@@ -184,7 +184,7 @@ play:
         pop     af
         ret
 
-        section bss_user
+        section BSS_5
 
         ;
         ; Counter so coins are not rotated every frame

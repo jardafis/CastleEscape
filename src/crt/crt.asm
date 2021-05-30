@@ -1,10 +1,27 @@
         EXTERN  _main
         EXTERN  __BSS_head
         EXTERN  __BSS_END_head
-        EXTERN  __BSS_5_head
-        EXTERN  __BSS_5_tail
 
-        DEFC    CRT_ORG_BANK_5=0x5B00
+        EXTERN  __BSS_0_head
+        EXTERN  __BSS_1_head
+        EXTERN  __BSS_2_head
+        EXTERN  __BSS_3_head
+        EXTERN  __BSS_4_head
+        EXTERN  __BSS_5_head
+        EXTERN  __BSS_6_head
+        EXTERN  __BSS_7_head
+        EXTERN  __BSS_0_tail
+        EXTERN  __BSS_1_tail
+        EXTERN  __BSS_2_tail
+        EXTERN  __BSS_3_tail
+        EXTERN  __BSS_4_tail
+        EXTERN  __BSS_5_tail
+        EXTERN  __BSS_6_tail
+        EXTERN  __BSS_7_tail
+
+		DEFC	CRT_ORG_BANK_0=0xc000
+		DEFC	CRT_ORG_BANK_2=0x8000
+		DEFC    CRT_ORG_BANK_5=0x5B00
         DEFC    CRT_ORG_CODE=0x8184
 
         SECTION CODE
@@ -13,7 +30,7 @@ start:
         di
 
 		;
-		; Clear the BSS section
+		; Clear the BSS sections
 		;
 		ld		sp, bssTable
 nextBSSSection:
@@ -29,17 +46,11 @@ nextBSSSection:
 		dec		bc						; Decrement length
 
         ld      (hl), 0					; Zero contents of HL
-        ld		de, hl					; DE = HL + 1
-       	inc		de
+        ld		de, hl
+       	inc		de						; DE = HL + 1
 		ldir							; Fill
+		jr		nextBSSSection
 bssInitDone:
-
-
-;        ld      hl, __BSS_head
-;        ld      (hl), 0
-;        ld      de, __BSS_head+1
-;        ld      bc, __BSS_END_head-__BSS_head-1
-;        ldir
 
 		;
 		; Set the stack pointer address
@@ -66,8 +77,22 @@ bssInitDone:
 bssTable:
 		dw	__BSS_END_head-__BSS_head
 		dw	__BSS_head
+		dw	__BSS_0_tail-__BSS_0_head
+		dw	__BSS_0_head
+		dw	__BSS_1_tail-__BSS_1_head
+		dw	__BSS_1_head
+		dw	__BSS_2_tail-__BSS_2_head
+		dw	__BSS_2_head
+		dw	__BSS_3_tail-__BSS_3_head
+		dw	__BSS_3_head
+		dw	__BSS_4_tail-__BSS_4_head
+		dw	__BSS_4_head
 		dw	__BSS_5_tail-__BSS_5_head
 		dw	__BSS_5_head
+		dw	__BSS_6_tail-__BSS_6_head
+		dw	__BSS_6_head
+		dw	__BSS_7_tail-__BSS_7_head
+		dw	__BSS_7_head
 		dw	0x8000
 
         SECTION RODATA_END
