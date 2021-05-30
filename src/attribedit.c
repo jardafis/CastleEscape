@@ -63,7 +63,7 @@ void putHex(unsigned int value)
 /*
  * Output a string to the screen at the current x,y cursor position.
  */
-void putString(unsigned char *string)
+void putString(char *string)
 {
     while (*string)
     {

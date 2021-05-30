@@ -14,7 +14,7 @@
 
         public  defineKeys
 
-        section BANK_5
+        section CODE_5
         include "defs.inc"
 
 defineKeys:
@@ -192,7 +192,7 @@ printKey:
 key:
         ds      2
 
-        section rodata_user
+        section RODATA_5
         ;
         ; List of lanterns on the this menu
         ;

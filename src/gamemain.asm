@@ -71,11 +71,11 @@
 
         include "defs.inc"
 
-        section bss_user
+		section	CODE
         org     -1                      ; Create a seperate output binary for this section
 
-        section BANK_5                  ; Set the base address of BANK_5
-        org     0x4000+0x1b00           ; Skip over the screen memory
+        section bss_user
+        org     -1                      ; Create a seperate output binary for this section
 
         section code_user
 _main:

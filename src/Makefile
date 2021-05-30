@@ -3,7 +3,6 @@ AS=asmpp.pl
 LD=zcc
 TARGET=zx
 CRT=31
-RODATA=rodata_user
 PROJ_NAME=CastleEscape
 PRAGMA_FILE=zpragma.inc
 ASMDEPS=	\
@@ -14,11 +13,15 @@ ASMDEPS=	\
 			$(wildcard music/*.mus) \
 			$(wildcard music/*.inc) \
 			$(wildcard sprite/*.inc)
+CODE=CODE_5
+RODATA=RODATA_5
+DATA=data_user
+BSS=bss_user
 
 C_OPT_FLAGS=-SO3
 
-CFLAGS=+$(TARGET) $(C_OPT_FLAGS) --codesegBANK_5 --constseg$(RODATA) -compiler=sdcc -I$(Z88DK)/include/_DEVELOPMENT/sdcc -c -pragma-include:$(PRAGMA_FILE)
-LDFLAGS=+$(TARGET) --codesegBANK_5 --constseg$(RODATA) -m -clib=sdcc_iy -pragma-include:$(PRAGMA_FILE) -Cz"--clearaddr 32767 --screen title.scr --exclude-sections bss_user"
+CFLAGS=+$(TARGET) $(C_OPT_FLAGS) --codeseg=$(CODE) --constseg=$(RODATA) --dataseg$(DATA) --bssseg$(BSS) -I$(Z88DK)/include/_DEVELOPMENT/sccz80 -c -pragma-include:$(PRAGMA_FILE)
+LDFLAGS=+$(TARGET) -crt0 crt/crt.asm --codesegBANK_5 --constseg$(RODATA) -m -pragma-include:$(PRAGMA_FILE) -Cz"--clearaddr 32767 --screen title.scr --exclude-sections bss_user"
 ASFLAGS=-I$(Z88DK)/lib
 
 OBJECTS =	$(patsubst %.c,%.o,$(wildcard *.c)) \

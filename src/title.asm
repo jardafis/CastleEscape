@@ -9,7 +9,7 @@
         public  titleScreen
         public  pressJumpMsg
 
-        section BANK_5
+        section CODE_5
         include "defs.inc"
 
 titleScreen:
@@ -59,7 +59,7 @@ waitNoJump:
 
         ret
 
-;        section rodata_user
+        section RODATA_5
 pressJumpMsg:
         db      "Press Jump to Continue", 0x00
 

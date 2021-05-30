@@ -19,7 +19,7 @@
         public  animateMenu
         public  waitReleaseKey
 
-        section BANK_5
+        section CODE_5
 
         include "defs.inc"
 
@@ -154,9 +154,9 @@ attribEdit:
         bank    0
         screen  0
 
-        ld      hl, _tileAttr
-        push    hl
         ld      hl, _tile0
+        push    hl
+        ld      hl, _tileAttr
         push    hl
         call    _attribEdit
         pop     hl
@@ -192,7 +192,7 @@ play:
 rotateCount:
         ds      1
 
-        section rodata_user
+        section RODATA_5
         ;
         ; List of lanterns on the main menu
         ;

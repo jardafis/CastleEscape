@@ -1,7 +1,7 @@
         public  _levels
         public  _tileAttr
 
-        section BANK_0
+        section RODATA_0
 _levels:
         include "levels.inc"
 _tileAttr:

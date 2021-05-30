@@ -15,15 +15,15 @@ while [ $1 ]
 do
 	file=$1
 	echo "Processing $file"
-	for extern in `grep "^\s*extern\s*" $file | awk '{print $2}'`
+	for extern in `grep -i "^\s*extern\s*" $file | awk '{print $2}'`
 	do
-		if [ `grep -c $extern $file` = 1 ]
+		if [ `grep -ic $extern $file` = 1 ]
 		then
 			# Make a backup of the file
 			cp $file ${file}.bak
 			# Remove the unused externs
 			echo "    Unused 'extern $extern' removed"
-			sed -i "/^\s*extern\s*$extern.*/d" $file
+			sed -i "/^\s*extern\s*$extern.*/Id" $file
 		fi
 	done
 	# Next command line parameter
