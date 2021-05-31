@@ -7,14 +7,14 @@
         extern  __BANK_6_head
         extern  __BANK_7_head
 
-		extern	__BSS_0_head
-		extern	__BSS_1_head
-		extern	__BSS_2_head
-		extern	__BSS_3_head
-		extern	__BSS_4_head
-		extern	__BSS_5_head
-		extern	__BSS_6_head
-		extern	__BSS_7_head
+        extern  __BSS_0_head
+        extern  __BSS_1_head
+        extern  __BSS_2_head
+        extern  __BSS_3_head
+        extern  __BSS_4_head
+        extern  __BSS_5_head
+        extern  __BSS_6_head
+        extern  __BSS_7_head
 
         section code_crt_init
         call    _bankedtapeloader
@@ -30,7 +30,6 @@
         ; Does not load the BSS sections. It is expected crt0 zeros these out.
         ;
 _bankedtapeloader:
-        pushall
         ld      ix, __BANK_0_head
         ld      de, __BSS_0_head-__BANK_0_head
         ld      c, MEM_BANK_ROM|0x0     ; Bank 0
@@ -74,7 +73,6 @@ _bankedtapeloader:
         ld      (SV_BANKM), a
         ld      bc, IO_BANK
         out     (c), a
-        popall
         ret
 
 load_block:

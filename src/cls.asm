@@ -21,7 +21,7 @@ _cls:
         halt
 
         di
-        ld      (clsTempSP), sp
+        ld      (clsTempSP+1), sp
 
         ld      sp, SCREEN_ATTR_END
         ld      h, l                    ; attr input parameter in l
@@ -59,8 +59,8 @@ loop:
         push    hl
         push    hl
         djnz    loop
-clsTempSP   equ $+1
-        ld      sp, 0x0000
+clsTempSP:
+        ld      sp, -1
         ei
 
         pop     hl

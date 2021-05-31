@@ -71,14 +71,14 @@
 
         include "defs.inc"
 
-		section	CODE
+        section CODE
         org     -1                      ; Create a seperate output binary for this section
 
         section bss_user
         org     -1                      ; Create a seperate output binary for this section
 
-		section BSS_5
-		org		-1
+        section BSS_5
+        org     -1
 
         section code_user
 _main:

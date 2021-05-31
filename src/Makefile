@@ -18,7 +18,7 @@ RODATA=RODATA_5
 DATA=DATA_5
 BSS=BSS_5
 
-C_OPT_FLAGS=-SO3
+C_OPT_FLAGS=-SO2
 
 CFLAGS=+$(TARGET) $(C_OPT_FLAGS) --codeseg=$(CODE) --constseg=$(RODATA) --dataseg$(DATA) --bssseg$(BSS) -I$(Z88DK)/include/_DEVELOPMENT/sccz80 -c -pragma-include:$(PRAGMA_FILE)
 LDFLAGS=+$(TARGET) -crt0 crt/crt.asm --codesegBANK_5 --constseg$(RODATA) -m -pragma-include:$(PRAGMA_FILE) -Cz"--clearaddr 32767 --screen title.scr --exclude-sections 'bss_user BSS_0 BSS_1 BSS_2 BSS_3 BSS_4 BSS_5 BSS_6 BSS_7'"
