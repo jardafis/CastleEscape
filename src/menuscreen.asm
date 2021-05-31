@@ -1,3 +1,3 @@
-        section BANK_7
+        section RODATA_7
 
         binary  "mainmenu.scr"
