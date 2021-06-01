@@ -21,6 +21,10 @@
         EXTERN  __BSS_6_tail
         EXTERN  __BSS_7_tail
 
+IFNDEF CRT_INITIALIZE_BSS
+		DEFC	CRT_INITIALIZE_BSS=1
+ENDIF
+
         SECTION CODE
         ORG     CRT_ORG_CODE
         SECTION code_crt_init
@@ -36,14 +40,16 @@ crt0:
         ld      sp, REGISTER_SP
 fillStack:
         ld      de, 0x5555              ; Word to fill
-        ld      b, STACK_SIZE/2         ; Stack size in words
+        ld      b, CRT_STACK_SIZE/2     ; Stack size in words
 fillStackLoop:
         push    de                      ; Push data to stack
         djnz    fillStackLoop           ; Loop for all words
         ld      sp, REGISTER_SP
 
         SECTION code_crt_main
+IF CRT_INITIALIZE_BSS
         call    bssInit
+ENDIF
         call    _main
 
         SECTION code_crt_exit
@@ -54,7 +60,6 @@ fillStackLoop:
 		; Clear the BSS sections
 		;
 bssInit:
-        di
         ld      (bssInitDone+1), sp
         ld      sp, bssTable
 nextBSSSection:

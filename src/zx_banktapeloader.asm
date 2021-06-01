@@ -28,6 +28,7 @@
         public  _bankedtapeloader
         ;
         ; Does not load the BSS sections. It is expected crt0 zeros these out.
+        ; Disabled interrupts before exit.
         ;
 _bankedtapeloader:
         ld      ix, __BANK_0_head
@@ -73,6 +74,7 @@ _bankedtapeloader:
         ld      (SV_BANKM), a
         ld      bc, IO_BANK
         out     (c), a
+        di								; The call to ROM peaves interrupts enabled. Disable them.
         ret
 
 load_block:
