@@ -19,7 +19,7 @@
         section code_crt_init
         call    _bankedtapeloader
 
-        section code_driver
+        section code_user
 
         defc    SV_BANKM=currentBank
 
