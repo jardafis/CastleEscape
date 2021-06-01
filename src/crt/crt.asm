@@ -87,12 +87,10 @@ bssInitDone:
 
 
         SECTION code_crt0_sccz80
-        SECTION code_driver
         SECTION code_user
         SECTION CODE_END
 
         SECTION RODATA
-        SECTION rodata_compiler
         SECTION rodata_user
 bssTable:
         dw      __BSS_END_head-__BSS_head
@@ -118,12 +116,10 @@ bssTable:
         SECTION RODATA_END
 
         SECTION DATA
-        SECTION data_compiler
         SECTION data_user
         SECTION DATA_END
 
         SECTION BSS
-        SECTION bss_compiler
         SECTION bss_user
         SECTION BSS_END
 
