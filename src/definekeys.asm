@@ -5,9 +5,6 @@
         extern  scanCodes
         extern  setAttr
         extern  displayTile
-        extern  _lanternFlicker
-        extern  rotateCount
-        extern  _animateCoins
         extern  keyboardScan
         extern  bank7Screen
         extern  animateMenu
@@ -17,7 +14,7 @@
 
         public  defineKeys
 
-        section BANK_5
+        section CODE_5
         include "defs.inc"
 
 defineKeys:
@@ -134,7 +131,7 @@ waitJumpRelease:
         jr      nz, waitJumpRelease
 
         pop     af
-        ret     
+        ret
 
         ;
         ; Display a prompt asking to input a direction key.
@@ -189,13 +186,13 @@ printKey:
         ld      a, (key)
         call    lookupScanCode
         pop     hl
-        ret     
+        ret
 
-        section bss_user
+        section BSS_5
 key:
         ds      2
 
-        section rodata_user
+        section RODATA_5
         ;
         ; List of lanterns on the this menu
         ;

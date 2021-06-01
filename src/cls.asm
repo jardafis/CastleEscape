@@ -1,4 +1,3 @@
-        extern  _screenTab
         public  _cls
         public  clearAttr
         public  setAttr
@@ -19,10 +18,10 @@ _cls:
         ld      a, l
         ld      (clsAttrib), a
 
-        halt    
+        halt
 
-        di      
-        ld      (clsTempSP), sp
+        di
+        ld      (clsTempSP+1), sp
 
         ld      sp, SCREEN_ATTR_END
         ld      h, l                    ; attr input parameter in l
@@ -60,14 +59,14 @@ loop:
         push    hl
         push    hl
         djnz    loop
-clsTempSP   equ $+1
-        ld      sp, 0x0000
-        ei      
+clsTempSP:
+        ld      sp, -1
+        ei
 
         pop     hl
         pop     bc
         pop     af
-        ret     
+        ret
 
         ;
         ; Set the screen attribute specified by 'bc' to
@@ -82,7 +81,7 @@ clearAttr:
         ld      a, (clsAttrib)
         call    setAttr
         pop     af
-        ret     
+        ret
 
         ;
         ; Set the screen attribute specified by 'bc' to
@@ -106,7 +105,7 @@ setAttr:
         ld      (hl), a
         pop     hl
         pop     bc
-        ret     
+        ret
 
         section bss_user
 clsAttrib:

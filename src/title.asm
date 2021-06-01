@@ -2,16 +2,14 @@
         extern  LOAD_SONG
         extern  PLAYER_OFF
         extern  _updateDirection
-        extern  _lanternFlicker
         extern  rotateCount
         extern  currentCoinTable
-        extern  _animateCoins
         extern  animateMenu
 
         public  titleScreen
         public  pressJumpMsg
 
-        section BANK_5
+        section CODE_5
         include "defs.inc"
 
 titleScreen:
@@ -59,9 +57,9 @@ waitNoJump:
 
         call    PLAYER_OFF
 
-        ret     
+        ret
 
-;        section rodata_user
+        section RODATA_5
 pressJumpMsg:
         db      "Press Jump to Continue", 0x00
 

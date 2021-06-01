@@ -22,7 +22,7 @@ _displayScore:
 
         pop     hl
         pop     bc
-        ret     
+        ret
 
         section bss_user
 score:                                  ; Score in BCD

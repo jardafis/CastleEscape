@@ -21,7 +21,7 @@
         ; Animate the visible coins on the current level.
         ;
 _animateCoins:
-        di      
+        di
         ld      (coinTableEnd+1), sp
         ld      de, (currentCoinTable)
 nextCoin:
@@ -34,9 +34,9 @@ nextCoin:
         inc     de
 
         ld      a, (de)                 ; Get x screen position
-        rrca    
-        rrca    
-        rrca    
+        rrca
+        rrca
+        rrca
         and     %00011111
         ld      c, a                    ; Save for later
         inc     de
@@ -56,7 +56,7 @@ nextCoin:
         ld      c, a
 bank7Screen:                            ; Code is modified to set bit 7 of b
         nop                             ; to write to 0xc000 addresses.
-        nop     
+        nop
 
         ; Calculate the tile address using the animation index
         ld      a, (de)                 ; Animation index
@@ -109,12 +109,12 @@ bank7Screen:                            ; Code is modified to set bit 7 of b
         jp      nextCoin
 coinTableEnd:
         ld      sp, 0x0000
-        ei      
-        ret     
+        ei
+        ret
 
 notVisible:
         ld      a, SIZEOF_item
-        addde   
+        addde
         jp      nextCoin
 
         ;
@@ -129,7 +129,7 @@ coinCollision:
         call    _displayScore
         ld      a, AYFX_COLLECT_COIN
         call    START_SOUND
-        ret     
+        ret
 
         section bss_user
 

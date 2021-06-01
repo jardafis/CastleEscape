@@ -45,7 +45,7 @@ checkXCol:
         jr      endif
 movingRight:
         ld      a, PLAYER_WIDTH         ; else add player width
-        addde   
+        addde
 endif:
         ld      a, (_yPos)              ; Get the yPos
         ld      l, a
@@ -60,11 +60,11 @@ endif:
         ; Divide xPos by 8 to get byte offset
         ld      a, e
         sra     d
-        rra     
+        rra
         sra     d
-        rra     
+        rra
         sra     d
-        rra     
+        rra
         ld      e, a
         add     hl, de                  ; Add X byte offset to tile map Y index
 
@@ -100,7 +100,7 @@ checkXDone:
         cp      MAX_X_POS-PLAYER_WIDTH+1
         jr      nc, nextXLevel          ; 'nc' if a >= value
         ld      (_xPos), a
-        ret     
+        ret
 
 previousXLevel:
         ld      a, (_tileMapX)
@@ -123,7 +123,7 @@ changeXLevel:
         ld      a, b                    ; New x position
         ld      (_xPos), a
         call    _setupScreen
-        ret     
+        ret
 
         ;
         ; Check for player colliding with platforms on
@@ -160,11 +160,11 @@ endif2:
 		;
         ld      a, l
         sra     h
-        rra     
+        rra
         sra     h
-        rra     
+        rra
         sra     h
-        rra     
+        rra
         ld      l, a
 		;
 		; Multiply by TILEMAP_WIDTH
@@ -175,7 +175,7 @@ endif2:
         ld      c, a                    ; Save pixel offset for later
         rrca                            ; Divide by 8 to get the byte offset
         rrca                            ; Faster to do rrca followed by AND rather than srl
-        rrca    
+        rrca
         and     %00011111
         addhl                           ; Add X byte offset to tile map Y index
 
@@ -240,7 +240,7 @@ updateYPos:
         cp      24
         jr      c, previousYLevel       ; 'c' if 'a' < value
         ld      (_yPos), a
-        ret     
+        ret
 
 previousYLevel:
         ld      a, (_tileMapY)
@@ -260,7 +260,7 @@ changeYLevel:
         ld      a, b
         ld      (_yPos), a
         call    _setupScreen
-        ret     
+        ret
 
 yCollision:
 		;
@@ -280,7 +280,7 @@ yCollision:
         ; Collided with ID_SOLID_TILE going up
         ; Don't update yPos.
         ;
-        ret     
+        ret
 
 landed:
         ;
@@ -295,4 +295,4 @@ landed:
         ld      (_jumping), a
         ld      (_falling), a
 
-        ret     
+        ret

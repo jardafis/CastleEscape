@@ -48,7 +48,7 @@ xLoop:
         pop     de
         pop     bc
         pop     af
-        ret     
+        ret
 
         section rodata_user
 bannerData:
