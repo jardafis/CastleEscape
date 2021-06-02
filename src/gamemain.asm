@@ -78,7 +78,7 @@
         org     -1                      ; Create a seperate output binary for this section
 
         section BSS_5
-        org     -1
+        org     -1                      ; Create a seperate output binary for this section
 
         section code_user
 _main:
@@ -87,8 +87,8 @@ _main:
         call    titleScreen
 
         call    mainMenu
-		; Never reached
-        assert
+
+		ret
 
 init:
         border  INK_BLACK
