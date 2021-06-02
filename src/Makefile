@@ -47,12 +47,13 @@ run: $(PROJ_NAME).tap
 dis: all
 	z88dk-dis -o $(HEAD) -x $(PROJ_NAME).map $(PROJ_NAME)_$(BANK).bin | less
 
-
+ifeq (,$(findstring $(MAKECMDGOALS),clean))
 %.d: %.asm
 	@./mkdep.sh $<
 
 %.d: %.c
-	./mkdep.sh $<
+	@./mkdep.sh $<
+endif
 
 %.o: %.c $(PRAGMA_FILE) Makefile
 	@echo "Compiling $<"
