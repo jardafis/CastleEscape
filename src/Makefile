@@ -51,6 +51,9 @@ dis: all
 %.d: %.asm
 	@./mkdep.sh $<
 
+%.d: %.c
+	./mkdep.sh $<
+
 %.o: %.c $(PRAGMA_FILE) Makefile
 	@echo "Compiling $<"
 	@$(CC) $(CFLAGS) -o $@ $<
@@ -62,4 +65,4 @@ $(PROJ_NAME).tap : $(OBJECTS) $(PRAGMA_FILE) Makefile
 	 $(LD) $(LDFLAGS) $(OBJECTS) -o $(PROJ_NAME).bin
 	 @rm -f *.i
 
--include $(ASMSRC:.asm=.d)
+-include $(ASMSRC:.asm=.d) $(CSRC:.c=.d)
