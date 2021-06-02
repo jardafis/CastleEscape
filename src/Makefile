@@ -49,10 +49,10 @@ dis: all
 
 ifeq (,$(findstring $(MAKECMDGOALS),clean))
 %.d: %.asm
-	@./mkdep.sh $<
+	@./mkdep.sh $< > $@
 
 %.d: %.c
-	@./mkdep.sh $<
+	@./mkdep.sh $< > $@
 endif
 
 %.o: %.c $(PRAGMA_FILE) Makefile

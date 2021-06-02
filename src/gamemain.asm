@@ -88,7 +88,7 @@ _main:
 
         call    mainMenu
 
-		ret
+        ret
 
 init:
         border  INK_BLACK

@@ -3,4 +3,6 @@
 #pragma output CRT_ORG_CODE = 0x8184
 #pragma output CRT_INITIALIZE_BSS = 1
 
+#pragma output CRT_ORG_BANK_0 = 0xC000
 #pragma output CRT_ORG_BANK_5 = 0x5B00
+#pragma output CRT_ORG_BANK_7 = 0x7C000

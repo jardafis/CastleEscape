@@ -21,8 +21,8 @@
         EXTERN  __BSS_6_tail
         EXTERN  __BSS_7_tail
 
-IFNDEF CRT_INITIALIZE_BSS
-		DEFC	CRT_INITIALIZE_BSS=1
+IFNDEF  CRT_INITIALIZE_BSS
+        DEFC    CRT_INITIALIZE_BSS=1
 ENDIF
 
         SECTION CODE
@@ -47,7 +47,7 @@ fillStackLoop:
         ld      sp, REGISTER_SP
 
         SECTION code_crt_main
-IF CRT_INITIALIZE_BSS
+IF  CRT_INITIALIZE_BSS
         call    bssInit
 ENDIF
         call    _main
