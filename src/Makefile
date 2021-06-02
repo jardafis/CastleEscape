@@ -7,11 +7,11 @@ PRAGMA_FILE=zpragma.inc
 ASMDEPS=	\
 			$(wildcard *.inc) \
 			$(wildcard *.scr) \
-			$(wildcard *.afb) \
 			$(wildcard *.dat) \
 			$(wildcard music/*.mus) \
 			$(wildcard music/*.inc) \
-			$(wildcard sprite/*.inc)
+			$(wildcard sprite/*.inc) \
+			$(wildcard crt/*.asm)
 
 CODE=CODE_5
 RODATA=RODATA_5
@@ -24,20 +24,13 @@ CFLAGS=+$(TARGET) $(C_OPT_FLAGS) --codeseg=$(CODE) --constseg=$(RODATA) --datase
 LDFLAGS=+$(TARGET) -crt0 crt/crt.asm -m \
 	-pragma-include:$(PRAGMA_FILE) \
 	-create-app -Cz"--clearaddr 32767 --screen title.scr --exclude-sections 'bss_user BSS_0 BSS_1 BSS_2 BSS_3 BSS_4 BSS_5 BSS_6 BSS_7'"
-ASFLAGS=-I$(Z88DK)/lib
+#ASFLAGS=-opt-speed
 
 OBJECTS =	$(patsubst %.c,%.o,$(wildcard *.c)) \
 			$(patsubst %.asm,%.o,$(wildcard *.asm))
 
 all: $(PROJ_NAME).tap
-	@grep "^__.*_5_" $(PROJ_NAME).map | 		awk '{printf "%-24s = %s\n", $$1, $$3}'
-	@grep __code_user_ $(PROJ_NAME).map | 	awk '{printf "%-24s = %s\n", $$1, $$3}'
-	@grep __rodata_user_ $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
-	@grep __data_user_ $(PROJ_NAME).map | 	awk '{printf "%-24s = %s\n", $$1, $$3}'
-	@grep __bss_user_ $(PROJ_NAME).map | 	awk '{printf "%-24s = %s\n", $$1, $$3}'
-	@echo
-	@grep "^__.*_0_" $(PROJ_NAME).map | 		awk '{printf "%-24s = %s\n", $$1, $$3}'
-	@grep "^__.*_7_" $(PROJ_NAME).map | 		awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep -E "__.*_([0-7]|user|crt.*)_(init|main|exit|sccz80|head|tail|size).*" $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
 
 %.o: %.c $(PRAGMA_FILE) Makefile
 	$(CC) $(CFLAGS) -o $@ $<
