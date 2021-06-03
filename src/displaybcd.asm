@@ -8,7 +8,7 @@
         public  displayBCD
 
         include "defs.inc"
-        section code_user
+        section CODE
 
         ; On entry:
         ;		a[3:0] = BCD value to display, a[7:4] must be zero

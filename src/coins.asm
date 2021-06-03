@@ -15,7 +15,7 @@
 
         include "defs.inc"
 
-        section code_user
+        section CODE
 
         ;
         ; Animate the visible coins on the current level.
@@ -131,7 +131,7 @@ coinCollision:
         call    START_SOUND
         ret
 
-        section bss_user
+        section BSS
 
 currentCoinTable:
         ds      2

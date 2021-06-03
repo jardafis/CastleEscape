@@ -16,7 +16,7 @@
 
         include "defs.inc"
 
-        section code_user
+        section CODE
         ;
         ; Increment and display the egg count
         ;
@@ -82,7 +82,7 @@ displayEggCount:
         pop     bc
         ret
 
-        section bss_user
+        section BSS
 counter:
         ds      1
 eggCount:                               ; BCD

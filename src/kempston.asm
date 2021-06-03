@@ -4,7 +4,7 @@
 
         include "defs.inc"
 
-        section code_user
+        section CODE
 		;
 		;	Input:
 		;		None
@@ -34,6 +34,6 @@ readKempston:
         ld      e, a
         ret
 
-        section bss_user
+        section BSS
 kjPresent:
         ds      1

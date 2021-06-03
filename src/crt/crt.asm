@@ -1,9 +1,11 @@
         include "zcc_opt.def"
 
+		EXTERN	bankedtapeloader
         EXTERN  _main
-        EXTERN  __BSS_head
-        EXTERN  __BSS_END_head
+        EXTERN	currentBank
 
+        EXTERN  __BSS_head
+        EXTERN  __BSS_tail
         EXTERN  __BSS_0_head
         EXTERN  __BSS_1_head
         EXTERN  __BSS_2_head
@@ -27,7 +29,6 @@ ENDIF
 
         SECTION CODE
         ORG     CRT_ORG_CODE
-        SECTION code_crt_init
 crt0:
         di
         ;
@@ -46,18 +47,15 @@ fillStackLoop:
         djnz    fillStackLoop           ; Loop for all words
         ld      sp, REGISTER_SP
 
-        SECTION code_crt_main
+		call	bankedtapeloader
 IF  CRT_INITIALIZE_BSS
         call    bssInit
 ENDIF
         call    _main
 
-        SECTION code_crt_exit
         di
         halt
 
-        SECTION code_crt0_sccz80
-        SECTION code_user
 		;
 		; Clear the BSS sections
 		;
@@ -92,68 +90,65 @@ nextBSSSection:
         jr      nextBSSSection
 bssInitDone:
         ld      sp, 0xffff
+
+		ld		a, 0x10
+		ld		(currentBank), a
+        ld      bc, 0x7ffd
+        out     (c), a
+
         ret
 
-        SECTION CODE_END
+        SECTION code_crt0_sccz80
 
         SECTION RODATA
-        SECTION rodata_user
 bssTable:
         dw      __BSS_head
-        dw      2<<8
-        dw      __BSS_END_head-__BSS_head
+        dw      0x12<<8
+        dw      __BSS_tail-__BSS_head
 IFDEF  CRT_ORG_BANK_0
         dw      __BSS_0_head
-        dw      0<<8
+        dw      0x10<<8
         dw      __BSS_0_tail-__BSS_0_head
 ENDIF
 IFDEF  CRT_ORG_BANK_1
         dw      __BSS_1_head
-        dw      1<<8
+        dw      0x11<<8
         dw      __BSS_1_tail-__BSS_1_head
 ENDIF
 IFDEF  CRT_ORG_BANK_2
         dw      __BSS_2_head
-        dw      2<<8
+        dw      0x12<<8
         dw      __BSS_2_tail-__BSS_2_head
 ENDIF
 IFDEF  CRT_ORG_BANK_3
         dw      __BSS_3_head
-        dw      3<<8
+        dw      0x13<<8
         dw      __BSS_3_tail-__BSS_3_head
 ENDIF
 IFDEF  CRT_ORG_BANK_4
         dw      __BSS_4_head
-        dw      4<<8
+        dw      0x14<<8
         dw      __BSS_4_tail-__BSS_4_head
 ENDIF
 IFDEF  CRT_ORG_BANK_5
         dw      __BSS_5_head
-        dw      5<<8
+        dw      0x15<<8
         dw      __BSS_5_tail-__BSS_5_head
 ENDIF
 IFDEF  CRT_ORG_BANK_6
         dw      __BSS_6_head
-        dw      6<<8
+        dw      0x16<<8
         dw      __BSS_6_tail-__BSS_6_head
 ENDIF
 IFDEF  CRT_ORG_BANK_7
         dw      __BSS_7_head
-        dw      7<<8
+        dw      0x17<<8
         dw      __BSS_7_tail-__BSS_7_head
 ENDIF
         dw      0x0000
 
-        SECTION RODATA_END
-
         SECTION DATA
-        SECTION data_user
-        SECTION DATA_END
-
         SECTION BSS
-        SECTION bss_user
-        SECTION BSS_END
-
 
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    		; Define Memory Banks

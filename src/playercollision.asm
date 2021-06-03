@@ -15,7 +15,7 @@
         public  checkYCol
 
         include "defs.inc"
-        section code_user
+        section CODE
 
         defc    ID_SOLID_TILE=144
         defc    ID_SOFT_TILE=135

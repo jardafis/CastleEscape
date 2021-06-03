@@ -4,7 +4,7 @@
         public  print
         public  printAttr
 
-        section code_user
+        section CODE
 
         include "defs.inc"
 

@@ -16,10 +16,7 @@
         extern  __BSS_6_head
         extern  __BSS_7_head
 
-        section code_crt_init
-        call    bankedtapeloader
-
-        section code_user
+        section CODE
         include "defs.inc"
 		include "zcc_opt.inc"
 		
@@ -88,7 +85,7 @@ load_block:
         call    nc, loadError
         ret
 
-        section rodata_user
+        section RODATA
 bankTable:
 IFDEF  CRT_ORG_BANK_0
         dw      __BANK_0_head

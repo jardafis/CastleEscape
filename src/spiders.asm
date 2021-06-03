@@ -10,7 +10,7 @@
 
         include "defs.inc"
 
-        section code_user
+        section CODE
 
 updateSpiderPos:
         ld      hl, (currentSpiderTable)
@@ -155,7 +155,7 @@ spiderCollision:
         call    die
         ret
 
-        section bss_user
+        section BSS
 changeSpiderDir:
         ds      1
 

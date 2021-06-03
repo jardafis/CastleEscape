@@ -1,6 +1,6 @@
         public  rand
 
-        section code_user
+        section CODE
 
 		;
 		; Xorshift PRNG

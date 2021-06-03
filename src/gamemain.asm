@@ -74,13 +74,13 @@
         section CODE
         org     -1                      ; Create a seperate output binary for this section
 
-        section bss_user
+        section BSS
         org     -1                      ; Create a seperate output binary for this section
 
         section BSS_5
         org     -1                      ; Create a seperate output binary for this section
 
-        section code_user
+        section CODE
 _main:
         call    init
 
@@ -570,7 +570,7 @@ mulDone:
         pop     bc
         ret
 
-        section bss_user
+        section BSS
 coinRotate:
         ds      1
 _currentTileMap:
@@ -598,11 +598,11 @@ xyStartPos:                             ; Position where player entered the leve
 _spriteBuffer:
         ds      48
 
-        section data_user
+        section BSS
 currentBank:
         db      MEM_BANK_ROM
 
-        section rodata_user
+        section RODATA
 readyMsg:
         db      "Ready?", 0x00
 gameOverMsg:

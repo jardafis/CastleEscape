@@ -2,7 +2,7 @@
 
         public  _initISR
         public  ticks
-        section code_user
+        section CODE
 
         include "defs.inc"
         defc    VECTOR_TABLE_HIGH=0x80
@@ -64,7 +64,7 @@ isrTempSP   equ $+1
         ei                              ; Enable interrupts
         reti                            ; Acknowledge and return from interrupt
 
-        section bss_user
+        section BSS
 ticks:
         ds      2
         ds      0x40                    ; 64 bytes for interrupt stack

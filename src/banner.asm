@@ -7,7 +7,7 @@
 
         include "defs.inc"
 
-        section code_user
+        section CODE
 
         defc    BANNER_HEIGHT=0x03
 
@@ -50,6 +50,6 @@ xLoop:
         pop     af
         ret
 
-        section rodata_user
+        section RODATA
 bannerData:
         include "banner.inc"

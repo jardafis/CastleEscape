@@ -1,5 +1,5 @@
         public  _screenTab
-        section rodata_user
+        section RODATA
 
         ;
         ; The screen table contains the address of the

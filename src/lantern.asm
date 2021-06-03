@@ -2,7 +2,7 @@
         public  _lanternList
         include "defs.inc"
 
-        section code_user
+        section CODE
         ;
         ; On entry:
         ;			hl - Pointer to lantern table
@@ -36,7 +36,7 @@ tempSP:
 done:
         ret
 
-        section rodata_user
+        section RODATA
 colors:
         db      INK_YELLOW
         db      INK_RED
@@ -47,7 +47,7 @@ colors:
         db      INK_YELLOW
         db      INK_RED
 
-        section bss_user
+        section BSS
 _lanternList:                           ; Max of 8 lanterns on any screen
         ds      SIZEOF_byte
         ds      SIZEOF_ptr*MAX_LANTERNS
