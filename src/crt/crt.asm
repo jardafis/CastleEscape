@@ -56,6 +56,8 @@ ENDIF
         di
         halt
 
+        SECTION code_crt0_sccz80
+        SECTION code_user
 		;
 		; Clear the BSS sections
 		;
@@ -63,55 +65,84 @@ bssInit:
         ld      (bssInitDone+1), sp
         ld      sp, bssTable
 nextBSSSection:
-        pop     bc                      ; BSS size
-        pop     hl                      ; BSS start
-        ld      a, b                    ; Check if the BSS size is 0
-        or      c                       ; If it is, skip to
-        jr      z, nextBSSSection       ; the next BSS section in the table
+        pop     hl                      ; Get BSS start address.
+        ld      a, h                    ; If the start address is
+        or      l                       ; 0x0000 it's the end of
+        jr      z, bssInitDone          ; the BSS table.
 
-        bit     7, b                    ; If bit 7 of BC is set
-        jr      nz, bssInitDone         ; End of table.
+		; Switch memory banks
+        pop     af                      ; Get the bank
+        ld      bc, 0x7ffd
+        out     (c), a
 
-        dec     bc                      ; Decrement length
+        pop     bc                      ; Get BSS size.
+        ld      a, b                    ; If the BSS size
+        or      c                       ; is zero, skip to the
+        jr      z, nextBSSSection       ; next BSS section in the table.
 
-		; Switch memory banks somewhere here
+        ld      (hl), 0                 ; Zero first byte of BSS.
+        dec     bc                      ; Decrement counter.
+        ld      a, b
+        or      c
+        jr      z, nextBSSSection       ; If counter is 0, next section in table.
 
-        ld      (hl), 0                 ; Zero contents of HL
         ld      de, hl
-        inc     de                      ; DE = HL + 1
-        ldir                            ; Fill
+        inc     de                      ; DE = HL + 1.
+        ldir                            ; Do the fill.
         jr      nextBSSSection
 bssInitDone:
         ld      sp, 0xffff
         ret
 
-
-        SECTION code_crt0_sccz80
-        SECTION code_user
         SECTION CODE_END
 
         SECTION RODATA
         SECTION rodata_user
 bssTable:
-        dw      __BSS_END_head-__BSS_head
         dw      __BSS_head
-        dw      __BSS_0_tail-__BSS_0_head
+        dw      2<<8
+        dw      __BSS_END_head-__BSS_head
+IFDEF  CRT_ORG_BANK_0
         dw      __BSS_0_head
-        dw      __BSS_1_tail-__BSS_1_head
+        dw      0<<8
+        dw      __BSS_0_tail-__BSS_0_head
+ENDIF
+IFDEF  CRT_ORG_BANK_1
         dw      __BSS_1_head
-        dw      __BSS_2_tail-__BSS_2_head
+        dw      1<<8
+        dw      __BSS_1_tail-__BSS_1_head
+ENDIF
+IFDEF  CRT_ORG_BANK_2
         dw      __BSS_2_head
-        dw      __BSS_3_tail-__BSS_3_head
+        dw      2<<8
+        dw      __BSS_2_tail-__BSS_2_head
+ENDIF
+IFDEF  CRT_ORG_BANK_3
         dw      __BSS_3_head
-        dw      __BSS_4_tail-__BSS_4_head
+        dw      3<<8
+        dw      __BSS_3_tail-__BSS_3_head
+ENDIF
+IFDEF  CRT_ORG_BANK_4
         dw      __BSS_4_head
-        dw      __BSS_5_tail-__BSS_5_head
+        dw      4<<8
+        dw      __BSS_4_tail-__BSS_4_head
+ENDIF
+IFDEF  CRT_ORG_BANK_5
         dw      __BSS_5_head
-        dw      __BSS_6_tail-__BSS_6_head
+        dw      5<<8
+        dw      __BSS_5_tail-__BSS_5_head
+ENDIF
+IFDEF  CRT_ORG_BANK_6
         dw      __BSS_6_head
-        dw      __BSS_7_tail-__BSS_7_head
+        dw      6<<8
+        dw      __BSS_6_tail-__BSS_6_head
+ENDIF
+IFDEF  CRT_ORG_BANK_7
         dw      __BSS_7_head
-        dw      0x8000
+        dw      7<<8
+        dw      __BSS_7_tail-__BSS_7_head
+ENDIF
+        dw      0x0000
 
         SECTION RODATA_END
 
@@ -128,38 +159,7 @@ bssTable:
    		; Define Memory Banks
    		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-IFNDEF  CRT_ORG_BANK_0
-        defc    CRT_ORG_BANK_0=0x00c000
-ENDIF
-
-IFNDEF  CRT_ORG_BANK_1
-        defc    CRT_ORG_BANK_1=0x01c000
-ENDIF
-
-IFNDEF  CRT_ORG_BANK_2
-        defc    CRT_ORG_BANK_2=0x02c000
-ENDIF
-
-IFNDEF  CRT_ORG_BANK_3
-        defc    CRT_ORG_BANK_3=0x03c000
-ENDIF
-
-IFNDEF  CRT_ORG_BANK_4
-        defc    CRT_ORG_BANK_4=0x04c000
-ENDIF
-
-IFNDEF  CRT_ORG_BANK_5
-        defc    CRT_ORG_BANK_5=0x05c000
-ENDIF
-
-IFNDEF  CRT_ORG_BANK_6
-        defc    CRT_ORG_BANK_6=0x06c000
-ENDIF
-IFNDEF  CRT_ORG_BANK_7
-        defc    CRT_ORG_BANK_7=0x07c000
-ENDIF
-
-
+IFDEF  CRT_ORG_BANK_0
         SECTION BANK_0
         org     CRT_ORG_BANK_0
         SECTION CODE_0
@@ -167,7 +167,9 @@ ENDIF
         SECTION DATA_0
         SECTION BSS_0
         SECTION BANK_0_END
+ENDIF
 
+IFDEF  CRT_ORG_BANK_1
         SECTION BANK_1
         org     CRT_ORG_BANK_1
         SECTION CODE_1
@@ -175,7 +177,9 @@ ENDIF
         SECTION DATA_1
         SECTION BSS_1
         SECTION BANK_1_END
+ENDIF
 
+IFDEF  CRT_ORG_BANK_2
         SECTION BANK_2
         org     CRT_ORG_BANK_2
         SECTION CODE_2
@@ -183,7 +187,9 @@ ENDIF
         SECTION DATA_2
         SECTION BSS_2
         SECTION BANK_2_END
+ENDIF
 
+IFDEF  CRT_ORG_BANK_3
         SECTION BANK_3
         org     CRT_ORG_BANK_3
         SECTION CODE_3
@@ -191,7 +197,9 @@ ENDIF
         SECTION DATA_3
         SECTION BSS_3
         SECTION BANK_3_END
+ENDIF
 
+IFDEF  CRT_ORG_BANK_4
         SECTION BANK_4
         org     CRT_ORG_BANK_4
         SECTION CODE_4
@@ -199,7 +207,9 @@ ENDIF
         SECTION DATA_4
         SECTION BSS_4
         SECTION BANK_4_END
+ENDIF
 
+IFDEF  CRT_ORG_BANK_5
         SECTION BANK_5
         org     CRT_ORG_BANK_5
         SECTION CODE_5
@@ -207,7 +217,9 @@ ENDIF
         SECTION DATA_5
         SECTION BSS_5
         SECTION BANK_5_END
+ENDIF
 
+IFDEF  CRT_ORG_BANK_6
         SECTION BANK_6
         org     CRT_ORG_BANK_6
         SECTION CODE_6
@@ -215,7 +227,9 @@ ENDIF
         SECTION DATA_6
         SECTION BSS_6
         SECTION BANK_6_END
+ENDIF
 
+IFDEF  CRT_ORG_BANK_7
         SECTION BANK_7
         org     CRT_ORG_BANK_7
         SECTION CODE_7
@@ -223,4 +237,4 @@ ENDIF
         SECTION DATA_7
         SECTION BSS_7
         SECTION BANK_7_END
-
+ENDIF

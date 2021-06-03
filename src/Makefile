@@ -39,7 +39,7 @@ all: $(PROJ_NAME).tap
 	@grep -E "__.*_([0-7]|user|crt.*)_(init|main|exit|sccz80|head|tail|size).*" $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
 
 clean:
-	rm -f *.[oid] *.tap *.bin *.map *.lis *.sym
+	rm -f *.[oid] *.tap *.bin *.map *.lis *.sym zcc_opt.inc
 
 run: $(PROJ_NAME).tap
 	fuse.exe $<
@@ -54,6 +54,9 @@ ifeq (,$(findstring $(MAKECMDGOALS),clean))
 %.d: %.c
 	@./mkdep.sh $< > $@
 endif
+
+zcc_opt.inc:$(PRAGMA_FILE)
+	@cat $(PRAGMA_FILE) |  sed 's/#pragma\s*output\s*/defc /g' > $@
 
 %.o: %.c $(PRAGMA_FILE) Makefile
 	@echo "Compiling $<"

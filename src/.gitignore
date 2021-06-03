@@ -7,3 +7,4 @@
 *.i
 *.bak
 *.d
+zcc_opt.inc
