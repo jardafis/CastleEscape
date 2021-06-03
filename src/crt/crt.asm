@@ -1,8 +1,8 @@
         include "zcc_opt.def"
 
-		EXTERN	bankedtapeloader
+        EXTERN  bankedtapeloader
         EXTERN  _main
-        EXTERN	currentBank
+        EXTERN  currentBank
 
         EXTERN  __BSS_head
         EXTERN  __BSS_tail
@@ -47,7 +47,7 @@ fillStackLoop:
         djnz    fillStackLoop           ; Loop for all words
         ld      sp, REGISTER_SP
 
-		call	bankedtapeloader
+        call    bankedtapeloader
 IF  CRT_INITIALIZE_BSS
         call    bssInit
 ENDIF
@@ -91,8 +91,8 @@ nextBSSSection:
 bssInitDone:
         ld      sp, 0xffff
 
-		ld		a, 0x10
-		ld		(currentBank), a
+        ld      a, 0x10
+        ld      (currentBank), a
         ld      bc, 0x7ffd
         out     (c), a
 
@@ -105,42 +105,42 @@ bssTable:
         dw      __BSS_head
         dw      0x12<<8
         dw      __BSS_tail-__BSS_head
-IFDEF  CRT_ORG_BANK_0
+IFDEF   CRT_ORG_BANK_0
         dw      __BSS_0_head
         dw      0x10<<8
         dw      __BSS_0_tail-__BSS_0_head
 ENDIF
-IFDEF  CRT_ORG_BANK_1
+IFDEF   CRT_ORG_BANK_1
         dw      __BSS_1_head
         dw      0x11<<8
         dw      __BSS_1_tail-__BSS_1_head
 ENDIF
-IFDEF  CRT_ORG_BANK_2
+IFDEF   CRT_ORG_BANK_2
         dw      __BSS_2_head
         dw      0x12<<8
         dw      __BSS_2_tail-__BSS_2_head
 ENDIF
-IFDEF  CRT_ORG_BANK_3
+IFDEF   CRT_ORG_BANK_3
         dw      __BSS_3_head
         dw      0x13<<8
         dw      __BSS_3_tail-__BSS_3_head
 ENDIF
-IFDEF  CRT_ORG_BANK_4
+IFDEF   CRT_ORG_BANK_4
         dw      __BSS_4_head
         dw      0x14<<8
         dw      __BSS_4_tail-__BSS_4_head
 ENDIF
-IFDEF  CRT_ORG_BANK_5
+IFDEF   CRT_ORG_BANK_5
         dw      __BSS_5_head
         dw      0x15<<8
         dw      __BSS_5_tail-__BSS_5_head
 ENDIF
-IFDEF  CRT_ORG_BANK_6
+IFDEF   CRT_ORG_BANK_6
         dw      __BSS_6_head
         dw      0x16<<8
         dw      __BSS_6_tail-__BSS_6_head
 ENDIF
-IFDEF  CRT_ORG_BANK_7
+IFDEF   CRT_ORG_BANK_7
         dw      __BSS_7_head
         dw      0x17<<8
         dw      __BSS_7_tail-__BSS_7_head
@@ -154,7 +154,7 @@ ENDIF
    		; Define Memory Banks
    		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-IFDEF  CRT_ORG_BANK_0
+IFDEF   CRT_ORG_BANK_0
         SECTION BANK_0
         org     CRT_ORG_BANK_0
         SECTION CODE_0
@@ -163,7 +163,7 @@ IFDEF  CRT_ORG_BANK_0
         SECTION BSS_0
 ENDIF
 
-IFDEF  CRT_ORG_BANK_1
+IFDEF   CRT_ORG_BANK_1
         SECTION BANK_1
         org     CRT_ORG_BANK_1
         SECTION CODE_1
@@ -172,7 +172,7 @@ IFDEF  CRT_ORG_BANK_1
         SECTION BSS_1
 ENDIF
 
-IFDEF  CRT_ORG_BANK_2
+IFDEF   CRT_ORG_BANK_2
         SECTION BANK_2
         org     CRT_ORG_BANK_2
         SECTION CODE_2
@@ -181,7 +181,7 @@ IFDEF  CRT_ORG_BANK_2
         SECTION BSS_2
 ENDIF
 
-IFDEF  CRT_ORG_BANK_3
+IFDEF   CRT_ORG_BANK_3
         SECTION BANK_3
         org     CRT_ORG_BANK_3
         SECTION CODE_3
@@ -190,7 +190,7 @@ IFDEF  CRT_ORG_BANK_3
         SECTION BSS_3
 ENDIF
 
-IFDEF  CRT_ORG_BANK_4
+IFDEF   CRT_ORG_BANK_4
         SECTION BANK_4
         org     CRT_ORG_BANK_4
         SECTION CODE_4
@@ -199,7 +199,7 @@ IFDEF  CRT_ORG_BANK_4
         SECTION BSS_4
 ENDIF
 
-IFDEF  CRT_ORG_BANK_5
+IFDEF   CRT_ORG_BANK_5
         SECTION BANK_5
         org     CRT_ORG_BANK_5
         SECTION CODE_5
@@ -208,7 +208,7 @@ IFDEF  CRT_ORG_BANK_5
         SECTION BSS_5
 ENDIF
 
-IFDEF  CRT_ORG_BANK_6
+IFDEF   CRT_ORG_BANK_6
         SECTION BANK_6
         org     CRT_ORG_BANK_6
         SECTION CODE_6
@@ -217,7 +217,7 @@ IFDEF  CRT_ORG_BANK_6
         SECTION BSS_6
 ENDIF
 
-IFDEF  CRT_ORG_BANK_7
+IFDEF   CRT_ORG_BANK_7
         SECTION BANK_7
         org     CRT_ORG_BANK_7
         SECTION CODE_7
