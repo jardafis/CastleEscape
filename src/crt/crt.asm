@@ -32,6 +32,7 @@
         DEFC    IO_BANK=0x7ffd
         DEFC    MEM_BANK_ROM=0x10
         DEFC    SCREEN_ATTR_START=0x5800
+        DEFC    SCREEN_ATTR_LENGTH=0x300
 
 IFNDEF  CRT_INITIALIZE_BSS
         DEFC    CRT_INITIALIZE_BSS=1
@@ -52,15 +53,16 @@ crt0:
 		; Color screen black
         ld      hl, SCREEN_ATTR_START
         ld      de, SCREEN_ATTR_START+1
+        ld      bc, SCREEN_ATTR_LENGTH-1
         ld      (hl), 0
         ldir
 
         call    loadBanks
 
         ;
-        ; Ensure memory bank is paged into 0xc000
+        ; Ensure memory bank 0 is paged into 0xc000
         ;
-        ld      a, 0x10
+        ld      a, MEM_BANK_ROM|0
         ld      (currentBank), a
         ld      bc, IO_BANK
         out     (c), a
@@ -138,79 +140,92 @@ IF  CRT_INITIALIZE_BSS
 		; Clear the BSS sections
 		;
 bssInit:
-        ld      (bssInitDone+1), sp
-        ld      sp, bssTable
+        ld      hl, bssTable
 nextBSSSection:
-        pop     hl                      ; Get BSS start address.
-        ld      a, h                    ; If the start address is
-        or      l                       ; 0x0000 it's the end of
-        jr      z, bssInitDone          ; the BSS table.
+        ld      e, (hl)
+        inc     hl
+        ld      d, (hl)
+        inc     hl
+
+        ld      a, d                    ; If the start address is
+        or      e                       ; 0x0000 it's the end of
+        ret     z                       ; the BSS table.
+
+        ld      a, (hl)                 ; Get the bank
+        inc     hl
 
 		; Switch memory banks
-        pop     af                      ; Get the bank
-        ld      bc, 0x7ffd
+        ld      bc, IO_BANK
         out     (c), a
 
-        pop     bc                      ; Get BSS size.
+        ld      c, (hl)
+        inc     hl
+        ld      b, (hl)
+        inc     hl
+
         ld      a, b                    ; If the BSS size
         or      c                       ; is zero, skip to the
         jr      z, nextBSSSection       ; next BSS section in the table.
+
+        push    hl
+        ex      de, hl
 
         ld      (hl), 0                 ; Zero first byte of BSS.
         dec     bc                      ; Decrement counter.
         ld      a, b
         or      c
-        jr      z, nextBSSSection       ; If counter is 0, next section in table.
+        jr      z, sectionDone          ; If counter is 0, next section in table.
 
         ld      de, hl
         inc     de                      ; DE = HL + 1.
         ldir                            ; Do the fill.
+
+sectionDone:
+        pop     hl
         jr      nextBSSSection
-bssInitDone:
-        ld      sp, 0xffff
-        ret
+
 ENDIF
 
         SECTION RODATA
 bssTable:
 IFDEF   CRT_ORG_BANK_0
         dw      __BSS_0_head
-        dw      0x10<<8
+        db      MEM_BANK_ROM|0
         dw      __BSS_0_tail-__BSS_0_head
 ENDIF
 IFDEF   CRT_ORG_BANK_1
         dw      __BSS_1_head
-        dw      0x11<<8
+        db      MEM_BANK_ROM|1
         dw      __BSS_1_tail-__BSS_1_head
 ENDIF
 IFDEF   CRT_ORG_BANK_2
         dw      __BSS_2_head
-        dw      0x12<<8
+        db      MEM_BANK_ROM|2
         dw      __BSS_2_tail-__BSS_2_head
 ENDIF
 IFDEF   CRT_ORG_BANK_3
         dw      __BSS_3_head
-        dw      0x13<<8
+        db      MEM_BANK_ROM|3
         dw      __BSS_3_tail-__BSS_3_head
 ENDIF
 IFDEF   CRT_ORG_BANK_4
         dw      __BSS_4_head
-        dw      0x14<<8
+        db      MEM_BANK_ROM|4
         dw      __BSS_4_tail-__BSS_4_head
 ENDIF
 IFDEF   CRT_ORG_BANK_5
         dw      __BSS_5_head
-        dw      0x15<<8
+        db      MEM_BANK_ROM|5
         dw      __BSS_5_tail-__BSS_5_head
 ENDIF
 IFDEF   CRT_ORG_BANK_6
         dw      __BSS_6_head
-        dw      0x16<<8
+        db      MEM_BANK_ROM|6
         dw      __BSS_6_tail-__BSS_6_head
 ENDIF
 IFDEF   CRT_ORG_BANK_7
         dw      __BSS_7_head
-        dw      0x17<<8
+        db      MEM_BANK_ROM|7
         dw      __BSS_7_tail-__BSS_7_head
 ENDIF
         dw      0x0000
