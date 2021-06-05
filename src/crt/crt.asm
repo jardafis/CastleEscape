@@ -59,14 +59,6 @@ crt0:
 
         call    loadBanks
 
-        ;
-        ; Ensure memory bank 0 is paged into 0xc000
-        ;
-        ld      a, MEM_BANK_ROM|0
-        ld      (currentBank), a
-        ld      bc, IO_BANK
-        out     (c), a
-
 IF  CRT_INITIALIZE_BSS
         call    bssInit
 ENDIF
@@ -86,6 +78,14 @@ fillStackLoop:
         push    de                      ; Push data to stack
         djnz    fillStackLoop           ; Loop for all words
         ld      sp, REGISTER_SP
+
+        ;
+        ; Ensure memory bank 0 is paged into 0xc000
+        ;
+        ld      a, MEM_BANK_ROM|0
+        ld      (currentBank), a
+        ld      bc, IO_BANK
+        out     (c), a
 
         jp      _main
 
