@@ -8,7 +8,7 @@
         public  lookupScanCode
         public  scanCodes
 
-        section CODE
+        section CODE_2
 
         include "defs.inc"
 
@@ -179,7 +179,7 @@ foundScanCode:
         pop     af
         ret
 
-        section DATA
+        section DATA_2
 
         ; Port upper 8 bits, key mask, direction bit
 scanCodes:
@@ -190,7 +190,7 @@ scanCodes:
 ;        db      0xfb, 0x01, UP         ; Q
 ;        db      0xfd, 0x01, DOWN       ; A
 
-        section RODATA
+        section RODATA_2
 
 keyMap:                                 ;Bit 0,  1,  2,  3,  4
         db      0xFE, 0x00, "Z", "X", "C", "V"

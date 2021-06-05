@@ -4,7 +4,7 @@
         public  score
 
         include "defs.inc"
-        section CODE
+        section CODE_2
 
         ;
         ; Display the current score
@@ -24,6 +24,6 @@ _displayScore:
         pop     bc
         ret
 
-        section BSS
+        section BSS_2
 score:                                  ; Score in BCD
         ds      2

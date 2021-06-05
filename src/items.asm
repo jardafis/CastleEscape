@@ -22,7 +22,7 @@
         defc    ITEM_WIDTH=0x08
         defc    ITEM_HEIGHT=0x08
 
-        section CODE
+        section CODE_2
         ;
         ; Entry:
         ;		hl - Pointer to the item table
@@ -588,7 +588,7 @@ removeItem:
         call    displayTile
         ret
 
-        section BSS
+        section BSS_2
         defvars 0                       ; Define the stack variables used
         {
             levelX      ds.b 1

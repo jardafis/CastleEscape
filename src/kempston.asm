@@ -4,7 +4,7 @@
 
         include "defs.inc"
 
-        section CODE
+        section CODE_2
 		;
 		;	Input:
 		;		None
@@ -34,6 +34,6 @@ readKempston:
         ld      e, a
         ret
 
-        section BSS
+        section BSS_2
 kjPresent:
         ds      1

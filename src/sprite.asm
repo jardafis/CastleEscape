@@ -7,7 +7,7 @@
 
         include "defs.inc"
 
-        section CODE
+        section CODE_2
 
 		;
 		; Entry:
@@ -166,6 +166,6 @@ displaySpriteSP equ $+1
 
         ret
 
-        section BSS
+        section BSS_2
 playerSprite:
         ds      2

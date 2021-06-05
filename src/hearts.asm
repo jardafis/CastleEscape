@@ -11,7 +11,7 @@
 
         include "defs.inc"
 
-        section CODE
+        section CODE_2
         ;
         ; Increment and display the egg count
         ;
@@ -28,7 +28,7 @@ heartCollision:
         call    START_SOUND
         ret
 
-        section BSS
+        section BSS_2
 heartCount:                             ; BCD
         ds      2
 

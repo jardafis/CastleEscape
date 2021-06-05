@@ -1,5 +1,5 @@
         extern  _cls
-        extern  _initISR
+        extern  initISR
         extern  _initItems
         extern  _scrollInit
         extern  _scroll
@@ -71,16 +71,10 @@
 
         include "defs.inc"
 
-        section CODE
-        org     -1                      ; Create a seperate output binary for this section
+        section BANK_5
+        binary  "title.scr"
 
-        section BSS
-        org     -1                      ; Create a seperate output binary for this section
-
-        section BSS_5
-        org     -1                      ; Create a seperate output binary for this section
-
-        section CODE
+        section CODE_2
 _main:
         call    init
 
@@ -88,7 +82,7 @@ _main:
 
         call    mainMenu
 
-        ret
+        assert
 
 init:
         border  INK_BLACK
@@ -101,7 +95,7 @@ init:
         ;
         ; Init ISR handling
         ;
-        call    _initISR
+        call    initISR
 
 		;
 		; Detect Kempston joystick and modify
@@ -570,7 +564,7 @@ mulDone:
         pop     bc
         ret
 
-        section BSS
+        section BSS_2
 coinRotate:
         ds      1
 _currentTileMap:
@@ -598,11 +592,11 @@ xyStartPos:                             ; Position where player entered the leve
 _spriteBuffer:
         ds      48
 
-        section BSS
+        section DATA_2
 currentBank:
         db      MEM_BANK_ROM
 
-        section RODATA
+        section RODATA_2
 readyMsg:
         db      "Ready?", 0x00
 gameOverMsg:

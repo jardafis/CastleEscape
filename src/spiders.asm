@@ -10,7 +10,7 @@
 
         include "defs.inc"
 
-        section CODE
+        section CODE_2
 
 updateSpiderPos:
         ld      hl, (currentSpiderTable)
@@ -155,7 +155,7 @@ spiderCollision:
         call    die
         ret
 
-        section BSS
+        section BSS_2
 changeSpiderDir:
         ds      1
 

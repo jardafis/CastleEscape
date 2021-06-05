@@ -1,5 +1,5 @@
 CC=zcc
-AS=asmpp.pl
+AS=z88dk-asmpp.pl
 LD=zcc
 
 TARGET=zx
@@ -22,7 +22,7 @@ CFLAGS=+$(TARGET) -c \
 LDFLAGS=+$(TARGET) -crt0 crt/crt.asm -m \
 	-pragma-include:$(PRAGMA_FILE) \
 	-create-app -Cz"--clearaddr 32767 \
-					--screen title.scr \
+					--bank-order '50123467' \
 					--exclude-sections 'BSS BSS_0 BSS_1 BSS_2 BSS_3 BSS_4 BSS_5 BSS_6 BSS_7'"
 #ASFLAGS=-opt-speed
 

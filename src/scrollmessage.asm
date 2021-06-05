@@ -4,7 +4,7 @@
         public  _scroll
         public  _scrollInit
         public  _scrollReset
-        section CODE
+        section CODE_2
 
         defc    X=0x08                  ; Start column of message
         defc    Y=0x01                  ; Start character row of message
@@ -219,7 +219,7 @@ resetMessagePointer:
         ld      (messagePointer), hl
         jp      getNextChar             ; Loop to get a character
 
-        section RODATA
+        section RODATA_2
 messages:
         dw      message0, message1, message2, message3, message4, message5, message6
 messagesEnd:
@@ -242,7 +242,7 @@ padding:
         ds      0x10, 0x20
         db      0x00
 
-        section BSS
+        section BSS_2
 messagePointer:
         ds      2                       ; Pointer to the current location in the message
 messageStart:

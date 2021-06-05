@@ -961,7 +961,7 @@ EXT_WORD:
         LD      D, (HL)
         RET
 
-        section RODATA
+        section RODATA_5
 ;TABLA DE DATOS DEL SELECTOR DEL CANAL DE EFECTOS DE RITMO
 
 TABLA_DATOS_CANAL_SFX:
@@ -988,7 +988,7 @@ SELECT_CANAL_C:
 
 
 ;____________________________________
-        section BSS
+        section BSS_5
 
 
 INTERR: DB      0                       ;INTERRUPTORES 1=ON 0=OFF

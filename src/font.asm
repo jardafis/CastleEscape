@@ -1,6 +1,6 @@
         public  _font_8x8_cpc_system
 
-        section RODATA
+        section RODATA_2
 _font_8x8_cpc_system:
         binary  "font_8x8_cpc_system.dat"
 		; Sad face ASCII 0x80 (128)

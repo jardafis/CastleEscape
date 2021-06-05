@@ -13,7 +13,7 @@
 
         include "defs.inc"
 
-        section CODE
+        section CODE_2
 
 		;
 		; Routine called when plater dies.

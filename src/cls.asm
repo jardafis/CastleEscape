@@ -1,7 +1,7 @@
         public  _cls
         public  clearAttr
         public  setAttr
-        section CODE
+        section CODE_2
 
         include "defs.inc"
 
@@ -107,6 +107,6 @@ setAttr:
         pop     bc
         ret
 
-        section BSS
+        section BSS_2
 clsAttrib:
         ds      1
