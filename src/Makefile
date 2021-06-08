@@ -25,7 +25,6 @@ OBJECTS=$(CSRC:.c=.o) $(ASMSRC:.asm=.o)
 
 # Tape files must be in the correct order
 TAPS=	loader.tap \
-		$(PROJ_NAME)_CODE.tap \
 		$(PROJ_NAME)_BANK_5.tap \
 		$(PROJ_NAME)_BANK_0.tap \
 		$(PROJ_NAME)_BANK_2.tap \
@@ -87,6 +86,7 @@ $(PROJ_NAME)_CODE.bin: $(OBJECTS) $(PRAGMA_FILE)
 
 loader.tap: $(PROJ_NAME)_CODE.bin $(BIN2REM)
 	@echo "Creating $@"
+	@cat $(PROJ_NAME)_CODE.bin >> $(PROJ_NAME)_LOADER.bin
 	@$(BIN2REM) $(PROJ_NAME)_LOADER.bin $@ CastleEsc
 
 $(PROJ_NAME).tap: $(TAPS)
