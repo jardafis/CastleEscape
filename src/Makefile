@@ -23,19 +23,20 @@ LDFLAGS=$(TARGET) -crt0 crt/crt.asm -m -pragma-include:$(PRAGMA_FILE)
 #ASFLAGS=-opt-speed
 OBJECTS=$(CSRC:.c=.o) $(ASMSRC:.asm=.o)
 
-# Tape files must be in the correct order
+# Tape files must be in the correct order and matching the 'bankTable' in crt0.asm
+# loader.tap is a BASIC loader with embedded machine code.
 TAPS=	loader.tap \
 		$(PROJ_NAME)_BANK_5.tap \
 		$(PROJ_NAME)_BANK_0.tap \
 		$(PROJ_NAME)_BANK_2.tap \
 		$(PROJ_NAME)_BANK_7.tap
 
-# Default to the CODE bank is no other is specified
+# Default to the CODE bank if no other is specified
 BANK ?= CODE
 # Find the start addres of the BANK and replace $ with 0x
 HEAD=$(shell grep __$(BANK)_head *.map | awk '{gsub("^.", "0x", $$3); print $$3}')
 
-.PHONY: clean run dis
+.PHONY: all clean run dis
 
 all: $(PROJ_NAME).tap
 	@grep -E "__(CODE|RODATA|DATA|BSS)_(head|tail|size).*" $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
