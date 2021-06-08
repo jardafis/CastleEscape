@@ -8,6 +8,7 @@ PRAGMA_FILE=zpragma.inc
 ASMSRC=$(wildcard *.asm)
 CSRC=$(wildcard *.c)
 BAS2TAP=./bas2tap/bas2tap
+BIN2REM=./bin2rem/bin2rem
 
 CFLAGS=$(TARGET) -c \
 		--codeseg=CODE_5 \
@@ -62,6 +63,9 @@ $(BAS2TAP):
 	git clone --depth=1 https://github.com/andybalaam/bas2tap.git
 	make -C bas2tap
 
+$(BIN2REM):
+	make -C bin2rem
+
 zcc_opt.inc: $(PRAGMA_FILE)
 	@echo "Creating $@"
 	@cat $(PRAGMA_FILE) |  sed 's/#pragma\s*output\s*/defc /g' > $@
@@ -81,13 +85,9 @@ $(PROJ_NAME)_CODE.bin: $(OBJECTS) $(PRAGMA_FILE)
 	@echo "Creating $@"
 	@z88dk-appmake $(TARGET) -b ${@:.tap=.bin} -o $@ --noloader --noheader --org 0
 
-$(PROJ_NAME)_CODE.tap : $(PROJ_NAME)_CODE.bin
+loader.tap: $(PROJ_NAME)_CODE.bin $(BIN2REM)
 	@echo "Creating $@"
-	@z88dk-appmake $(TARGET) -b $< -o $@ --noloader --org 32768
-
-loader.tap: loader.bas $(BAS2TAP)
-	@echo "Creating $@"
-	@$(BAS2TAP) -q -a10 -sCastleEsc $< $@
+	@$(BIN2REM) $(PROJ_NAME)_LOADER.bin $@ CastleEsc
 
 $(PROJ_NAME).tap: $(TAPS)
 	@echo "Creating $@"
