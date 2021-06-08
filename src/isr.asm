@@ -1,8 +1,8 @@
         extern  START_SONG
 
-        public  _initISR
+        public  initISR
         public  ticks
-        section code_user
+        section CODE_2
 
         include "defs.inc"
         defc    VECTOR_TABLE_HIGH=0x80
@@ -10,7 +10,7 @@
         defc    JUMP_ADDR_BYTE=0x81
         defc    JUMP_ADDR=(JUMP_ADDR_BYTE<<8)|JUMP_ADDR_BYTE
 
-_initISR:
+initISR:
         pushall
 
         ld      bc, 0x100               ; bytes of the vector table
@@ -64,7 +64,7 @@ isrTempSP   equ $+1
         ei                              ; Enable interrupts
         reti                            ; Acknowledge and return from interrupt
 
-        section bss_user
+        section BSS_2
 ticks:
         ds      2
         ds      0x40                    ; 64 bytes for interrupt stack

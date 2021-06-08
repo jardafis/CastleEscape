@@ -2,7 +2,7 @@
         public  _RightKnight0
         public  _LeftKnight0
 
-        section rodata_user
+        section RODATA_2
 
         ;
         ; Include the auto generated tile data

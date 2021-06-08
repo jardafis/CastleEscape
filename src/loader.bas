@@ -1,0 +1,4 @@
+5 REM Load the loader at 0x8000 and run it.
+10 CLEAR 32767
+50 LOAD "" CODE 32768
+60 RANDOMIZE USR 32768

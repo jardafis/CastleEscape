@@ -1,32 +1,34 @@
 CC=zcc
-AS=asmpp.pl
+AS=z88dk-asmpp.pl
 LD=zcc
 
-TARGET=zx
+TARGET= +zx
 PROJ_NAME=CastleEscape
 PRAGMA_FILE=zpragma.inc
 ASMSRC=$(wildcard *.asm)
 CSRC=$(wildcard *.c)
+BAS2TAP=./bas2tap/bas2tap
 
-C_OPT_FLAGS=-SO2
-
-CFLAGS=+$(TARGET) -c \
-		$(C_OPT_FLAGS) \
+CFLAGS=$(TARGET) -c \
 		--codeseg=CODE_5 \
 		--constseg=RODATA_5 \
 		--dataseg=DATA_5 \
 		--bssseg=BSS_5 \
-		-I$(Z88DK)/include/_DEVELOPMENT/sccz80 \
+		-clib=new \
 		-pragma-include:$(PRAGMA_FILE)
 
-LDFLAGS=+$(TARGET) -crt0 crt/crt.asm -m \
-	-pragma-include:$(PRAGMA_FILE) \
-	-create-app -Cz"--clearaddr 32767 \
-					--screen title.scr \
-					--exclude-sections 'bss_user BSS_0 BSS_1 BSS_2 BSS_3 BSS_4 BSS_5 BSS_6 BSS_7'"
-#ASFLAGS=-opt-speed
+LDFLAGS=$(TARGET) -crt0 crt/crt.asm -m -pragma-include:$(PRAGMA_FILE)
 
+#ASFLAGS=-opt-speed
 OBJECTS=$(CSRC:.c=.o) $(ASMSRC:.asm=.o)
+
+# Tape files must be in the correct order
+TAPS=	loader.tap \
+		$(PROJ_NAME)_CODE.tap \
+		$(PROJ_NAME)_BANK_5.tap \
+		$(PROJ_NAME)_BANK_0.tap \
+		$(PROJ_NAME)_BANK_2.tap \
+		$(PROJ_NAME)_BANK_7.tap
 
 # Default to the CODE bank is no other is specified
 BANK ?= CODE
@@ -36,33 +38,59 @@ HEAD=$(shell grep __$(BANK)_head *.map | awk '{gsub("^.", "0x", $$3); print $$3}
 .PHONY: clean run dis
 
 all: $(PROJ_NAME).tap
-	@grep -E "__.*_([0-7]|user|crt.*)_(init|main|exit|sccz80|head|tail|size).*" $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep -E "__(CODE|RODATA|DATA|BSS)_(head|tail|size).*" $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep -E "__(CODE|RODATA|DATA|BSS|code)_([0-7]|user|crt.*)_(sccz80|head|tail|size).*" $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
 
 clean:
-	rm -f *.[oid] *.tap *.bin *.map *.lis *.sym
+	rm -f *.[oid] *.tap *.bin *.map zcc_opt.inc
 
 run: $(PROJ_NAME).tap
 	fuse.exe $<
 
-dis: all
+dis: $(PROJ_NAME)_CODE.bin
 	z88dk-dis -o $(HEAD) -x $(PROJ_NAME).map $(PROJ_NAME)_$(BANK).bin | less
 
-
+ifeq (,$(findstring $(MAKECMDGOALS),clean))
 %.d: %.asm
-	@./mkdep.sh $<
+	@./mkdep.sh $< > $@
 
 %.d: %.c
-	./mkdep.sh $<
+	@./mkdep.sh $< > $@
+endif
 
-%.o: %.c $(PRAGMA_FILE) Makefile
+$(BAS2TAP):
+	git clone --depth=1 https://github.com/andybalaam/bas2tap.git
+	make -C bas2tap
+
+zcc_opt.inc: $(PRAGMA_FILE)
+	@echo "Creating $@"
+	@cat $(PRAGMA_FILE) |  sed 's/#pragma\s*output\s*/defc /g' > $@
+
+%.o: %.c $(PRAGMA_FILE)
 	@echo "Compiling $<"
 	@$(CC) $(CFLAGS) -o $@ $<
 
-%.o: %.asm $(PRAGMA_FILE) Makefile
+%.o: %.asm zcc_opt.inc
 	@$(AS) $(ASFLAGS) $<
-	
-$(PROJ_NAME).tap : $(OBJECTS) $(PRAGMA_FILE) Makefile
-	 $(LD) $(LDFLAGS) $(OBJECTS) -o $(PROJ_NAME).bin
-	 @rm -f *.i
+
+$(PROJ_NAME)_CODE.bin: $(OBJECTS) $(PRAGMA_FILE)
+	 @echo "Linking $@"
+	 @$(LD) $(LDFLAGS) $(OBJECTS) -o $(PROJ_NAME).bin
+
+%.tap: $(PROJ_NAME)_CODE.bin
+	@echo "Creating $@"
+	@z88dk-appmake $(TARGET) -b ${@:.tap=.bin} -o $@ --noloader --noheader --org 0
+
+$(PROJ_NAME)_CODE.tap : $(PROJ_NAME)_CODE.bin
+	@echo "Creating $@"
+	@z88dk-appmake $(TARGET) -b $< -o $@ --noloader --org 32768
+
+loader.tap: loader.bas $(BAS2TAP)
+	@echo "Creating $@"
+	@$(BAS2TAP) -q -a10 -sCastleEsc $< $@
+
+$(PROJ_NAME).tap: $(TAPS)
+	@echo "Creating $@"
+	@cat $+ > $@ 
 
 -include $(ASMSRC:.asm=.d) $(CSRC:.c=.d)
