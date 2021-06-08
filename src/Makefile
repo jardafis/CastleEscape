@@ -2,23 +2,19 @@ CC=zcc
 AS=z88dk-asmpp.pl
 LD=zcc
 
-TARGET= "+zx"
+TARGET= +zx
 PROJ_NAME=CastleEscape
 PRAGMA_FILE=zpragma.inc
 ASMSRC=$(wildcard *.asm)
 CSRC=$(wildcard *.c)
 BAS2TAP=./bas2tap/bas2tap
 
-
-C_OPT_FLAGS=-SO2
-
 CFLAGS=$(TARGET) -c \
-		$(C_OPT_FLAGS) \
 		--codeseg=CODE_5 \
 		--constseg=RODATA_5 \
 		--dataseg=DATA_5 \
 		--bssseg=BSS_5 \
-		-I$(Z88DK)/include/_DEVELOPMENT/sccz80 \
+		-clib=new \
 		-pragma-include:$(PRAGMA_FILE)
 
 LDFLAGS=$(TARGET) -crt0 crt/crt.asm -m -pragma-include:$(PRAGMA_FILE)
@@ -34,7 +30,6 @@ TAPS=	loader.tap \
 		$(PROJ_NAME)_BANK_2.tap \
 		$(PROJ_NAME)_BANK_7.tap
 
-
 # Default to the CODE bank is no other is specified
 BANK ?= CODE
 # Find the start addres of the BANK and replace $ with 0x
@@ -47,7 +42,7 @@ all: $(PROJ_NAME).tap
 	@grep -E "__(CODE|RODATA|DATA|BSS|code)_([0-7]|user|crt.*)_(sccz80|head|tail|size).*" $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
 
 clean:
-	rm -f *.[oid] *.tap *.bin *.map *.lis *.sym zcc_opt.inc
+	rm -f *.[oid] *.tap *.bin *.map zcc_opt.inc
 
 run: $(PROJ_NAME).tap
 	fuse.exe $<
@@ -67,25 +62,26 @@ $(BAS2TAP):
 	git clone --depth=1 https://github.com/andybalaam/bas2tap.git
 	make -C bas2tap
 
-zcc_opt.inc:$(PRAGMA_FILE)
+zcc_opt.inc: $(PRAGMA_FILE)
 	@echo "Creating $@"
 	@cat $(PRAGMA_FILE) |  sed 's/#pragma\s*output\s*/defc /g' > $@
 
-%.o: %.c $(PRAGMA_FILE) Makefile
+%.o: %.c $(PRAGMA_FILE)
 	@echo "Compiling $<"
 	@$(CC) $(CFLAGS) -o $@ $<
 
-%.o: %.asm zcc_opt.inc Makefile
+%.o: %.asm zcc_opt.inc
 	@$(AS) $(ASFLAGS) $<
 
-%.tap: $(PROJ_NAME)_CODE.bin Makefile
+$(PROJ_NAME)_CODE.bin: $(OBJECTS) $(PRAGMA_FILE)
+	 @echo "Linking $@"
+	 @$(LD) $(LDFLAGS) $(OBJECTS) -o $(PROJ_NAME).bin
+
+%.tap: $(PROJ_NAME)_CODE.bin
 	@echo "Creating $@"
 	@z88dk-appmake $(TARGET) -b ${@:.tap=.bin} -o $@ --noloader --noheader --org 0
 
-$(PROJ_NAME)_CODE.bin: $(OBJECTS) $(PRAGMA_FILE) Makefile
-	 $(LD) $(LDFLAGS) $(OBJECTS) -o $(PROJ_NAME).bin
-
-$(PROJ_NAME)_CODE.tap : $(PROJ_NAME)_CODE.bin Makefile
+$(PROJ_NAME)_CODE.tap : $(PROJ_NAME)_CODE.bin
 	@echo "Creating $@"
 	@z88dk-appmake $(TARGET) -b $< -o $@ --noloader --org 32768
 
