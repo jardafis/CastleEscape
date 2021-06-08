@@ -37,6 +37,8 @@
 IFNDEF  CRT_INITIALIZE_BSS
         DEFC    CRT_INITIALIZE_BSS=1
 ENDIF
+        PUBLIC  crt0
+        PUBLIC  crt0_end
 
         SECTION CODE
         ORG     CRT_ORG_CODE
@@ -275,7 +277,7 @@ IFDEF   CRT_ORG_BANK_7
         db      MEM_BANK_ROM|0x7
 ENDIF
         dw      0x0000
-
+crt0_end:
         SECTION BSS
         org     -1
         ds      0x10, 0x55
