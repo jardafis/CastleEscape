@@ -1,5 +1,9 @@
 CC=zcc
+ifeq (, $(shell which z88dk-asmpp.pl))
+AS=asmpp.pl
+else
 AS=z88dk-asmpp.pl
+endif
 LD=zcc
 
 TARGET= +zx
@@ -8,6 +12,7 @@ PRAGMA_FILE=zpragma.inc
 ASMSRC=$(wildcard *.asm)
 CSRC=$(wildcard *.c)
 BAS2TAP=./bas2tap/bas2tap
+BIN2REM=./bin2rem/bin2rem
 
 CFLAGS=$(TARGET) -c \
 		--codeseg=CODE_5 \
@@ -22,20 +27,20 @@ LDFLAGS=$(TARGET) -crt0 crt/crt.asm -m -pragma-include:$(PRAGMA_FILE)
 #ASFLAGS=-opt-speed
 OBJECTS=$(CSRC:.c=.o) $(ASMSRC:.asm=.o)
 
-# Tape files must be in the correct order
+# Tape files must be in the correct order and matching the 'bankTable' in crt0.asm
+# loader.tap is a BASIC loader with embedded machine code.
 TAPS=	loader.tap \
-		$(PROJ_NAME)_CODE.tap \
 		$(PROJ_NAME)_BANK_5.tap \
 		$(PROJ_NAME)_BANK_0.tap \
 		$(PROJ_NAME)_BANK_2.tap \
 		$(PROJ_NAME)_BANK_7.tap
 
-# Default to the CODE bank is no other is specified
+# Default to the CODE bank if no other is specified
 BANK ?= CODE
 # Find the start addres of the BANK and replace $ with 0x
 HEAD=$(shell grep __$(BANK)_head *.map | awk '{gsub("^.", "0x", $$3); print $$3}')
 
-.PHONY: clean run dis
+.PHONY: all clean run dis
 
 all: $(PROJ_NAME).tap
 	@grep -E "__(CODE|RODATA|DATA|BSS)_(head|tail|size).*" $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
@@ -62,6 +67,9 @@ $(BAS2TAP):
 	git clone --depth=1 https://github.com/andybalaam/bas2tap.git
 	make -C bas2tap
 
+$(BIN2REM):
+	make -C bin2rem
+
 zcc_opt.inc: $(PRAGMA_FILE)
 	@echo "Creating $@"
 	@cat $(PRAGMA_FILE) |  sed 's/#pragma\s*output\s*/defc /g' > $@
@@ -81,13 +89,10 @@ $(PROJ_NAME)_CODE.bin: $(OBJECTS) $(PRAGMA_FILE)
 	@echo "Creating $@"
 	@z88dk-appmake $(TARGET) -b ${@:.tap=.bin} -o $@ --noloader --noheader --org 0
 
-$(PROJ_NAME)_CODE.tap : $(PROJ_NAME)_CODE.bin
+loader.tap: $(PROJ_NAME)_CODE.bin $(BIN2REM)
 	@echo "Creating $@"
-	@z88dk-appmake $(TARGET) -b $< -o $@ --noloader --org 32768
-
-loader.tap: loader.bas $(BAS2TAP)
-	@echo "Creating $@"
-	@$(BAS2TAP) -q -a10 -sCastleEsc $< $@
+	@cat $(PROJ_NAME)_CODE.bin >> $(PROJ_NAME)_LOADER.bin
+	@$(BIN2REM) $(PROJ_NAME)_LOADER.bin $@ CastleEsc
 
 $(PROJ_NAME).tap: $(TAPS)
 	@echo "Creating $@"
