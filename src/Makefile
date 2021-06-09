@@ -1,5 +1,9 @@
 CC=zcc
+ifeq (, $(shell which z88dk-asmpp.pl))
+AS=asmpp.pl
+else
 AS=z88dk-asmpp.pl
+endif
 LD=zcc
 
 TARGET= +zx
