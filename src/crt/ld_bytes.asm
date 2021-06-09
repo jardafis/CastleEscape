@@ -1,16 +1,16 @@
         DEFC    INIT_BORDER=0x00
+        DEFC    EAR_INPUT=0x40
+        DEFC    IO_ULA=0xfe
 
 LD_BYTES:
         INC     D                       ; This resets the zero flag. (D cannot hold +FF.)
         EX      AF, AF'                 ; The A register holds +00 for a header and +FF for a block of data. The carry flag is reset for verifying and set for loading.
         DEC     D                       ; Restore D to its original value.
-        LD      A, INIT_BORDER          ; The border is made white.
-        OUT     (IO_BORDER), A
-        IN      A, (IO_BORDER)          ; Make an initial read of port '254'.
-        RRA                             ; Rotate the byte obtained but keep only the EAR bit.
-        AND     $20
-        OR      $02                     ; Signal red border.
-        LD      C, A                    ; Store the value in the C register (+22 for 'off' and +02 for 'on' - the present EAR state).
+        LD      A, INIT_BORDER          ; Set the initial border color.
+        OUT     (IO_ULA), A
+        IN      A, (IO_ULA)             ; Make an initial read of port '254'.
+        AND     EAR_INPUT
+        LD      C, A                    ; Store the value in the C register (+40 for 'off' and +00 for 'on' - the present EAR state).
         CP      A                       ; Set the zero flag.
 
 ; The first stage of reading a tape involves showing that a pulsing signal actually exists (i.e. 'on/off' or 'off/on' edges).
@@ -54,9 +54,6 @@ LD_SYNC:
         RET     NC
 
 ; The bytes of the header or the program/data block can now be loaded or verified. But the first byte is the type flag.
-        LD      A, C                    ; The border colours from now on will be blue and yellow.
-        XOR     $03
-        LD      C, A
         LD      H, $00                  ; Initialise the 'parity matching' byte to zero.
         LD      B, $B0                  ; Set the timing constant for the flag byte.
         JR      LD_MARKER               ; Jump forward into the byte loading loop.
@@ -122,19 +119,22 @@ LD_SAMPLE:
         INC     B                       ; Count each pass.
         RET     Z                       ; Return carry reset and zero set if 'time-up'.
         LD      A, 0x7F                 ; Trigger for emulators to let them know we are a loader.
-        IN      A, (IO_BORDER)
-        RRA                             ; Shift the byte.
+        								; These two instructions cause a read from 0x7ffe which includes
+        								; the 'BREAK' key in bit 0
+        IN      A, (IO_ULA)
         XOR     C                       ; Now test the byte against the 'last edge-type';  jump back unless it has changed.
-        AND     $20
+        AND     EAR_INPUT
         JR      Z, LD_SAMPLE
 
 ; A new 'edge' has been found within the time period allowed for the search. So change the border colour and set the carry flag.
-        LD      A, C                    ; Change the 'last edge-type' and border colour.
-        CPL
+        LD      A, C                    ; Change the 'last edge-type'.
+        XOR     EAR_INPUT
         LD      C, A
-        AND     $07                     ; Keep only the border colour.
+        RLA                             ; Shift the EAR bit (bit 6) into the border color (bit 1)
+        RLA
+        RLA
+        RLA
         OR      $08                     ; Signal 'MIC off'.
-        OUT     (IO_BORDER), A          ; Change the border colour (red/cyan or blue/yellow).
-
+        OUT     (IO_ULA), A             ; Change the border colour (red/black).
         SCF                             ; Signal the successful search before returning.
         RET
