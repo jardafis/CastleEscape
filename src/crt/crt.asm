@@ -37,6 +37,10 @@
 IFNDEF  CRT_INITIALIZE_BSS
         DEFC    CRT_INITIALIZE_BSS=1
 ENDIF
+IFNDEF  CRT_CUSTOM_LOADER
+        DEFC    CRT_CUSTOM_LOADER=0
+ENDIF
+
         PUBLIC  crt0
         PUBLIC  crt0_end
 
@@ -127,7 +131,13 @@ loadNextBank:
 
         push    hl                      ; Save the table pointer.
 
-		call	LD_BYTES
+IF  CRT_CUSTOM_LOADER
+        call    LD_BYTES
+ELSE
+        ld      a, 0xff
+        scf
+        call    0x556
+ENDIF
 
         pop     hl                      ; Restore the table pointer.
         jr      loadNextBank            ; On to the next bank.
@@ -184,6 +194,9 @@ sectionDone:
         pop     hl
         jr      nextBSSSection
 
+ENDIF
+IF  CRT_CUSTOM_LOADER
+        include "ld_bytes.asm"
 ENDIF
 
         SECTION RODATA
@@ -275,7 +288,6 @@ IFDEF   CRT_ORG_BANK_7
         db      MEM_BANK_ROM|0x7
 ENDIF
         dw      0x0000
-		include	"ld_bytes.asm"
 crt0_end:
         SECTION BSS
         org     -1

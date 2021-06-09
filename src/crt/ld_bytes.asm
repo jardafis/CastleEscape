@@ -18,7 +18,7 @@ LD_BREAK:
         RET     NZ                      ; Return if the BREAK key is being pressed.
 LD_START:
         CALL    LD_EDGE_1               ; Return with the carry flag reset if there is no 'edge' within approx.
-        JR      NC, LD_BREAK            ; 14,000 T states. But if an 'edge' is found the border will go cyan.
+        JR      NC, LD_BREAK            ; 14,000 T states.
 
 ; The next stage involves waiting a while and then showing that the signal is still pulsing.
         LD      HL, $0415               ; The length of this waiting period will be almost one second in duration.
