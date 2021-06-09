@@ -127,9 +127,7 @@ loadNextBank:
 
         push    hl                      ; Save the table pointer.
 
-        ld      a, 0xff                 ; Data block
-        scf                             ; Load
-        call    0x556                   ; Call the tape loader in ROM
+		call	LD_BYTES
 
         pop     hl                      ; Restore the table pointer.
         jr      loadNextBank            ; On to the next bank.
@@ -277,6 +275,7 @@ IFDEF   CRT_ORG_BANK_7
         db      MEM_BANK_ROM|0x7
 ENDIF
         dw      0x0000
+		include	"ld_bytes.asm"
 crt0_end:
         SECTION BSS
         org     -1
