@@ -141,10 +141,9 @@ LD_SAMPLE:
         LD      A, C                    ; Change the 'last edge-type'.
         XOR     EAR_INPUT
         LD      C, A
-        RLA                             ; Shift the EAR bit (bit 6) into the border color (bit 1)
-        RLA
-        RLA
-        RLA
+        RLCA                            ; Shift the EAR bit (bit 6) into the border color (bit 1)
+        RLCA
+        RLCA
         OR      MIC_OUTPUT              ; Signal 'MIC off'.
         OUT     (IO_ULA), A             ; Change the border colour (red/black).
         SCF                             ; Signal the successful search before returning.
