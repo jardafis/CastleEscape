@@ -17,7 +17,7 @@
 		; check for BREAK or call SA_LD_RET.
 		;
 LD_BYTES:
-        INC     D                       ; This resets the zero flag. (D cannot hold +FF.)
+        INC     D                       ; This clear the zero flag. (D cannot hold +FF.)
         EX      AF, AF'                 ; Save flags.
         DEC     D                       ; Restore D to its original value.
         LD      A, INIT_BORDER          ; Set the initial border color.
@@ -76,10 +76,9 @@ LD_LOOP:
         LD      (IX+$00), L             ; Make the actual load when required.
 
 ; A new byte can now be collected from the tape.
-LD_NEXT:
         INC     IX                      ; Increase the 'destination'.
-LD_DEC:
         DEC     DE                      ; Decrease the 'counter'.
+LD_DEC:
         EX      AF, AF'                 ; Save the flags.
         LD      B, $B2                  ; Set the timing constant.
 LD_MARKER:
@@ -110,7 +109,6 @@ LD_8_BITS:
 
 LD_FLAG:
         CP      A                       ; Set zero flag
-        INC     DE                      ; Increase the counter to compensate for its 'decrease' after the jump.
         JR      LD_DEC
 
 LD_EDGE_2:
