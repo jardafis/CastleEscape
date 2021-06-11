@@ -30,7 +30,13 @@ function c_to_asm() {
 	# Remove underscores
 	sed -i -e "s/._/./" $outputFile
 
-	asmstyle.pl $outputFile
+	which z88dk-asmstyle.pl > /dev/null
+	if [ $? = 0 ]
+	then
+		z88dk-asmstyle.pl $outputFile
+	else
+		asmstyle.pl $outputFile
+	fi
 	rm ${outputFile}.bak
 	
 	return 0
