@@ -191,4 +191,4 @@ keyMap:                                 ;Bit 0,  1,  2,  3,  4
         db      0xDF, "P", "O", "I", "U", "Y"
         db      0xBF, 0x0d, "L", "K", "J", "H"
         db      0x7F, " ", 0x00, "M", "N", "B"
-        db		0x00 ; No key pressed
+        db      0x00                    ; No key pressed
