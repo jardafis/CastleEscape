@@ -364,7 +364,7 @@ assert  MACRO
 
 border  MACRO   color
         ld      a, color
-		or		MIC_OUTPUT				; Disable the MIC output
+        or      MIC_OUTPUT              ; Disable the MIC output
         out     (IO_BORDER), a
         ENDM
 
@@ -372,11 +372,7 @@ border  MACRO   color
 		; Banked call to function
 		;
 bcall   MACRO   function
-        exx
-        ld      hl, function
-        push    hl
-        ld      h, function>>16|MEM_BANK_ROM
-        push    hl
-        exx
         call    bankedCall
+        db      function>>16|MEM_BANK_ROM
+        dw      function
         ENDM

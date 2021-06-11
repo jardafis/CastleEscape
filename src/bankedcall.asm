@@ -6,37 +6,43 @@
         include "defs.inc"
 
 		;
-		; Input:
-		;		SP+0 - Return address for this function
-		;		SP+2 - Bank number for banked routine
-		;		SP+4 - Address of banked routine
-		;
 		; Note:
 		;		Alternate register set is used for temporary
 		;		storage.
 		;
+		; Calling Convention:
+		; 		call	bankedCall
+		;		db		<newBank>
+		;		dw		<bankedFunction>
+		; retAddr: <- actual return address from this function
+		;
 bankedCall:
-        ex      af, af'                 ; Save all regs
+        ex      af, af'
         exx
 
         ld      a, (currentBank)        ; Get the current bank number
-        ld      d, a                    ; Save it
+        ld      d, a                    ; and save it.
 
-        pop     hl                      ; Get the return address for this function
-        pop     af                      ; Get the new bank number
+        pop     hl                      ; Get the return address it points to the new bank
+        ld      a, (hl)                 ; New bank number
+        inc     hl
+
 		; Switch to the new bank
         ld      (currentBank), a
         ld      bc, IO_BANK
         out     (c), a
 
-        pop     bc                      ; Address of banked function
+        ld      c, (hl)                 ; Get the banked routine address
+        inc     hl
+        ld      b, (hl)
+        inc     hl                      ; hl now points to the address actual return address
 
 		;
 		; Build the new stack frame
 		;
 
         push    hl                      ; Return address from this function
-        push    de                      ; Save the old bank number
+        push    de                      ; The old bank number
 
         ld      hl, bankedReturn
         push    hl                      ; Return address from banked function
@@ -53,15 +59,17 @@ bankedCall:
 		;
 bankedReturn:
         ex      af, af'                 ; Save af from the banked call
+        exx
+
         pop     af                      ; Get the old bank number from the stack
 
 		; Map in the old bank
-        push    bc
         ld      (currentBank), a
         ld      bc, IO_BANK
         out     (c), a
-        pop     bc
 
+        exx
         ex      af, af'                 ; Restore af from the banked call
-		; All registers are from the banked function
+
+		; All registers from the banked function are available here
         ret
