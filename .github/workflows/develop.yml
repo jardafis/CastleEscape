@@ -26,7 +26,9 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install perl prerequisites
-        run: cpan install Capture::Tiny File::Basename IO::File File::Spec Iterator::Simple Iterator::Simple::Lookahead Regexp::Common FindBin Data::Dump Modern::Perl Path::Tiny File::Copy
+        run: |
+          perl -MCPAN -e upgrade
+          cpan install Capture::Tiny File::Basename IO::File File::Spec Iterator::Simple Iterator::Simple::Lookahead Regexp::Common FindBin Data::Dump Modern::Perl Path::Tiny File::Copy
 
       - name: Install z88dk
         run: |
