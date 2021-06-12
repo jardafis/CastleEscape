@@ -39,6 +39,7 @@ jobs:
         run: |
           export Z88DK=/snap/z88dk/current/share/z88dk
           export ZCCCFG=${Z88DK}/lib/config
+          export PATH=/snap/z88dk/current/bin:$PATH
           make -C assets install
           make -C src all
 
