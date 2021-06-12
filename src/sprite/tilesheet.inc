@@ -1169,21 +1169,21 @@ tile129:
         defb    0
         defb    0
 tile130:
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
+        defb    255
+        defb    255
+        defb    255
+        defb    223
+        defb    254
+        defb    109
+        defb    128
         defb    0
 tile131:
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
+        defb    252
+        defb    248
+        defb    124
+        defb    216
+        defb    244
+        defb    160
         defb    0
         defb    0
 tile132:

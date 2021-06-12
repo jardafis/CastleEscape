@@ -5,8 +5,9 @@ A ZX Spectrum game written using [Z88DK](https://github.com/z88dk/z88dk) for [FU
 * Coding - [IrataHack](mailto:iratahack@digitalxfer.com)
 * Graphics - Supported by [Carnivac](https://zxart.ee/eng/authors/c/carnivac/)
 * Music - Borrowed from [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
-* Sound Effects - Using [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
+* Sound Effects - Created using [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
 * Levels - Designed with [Tiled](https://www.mapeditor.org/)
+* PNG to SCR - Converte with [PNG-to-SCR](https://github.com/MatejJan/PNG-to-SCR) 
 
 ## Synopsis
 Wee Knight must escape the haunted castle collecting gold coins and dodging the castles deadly inhabitants as he goes. Due to the enormous weight of his armor, Wee Knight cannot jump very high unless he consumes the purple eggs found within the castle. But beware, the anti-gravity effects of the eggs do not last long leaving Wee Knight at risk of missing out on the castles many treasures. Prolong life by collecting the hearts and don’t let Wee Knight fall too far or he'll be crushed by the weight of his own armor.

@@ -1,8 +1,8 @@
 CC=zcc
-ifeq (, $(shell which z88dk-asmpp.pl))
+ifeq (, $(shell which z88dk-asmpp))
 AS=asmpp.pl
 else
-AS=z88dk-asmpp.pl
+AS=z88dk-asmpp
 endif
 LD=zcc
 
@@ -50,7 +50,7 @@ clean:
 	rm -f *.[oid] *.tap *.bin *.map zcc_opt.inc
 
 run: $(PROJ_NAME).tap
-	fuse.exe $<
+	fuse $<
 
 dis: $(PROJ_NAME)_CODE.bin
 	z88dk-dis -o $(HEAD) -x $(PROJ_NAME).map $(PROJ_NAME)_$(BANK).bin | less

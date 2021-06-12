@@ -5,7 +5,7 @@
         public  START_SOUND
         public  INTERR
 
-        section CODE_5
+        section CODE_2
 
 		;
 		; Assembly player from https://github.com/AugustoRuiz/WYZTracker
@@ -14,7 +14,7 @@
 		;
         include "wyzproplay47c_zx.inc"
 
-        section RODATA_5
+        section RODATA_2
 		;
 		; Table of songs...
 		;
