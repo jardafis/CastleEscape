@@ -24,7 +24,8 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
+      - name: Install apt dependencies
+        run: sudo apt install -y cpanminus
       - name: Install perl prerequisites
         run: sudo cpanm -n Capture::Tiny File::Basename IO::File File::Spec Iterator::Simple Iterator::Simple::Lookahead Regexp::Common FindBin Data::Dump Modern::Perl Path::Tiny File::Copy
       - name: Install z88dk
