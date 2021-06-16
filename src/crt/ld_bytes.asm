@@ -1,24 +1,35 @@
-        DEFC    INIT_BORDER=0x00
         DEFC    EAR_INPUT=0x40
+        DEFC    MIC_OUTPUT=0x08
         DEFC    IO_ULA=0xfe
+        DEFC    INIT_BORDER=0x00|MIC_OUTPUT
 
+		;
+		; LD_BYTES routine from the ZX Spectrum ROM
+		;
+		; Input:
+		;		ix - Address to load data block
+		;		de - Size (in bytes) of data to load
+		;
+		; Output:
+		;		Carry flag reset if there was an error
+		;
+		; This routine does not perform 'verify', check the data block type,
+		; check for BREAK or call SA_LD_RET.
+		;
 LD_BYTES:
-        INC     D                       ; This resets the zero flag. (D cannot hold +FF.)
-        EX      AF, AF'                 ; The A register holds +00 for a header and +FF for a block of data. The carry flag is reset for verifying and set for loading.
+        INC     D                       ; This clear the zero flag. (D cannot hold +FF.)
+        EX      AF, AF'                 ; Save flags.
         DEC     D                       ; Restore D to its original value.
         LD      A, INIT_BORDER          ; Set the initial border color.
         OUT     (IO_ULA), A
         IN      A, (IO_ULA)             ; Make an initial read of port '254'.
         AND     EAR_INPUT
         LD      C, A                    ; Store the value in the C register (+40 for 'off' and +00 for 'on' - the present EAR state).
-        CP      A                       ; Set the zero flag.
 
 ; The first stage of reading a tape involves showing that a pulsing signal actually exists (i.e. 'on/off' or 'off/on' edges).
-LD_BREAK:
-        RET     NZ                      ; Return if the BREAK key is being pressed.
 LD_START:
         CALL    LD_EDGE_1               ; Return with the carry flag reset if there is no 'edge' within approx.
-        JR      NC, LD_BREAK            ; 14,000 T states.
+        JR      NC, LD_START            ; 14,000 T states.
 
 ; The next stage involves waiting a while and then showing that the signal is still pulsing.
         LD      HL, $0415               ; The length of this waiting period will be almost one second in duration.
@@ -29,13 +40,13 @@ LD_WAIT:
         OR      L
         JR      NZ, LD_WAIT
         CALL    LD_EDGE_2               ; Continue only if two edges are found within the allowed time period.
-        JR      NC, LD_BREAK
+        JR      NC, LD_START
 
 ; Now accept only a 'leader signal'.
 LD_LEADER:
         LD      B, $9C                  ; The timing constant.
         CALL    LD_EDGE_2               ; Continue only if two edges are found within the allowed time period.
-        JR      NC, LD_BREAK
+        JR      NC, LD_START
         LD      A, $C6                  ; However the edges must have been found within about 3,000 T states of each other.
         CP      B
         JR      NC, LD_START
@@ -46,7 +57,7 @@ LD_LEADER:
 LD_SYNC:
         LD      B, $C9                  ; The timing constant.
         CALL    LD_EDGE_1               ; Every edge is considered until two edges are found close together - these will be the start and finishing edges of the 'off' sync pulse.
-        JR      NC, LD_BREAK
+        JR      NC, LD_START
         LD      A, B
         CP      $D4
         JR      NC, LD_SYNC
@@ -65,10 +76,9 @@ LD_LOOP:
         LD      (IX+$00), L             ; Make the actual load when required.
 
 ; A new byte can now be collected from the tape.
-LD_NEXT:
         INC     IX                      ; Increase the 'destination'.
-LD_DEC:
         DEC     DE                      ; Decrease the 'counter'.
+LD_DEC:
         EX      AF, AF'                 ; Save the flags.
         LD      B, $B2                  ; Set the timing constant.
 LD_MARKER:
@@ -99,7 +109,6 @@ LD_8_BITS:
 
 LD_FLAG:
         CP      A                       ; Set zero flag
-        INC     DE                      ; Increase the counter to compensate for its 'decrease' after the jump.
         JR      LD_DEC
 
 LD_EDGE_2:
@@ -112,7 +121,7 @@ LD_EDGE_1:
 LD_DELAY:
         DEC     A
         JR      NZ, LD_DELAY
-        AND     A
+        AND     A                       ; Reset the carry flag
 
 ; The sampling loop is now entered. The value in the B register is incremented for each pass;  'time-up' is given when B reaches zero.
 LD_SAMPLE:
@@ -130,11 +139,10 @@ LD_SAMPLE:
         LD      A, C                    ; Change the 'last edge-type'.
         XOR     EAR_INPUT
         LD      C, A
-        RLA                             ; Shift the EAR bit (bit 6) into the border color (bit 1)
-        RLA
-        RLA
-        RLA
-        OR      $08                     ; Signal 'MIC off'.
+        RLCA                            ; Shift the EAR bit (bit 6) into the border color (bit 1)
+        RLCA
+        RLCA
+        OR      MIC_OUTPUT              ; Signal 'MIC off'.
         OUT     (IO_ULA), A             ; Change the border colour (red/black).
         SCF                             ; Signal the successful search before returning.
         RET

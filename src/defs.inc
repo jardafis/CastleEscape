@@ -1,5 +1,6 @@
         extern  _font_8x8_cpc_system
         extern  currentBank
+        extern  bankedCall
 
         ;
         ; WYZTracker Songs
@@ -150,6 +151,7 @@
         defc    IO_BEEPER=0xfe
         defc    IO_BANK=0x7ffd
         defc    IO_KEMPSTON=0x1f
+        defc    MIC_OUTPUT=0x08
 
 		;
 		; OpCodes
@@ -362,5 +364,15 @@ assert  MACRO
 
 border  MACRO   color
         ld      a, color
+        or      MIC_OUTPUT              ; Disable the MIC output
         out     (IO_BORDER), a
+        ENDM
+
+		;
+		; Banked call to function
+		;
+bcall   MACRO   function
+        call    bankedCall
+        db      function>>16|MEM_BANK_ROM
+        dw      function
         ENDM
