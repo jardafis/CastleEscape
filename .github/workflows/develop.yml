@@ -24,10 +24,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - name: Install apt dependencies
-        run: sudo apt install -y cpanminus
-      - name: Install perl prerequisites
-        run: sudo cpanm -n Capture::Tiny File::Basename IO::File File::Spec Iterator::Simple Iterator::Simple::Lookahead Regexp::Common FindBin Data::Dump Modern::Perl Path::Tiny File::Copy
       - name: Install z88dk
         run: |
           sudo snap install --edge z88dk
@@ -37,9 +33,6 @@ jobs:
 
       - name: Build all
         run: |
-          export Z88DK=/snap/z88dk/current/share/z88dk
-          export ZCCCFG=${Z88DK}/lib/config
-          export PATH=/snap/z88dk/current/bin:$PATH
           make -C assets install
           make -C src all
 
