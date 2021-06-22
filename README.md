@@ -42,18 +42,17 @@ The game consists 24 levels arranged in a 4x6 grid.
 ![Level Map](assets/tiled/levels.png)
 
 ## Building Sources
-The latest version of Z88DK must be in the path including *z88dk-asmpp.pl* (pre-processor)
-and *z88dk-asmstyle.pl* (assembly code formatter). Install Z88DK on Ubuntu with the commands
+The latest version of Z88DK must be in the path including *z88dk-asmpp* (pre-processor)
+and *z88dk-asmstyle* (assembly code formatter). Install Z88DK on Ubuntu with the commands
 below or on another OS by following the instructions [here](https://github.com/z88dk/z88dk/wiki/installation).
 
 ```
+sudo apt install snapd
 sudo snap install --edge z88dk
 sudo snap alias z88dk.zcc zcc
 sudo snap alias z88dk.z88dk-asmpp z88dk-asmpp
 sudo snap alias z88dk.z88dk-asmstyle z88dk-asmstyle
-export Z88DK=/snap/z88dk/current/share/z88dk
-export ZCCCFG=${Z88DK}/lib/config
-export PATH=/snap/z88dk/current/bin:$PATH
+sudo snap alias z88dk.z88dk-appmake z88dk-appmake
 ```
 
 From the cloned repo use the following commands to build the game.
