@@ -23,18 +23,8 @@ die:
         push    bc
         push    de
         push    hl
-		;
-		; Decrement the heart count
-		;
-        ld      l, 0x01
-        ld      de, heartCount
-        call    subBCD
-        ld      bc, 0x011d              ; y,x screen location
-        ex      de, hl
-        call    display2BCD
-
         ;
-        ; Start the title song
+        ; Start the death march
         ;
         LD      A, DEATH_MARCH
         CALL    LOAD_SONG
@@ -54,6 +44,16 @@ delayLoop:
         ; Ensure border is black
         ;
         border  INK_BLACK
+
+		;
+		; Decrement the heart count
+		;
+        ld      l, 0x01
+        ld      de, heartCount
+        call    subBCD
+        ld      bc, 0x011d              ; y,x screen location
+        ex      de, hl
+        call    display2BCD
 
 		;
 		; If the heart count is zero, game over!
