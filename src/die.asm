@@ -7,7 +7,7 @@
         extern  _jumping
         extern  _ySpeed
         extern  _falling
-        extern  LOAD_SONG
+        extern  wyz_play_song
 
         public  die
 
@@ -26,8 +26,8 @@ die:
         ;
         ; Start the death march
         ;
-        LD      A, DEATH_MARCH
-        CALL    LOAD_SONG
+        ld      a, DEATH_MARCH
+        call    wyz_play_song
 
         ;
         ; Delay for 200 1/50's of a second (4 seconds) and flash

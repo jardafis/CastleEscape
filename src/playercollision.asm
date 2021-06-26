@@ -8,7 +8,7 @@
         extern  _tileMapY
         extern  _jumping
         extern  _falling
-        extern  START_SOUND
+        extern  wyz_play_sound
         extern  die
 
         public  checkXCol
@@ -227,7 +227,7 @@ noYCollision:
         ld      a, FALL_DISTANCE        ; Distance before falling starts
         cp      (hl)
         ld      a, AYFX_FALLING
-        call    z, START_SOUND
+        call    z, wyz_play_sound
 
 updateYPos:
 		;

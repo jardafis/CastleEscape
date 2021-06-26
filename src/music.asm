@@ -1,11 +1,10 @@
-        public  PLAYER_INIT
-        public  PLAYER_OFF
-        public  LOAD_SONG
-        public  START_SONG
-        public  START_SOUND
-        public  INTERR
+        public  wyz_player_init
+        public  wyz_player_stop
+        public  wyz_play_song
+        public  wyz_play_frame
+        public  wyz_play_sound
 
-        section CODE_2
+        section CODE_5
 
 		;
 		; Assembly player from https://github.com/AugustoRuiz/WYZTracker

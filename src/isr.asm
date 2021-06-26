@@ -1,4 +1,4 @@
-        extern  START_SONG
+        extern  wyz_play_frame
 
         public  initISR
         public  ticks
@@ -43,7 +43,7 @@ isr:
         push    iy
 
 IFDEF   SOUND
-        call    START_SONG
+        call    wyz_play_frame
 ENDIF
 
         ;

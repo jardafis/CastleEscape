@@ -1,6 +1,6 @@
         extern  printAttr
-        extern  LOAD_SONG
-        extern  PLAYER_OFF
+        extern  wyz_play_song
+        extern  wyz_player_stop
         extern  _updateDirection
         extern  rotateCount
         extern  currentCoinTable
@@ -16,8 +16,8 @@ titleScreen:
         ;
         ; Start the title song
         ;
-        LD      A, TITLE_MUSIC
-        CALL    LOAD_SONG
+        ld      a, TITLE_MUSIC
+        call    wyz_play_song
 
         ;
         ; Display the continue message
@@ -55,7 +55,7 @@ waitNoJump:
         and     JUMP
         jr      nz, waitNoJump
 
-        call    PLAYER_OFF
+        call    wyz_player_stop
 
         ret
 

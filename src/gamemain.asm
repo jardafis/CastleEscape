@@ -46,10 +46,10 @@
         extern  displayItems_pixel
         extern  updateSpiderPos
         extern  printAttr
-        extern  PLAYER_INIT
+        extern  wyz_player_init
         extern  bank7Screen
         extern  titleScreen
-        extern  START_SOUND
+        extern  wyz_play_sound
 
         public  _currentTileMap
         public  _setCurrentTileMap
@@ -90,7 +90,7 @@ init:
 		;
 		; Initialize the WYZ Player
 		;
-        call    PLAYER_INIT
+        call    wyz_player_init
 
         ;
         ; Init ISR handling
@@ -343,7 +343,7 @@ smallJump:
         rrca                            ; Divide by 2 for direction change. Only works if bit 0 is 0
         ld      (jumpMidpoint), a       ; Save for compare below
         ld      a, b
-        call    START_SOUND
+        call    wyz_play_sound
 cantJump:
 
         ld      a, (_jumping)

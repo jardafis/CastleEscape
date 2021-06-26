@@ -3,7 +3,7 @@
         extern  addBCD
         extern  _displayScore
         extern  score
-        extern  START_SOUND
+        extern  wyz_play_sound
         extern  removeItem
 
         public  _animateCoins
@@ -128,7 +128,7 @@ coinCollision:
         call    addBCD
         call    _displayScore
         ld      a, AYFX_COLLECT_COIN
-        call    START_SOUND
+        call    wyz_play_sound
         ret
 
         section BSS_2
