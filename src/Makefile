@@ -11,7 +11,6 @@ PROJ_NAME=CastleEscape
 PRAGMA_FILE=zpragma.inc
 ASMSRC=$(wildcard *.asm)
 CSRC=$(wildcard *.c)
-BAS2TAP=./bas2tap/bas2tap
 BIN2REM=./bin2rem/bin2rem
 
 CFLAGS=$(TARGET) -c \
@@ -62,10 +61,6 @@ ifeq (,$(findstring $(MAKECMDGOALS),clean))
 %.d: %.c
 	@./mkdep.sh $< > $@
 endif
-
-$(BAS2TAP):
-	git clone --depth=1 https://github.com/andybalaam/bas2tap.git
-	make -C bas2tap
 
 $(BIN2REM):
 	make -C bin2rem
