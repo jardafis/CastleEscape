@@ -3,6 +3,9 @@
         DEFC    IO_ULA=0xfe
         DEFC    INIT_BORDER=0x00|MIC_OUTPUT
 
+IFNDEF	CRT_LOADER_RAINBOW
+		DEFC	CRT_LOADER_RAINBOW=0
+ENDIF
 		;
 		; LD_BYTES routine from the ZX Spectrum ROM
 		;
@@ -139,9 +142,9 @@ LD_SAMPLE:
         LD      A, C                    ; Change the 'last edge-type'.
         XOR     EAR_INPUT
         LD      C, A
-IFDEF RAINBOW
-		LD		A, R
-		AND		0x07
+IF      CRT_LOADER_RAINBOW
+        LD      A, R
+        AND     0x07
 ELSE
         RLCA                            ; Shift the EAR bit (bit 6) into the border color (bit 1)
         RLCA

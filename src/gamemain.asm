@@ -71,9 +71,6 @@
 
         include "defs.inc"
 
-        section BANK_5
-        binary  "title.scr"
-
         section CODE_2
 _main:
         call    init

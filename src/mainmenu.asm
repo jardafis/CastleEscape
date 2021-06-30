@@ -90,12 +90,12 @@ keyPressed:
         call    waitReleaseKey
 jumpPressed:
         cp      '0'
-        jr		z, play
+        jr      z, play
         cp      '1'
         call    z, defineKeys
 IFDEF   ATTRIB_EDIT
         cp      '2'
-        jr		z, attribEdit
+        jr      z, attribEdit
 ENDIF
         jp      displayScreen
 
@@ -173,7 +173,7 @@ play:
         ld      a, MAIN_MENU_MUSIC
         call    wyz_play_song
 
-		jp		mainMenu
+        jp      mainMenu
 
         section BSS_5
 
