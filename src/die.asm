@@ -57,8 +57,9 @@ delayLoop:
 
 		;
 		; If the heart count is zero, game over!
+		; hl points to heartCount
 		;
-        ld      a, (heartCount)
+        ld      a, (hl)
         or      a
         jp      z, gameOver
 

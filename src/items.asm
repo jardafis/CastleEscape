@@ -22,6 +22,22 @@
         defc    ITEM_WIDTH=0x08
         defc    ITEM_HEIGHT=0x08
 
+		;
+		;	Flag bits:
+		;	+---------------+
+		;	|7|6|5|4|3|2|1|0|
+		;	+---------------+
+		;	 | | | | | | | |
+		;	 | | | | | | | +-- Visible
+		;	 | | | | | | +---- Unused
+		;	 | | | | | +------ Unused
+		;	 | | | | +-------- Unused
+		;	 | | | +---------- Unused
+		;	 | | +------------ Unused
+		;	 | +-------------- Unused
+		;	 +---------------- End of table
+		;
+
         section CODE_2
         ;
         ; Entry:
@@ -104,8 +120,8 @@ itemID:
         ld      bc, SCREEN_WIDTH
         add     hl, bc
 
-        ; Flags, 0xff = end of list
-        ld      a, 0xff
+        ; Flags, bit 7, end of list
+        ld      a, 0x80
         ld      (de), a
         inc     de
 
@@ -321,8 +337,8 @@ displayItems:
         ld      d, a                    ; Save tile ID
 nextItem2:
         ld      a, (hl)                 ; Flags
-        cp      0xff
-        ret     z
+        or		a
+        ret     m
 
         cp      0x00                    ; Is the item visible?
         jr      z, notVisible2
@@ -366,8 +382,8 @@ displayItems_pixel:
         ld      d, a                    ; Save tile ID
 nextItem3:
         ld      a, (hl)                 ; Flags
-        cp      0xff
-        ret     z
+		or		a
+        ret     m
 
         cp      0x00                    ; Is the item visible?
         jr      z, notVisible4
@@ -505,8 +521,8 @@ checkItemCollision:
         ld      (itemCollision+1), de
 nextItem:
         ld      a, (hl)
-        cp      0xff
-        ret     z
+        or		a
+        ret     m
 
         cp      0x00                    ; Is the item visible?
         jr      z, notVisible3

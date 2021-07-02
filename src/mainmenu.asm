@@ -43,12 +43,6 @@ displayScreen:
         ld      (currentCoinTable), hl
 
         ;
-        ; Reset counter used for coin rotation
-        ;
-        xor     a
-        ld      (rotateCount), a
-
-        ;
         ; Patch the animate coins routine to access
         ; memory @ 0xc000
         ;
@@ -70,8 +64,7 @@ getKey:
         call    animateMenu
 
         call    keyboardScan            ; Read the keyboard
-        or      a                       ; If a key has been presses
-        jr      nz, keyPressed          ; jump to process it.
+        jr      nz, keyPressed          ; Process key press
 
         ld      a, (kjPresent)          ; Check if the kempston joystick
         or      a                       ; is present, if not
@@ -136,8 +129,7 @@ waitReleaseKey:
 releaseKey:
         call    animateMenu
         call    keyboardScan            ; Read the keyboard
-        or      a                       ; If a key is pressed
-        jr      nz, releaseKey          ; continue looping
+        jr      nz, releaseKey          ; Key is being pressed
         pop     af
         ret
 

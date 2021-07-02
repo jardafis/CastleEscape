@@ -26,10 +26,9 @@ _animateCoins:
         ld      de, (currentCoinTable)
 nextCoin:
         ld      a, (de)                 ; Coin flags
-        cp      0xff                    ; Check for end of coin table
-        jp      z, coinTableEnd         ; done if true.
-        or      a                       ; Is the coin visible?
-        jp      z, notVisible
+		or		a						; Update flags based on the value of 'a'
+		jp		m, coinTableEnd			; Bit-7 set means end of table
+        jp      z, notVisible			; Zero means not visible
 
         inc     de
 

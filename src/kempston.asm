@@ -16,7 +16,6 @@ detectKempston:
         halt
         in      a, (IO_KEMPSTON)
         inc     a
-        or      a
         ld      (kjPresent), a
         ret
 

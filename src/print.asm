@@ -81,7 +81,7 @@ printChar:
         push    hl
 
         di
-        ld      (TempSP), sp
+        ld      (TempSP+1), sp
 
         sub     ' '                     ; Font data starts at SPACE
         ld      d, a                    ; Save char to be displayed
@@ -142,7 +142,7 @@ printChar:
         ld      (hl), b
 
         ; Restore the stack pointer.
-TempSP  equ     $+1
+TempSP:
         ld      sp, 0x0000
         ei
 

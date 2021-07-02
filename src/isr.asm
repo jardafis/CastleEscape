@@ -33,8 +33,6 @@ initISR:
         ret
 
 isr:
-        ld      (isrTempSP), sp         ; Save the application stack pointer
-        ld      sp, interruptStack      ; Load the interrupt stack pointer
         push    af
         push    bc
         push    de
@@ -59,13 +57,9 @@ ENDIF
         pop     de
         pop     bc
         pop     af                      ; Restore the registers we used
-isrTempSP   equ $+1
-        ld      sp, 0x0000              ; Restore the application stack pointer
         ei                              ; Enable interrupts
         reti                            ; Acknowledge and return from interrupt
 
         section BSS_2
 ticks:
         ds      2
-        ds      0x40                    ; 64 bytes for interrupt stack
-interruptStack:

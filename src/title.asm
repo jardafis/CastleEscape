@@ -36,11 +36,6 @@ titleScreen:
         ld      hl, coinTable
         ld      (currentCoinTable), hl
 
-        ;
-        ; Reset counter used for coin rotation
-        ;
-        xor     a
-        ld      (rotateCount), a
 waitJump:
         ld      hl, lanternList
         call    animateMenu
