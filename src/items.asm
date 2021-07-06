@@ -239,6 +239,27 @@ setTileAttr:
         pop     af
         ret
 
+        public	_displayTile
+        defvars 0                       ; Define the stack variables used
+        {
+            yPos      ds.b 2
+            xPos      ds.b 2
+            tile	  ds.b 2
+        }
+
+_displayTile:
+		entry
+
+		ld	b, (ix+yPos)
+		ld	c, (ix+xPos)
+		ld	a, (ix+tile)
+
+		call	displayTile
+		call	setTileAttr
+
+		exit
+		ret
+
         ;
         ; Display the specified tile at the specified location.
         ;
