@@ -1,9 +1,5 @@
 CC=zcc
-ifeq (, $(shell which z88dk-asmpp))
-AS=asmpp.pl
-else
 AS=z88dk-asmpp
-endif
 LD=zcc
 
 TARGET= +zx
@@ -27,15 +23,16 @@ LDFLAGS=$(TARGET) -crt0 crt/crt.asm -m -pragma-include:$(PRAGMA_FILE)
 OBJECTS=$(CSRC:.c=.o) $(ASMSRC:.asm=.o)
 
 # Tape files must be in the correct order and matching the 'bankTable' in crt0.asm
-# loader.tap is a BASIC loader with embedded machine code.
-TAPS=	loader.tap \
+# loader.tap is a BASIC loader with embedded machine code bank 5 comes next as this
+# has the loading screen. All other bank tape files come after in order.
+TAPS:=	loader.tap \
 		$(PROJ_NAME)_BANK_5.tap \
 		$(PROJ_NAME)_BANK_0.tap \
 		$(PROJ_NAME)_BANK_2.tap \
 		$(PROJ_NAME)_BANK_7.tap
 
 # Default to the CODE bank if no other is specified
-BANK ?= CODE
+BANK ?= BANK_2
 # Find the start addres of the BANK and replace $ with 0x
 HEAD=$(shell grep __$(BANK)_head *.map | awk '{gsub("^.", "0x", $$3); print $$3}')
 
