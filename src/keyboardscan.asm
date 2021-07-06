@@ -37,6 +37,7 @@ _keyboardScan:
 		;
 		;	Exit:
 		;		a - ASCII code for key pressed or 0 if no keys are pressed
+		;		Z - Zero flag set if no key pressed
         ;
         ; Taken from http://www.breakintoprogram.co.uk/computers/zx-spectrum/keyboard
         ; with optimizations by IrataHack.
@@ -65,6 +66,7 @@ nextKey:
 foundKey:
         ld      A, (HL)                 ; Load the key value from the table
 
+		or		a						; Update zero flag
         pop     HL
         pop     BC
         ret
@@ -115,13 +117,11 @@ waitKey:
 
 waitKeyPress:
         call    keyboardScan
-        or      a
         jr      z, waitKeyPress
 
         ld      b, a                    ; Save the value of the key pressed
 waitKeyRelease:
         call    keyboardScan
-        or      a
         jr      nz, waitKeyRelease
 
         ld      a, b                    ; Restore the value of the key pressed

@@ -16,7 +16,7 @@ then
 fi
 
 file=$1
-INCS=`grep -iE "\s*(include|binary)\s*\".*\"" $file | sed 's/\"//g' | awk '{print $2}'`
+INCS=`grep -iE "^\s*(include|binary)\s*\".*\"" $file | sed 's/\"//g' | awk '{print $2}'`
 echo "${file/.*/.o} ${file/.*/.d}: $file ${INCS//$'\n'/ }"
 
 exit 0

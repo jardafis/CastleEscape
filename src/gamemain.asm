@@ -46,10 +46,10 @@
         extern  displayItems_pixel
         extern  updateSpiderPos
         extern  printAttr
-        extern  PLAYER_INIT
+        extern  wyz_player_init
         extern  bank7Screen
         extern  titleScreen
-        extern  START_SOUND
+        extern  wyz_play_sound
 
         public  _currentTileMap
         public  _setCurrentTileMap
@@ -71,9 +71,6 @@
 
         include "defs.inc"
 
-        section BANK_5
-        binary  "title.scr"
-
         section CODE_2
 _main:
         call    init
@@ -90,7 +87,7 @@ init:
 		;
 		; Initialize the WYZ Player
 		;
-        call    PLAYER_INIT
+        call    wyz_player_init
 
         ;
         ; Init ISR handling
@@ -194,12 +191,6 @@ newGame:
         ld      (_tileMapY), a
 
         ;
-        ; Initial coin rotate counter
-        ;
-        ld      a, 6
-        ld      (coinRotate), a
-
-        ;
         ; Setup the scrolling message
         ;
         call    _scrollInit
@@ -235,18 +226,12 @@ gameLoop:
         ;
         halt
 
-IF  0
-        ld      bc, 0x300
-lo:
-        dec     bc
-        ld      a, b
-        or      c
-        jr      nz, lo
-ENDIF
-
-IFDEF   TIMING_BORDER
-        border  INK_BLUE
-ENDIF
+		; ######################################
+        ;
+        ; Update the scrolling message
+        ;
+		; ######################################
+        call    _scroll
 
 		; ######################################
 		;
@@ -262,8 +247,8 @@ ENDIF
         call    _pasteScreen
 
         ld      a, (ticks)
-        and     %00000001
-        jr      nz, oddFrame2
+        rrca
+        jr      c, skipOddFrame2
 
 		;
 		; The below code is only executed on even frame numbers
@@ -276,16 +261,13 @@ ENDIF
         ld      hl, (currentSpiderTable)
         call    displayItems_pixel
 
-oddFrame2:
+skipOddFrame2:
 
 		; ######################################
 		;
 		; Update user input
 		;
 		; ######################################
-IFDEF   TIMING_BORDER
-        border  INK_RED
-ENDIF
         call    _updateDirection
 
         ;
@@ -343,7 +325,7 @@ smallJump:
         rrca                            ; Divide by 2 for direction change. Only works if bit 0 is 0
         ld      (jumpMidpoint), a       ; Save for compare below
         ld      a, b
-        call    START_SOUND
+        call    wyz_play_sound
 cantJump:
 
         ld      a, (_jumping)
@@ -367,9 +349,6 @@ notJumping:
 		; in the Y direction.
 		;
 		; ######################################
-IFDEF   TIMING_BORDER
-        border  INK_MAGENTA
-ENDIF
         call    checkYCol
 
 		; ######################################
@@ -378,22 +357,9 @@ ENDIF
 		; in the Y direction.
 		;
 		; ######################################
-IFDEF   TIMING_BORDER
-        border  INK_GREEN
-ENDIF
         ld      a, (_xSpeed)            ; If xSpeed != 0 player is moving
         or      a                       ; left or right.
         call    nz, checkXCol           ; Check for a collision.
-
-		; ######################################
-        ;
-        ; Update the scrolling message
-        ;
-		; ######################################
-IFDEF   TIMING_BORDER
-        border  INK_CYAN
-ENDIF
-        call    _scroll
 
 		; ######################################
         ;
@@ -401,9 +367,6 @@ ENDIF
         ; hearts, and spiders, etc.
         ;
 		; ######################################
-IFDEF   TIMING_BORDER
-        border  INK_YELLOW
-ENDIF
         ld      hl, (currentCoinTable)
         ld      de, coinCollision
         call    checkItemCollision
@@ -417,28 +380,15 @@ ENDIF
         ld      de, spiderCollision
         call    checkItemCollision
 
-        ld      a, (ticks)
-        and     %00000001
-        jr      z, noAnimate
-
-		; ######################################
-		;
-		; The below code is only executed on odd frame numbers
-		;
-		; ######################################
-
 		; ######################################
 		;
 		; Rotate any visible coins.
 		;
 		; ######################################
-IFDEF   TIMING_BORDER
-        border  INK_WHITE
-ENDIF
         ld      hl, coinRotate
         dec     (hl)
         jp      p, noAnimate
-        ld      (hl), ROTATE_COUNT/2    ; Reset rotate counter
+        ld      (hl), ROTATE_COUNT      ; Reset rotate counter
         call    _animateCoins
 noAnimate:
 
@@ -447,23 +397,16 @@ noAnimate:
 		; Redraw any moving items.
 		;
 		; ######################################
-
-IFDEF   TIMING_BORDER
-        border  INK_BLUE
-ENDIF
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _copyScreen
 
-IFDEF   TIMING_BORDER
-        border  INK_RED
-ENDIF
         ld      bc, (_xPos)
         call    _displaySprite
 
         ld      a, (ticks)
-        and     %00000001
-        jr      nz, oddFrame
+        rrca
+        jr      c, skipOddFrame
 
 		; ######################################
 		;
@@ -478,31 +421,20 @@ ENDIF
         ;
         ; Flicker any lanterns on the screen
         ;
-IFDEF   TIMING_BORDER
-        border  INK_MAGENTA
-ENDIF
         ld      hl, _lanternList
         call    _lanternFlicker
 
-oddFrame:
+skipOddFrame:
         ;
         ; See if the egg count needs to be decremented
         ;
-IFDEF   TIMING_BORDER
-        border  INK_GREEN
-ENDIF
         call    decrementEggs
 
-IFDEF   TIMING_BORDER
-        border  INK_BLACK
-ENDIF
         jp      gameLoop
 
 gameOver:
         ld      sp, -1
-IFDEF   TIMING_BORDER
-        border  INK_BLACK
-ENDIF
+
         ld      bc, 0x0b0a
         ld      hl, gameOverMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT

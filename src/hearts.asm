@@ -1,6 +1,6 @@
         extern  addBCD
         extern  display2BCD
-        extern  START_SOUND
+        extern  wyz_play_sound
         extern  removeItem
 
         public  heartCount
@@ -25,7 +25,7 @@ heartCollision:
         ld      hl, heartCount          ; Point to 1000's/100's of score
         call    display2BCD
         ld      a, AYFX_COLLECT_HEART
-        call    START_SOUND
+        call    wyz_play_sound
         ret
 
         section BSS_2

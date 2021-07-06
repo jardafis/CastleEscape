@@ -1,6 +1,6 @@
         extern  printAttr
-        extern  LOAD_SONG
-        extern  PLAYER_OFF
+        extern  wyz_play_song
+        extern  wyz_player_stop
         extern  _updateDirection
         extern  rotateCount
         extern  currentCoinTable
@@ -9,6 +9,9 @@
         public  titleScreen
         public  pressJumpMsg
 
+        section BANK_5
+        binary  "title.scr"
+
         section CODE_5
         include "defs.inc"
 
@@ -16,8 +19,8 @@ titleScreen:
         ;
         ; Start the title song
         ;
-        LD      A, TITLE_MUSIC
-        CALL    LOAD_SONG
+        ld      a, TITLE_MUSIC
+        call    wyz_play_song
 
         ;
         ; Display the continue message
@@ -33,11 +36,6 @@ titleScreen:
         ld      hl, coinTable
         ld      (currentCoinTable), hl
 
-        ;
-        ; Reset counter used for coin rotation
-        ;
-        xor     a
-        ld      (rotateCount), a
 waitJump:
         ld      hl, lanternList
         call    animateMenu
@@ -55,7 +53,7 @@ waitNoJump:
         and     JUMP
         jr      nz, waitNoJump
 
-        call    PLAYER_OFF
+        call    wyz_player_stop
 
         ret
 

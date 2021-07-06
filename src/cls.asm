@@ -10,6 +10,9 @@
         ;
         ; On entry, l contains the attribute to fill the attr memory.
         ;
+        ; Notes: Interrupts must be enabled as 'halt' is used to sync to
+        ; the screen refresh.
+        ;
 _cls:
         push    af
         push    bc

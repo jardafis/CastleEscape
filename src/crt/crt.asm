@@ -40,6 +40,15 @@ ENDIF
 IFNDEF  CRT_CUSTOM_LOADER
         DEFC    CRT_CUSTOM_LOADER=0
 ENDIF
+IFNDEF  CRT_FILL_STACK
+        DEFC    CRT_FILL_STACK=0
+ENDIF
+IFNDEF  CRT_BORDER_COLOR
+        DEFC    CRT_BORDER_COLOR=0
+ENDIF
+IFNDEF  CRT_SCREEN_ATTRIB
+        DEFC    CRT_SCREEN_ATTRIB=0
+ENDIF
 
         PUBLIC  crt0
         PUBLIC  crt0_end
@@ -51,16 +60,16 @@ crt0:
 		;
 		; Setup a stack for the loader
 		;
-        ld      sp, loaderStack
+        ld      sp, REGISTER_SP
 
-		; Set border to black
-        xor     a
+		; Set border to black; MIC output off
+        ld      a, CRT_BORDER_COLOR|8
         out     (IO_BORDER), a
-		; Color screen black
+		; Color screen
         ld      hl, SCREEN_ATTR_START
         ld      de, SCREEN_ATTR_START+1
         ld      bc, SCREEN_ATTR_LENGTH-1
-        ld      (hl), 0
+        ld      (hl), CRT_SCREEN_ATTRIB
         ldir
 
         call    loadBanks
@@ -76,7 +85,7 @@ ENDIF
         ; Interrupts should be disabled so no need to worry
         ; about ISR accessing the stack.
         ;
-        ld      sp, REGISTER_SP
+IF  CRT_FILL_STACK
 fillStack:
         ld      de, 0x5555              ; Word to fill
         ld      b, CRT_STACK_SIZE/2     ; Stack size in words
@@ -84,6 +93,7 @@ fillStackLoop:
         push    de                      ; Push data to stack
         djnz    fillStackLoop           ; Loop for all words
         ld      sp, REGISTER_SP
+ENDIF
 
         ;
         ; Ensure memory bank 0 is paged into 0xc000
@@ -95,9 +105,6 @@ fillStackLoop:
 
         jp      _main
 
-        ;
-        ; Must disabled interrupts before exit.
-        ;
 loadBanks:
         ld      hl, bankTable
 loadNextBank:
@@ -108,7 +115,7 @@ loadNextBank:
 
         ld      a, d                    ; If the bank start address
         or      e                       ; is zero we have reached the end
-        jr      z, banksLoaded          ; of the table. All loading done.
+        ret     z                       ; of the table.
 
         push    de                      ; Put the start address into
         pop     ix                      ; ix
@@ -137,13 +144,11 @@ ELSE
         ld      a, 0xff
         scf
         call    0x556
+        di                              ; Ensure interrupts are disabled
 ENDIF
 
         pop     hl                      ; Restore the table pointer.
         jr      loadNextBank            ; On to the next bank.
-banksLoaded:
-        di
-        ret
 
 IF  CRT_INITIALIZE_BSS
 		;
@@ -289,10 +294,6 @@ IFDEF   CRT_ORG_BANK_7
 ENDIF
         dw      0x0000
 crt0_end:
-        SECTION BSS
-        org     -1
-        ds      0x10, 0x55
-loaderStack:
 
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    		; Define Memory Banks

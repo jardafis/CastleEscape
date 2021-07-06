@@ -5,8 +5,8 @@
         extern  keyboardScan
         extern  readKempston
         extern  kjPresent
-        extern  LOAD_SONG
-        extern  PLAYER_OFF
+        extern  wyz_play_song
+        extern  wyz_player_stop
         extern  _lanternFlicker
         extern  currentCoinTable
         extern  _animateCoins
@@ -32,8 +32,8 @@ mainMenu:
         ;
         ; Start main menu song
         ;
-        LD      A, MAIN_MENU_MUSIC
-        CALL    LOAD_SONG
+        ld      a, MAIN_MENU_MUSIC
+        call    wyz_play_song
 
 displayScreen:
         ;
@@ -41,12 +41,6 @@ displayScreen:
         ;
         ld      hl, coinTable
         ld      (currentCoinTable), hl
-
-        ;
-        ; Reset counter used for coin rotation
-        ;
-        xor     a
-        ld      (rotateCount), a
 
         ;
         ; Patch the animate coins routine to access
@@ -70,8 +64,7 @@ getKey:
         call    animateMenu
 
         call    keyboardScan            ; Read the keyboard
-        or      a                       ; If a key has been presses
-        jr      nz, keyPressed          ; jump to process it.
+        jr      nz, keyPressed          ; Process key press
 
         ld      a, (kjPresent)          ; Check if the kempston joystick
         or      a                       ; is present, if not
@@ -90,12 +83,12 @@ keyPressed:
         call    waitReleaseKey
 jumpPressed:
         cp      '0'
-        call    z, play
+        jr      z, play
         cp      '1'
         call    z, defineKeys
 IFDEF   ATTRIB_EDIT
         cp      '2'
-        call    z, attribEdit
+        jr      z, attribEdit
 ENDIF
         jp      displayScreen
 
@@ -136,18 +129,14 @@ waitReleaseKey:
 releaseKey:
         call    animateMenu
         call    keyboardScan            ; Read the keyboard
-        or      a                       ; If a key is pressed
-        jr      nz, releaseKey          ; continue looping
+        jr      nz, releaseKey          ; Key is being pressed
         pop     af
         ret
 
         ;
         ; Wrapper to call attribute edit function in 'C'
         ;
-        ;   Notes:
-        ;       'af' is preserved.
 attribEdit:
-        push    af
         ;
         ; Page bank 0 to 0xc000 since it has the attributes
         ;
@@ -162,27 +151,21 @@ attribEdit:
         pop     hl
         pop     hl
 
-        pop     af
-        ret
+        jp      displayScreen
 
         ;
         ; Stop menu music and start a new game. Upon return
         ; restart menu music.
         ;
-        ;   Notes:
-        ;       'af' is preserved.
 play:
-        push    af
-
-        call    PLAYER_OFF
+        call    wyz_player_stop
 
         call    newGame
 
-        LD      A, MAIN_MENU_MUSIC
-        CALL    LOAD_SONG
+        ld      a, MAIN_MENU_MUSIC
+        call    wyz_play_song
 
-        pop     af
-        ret
+        jp      mainMenu
 
         section BSS_5
 

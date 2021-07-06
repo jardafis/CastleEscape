@@ -2,7 +2,7 @@
         extern  addBCD
         extern  displayTile
         extern  decBCD
-        extern  START_SOUND
+        extern  wyz_play_sound
         extern  removeItem
 
         public  eggTables
@@ -28,7 +28,7 @@ eggCollision:
         call    addBCD
         call    displayEggCount
         ld      a, AYFX_COLLECT_EGG
-        call    START_SOUND
+        call    wyz_play_sound
         ret
 
 updateEggImage:
