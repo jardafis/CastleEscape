@@ -1,33 +1,16 @@
         extern  assert
 
-        public  _keyboardScan
         public  keyboardScan
         public  _updateDirection
         public  kjScan
         public  waitKey
+        public	_waitKey
         public  lookupScanCode
         public  scanCodes
 
         section CODE_2
 
         include "defs.inc"
-
-		;
-		; C Wrapper.
-		; Scan the keyboard for input.
-		;
-		;	Entry:
-		;		None
-		;
-		;	Exit:
-		;		l - ASCII code for key pressed or 0 if no keys are pressed
-		;
-_keyboardScan:
-        push    af
-        call    keyboardScan
-        ld      l, a
-        pop     af
-        ret
 
 		;
 		; Scan the keyboard for input.
@@ -105,6 +88,23 @@ kjScan:
         nop
         nop
         ret
+
+		;
+		; C Wrapper.
+		; Wait for a key to be pressed and released
+		;
+		;	Entry:
+		;		None
+		;
+		;	Exit:
+		;		l - ASCII code for key pressed or 0 if no keys are pressed
+		;
+_waitKey:
+		push	af
+		call	waitKey
+		ld		l, a
+		pop		af
+		ret
 
 		;
 		; Wait for a key to be pressed.

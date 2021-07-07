@@ -1,12 +1,11 @@
 #include <arch/zx.h>
 
-extern unsigned char keyboardScan(void)
-__z88dk_fastcall;
 extern void cls(char attr)
 __z88dk_fastcall;
 extern unsigned char *screenTab[];
 extern void printChar(unsigned char c, unsigned char x, unsigned char y);
 extern void displayTile(unsigned char tile, unsigned char x, unsigned y);
+extern unsigned char waitKey(void);
 
 #define TILE_WIDTH      12
 #define TILE_HEIGHT     14
@@ -167,8 +166,7 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
     do
     {
         // Wait for key press
-        while ((key = keyboardScan()) == 0)
-            __asm__("halt");
+        key = waitKey();
 
         switch (key)
         {
@@ -218,9 +216,6 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
             break;
         }
 
-        // Wait for key release
-        while (keyboardScan() != 0)
-            __asm__("halt");
     } while (key != ' ');                   // SPACE to exit
     /*
      * Copy the attributes back to their original location so
