@@ -29,15 +29,15 @@
         section CODE_2
 
 updateSpiderPos:
-		ld		hl, changeSpiderDir
-		dec		(hl)
-		jr		nz, update
-		ld		(hl), 25
+        ld      hl, changeSpiderDir
+        dec     (hl)
+        jr      nz, update
+        ld      (hl), 25
 
         ld      hl, (currentSpiderTable)
 nextSpider:
         ld      a, (hl)                 ; Flags
-		or		a
+        or      a
         ret     m
 
         push    hl
@@ -75,8 +75,8 @@ update:
         ld      hl, (currentSpiderTable)
 updatePosition:
         ld      a, (hl)                 ; Flags
-		or		a
-        ret		m                       ; Check for end of list return if true.
+        or      a
+        ret     m                       ; Check for end of list return if true.
 
         push    hl                      ; Save item pointer
 
@@ -169,7 +169,7 @@ spiderCollision:
         call    die
         ret
 
-		section	DATA_2
+        section DATA_2
 
 changeSpiderDir:
         db      25

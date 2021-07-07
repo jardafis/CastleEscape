@@ -26,9 +26,9 @@ _animateCoins:
         ld      de, (currentCoinTable)
 nextCoin:
         ld      a, (de)                 ; Coin flags
-		or		a						; Update flags based on the value of 'a'
-		jp		m, coinTableEnd			; Bit-7 set means end of table
-        jp      z, notVisible			; Zero means not visible
+        or      a                       ; Update flags based on the value of 'a'
+        jp      m, coinTableEnd         ; Bit-7 set means end of table
+        jp      z, notVisible           ; Zero means not visible
 
         inc     de
 

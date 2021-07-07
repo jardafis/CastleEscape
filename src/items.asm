@@ -239,6 +239,27 @@ setTileAttr:
         pop     af
         ret
 
+        public  _displayTile
+        defvars 0                       ; Define the stack variables used
+        {
+            yPos        ds.b 2
+            xPos        ds.b 2
+            tile        ds.b 2
+        }
+
+_displayTile:
+        entry
+
+        ld      b, (ix+yPos)
+        ld      c, (ix+xPos)
+        ld      a, (ix+tile)
+
+        call    displayTile
+        call    setTileAttr
+
+        exit
+        ret
+
         ;
         ; Display the specified tile at the specified location.
         ;
@@ -337,7 +358,7 @@ displayItems:
         ld      d, a                    ; Save tile ID
 nextItem2:
         ld      a, (hl)                 ; Flags
-        or		a
+        or      a
         ret     m
 
         cp      0x00                    ; Is the item visible?
@@ -382,7 +403,7 @@ displayItems_pixel:
         ld      d, a                    ; Save tile ID
 nextItem3:
         ld      a, (hl)                 ; Flags
-		or		a
+        or      a
         ret     m
 
         cp      0x00                    ; Is the item visible?
@@ -521,7 +542,7 @@ checkItemCollision:
         ld      (itemCollision+1), de
 nextItem:
         ld      a, (hl)
-        or		a
+        or      a
         ret     m
 
         cp      0x00                    ; Is the item visible?
