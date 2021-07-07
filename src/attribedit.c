@@ -32,14 +32,14 @@ void setCursor(char x, char y)
 /*
  * Start of the screen attribute memory.
  */
-unsigned char * const attr = (unsigned char*) 0x5800;
+unsigned char *const attr = (unsigned char*) 0x5800;
 
 /*
  * Output a 16-bit hex value.
  */
 void putHex(unsigned int value)
 {
-    for(signed char n = 12; n>=0; n-=4)
+    for (signed char n = 12; n >= 0; n -= 4)
     {
         printChar(hex[(value >> n) & 0xf], cursorX++, cursorY);
     }
@@ -71,12 +71,12 @@ void putString(char *string)
  */
 void displayTileset(const unsigned char *tiles)
 {
-	unsigned char tile = 0;
+    unsigned char tile = 0;
     for (char y = 0; y < TILE_HEIGHT; y++)
     {
         for (char x = 0; x < TILE_WIDTH; x++)
         {
-        	displayTile(tile++, x, y);
+            displayTile(tile++, x, y);
         }
     }
 }
@@ -144,6 +144,9 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
     unsigned char key;
 
     cls(INK_WHITE | PAPER_BLACK);
+
+    displayTileset(tileset);
+
     setCursor(0, TILE_HEIGHT);
     putString("Up          - 'q'\n");
     putString("Down        - 'a'\n");
@@ -159,8 +162,6 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
     putString("/");
     putHex(TILE_WIDTH * TILE_HEIGHT);
 
-    displayTileset(tileset);
-
     xorCursor(x, y);
 
     do
@@ -172,7 +173,7 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
         {
         case 'P':                           // Right
             xorCursor(x, y);
-            if (x < (TILE_WIDTH-1))
+            if (x < (TILE_WIDTH - 1))
                 x++;
             xorCursor(x, y);
             break;
@@ -190,7 +191,7 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
             break;
         case 'A':                           // Down
             xorCursor(x, y);
-            if (y < (TILE_HEIGHT-1))
+            if (y < (TILE_HEIGHT - 1))
                 y++;
             xorCursor(x, y);
             break;

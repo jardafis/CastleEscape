@@ -4,7 +4,7 @@
         public  _updateDirection
         public  kjScan
         public  waitKey
-        public	_waitKey
+        public  _waitKey
         public  lookupScanCode
         public  scanCodes
 
@@ -49,7 +49,7 @@ nextKey:
 foundKey:
         ld      A, (HL)                 ; Load the key value from the table
 
-		or		a						; Update zero flag
+        or      a                       ; Update zero flag
         pop     HL
         pop     BC
         ret
@@ -100,11 +100,11 @@ kjScan:
 		;		l - ASCII code for key pressed or 0 if no keys are pressed
 		;
 _waitKey:
-		push	af
-		call	waitKey
-		ld		l, a
-		pop		af
-		ret
+        push    af
+        call    waitKey
+        ld      l, a
+        pop     af
+        ret
 
 		;
 		; Wait for a key to be pressed.

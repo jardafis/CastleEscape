@@ -8,7 +8,7 @@
 
         include "defs.inc"
 
-        public	_printChar
+        public  _printChar
 		;
 		; Display a char at the specified location.
 		; Callable from 'C', parameters are passed on
@@ -16,22 +16,22 @@
 		;
         defvars 0                       ; Define the stack variables used
         {
-            yPos      ds.b 2
-            xPos      ds.b 2
-            char	  ds.b 2
+            yPos        ds.b 2
+            xPos        ds.b 2
+            char        ds.b 2
         }
 
 _printChar:
-		entry
+        entry
 
-		ld	b, (ix+yPos)
-		ld	c, (ix+xPos)
-		ld	a, (ix+char)
+        ld      b, (ix+yPos)
+        ld      c, (ix+xPos)
+        ld      a, (ix+char)
 
-		call	printChar
+        call    printChar
 
-		exit
-		ret
+        exit
+        ret
 
 		;
 		; Display a string with attributes.
