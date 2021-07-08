@@ -68,6 +68,7 @@
         public  gameOver
         public  xyPos
         public  xyStartPos
+        public  startSprite
 
         include "defs.inc"
 
@@ -519,6 +520,8 @@ _jumping:
         ds      1
 _falling:
         ds      1
+startSprite:
+        ds      2
 xyStartPos:                             ; Position where player entered the level
         ds      2
 _spriteBuffer:

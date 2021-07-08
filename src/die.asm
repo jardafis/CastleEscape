@@ -8,6 +8,8 @@
         extern  _ySpeed
         extern  _falling
         extern  wyz_play_song
+        extern  playerSprite
+        extern  startSprite
 
         public  die
 
@@ -63,10 +65,12 @@ delayLoop:
         or      a
         jp      z, gameOver
 
-		; Set player X/Y position to where
+		; Set player X/Y position (and sprite direction) to where
 		; they entered the level.
         ld      hl, (xyStartPos)
         ld      (xyPos), hl
+        ld      hl, (startSprite)
+        ld      (playerSprite), hl
         xor     a
         ld      (_jumping), a
         ld      (_ySpeed), a

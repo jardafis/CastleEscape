@@ -20,6 +20,8 @@
         extern  xyPos
         extern  xyStartPos
         extern  displayEggCount
+        extern  playerSprite
+        extern  startSprite
 
         public  _setupScreen
 
@@ -86,11 +88,13 @@ _setupScreen:
 
         call    _scrollReset
 
-		; Save the location where the player entered
+		; Save the location (and direction) where the player entered
 		; the level. This is used as the starting
 		; location when they die.
         ld      hl, (xyPos)
         ld      (xyStartPos), hl
+        ld      hl, (playerSprite)
+        ld      (startSprite), hl
 
         popall
         ret
