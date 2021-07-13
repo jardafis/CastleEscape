@@ -47,7 +47,6 @@ and *z88dk-asmstyle* (assembly code formatter). Install Z88DK on Ubuntu with the
 below or on another OS by following the instructions [here](https://github.com/z88dk/z88dk/wiki/installation).
 
 ```
-sudo apt install snapd
 sudo snap install --edge z88dk
 sudo snap alias z88dk.zcc zcc
 sudo snap alias z88dk.z88dk-asmpp z88dk-asmpp
