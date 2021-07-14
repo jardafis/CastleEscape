@@ -6,3 +6,6 @@
 *.sym
 *.i
 *.bak
+*.d
+zcc_opt.inc
+bas2tap

@@ -1,9 +1,8 @@
-        public  PLAYER_INIT
-        public  PLAYER_OFF
-        public  LOAD_SONG
-        public  START_SONG
-        public  START_SOUND
-        public  INTERR
+        public  wyz_player_init
+        public  wyz_player_stop
+        public  wyz_play_song
+        public  wyz_play_frame
+        public  wyz_play_sound
 
         section CODE_5
 
@@ -14,7 +13,7 @@
 		;
         include "wyzproplay47c_zx.inc"
 
-        section RODATA_5
+        section RODATA_2
 		;
 		; Table of songs...
 		;

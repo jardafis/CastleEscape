@@ -4,10 +4,34 @@
         public  print
         public  printAttr
 
-        section code_user
+        section CODE_2
 
         include "defs.inc"
 
+        public  _printChar
+		;
+		; Display a char at the specified location.
+		; Callable from 'C', parameters are passed on
+		; the stack.
+		;
+        defvars 0                       ; Define the stack variables used
+        {
+            yPos        ds.b 2
+            xPos        ds.b 2
+            char        ds.b 2
+        }
+
+_printChar:
+        entry
+
+        ld      b, (ix+yPos)
+        ld      c, (ix+xPos)
+        ld      a, (ix+char)
+
+        call    printChar
+
+        exit
+        ret
 
 		;
 		; Display a string with attributes.
@@ -81,7 +105,7 @@ printChar:
         push    hl
 
         di
-        ld      (TempSP), sp
+        ld      (TempSP+1), sp
 
         sub     ' '                     ; Font data starts at SPACE
         ld      d, a                    ; Save char to be displayed
@@ -142,7 +166,7 @@ printChar:
         ld      (hl), b
 
         ; Restore the stack pointer.
-TempSP  equ     $+1
+TempSP:
         ld      sp, 0x0000
         ei
 

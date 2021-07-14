@@ -17,7 +17,7 @@
 ;______________________________________________________
 
 
-START_SONG:
+wyz_play_frame:
         CALL    ROUT
 
         LD      HL, PSG_REG
@@ -155,7 +155,8 @@ LOUT:   OUT     (C), A
 
 ;INICIA EL SONIDO N� (A)
 
-START_SOUND:                            ;CP	8		;SFX SPEECH
+wyz_play_sound:
+INICIA_SONIDO:                          ;CP	8		;SFX SPEECH
 		;JP	Z,SLOOP		;
 
         LD      HL, TABLA_SONIDOS
@@ -167,6 +168,7 @@ START_SOUND:                            ;CP	8		;SFX SPEECH
 
 ;PLAYER INIT
 
+wyz_player_init:
 PLAYER_INIT:
         LD      HL, BUFFER_CANAL_A      ;RESERVAR MEMORIA PARA BUFFER DE SONIDO!!!!!
         LD      (CANAL_A), HL           ;RECOMENDABLE $10 O MAS BYTES POR CANAL.
@@ -182,6 +184,7 @@ PLAYER_INIT:
 
 ;PLAYER OFF
 
+wyz_player_stop:
 PLAYER_OFF:
         XOR     A                       ;***** IMPORTANTE SI NO HAY MUSICA ****
         LD      (INTERR), A
@@ -208,6 +211,7 @@ CLEAR_PSG_BUFFER:
 ;CARGA UNA CANCION
 ;IN:(A)=N� DE CANCION
 
+wyz_play_song:
 LOAD_SONG:
         LD      HL, INTERR              ;CARGA CANCION
 
@@ -243,10 +247,11 @@ DECODE_SONG:
         INC     DE                      ;LOOP 1=ON/0=OFF?
         LD      A, (DE)
         BIT     0, A
-        LD      HL, INTERR
-        RES     4, (HL)                 ; Reset loop bit by default
         JR      Z, NPTJP0
-        SET     4, (HL)                 ; Set loop bit
+        LD      HL, INTERR
+        SET     4, (HL)
+
+
 
 ;SELECCION DEL CANAL DE EFECTOS DE RITMO
 
@@ -600,7 +605,7 @@ COM_EFECTO:
         INC     HL
         LD      (IX+PUNTERO_A-PUNTERO_A), L
         LD      (IX+PUNTERO_A-PUNTERO_A+1), H
-        JP      START_SOUND
+        JP      INICIA_SONIDO
 
 COM_ENVOLVENTE:
         BIT     2, A
@@ -715,7 +720,7 @@ LOCALIZA_EFECTO:
         INC     HL
         LD      (IX+00), L
         LD      (IX+01), H
-        JP      START_SOUND
+        JP      INICIA_SONIDO
 
 
 LEJP0:  INC     HL
@@ -961,7 +966,7 @@ EXT_WORD:
         LD      D, (HL)
         RET
 
-        section rodata_user
+        section RODATA_5
 ;TABLA DE DATOS DEL SELECTOR DEL CANAL DE EFECTOS DE RITMO
 
 TABLA_DATOS_CANAL_SFX:
@@ -988,7 +993,7 @@ SELECT_CANAL_C:
 
 
 ;____________________________________
-        section bss_user
+        section BSS_5
 
 
 INTERR: DB      0                       ;INTERRUPTORES 1=ON 0=OFF

@@ -8,17 +8,17 @@
         extern  _tileMapY
         extern  _jumping
         extern  _falling
-        extern  START_SOUND
+        extern  wyz_play_sound
         extern  die
 
         public  checkXCol
         public  checkYCol
 
         include "defs.inc"
-        section code_user
+        section CODE_2
 
-        defc    ID_SOLID_TILE=144
-        defc    ID_SOFT_TILE=135
+        defc    ID_SOLID_TILE=12*TILE_SHEET_WIDTH
+        defc    ID_SOFT_TILE=10*TILE_SHEET_WIDTH
         defc    FALL_DISTANCE=33
 
         ;
@@ -227,7 +227,7 @@ noYCollision:
         ld      a, FALL_DISTANCE        ; Distance before falling starts
         cp      (hl)
         ld      a, AYFX_FALLING
-        call    z, START_SOUND
+        call    z, wyz_play_sound
 
 updateYPos:
 		;

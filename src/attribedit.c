@@ -1,13 +1,14 @@
 #include <arch/zx.h>
 
-extern unsigned char keyboardScan(void)
-__z88dk_fastcall;
 extern void cls(char attr)
 __z88dk_fastcall;
 extern unsigned char *screenTab[];
+extern void printChar(unsigned char c, unsigned char x, unsigned char y);
+extern void displayTile(unsigned char tile, unsigned char x, unsigned y);
+extern unsigned char waitKey(void);
 
-#define TILE_WIDTH      12
-#define TILE_HEIGHT     14
+#define TILE_WIDTH      16
+#define TILE_HEIGHT     16
 
 /*
  * Current cursor location for displaying text to the screen.
@@ -29,32 +30,16 @@ void setCursor(char x, char y)
     cursorY = y;
 }
 /*
- * Address of the ROM font.
- */
-const unsigned char * const font = (const unsigned char*) 0x3d00;
-/*
  * Start of the screen attribute memory.
  */
-unsigned char * const attr = (unsigned char*) 0x5800;
-
-/*
- * Display a character using the ROM font at the specified x,y character
- * screen location.
- */
-void printChar(unsigned char c, unsigned char x, unsigned char y)
-{
-    for (char n = 0; n < 8; n++)
-    {
-        *(screenTab[(y << 3) + n] + x) = font[((c - ' ') << 3) + n];
-    }
-}
+unsigned char *const attr = (unsigned char*) 0x5800;
 
 /*
  * Output a 16-bit hex value.
  */
 void putHex(unsigned int value)
 {
-    for(signed char n = 12; n>=0; n-=4)
+    for (signed char n = 12; n >= 0; n -= 4)
     {
         printChar(hex[(value >> n) & 0xf], cursorX++, cursorY);
     }
@@ -86,16 +71,12 @@ void putString(char *string)
  */
 void displayTileset(const unsigned char *tiles)
 {
+    unsigned char tile = 0;
     for (char y = 0; y < TILE_HEIGHT; y++)
     {
         for (char x = 0; x < TILE_WIDTH; x++)
         {
-            unsigned char *screenAddr = screenTab[y * 8] + x;
-            for (char n = 0; n < 8; n++)
-            {
-                *screenAddr = *tiles++;
-                screenAddr += 0x100;
-            }
+            displayTile(tile++, x, y);
         }
     }
 }
@@ -104,7 +85,7 @@ void displayTileset(const unsigned char *tiles)
  * Bitmap for the box cursor.
  */
 const unsigned char cursor[8] =
-{ 0xff, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0xff };
+{ 0xc3, 0x81, 0x81, 0x00, 0x00, 0x81, 0x81, 0xc3 };
 
 /*
  * Display the box cursor at the current cursor location.
@@ -154,24 +135,6 @@ void saveAttrib(unsigned char *dest)
 }
 
 /*
- * Load attributes to screen memory from the specified location.
- */
-void loadAttrib(unsigned char *src)
-{
-    int x;
-    int y;
-
-    for (y = 0; y < TILE_HEIGHT; y++)
-    {
-        for (x = 0; x < TILE_WIDTH; x++)
-        {
-            attr[(y * 32) + x] = *src & 0xc7;
-            src++;
-        }
-    }
-}
-
-/*
  * Entry point for tile attribute editing in realtime.
  */
 void attribEdit(unsigned char *tileset, unsigned char *attrib)
@@ -181,38 +144,48 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
     unsigned char key;
 
     cls(INK_WHITE | PAPER_BLACK);
-    setCursor(0, TILE_HEIGHT);
-    putString("Up          - 'q'\n");
-    putString("Down        - 'a'\n");
-    putString("Left        - 'o'\n");
-    putString("Right       - 'p'\n");
-    putString("Bright      - 'b'\n");
-    putString("Flash       - 'f'\n");
-    putString("Reset       - 'r'\n");
-    putString("Ink color   - 0 - 7\n");
-    putString("Exit        - <SPACE>\n");
-    putString("Attr. address/len = 0x");
-    putHex((unsigned int) attrib);
-    putString("/");
-    putHex(TILE_WIDTH * TILE_HEIGHT);
-
-    loadAttrib(attrib);
 
     displayTileset(tileset);
+
+    setCursor(16, 0);
+    putString("Up        - 'q'");
+    setCursor(16, 1);
+    putString("Down      - 'a'");
+    setCursor(16, 2);
+    putString("Left      - 'o'");
+    setCursor(16, 3);
+    putString("Right     - 'p'");
+    setCursor(16, 4);
+    putString("Bright    - 'b'");
+    setCursor(16, 5);
+    putString("Flash     - 'f'");
+    setCursor(16, 6);
+    putString("Reset     - 'r'");
+    setCursor(16, 7);
+    putString("Ink color - 0-7");
+    setCursor(16, 8);
+    putString("Exit   - <SPACE>");
+    setCursor(16, 10);
+    putString("Attr.");
+    setCursor(16, 11);
+    putString("  addr  = 0x");
+    putHex((unsigned int) attrib);
+    setCursor(16, 12);
+    putString("  len   = 0x");
+    putHex(TILE_WIDTH * TILE_HEIGHT);
 
     xorCursor(x, y);
 
     do
     {
         // Wait for key press
-        while ((key = keyboardScan()) == 0)
-            __asm__("halt");
+        key = waitKey();
 
         switch (key)
         {
         case 'P':                           // Right
             xorCursor(x, y);
-            if (x < (TILE_WIDTH-1))
+            if (x < (TILE_WIDTH - 1))
                 x++;
             xorCursor(x, y);
             break;
@@ -230,7 +203,7 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
             break;
         case 'A':                           // Down
             xorCursor(x, y);
-            if (y < (TILE_HEIGHT-1))
+            if (y < (TILE_HEIGHT - 1))
                 y++;
             xorCursor(x, y);
             break;
@@ -249,14 +222,13 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
             }
             else if (key == 'R')            // Reset
             {
-                loadAttrib(attrib);
+                xorCursor(x, y);
+                displayTileset(tileset);
+                xorCursor(x, y);
             }
             break;
         }
 
-        // Wait for key release
-        while (keyboardScan() != 0)
-            __asm__("halt");
     } while (key != ' ');                   // SPACE to exit
     /*
      * Copy the attributes back to their original location so

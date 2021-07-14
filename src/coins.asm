@@ -3,7 +3,7 @@
         extern  addBCD
         extern  _displayScore
         extern  score
-        extern  START_SOUND
+        extern  wyz_play_sound
         extern  removeItem
 
         public  _animateCoins
@@ -15,7 +15,7 @@
 
         include "defs.inc"
 
-        section code_user
+        section CODE_2
 
         ;
         ; Animate the visible coins on the current level.
@@ -26,10 +26,9 @@ _animateCoins:
         ld      de, (currentCoinTable)
 nextCoin:
         ld      a, (de)                 ; Coin flags
-        cp      0xff                    ; Check for end of coin table
-        jp      z, coinTableEnd         ; done if true.
-        or      a                       ; Is the coin visible?
-        jp      z, notVisible
+        or      a                       ; Update flags based on the value of 'a'
+        jp      m, coinTableEnd         ; Bit-7 set means end of table
+        jp      z, notVisible           ; Zero means not visible
 
         inc     de
 
@@ -128,10 +127,10 @@ coinCollision:
         call    addBCD
         call    _displayScore
         ld      a, AYFX_COLLECT_COIN
-        call    START_SOUND
+        call    wyz_play_sound
         ret
 
-        section bss_user
+        section BSS_2
 
 currentCoinTable:
         ds      2

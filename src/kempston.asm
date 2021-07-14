@@ -4,7 +4,7 @@
 
         include "defs.inc"
 
-        section code_user
+        section CODE_2
 		;
 		;	Input:
 		;		None
@@ -16,7 +16,6 @@ detectKempston:
         halt
         in      a, (IO_KEMPSTON)
         inc     a
-        or      a
         ld      (kjPresent), a
         ret
 
@@ -34,6 +33,6 @@ readKempston:
         ld      e, a
         ret
 
-        section bss_user
+        section BSS_2
 kjPresent:
         ds      1

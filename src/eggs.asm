@@ -2,7 +2,7 @@
         extern  addBCD
         extern  displayTile
         extern  decBCD
-        extern  START_SOUND
+        extern  wyz_play_sound
         extern  removeItem
 
         public  eggTables
@@ -16,7 +16,7 @@
 
         include "defs.inc"
 
-        section code_user
+        section CODE_2
         ;
         ; Increment and display the egg count
         ;
@@ -28,7 +28,7 @@ eggCollision:
         call    addBCD
         call    displayEggCount
         ld      a, AYFX_COLLECT_EGG
-        call    START_SOUND
+        call    wyz_play_sound
         ret
 
 updateEggImage:
@@ -82,7 +82,7 @@ displayEggCount:
         pop     bc
         ret
 
-        section bss_user
+        section BSS_2
 counter:
         ds      1
 eggCount:                               ; BCD

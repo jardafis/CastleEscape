@@ -1,7 +1,7 @@
         public  _cls
         public  clearAttr
         public  setAttr
-        section code_user
+        section CODE_2
 
         include "defs.inc"
 
@@ -9,6 +9,9 @@
         ; Clear the screen bitmap and attr data.
         ;
         ; On entry, l contains the attribute to fill the attr memory.
+        ;
+        ; Notes: Interrupts must be enabled as 'halt' is used to sync to
+        ; the screen refresh.
         ;
 _cls:
         push    af
@@ -107,6 +110,6 @@ setAttr:
         pop     bc
         ret
 
-        section bss_user
+        section BSS_2
 clsAttrib:
         ds      1

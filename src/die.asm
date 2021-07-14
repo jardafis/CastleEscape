@@ -7,13 +7,15 @@
         extern  _jumping
         extern  _ySpeed
         extern  _falling
-        extern  LOAD_SONG
+        extern  wyz_play_song
+        extern  playerSprite
+        extern  startSprite
 
         public  die
 
         include "defs.inc"
 
-        section code_user
+        section CODE_2
 
 		;
 		; Routine called when plater dies.
@@ -23,21 +25,11 @@ die:
         push    bc
         push    de
         push    hl
-		;
-		; Decrement the heart count
-		;
-        ld      l, 0x01
-        ld      de, heartCount
-        call    subBCD
-        ld      bc, 0x011d              ; y,x screen location
-        ex      de, hl
-        call    display2BCD
-
         ;
-        ; Start the title song
+        ; Start the death march
         ;
-        LD      A, DEATH_MARCH
-        CALL    LOAD_SONG
+        ld      a, DEATH_MARCH
+        call    wyz_play_song
 
         ;
         ; Delay for 200 1/50's of a second (4 seconds) and flash
@@ -56,16 +48,29 @@ delayLoop:
         border  INK_BLACK
 
 		;
-		; If the heart count is zero, game over!
+		; Decrement the heart count
 		;
-        ld      a, (heartCount)
+        ld      l, 0x01
+        ld      de, heartCount
+        call    subBCD
+        ld      bc, 0x011d              ; y,x screen location
+        ex      de, hl
+        call    display2BCD
+
+		;
+		; If the heart count is zero, game over!
+		; hl points to heartCount
+		;
+        ld      a, (hl)
         or      a
         jp      z, gameOver
 
-		; Set player X/Y position to where
+		; Set player X/Y position (and sprite direction) to where
 		; they entered the level.
         ld      hl, (xyStartPos)
         ld      (xyPos), hl
+        ld      hl, (startSprite)
+        ld      (playerSprite), hl
         xor     a
         ld      (_jumping), a
         ld      (_ySpeed), a

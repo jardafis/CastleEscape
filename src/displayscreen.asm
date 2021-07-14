@@ -6,7 +6,7 @@
 
         include "defs.inc"
 
-        section code_user
+        section CODE_2
         ;
         ; Display a complete tile map
         ;

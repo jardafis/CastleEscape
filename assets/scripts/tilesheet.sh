@@ -30,7 +30,13 @@ function c_to_asm() {
 	# Remove underscores
 	sed -i -e "s/._/./" $outputFile
 
-	asmstyle.pl $outputFile
+	which z88dk-asmstyle > /dev/null
+	if [ $? = 0 ]
+	then
+		z88dk-asmstyle $outputFile
+	else
+		asmstyle.pl $outputFile
+	fi
 	rm ${outputFile}.bak
 	
 	return 0
@@ -53,8 +59,8 @@ tileWidth=8
 tileHeight=8
 
 # Width and Height in tiles
-width=12
-height=14
+width=16
+height=16
 
 tileSet=tiles.c
 

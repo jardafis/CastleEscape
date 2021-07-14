@@ -158,8 +158,7 @@ getKey:
         call    animateMenu
 
         call    keyboardScan            ; Read the keyboard
-        or      a                       ; If a key has been pressed
-        jr      z, getKey               ; jump to process it.
+        jr      z, getKey               ; Process key press
         ld      (key), a
 
         ld      hl, lanternList

@@ -1,5 +1,6 @@
         extern  _font_8x8_cpc_system
         extern  currentBank
+        extern  bankedCall
 
         ;
         ; WYZTracker Songs
@@ -51,7 +52,7 @@
         defc    MAX_HEARTS=8
         defc    MAX_EGGS=8
         defc    MAX_COINS=8
-        defc    MAX_SPIDERS=4
+        defc    MAX_SPIDERS=8
 
         ;
         ; Tilemap definitions
@@ -91,14 +92,17 @@
 		;
         ; Sprite ID's
         ;
+        defc    TILE_SHEET_WIDTH=16
+        defc    TILE_SHEET_HEIGHT=16
+
         defc    ID_LANTERN=3
         defc    ID_BLANK=11
-        defc    ID_COIN=6*12
-        defc    ID_EGG=31
-        defc    ID_EGG0=5*12
-        defc    ID_HEART=34
-        defc    ID_SPIDER=4*12+3
-        defc    ID_PLATFORM=11*12+9
+        defc    ID_COIN=6*TILE_SHEET_WIDTH
+        defc    ID_EGG=2*TILE_SHEET_WIDTH+7
+        defc    ID_EGG0=5*TILE_SHEET_WIDTH
+        defc    ID_HEART=2*TILE_SHEET_WIDTH+10
+        defc    ID_SPIDER=4*TILE_SHEET_WIDTH+3
+        defc    ID_PLATFORM=11*TILE_SHEET_WIDTH+9
 
 
         ;
@@ -150,6 +154,7 @@
         defc    IO_BEEPER=0xfe
         defc    IO_BANK=0x7ffd
         defc    IO_KEMPSTON=0x1f
+        defc    MIC_OUTPUT=0x08
 
 		;
 		; OpCodes
@@ -362,5 +367,15 @@ assert  MACRO
 
 border  MACRO   color
         ld      a, color
+        or      MIC_OUTPUT              ; Disable the MIC output
         out     (IO_BORDER), a
+        ENDM
+
+		;
+		; Banked call to function
+		;
+bcall   MACRO   function
+        call    bankedCall
+        db      function>>16|MEM_BANK_ROM
+        dw      function
         ENDM
