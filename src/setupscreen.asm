@@ -8,7 +8,7 @@
         extern  heartTables
         extern  _setCurrentTileMap
         extern  _currentTileMap
-        extern  _displayScreen
+        extern  displayTileMap
         extern  displayItems
         extern  display2BCD
         extern  heartCount
@@ -59,10 +59,8 @@ _setupScreen:
 
         call    _setCurrentTileMap
 
-        halt
-
         ld      hl, (_currentTileMap)
-        call    _displayScreen
+        call    displayTileMap
 
         call    displayBanner
 
