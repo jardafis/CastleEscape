@@ -48,16 +48,23 @@ notVisible:
         jp      nextCoin
 
         ;
-        ; Add 5 to the score and display it
+        ; Called when a collision is detected
+        ;
+		;	Entry:
+		;		hl - Pointer to items flags
+		;		b  - Screen y character position
+		;		c  - screen x character position
         ;
 coinCollision:
         call    removeItem              ; Remove the item from the screen
 
-        ld      l, COIN_POINTS
+        ld      l, COIN_POINTS          ; Add points
         ld      de, score
         call    addBCD
+
         call    _displayScore
-        ld      a, AYFX_COLLECT_COIN
+
+        ld      a, AYFX_COLLECT_COIN    ; Play a sound
         call    wyz_play_sound
         ret
 

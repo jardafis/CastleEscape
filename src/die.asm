@@ -1,5 +1,5 @@
         extern  heartCount
-        extern  subBCD
+        extern  decBCD
         extern  display2BCD
         extern  gameOver
         extern  xyPos
@@ -50,9 +50,8 @@ delayLoop:
 		;
 		; Decrement the heart count
 		;
-        ld      l, 0x01
         ld      de, heartCount
-        call    subBCD
+        call    decBCD
         ld      bc, 0x011d              ; y,x screen location
         ex      de, hl
         call    display2BCD

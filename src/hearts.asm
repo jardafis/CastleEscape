@@ -1,4 +1,4 @@
-        extern  addBCD
+        extern  incBCD
         extern  display2BCD
         extern  wyz_play_sound
         extern  removeItem
@@ -13,18 +13,24 @@
 
         section CODE_2
         ;
-        ; Increment and display the egg count
+        ; Called when a collision is detected
+        ;
+		;	Entry:
+		;		hl - Pointer to items flags
+		;		b  - Screen y character position
+		;		c  - screen x character position
         ;
 heartCollision:
         call    removeItem              ; Remove the item from the screen
 
-        ld      l, 0x01
         ld      de, heartCount
-        call    addBCD
+        call    incBCD
+
         ld      bc, 0x011d              ; y,x screen location
-        ld      hl, heartCount          ; Point to 1000's/100's of score
+        ex      de, hl
         call    display2BCD
-        ld      a, AYFX_COLLECT_HEART
+
+        ld      a, AYFX_COLLECT_HEART   ; Play a sound
         call    wyz_play_sound
         ret
 
