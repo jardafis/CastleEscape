@@ -11,8 +11,8 @@
         extern  displayTileMap
         extern  displayItems
         extern  display2BCD
+        extern  display4BCD
         extern  heartCount
-        extern  _displayScore
         extern  _scrollReset
         extern  displayBanner
         extern  spiderTables
@@ -22,6 +22,7 @@
         extern  displayEggCount
         extern  playerSprite
         extern  startSprite
+        extern  score
 
         public  _setupScreen
 
@@ -82,7 +83,9 @@ _setupScreen:
         ld      hl, heartCount          ; Point to 10's/1's
         call    display2BCD
 
-        call    _displayScore
+        ld      bc, 0x0103              ; Y/X screen location
+        ld      hl, score
+        call    display4BCD
 
         call    _scrollReset
 

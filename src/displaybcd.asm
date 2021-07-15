@@ -4,6 +4,7 @@
         public  subBCD
         public  incBCD
         public  decBCD
+        public  display4BCD
         public  display2BCD
         public  displayBCD
 
@@ -48,6 +49,27 @@ display2BCD:
 
         pop     bc
         pop     af
+        ret
+
+        ;
+        ; Display 4 BCD digits
+        ;
+        ;	Entry:
+        ;		b  - Y screen position
+        ;		c  - X screen position
+        ;		hl - Pointer to BCD value
+        ;
+display4BCD:
+        push    bc
+
+        inc     hl
+        call    display2BCD
+        dec     hl
+        inc     c
+        inc     c
+        call    display2BCD
+
+        pop     bc
         ret
 
         ;

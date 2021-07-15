@@ -85,13 +85,22 @@ displayTile:
         push    bc
         push    hl
 
+		; hl = a * 8
+        rlca
+        rlca
+        rlca
+        ld      h, a
+        and     %11111000
+        ld      l, a
+
+        ld      a, h
+        and     %00000111
+        ld      h, a
+
         di
         ; Save the current stack pointer
         ld      (TempSP2+1), sp
 
-        ld      l, a                    ; Tile ID
-        ld      h, 0
-        hlx     8
         ld      sp, _tile0
         add     hl, sp
 

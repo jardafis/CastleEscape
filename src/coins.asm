@@ -1,5 +1,5 @@
         extern  addBCD
-        extern  _displayScore
+        extern  display4BCD
         extern  score
         extern  wyz_play_sound
         extern  removeItem
@@ -62,7 +62,9 @@ coinCollision:
         ld      de, score
         call    addBCD
 
-        call    _displayScore
+        ex      de, hl
+        ld      bc, 0x0103              ; Y/X screen location
+        call    display4BCD
 
         ld      a, AYFX_COLLECT_COIN    ; Play a sound
         call    wyz_play_sound

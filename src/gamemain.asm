@@ -69,6 +69,7 @@
         public  xyPos
         public  xyStartPos
         public  startSprite
+        public  score
 
         include "defs.inc"
 
@@ -498,6 +499,8 @@ mulDone:
         ret
 
         section BSS_2
+score:                                  ; Score in BCD
+        ds      2
 coinRotate:
         ds      1
 _currentTileMap:
