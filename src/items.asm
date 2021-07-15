@@ -7,7 +7,6 @@
         extern  displayTile
         extern  displayTilePixel
         extern  setTileAttr
-        extern  _screenTab
 
         public  _initItems
         public  setCurrentItemTable
