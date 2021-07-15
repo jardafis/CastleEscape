@@ -1,7 +1,7 @@
-        extern  _screenTab
         extern  setAttr
 
         public  print
+        public  printChar
         public  printAttr
         public  _printChar
 
