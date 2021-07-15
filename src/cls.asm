@@ -99,29 +99,29 @@ clearAttr:
         ;	'a' is not preserved.
         ;
 setAttr:
-		push	hl
+        push    hl
 
-		ld		(attribVal+1), a
+        ld      (attribVal+1), a
 
-		ld		a, b
-		rrca
-		rrca
-		rrca
-		ld		h, a
-		and		%11100000
-		or		c
-		ld		l, a
+        ld      a, b
+        rrca
+        rrca
+        rrca
+        ld      h, a
+        and     %11100000
+        or      c
+        ld      l, a
 
-		ld		a, h
-		and		%00000011
-		or		SCREEN_ATTR_START>>8
-		ld		h, a
+        ld      a, h
+        and     %00000011
+        or      SCREEN_ATTR_START>>8
+        ld      h, a
 
 attribVal:
         ld      (hl), -1
 
-		pop		hl
-		ret
+        pop     hl
+        ret
 
         section BSS_2
 clsAttrib:

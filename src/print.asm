@@ -126,7 +126,7 @@ printChar:
 
         ; Calculate the screen address
         ld      a, b                    ; Y character position
-        rrca							; Move lower 3 bits to the upper 3 bits
+        rrca                            ; Move lower 3 bits to the upper 3 bits
         rrca
         rrca
         and     %11100000               ; Bits 5-3 of pixel row
