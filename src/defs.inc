@@ -336,6 +336,7 @@ modLoop:
 		; Calculate screen row address
 		;
 calculateRow    MACRO   row
+        extern  _screenTab
         ld      l, row                  ; Get the screen y pixel position
         ld      h, 0
         add     hl, hl                  ; Multiply it by 2
