@@ -1,19 +1,18 @@
         extern  _yPos
         extern  _xPos
         extern  _levels
-        extern  _tileAttr
         extern  _tileMapX
-        extern  _screenTab
         extern  _tile0
-        extern  setAttr
         extern  clearAttr
+        extern  displayTile
+        extern  displayTilePixel
+        extern  setTileAttr
+        extern  _screenTab
 
         public  _initItems
         public  setCurrentItemTable
         public  displayItems
         public  checkItemCollision
-        public  displayTile
-        public  setTileAttr
         public  removeItem
         public  displayItems_pixel
 
@@ -49,6 +48,16 @@
         ; building up a table of items for each level. These tables
         ; are then used by animation routines and collision routines.
         ;
+        defvars 0                       ; Define the stack variables used
+        {
+            levelX      ds.b 1
+            levelY      ds.b 1
+            tileX       ds.b 1
+            tileY       ds.b 1
+            itemCount   ds.b 1
+            SIZEOF_stackVars
+        }
+
 _initItems:
         pushall
 
@@ -62,7 +71,7 @@ _initItems:
         ; Build a stack frame for our variables
         ;
         ld      (tempSP+1), sp
-        ld      ix, -SIZEOF_vars
+        ld      ix, -SIZEOF_stackVars
         add     ix, sp
         ld      sp, ix
 
@@ -218,133 +227,6 @@ currItemTab:
         ret
 
         ;
-        ; Set the attribute for the tile at the specified location
-        ;
-        ; Entry:
-        ;		b - Y location
-        ;		c - X location
-        ;		a - Tile ID of item
-        ;
-setTileAttr:
-        push    af
-        push    hl
-
-        ld      hl, _tileAttr
-        addhl
-        ld      a, (hl)
-
-        call    setAttr
-
-        pop     hl
-        pop     af
-        ret
-
-        public  _displayTile
-        defvars 0                       ; Define the stack variables used
-        {
-            yPos        ds.b 2
-            xPos        ds.b 2
-            tile        ds.b 2
-        }
-
-_displayTile:
-        entry
-
-        ld      b, (ix+yPos)
-        ld      c, (ix+xPos)
-        ld      a, (ix+tile)
-
-        call    displayTile
-        call    setTileAttr
-
-        exit
-        ret
-
-        ;
-        ; Display the specified tile at the specified location.
-        ;
-        ; Entry:
-        ;		b - Y location
-        ;		c - X location
-        ;		a  - Tile ID of item
-        ;
-displayTile:
-        push    af
-        push    bc
-        push    de
-        push    hl
-
-        di
-        ; Save the current stack pointer
-        ld      (TempSP2+1), sp
-
-        ld      d, a                    ; Save the tile ID
-        ; Calculate the screen address
-        ld      l, b                    ; Y screen position
-        ld      h, 0
-        hlx     16
-        ld      sp, _screenTab
-        add     hl, sp
-        ld      sp, hl
-        ld      a, c
-        pop     bc
-        add     c                       ; Add X offset
-        ld      c, a                    ; Store result in 'c'
-
-        ld      l, d                    ; Tile ID
-        ld      h, 0
-        hlx     8
-        ld      de, _tile0
-        add     hl, de
-
-        ; Point the stack at the tile data
-        ld      sp, hl
-        ; Point hl at the screen address
-        ld      hl, bc
-
-        ; Pop 2 bytes of tile data and store it
-        ; to the screen.
-        pop     bc                      ; 10
-        ld      (hl), c                 ; 7
-        inc     h                       ; Add 256 to screen address 4
-        ld      (hl), b                 ; 7
-        inc     h                       ; Add 256 to screen address 4
-
-        ; Pop 2 bytes of tile data and store it
-        ; to the screen.
-        pop     bc
-        ld      (hl), c
-        inc     h
-        ld      (hl), b
-        inc     h
-
-        ; Pop 2 bytes of tile data and store it
-        ; to the screen.
-        pop     bc
-        ld      (hl), c
-        inc     h
-        ld      (hl), b
-        inc     h
-
-        ; Pop 2 bytes of tile data and store it
-        ; to the screen.
-        pop     bc
-        ld      (hl), c
-        inc     h
-        ld      (hl), b
-
-        ; Restore the stack pointer.
-TempSP2:
-        ld      sp, -1
-        ei
-
-        pop     hl
-        pop     de
-        pop     bc
-        pop     af
-        ret
-
-        ;
         ; Display the visible items pointed to by hl. Typically
         ; called when the level changes to display the items
         ; which have not yet been collected or to display items
@@ -360,31 +242,19 @@ nextItem2:
         ld      a, (hl)                 ; Flags
         or      a
         ret     m
-
-        cp      0x00                    ; Is the item visible?
         jr      z, notVisible2
 
-        push    hl
-
         inc     hl
-        ld      a, (hl)                 ; Tile x position
-        rrca
-        rrca
-        rrca
-        and     %00011111
-        ld      c, a
+        ld      c, (hl)
         inc     hl
-        ld      a, (hl)                 ; Tile y position
-        rrca
-        rrca
-        rrca
-        and     %00011111
-        ld      b, a
+        ld      b, (hl)
+        inc     hl
+        inc     hl                      ; Skip animation frame
         ld      a, d                    ; Tile ID
-        call    displayTile             ; Display tile
+        call    displayTilePixel        ; Display tile
         call    setTileAttr
+        jr      nextItem2
 
-        pop     hl                      ; Restore coin table pointer
 notVisible2:
         ld      a, SIZEOF_item
         addhl
@@ -405,8 +275,6 @@ nextItem3:
         ld      a, (hl)                 ; Flags
         or      a
         ret     m
-
-        cp      0x00                    ; Is the item visible?
         jr      z, notVisible4
 
         push    hl
@@ -544,8 +412,6 @@ nextItem:
         ld      a, (hl)
         or      a
         ret     m
-
-        cp      0x00                    ; Is the item visible?
         jr      z, notVisible3
 
         push    hl
@@ -626,16 +492,6 @@ removeItem:
         ret
 
         section BSS_2
-        defvars 0                       ; Define the stack variables used
-        {
-            levelX      ds.b 1
-            levelY      ds.b 1
-            tileX       ds.b 1
-            tileY       ds.b 1
-            itemCount   ds.b 1
-            SIZEOF_vars
-        }
-
 currentItemTable:
         ds      2
 

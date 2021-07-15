@@ -24,11 +24,11 @@ defineKeys:
         ;
 
         ;
-        ; Patch the animate coins routine to access
+        ; Patch the displayTile routine to access
         ; memory @ 0x4000 (screen 0)
         ;
-        ld      hl, NOP_OPCODE<<8|NOP_OPCODE
-        ld      (bank7Screen), hl
+        ld      a, SCREEN_START>>8
+        ld      (bank7Screen+1), a
 
         ;
         ; Copy screen 1 to screen 0

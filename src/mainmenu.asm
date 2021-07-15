@@ -43,11 +43,11 @@ displayScreen:
         ld      (currentCoinTable), hl
 
         ;
-        ; Patch the animate coins routine to access
+        ; Patch the displayTile routine to access
         ; memory @ 0xc000
         ;
-        ld      hl, SET_7_B_OPCODE
-        ld      (bank7Screen), hl
+        ld      a, SCREEN1_START>>8
+        ld      (bank7Screen+1), a
 
         ;
         ; Point the ULA at screen 1
@@ -142,6 +142,12 @@ attribEdit:
         ;
         bank    0
         screen  0
+        ;
+        ; Patch the displayTile routine to access
+        ; memory @ 0x4000
+        ;
+        ld      a, SCREEN_START>>8
+        ld      (bank7Screen+1), a
 
         ld      hl, _tile0
         push    hl

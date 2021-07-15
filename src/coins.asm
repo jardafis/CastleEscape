@@ -1,17 +1,15 @@
-        extern  _screenTab
-        extern  _tile0
         extern  addBCD
         extern  _displayScore
         extern  score
         extern  wyz_play_sound
         extern  removeItem
+        extern  displayTilePixel
 
         public  _animateCoins
         public  _coinTables
         public  coins
         public  currentCoinTable
         public  coinCollision
-        public  bank7Screen
 
         include "defs.inc"
 
@@ -21,99 +19,32 @@
         ; Animate the visible coins on the current level.
         ;
 _animateCoins:
-        di
-        ld      (coinTableEnd+1), sp
-        ld      de, (currentCoinTable)
+        ld      hl, (currentCoinTable)
 nextCoin:
-        ld      a, (de)                 ; Coin flags
+        ld      a, (hl)                 ; Coin flags
         or      a                       ; Update flags based on the value of 'a'
-        jp      m, coinTableEnd         ; Bit-7 set means end of table
+        ret     m                       ; Bit-7 set means end of table
         jp      z, notVisible           ; Zero means not visible
 
-        inc     de
-
-        ld      a, (de)                 ; Get x screen position
-        rrca
-        rrca
-        rrca
-        and     %00011111
-        ld      c, a                    ; Save for later
-        inc     de
-
-        ld      a, (de)                 ; Get y screen position
-        ld      l, a
-        ld      h, 0
-        inc     de
-        ld      a, c                    ; Restore x screen position
-
-        hlx     2
-        ld      sp, _screenTab
-        add     hl, sp
-        ld      sp, hl
-        pop     bc                      ; Pop y screen address
-        add     c
-        ld      c, a
-bank7Screen:                            ; Code is modified to set bit 7 of b
-        nop                             ; to write to 0xc000 addresses.
-        nop
-
-        ; Calculate the tile address using the animation index
-        ld      a, (de)                 ; Animation index
+        inc     hl
+        ld      c, (hl)
+        inc     hl
+        ld      b, (hl)
+        inc     hl
+        ; Calculate the tile using the animation index
+        ld      a, (hl)                 ; Animation index
         inc     a
-        ld      (de), a
-        inc     de
+        ld      (hl), a
+        inc     hl
         and     0x03                    ; Only 4 animations 0-3
         add     ID_COIN                 ; Index of first animation
 
-        ld      l, a
-        ld      h, 0
-        hlx     8
-        ld      sp, _tile0
-        add     hl, sp
-
-        ld      sp, hl
-        ld      hl, bc
-
-        ; Pop 2 bytes of tile data and store it
-        ; to the screen.
-        pop     bc                      ; 10
-        ld      (hl), c                 ; 7
-        inc     h                       ; Add 256 to screen address 4
-        ld      (hl), b                 ; 7
-        inc     h                       ; Add 256 to screen address 4
-
-        ; Pop 2 bytes of tile data and store it
-        ; to the screen.
-        pop     bc
-        ld      (hl), c
-        inc     h
-        ld      (hl), b
-        inc     h
-
-        ; Pop 2 bytes of tile data and store it
-        ; to the screen.
-        pop     bc
-        ld      (hl), c
-        inc     h
-        ld      (hl), b
-        inc     h
-
-        ; Pop 2 bytes of tile data and store it
-        ; to the screen.
-        pop     bc
-        ld      (hl), c
-        inc     h
-        ld      (hl), b
+        call    displayTilePixel
 
         jp      nextCoin
-coinTableEnd:
-        ld      sp, 0x0000
-        ei
-        ret
-
 notVisible:
         ld      a, SIZEOF_item
-        addde
+        addhl
         jp      nextCoin
 
         ;

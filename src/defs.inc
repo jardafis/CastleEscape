@@ -108,6 +108,7 @@
         ;
         ; Screen addresses
         ;
+        defc    SCREEN1_START=0xc000
         defc    SCREEN_START=0x4000
         defc    SCREEN_LENGTH=0x1800
         defc    SCREEN_END=(SCREEN_START+SCREEN_LENGTH)
@@ -160,8 +161,6 @@
 		; OpCodes
 		;
         defc    JP_OPCODE=0xc3
-        defc    NOP_OPCODE=0x00
-        defc    SET_7_B_OPCODE=0xf8cb
 
         ;
         ; Macros for use with asmpp.pl
@@ -256,7 +255,7 @@ entry   MACRO
         push    de
         push    hl
         push    ix
-        ld      ix, 12                  ; the 6 pushes above plus return address
+        ld      ix, 12                  ; the 5 pushes above plus return address
         add     ix, sp
         ENDM
 

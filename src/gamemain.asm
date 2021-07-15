@@ -120,11 +120,11 @@ newGame:
         call    printAttr
 
         ;
-        ; Patch the animate coins routine to access
+        ; Patch the displayTile routine to access
         ; the screen memory at 0x4000
         ;
-        ld      hl, NOP_OPCODE<<8|NOP_OPCODE
-        ld      (bank7Screen), hl
+        ld      a, SCREEN_START>>8
+        ld      (bank7Screen+1), a
 
         ;
         ; Point the ULA at screen 0
