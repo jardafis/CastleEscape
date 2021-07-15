@@ -104,7 +104,7 @@ ENDIF
         inc     de                      ; There was a wraparound
         ld      a, (de)                 ; Get high byte of BCD value
         or      a                       ; Clear the carry flag
-        dec     a                       ; Increment the value
+        dec     a                       ; Decrement the value
         daa                             ; Adjust result for BCD
         ld      (de), a                 ; Save the incremented BCD value
 
