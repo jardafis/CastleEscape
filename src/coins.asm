@@ -53,7 +53,7 @@ notVisible:
 coinCollision:
         call    removeItem              ; Remove the item from the screen
 
-        ld      l, 0x05
+        ld      l, COIN_POINTS
         ld      de, score
         call    addBCD
         call    _displayScore

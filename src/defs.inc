@@ -3,6 +3,11 @@
         extern  bankedCall
 
         ;
+        ; Points
+        ;
+        defc    COIN_POINTS=0x05
+
+        ;
         ; WYZTracker Songs
         ;
         defc    TITLE_MUSIC=0
