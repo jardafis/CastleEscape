@@ -2,7 +2,6 @@
         extern  wyz_play_song
         extern  wyz_player_stop
         extern  _updateDirection
-        extern  rotateCount
         extern  currentCoinTable
         extern  animateMenu
 
