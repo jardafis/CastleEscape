@@ -1,8 +1,10 @@
         extern  _currentTileMap
         extern  die
+        extern  displayPixelTile
         extern  rand
 
         public  currentSpiderTable
+        public  displaySpiders
         public  spiderCollision
         public  spiderTables
         public  spiders
@@ -124,6 +126,31 @@ collision:
         ld      de, SIZEOF_item
         add     hl, de
         jr      updatePosition
+
+		;
+		; Display the spiders from the current spider table.
+		;
+displaySpiders:
+        ld      hl, (currentSpiderTable)
+nextItem:
+        ld      a, (hl)                 ; Flags
+        or      a
+        ret     m
+        inc     hl
+
+        ld      c, (hl)                 ; X pixel position
+        inc     hl
+        ld      b, (hl)                 ; Y pixel position
+        inc     hl
+
+        inc     hl                      ; Skip animation frame
+
+        ld      a, b                    ; Determine the animation from the Y pixel position
+        and     %00000001
+        add     ID_SPIDER
+
+        call    displayPixelTile        ; Display tile
+        jp      nextItem
 
 		;
 		; Check if a spider has collided with a tile.

@@ -1,6 +1,6 @@
         extern  addBCD
         extern  display4BCD
-        extern  displayTilePixel
+        extern  displayTile
         extern  removeItem
         extern  score
         extern  wyz_play_sound
@@ -31,6 +31,9 @@ nextCoin:
         inc     hl
         ld      b, (hl)
         inc     hl
+
+        pixelToChar b, c
+
         ; Calculate the tile using the animation index
         ld      a, (hl)                 ; Animation index
         inc     a
@@ -39,7 +42,7 @@ nextCoin:
         and     0x03                    ; Only 4 animations 0-3
         add     ID_COIN                 ; Index of first animation
 
-        call    displayTilePixel
+        call    displayTile
 
         jp      nextCoin
 notVisible:

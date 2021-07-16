@@ -1,17 +1,17 @@
         extern  _levels
-        extern  _tile0
         extern  _tileMapX
         extern  _xPos
         extern  _yPos
         extern  clearAttr
+        extern  displayPixelTile
         extern  displayTile
-        extern  displayTilePixel
+        extern  displayTile
         extern  setTileAttr
 
         public  _initItems
         public  checkItemCollision
         public  displayItems
-        public  displayItems_pixel
+        public  displayPixelItems
         public  removeItem
         public  setCurrentItemTable
 
@@ -248,9 +248,12 @@ nextItem2:
         inc     hl
         ld      b, (hl)
         inc     hl
+
+        pixelToChar b, c
+
         inc     hl                      ; Skip animation frame
         ld      a, d                    ; Tile ID
-        call    displayTilePixel        ; Display tile
+        call    displayTile             ; Display tile
         call    setTileAttr
         jr      nextItem2
 
@@ -260,141 +263,36 @@ notVisible2:
         jr      nextItem2
 
         ;
-        ; Clear the visible items pointed to by hl. Typically
-        ; called to remove the items from the screen before
-        ; their position is updating.
+        ; Display the visible pixel aligned items pointed to by hl.
         ;
         ; Entry:
         ;		hl - Pointer to item table
         ;		a  - Tile ID
         ;
-displayItems_pixel:
+displayPixelItems:
         ld      d, a                    ; Save tile ID
-nextItem3:
+nextItem5:
         ld      a, (hl)                 ; Flags
         or      a
         ret     m
-        jr      z, notVisible4
-
-        push    hl
+        jr      z, notVisible5
 
         inc     hl
-        ld      a, (hl)                 ; Item x pixel position
-        rrca
-        rrca
-        rrca
-        and     %00011111
-        ld      c, a
-
+        ld      c, (hl)
         inc     hl
-        ld      b, (hl)                 ; Tile y pixel position
-
-        push    de
-
-        di
-        ld      (clearTileSP+1), sp
-
-        calculateRow    b
-
-        ld      a, d
-        cp      ID_BLANK
-        jr      z, blankTile
-
-        ld      a, b
-        and     %00000001
-        add     d
-
-        ld      l, a                    ; Tile ID
-        ld      h, 0
-        hlx     8
-        ld      de, _tile0
-        add     hl, de
-        jr      other
-
-blankTile:
-        ld      l, d                    ; Tile ID
-        ld      h, 0
-        hlx     8
-        ld      de, _tile0
-        add     hl, de
-
-other:
-        pop     de
-        ld      a, e
-        add     c
-        ld      e, a
-        ld      a, (hl)
-        ld      (de), a
+        ld      b, (hl)
         inc     hl
 
-        pop     de
-        ld      a, e
-        add     c
-        ld      e, a
-        ld      a, (hl)
-        ld      (de), a
-        inc     hl
+        inc     hl                      ; Skip animation frame
 
-        pop     de
-        ld      a, e
-        add     c
-        ld      e, a
-        ld      a, (hl)
-        ld      (de), a
-        inc     hl
+        ld      a, d                    ; Tile ID
+        call    displayPixelTile        ; Display tile
+        jr      nextItem5
 
-        pop     de
-        ld      a, e
-        add     c
-        ld      e, a
-        ld      a, (hl)
-        ld      (de), a
-        inc     hl
-
-        pop     de
-        ld      a, e
-        add     c
-        ld      e, a
-        ld      a, (hl)
-        ld      (de), a
-        inc     hl
-
-        pop     de
-        ld      a, e
-        add     c
-        ld      e, a
-        ld      a, (hl)
-        ld      (de), a
-        inc     hl
-
-        pop     de
-        ld      a, e
-        add     c
-        ld      e, a
-        ld      a, (hl)
-        ld      (de), a
-        inc     hl
-
-        pop     de
-        ld      a, e
-        add     c
-        ld      e, a
-        ld      a, (hl)
-        ld      (de), a
-        inc     hl
-
-clearTileSP:
-        ld      sp, -1
-        ei
-        pop     de
-
-;        call    setTileAttr
-
-        pop     hl                      ; Restore coin table pointer
-notVisible4:
+notVisible5:
         ld      a, SIZEOF_item
         addhl
-        jp      nextItem3
+        jr      nextItem5
 
         ;
         ; Check if the player has collided with an item. And if so,

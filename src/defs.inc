@@ -384,3 +384,33 @@ bcall   MACRO   function
         db      function>>16|MEM_BANK_ROM
         dw      function
         ENDM
+
+        ;
+        ; Convert Y/X pixel coords to character coords.
+        ;
+        ; Entry:
+        ;   Y - Y pixel location
+        ;   X - X pixel location
+        ;
+        ; Exit:
+        ;   Y - Y character location
+        ;   X - X character location
+        ;
+        ; Notes:
+        ;   On exit 'a' is the X character location
+        ;
+pixelToChar MACRO   Y, X
+        ld      a, Y                    ; Y char position
+        rrca                            ; Divide by 8
+        rrca
+        rrca
+        and     %00011111               ; Remove garbage
+        ld      Y, a
+
+        ld      a, X                    ; X char position
+        rrca                            ; Divide by 8
+        rrca
+        rrca
+        and     %00011111               ; Remove garbage
+        ld      X, a
+        ENDM

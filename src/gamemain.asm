@@ -26,7 +26,8 @@
         extern  currentSpiderTable
         extern  decrementEggs
         extern  detectKempston
-        extern  displayItems_pixel
+        extern  displayPixelItems
+        extern  displaySpiders
         extern  eggCollision
         extern  eggCount
         extern  eggTables
@@ -261,7 +262,7 @@ gameLoop:
 		;
         ld      a, ID_BLANK
         ld      hl, (currentSpiderTable)
-        call    displayItems_pixel
+        call    displayPixelItems
 
 skipOddFrame2:
 
@@ -416,10 +417,7 @@ noAnimate:
 		;
 		; ######################################
         call    updateSpiderPos
-
-        ld      a, ID_SPIDER
-        ld      hl, (currentSpiderTable)
-        call    displayItems_pixel
+        call    displaySpiders
         ;
         ; Flicker any lanterns on the screen
         ;

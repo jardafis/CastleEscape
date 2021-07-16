@@ -4,8 +4,8 @@
 
         public  _displayTile
         public  bank7Screen
+        public  displayPixelTile
         public  displayTile
-        public  displayTilePixel
         public  setTileAttr
 
         include "defs.inc"
@@ -35,40 +35,6 @@ _displayTile:
 
         exit
         ret
-
-        ;
-        ; Display the specified tile at the specified location.
-        ;
-        ; This subroutine takes the X/Y position as pixel positions
-        ; and converts them to character positions. Used for displaying
-        ; items which are character aligned.
-        ;
-        ; Entry:
-        ;		b - Y pixel location
-        ;		c - X pixel location
-        ;		a - Tile ID of item
-        ;
-displayTilePixel:
-        push    af
-        ld      a, b                    ; Y char position
-        rrca                            ; Divide by 8
-        rrca
-        rrca
-        and     %00011111
-        ld      b, a
-
-        ld      a, c                    ; X char position
-        rrca                            ; Divide by 8
-        rrca
-        rrca
-        and     %00011111
-        ld      c, a
-        pop     af
-
-		; *********************************************
-		; FALL THROUGH TO DISPLAY THE TILE
-		; DO NOT INSERT CODE BETWEEN THESE FUNCTIONS
-		; *********************************************
 
         ;
         ; Display the specified tile at the specified location.
@@ -159,6 +125,131 @@ TempSP2:
         ei
 
         pop     hl
+        pop     bc
+        pop     af
+        ret
+
+        ;
+        ; Display the specified tile at the specified pixel location.
+        ;
+        ; All used registers are preserved by this function.
+        ;
+        ; Entry:
+        ;		b - Y character location
+        ;		c - X character location
+        ;		a - Tile ID of item
+        ;
+displayPixelTile:
+        push    af
+        push    bc
+        push    de
+        push    hl
+
+        di
+        ld      (clearTileSP+1), sp
+
+        calculateRow    b
+
+		; Calculate the index into the tilesheet
+		; hl = tileID * 8
+        rlca
+        rlca
+        rlca
+        ld      h, a
+        and     %11111000
+        ld      l, a
+
+        ld      a, h
+        and     %00000111
+        ld      h, a
+        ld      de, _tile0
+        add     hl, de
+
+        ld      a, c                    ; Item x pixel position to char position
+        rrca
+        rrca
+        rrca
+        and     %00011111
+        ld      c, a
+
+		; Write the tile data to the screen
+		; de - Pointer to screen
+		; hl - Pointer to tile data
+		; c  - Tile X character offset
+
+        pop     de                      ; Pop screen address
+
+        ld      a, e                    ; Add X offset
+        add     c
+        ld      e, a
+
+        ld      a, (hl)                 ; Move tile data to the screen
+        ld      (de), a
+        inc     hl
+
+        pop     de
+        ld      a, e
+        add     c
+        ld      e, a
+        ld      a, (hl)
+        ld      (de), a
+        inc     hl
+
+        pop     de
+        ld      a, e
+        add     c
+        ld      e, a
+        ld      a, (hl)
+        ld      (de), a
+        inc     hl
+
+        pop     de
+        ld      a, e
+        add     c
+        ld      e, a
+        ld      a, (hl)
+        ld      (de), a
+        inc     hl
+
+        pop     de
+        ld      a, e
+        add     c
+        ld      e, a
+        ld      a, (hl)
+        ld      (de), a
+        inc     hl
+
+        pop     de
+        ld      a, e
+        add     c
+        ld      e, a
+        ld      a, (hl)
+        ld      (de), a
+        inc     hl
+
+        pop     de
+        ld      a, e
+        add     c
+        ld      e, a
+        ld      a, (hl)
+        ld      (de), a
+        inc     hl
+
+        pop     de
+        ld      a, e
+        add     c
+        ld      e, a
+        ld      a, (hl)
+        ld      (de), a
+;        inc     hl
+
+clearTileSP:
+        ld      sp, -1
+        ei
+
+
+        pop     hl
+        pop     de
         pop     bc
         pop     af
         ret
