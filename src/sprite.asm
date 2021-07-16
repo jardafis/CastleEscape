@@ -136,6 +136,7 @@ _displaySprite:
         add     l                       ; Add to screen address
         ld      l, a
 
+        ld      c, 0x07
         ld      b, PLAYER_HEIGHT
 yLoop:
         pop     de                      ; Pop sprite data
@@ -161,11 +162,10 @@ yLoop:
         dec     l
         dec     l
 
-        ld      a, h                    ; Check for char boundary crossing
-        and     %00000111
-        cmp     0x07
-        jr      z, nextCharRow
         inc     h                       ; Next pixel line
+        ld      a, h                    ; Check for char boundary crossing
+        and     c                       ; and 0x07
+        jr      z, nextCharRow
 
         djnz    yLoop                   ; Loop for next row of sprite
 
@@ -175,26 +175,18 @@ displaySpriteSP:
         ret
 
 nextCharRow:
-		; Reset the pixel line
-        ld      a, h
-        and     %11111000
-        ld      h, a
-
 		; Increment char row
         ld      a, l
         add     0x20
         ld      l, a
         jr      c, nextThird
 
-        djnz    yLoop                   ; Loop for next row of sprite
-        jr      displaySpriteSP
-
-nextThird:
-		; Increment screen third
+		; Same third
         ld      a, h
-        add     0x08
+        sub     0x08
         ld      h, a
 
+nextThird:
         djnz    yLoop                   ; Loop for next row of sprite
         jr      displaySpriteSP
 
