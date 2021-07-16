@@ -1,16 +1,16 @@
-        extern  printAttr
-        extern  pressJumpMsg
+        extern  __BANK_7_head
         extern  _updateDirection
-        extern  lookupScanCode
-        extern  scanCodes
-        extern  setAttr
+        extern  animateMenu
+        extern  bank7Screen
         extern  displayTile
         extern  keyboardScan
-        extern  bank7Screen
-        extern  animateMenu
-        extern  waitReleaseKey
+        extern  lookupScanCode
+        extern  pressJumpMsg
+        extern  printAttr
+        extern  scanCodes
+        extern  setAttr
         extern  setTileAttr
-        extern  __BANK_7_head
+        extern  waitReleaseKey
 
         public  defineKeys
 
@@ -24,11 +24,11 @@ defineKeys:
         ;
 
         ;
-        ; Patch the animate coins routine to access
+        ; Patch the displayTile routine to access
         ; memory @ 0x4000 (screen 0)
         ;
-        ld      hl, NOP_OPCODE<<8|NOP_OPCODE
-        ld      (bank7Screen), hl
+        ld      a, SCREEN_START>>8
+        ld      (bank7Screen+1), a
 
         ;
         ; Copy screen 1 to screen 0
@@ -43,20 +43,21 @@ defineKeys:
         ;
         ; Clear the text from the main menu
         ;
-        ld      a, ID_BLANK             ; ID of tile to use
         ld      b, 0x0d                 ; Start Y position
-        ld      e, 8                    ; Number of rows
 yLoop:
         ld      c, 0x06                 ; Starting X position
-        ld      d, 0x13                 ; Number of columns
 xLoop:
+        ld      a, ID_BLANK             ; ID of tile to use
         call    displayTile             ; Display the tile
+
         inc     c                       ; Increment the screen X position
-        dec     d                       ; Decrement column counter
+        ld      a, c
+        cmp     0x06+0x13
         jr      nz, xLoop               ; and loop if not zero
 
         inc     b                       ; Increment the screen Y position
-        dec     e                       ; Decrement row counter
+        ld      a, b
+        cmp     0x0d+0x08
         jr      nz, yLoop               ; and loop if not zero
 
         ;

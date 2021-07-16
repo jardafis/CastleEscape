@@ -7,8 +7,8 @@ extern void printChar(unsigned char c, unsigned char x, unsigned char y);
 extern void displayTile(unsigned char tile, unsigned char x, unsigned y);
 extern unsigned char waitKey(void);
 
-#define TILE_WIDTH      12
-#define TILE_HEIGHT     14
+#define TILE_WIDTH      16
+#define TILE_HEIGHT     16
 
 /*
  * Current cursor location for displaying text to the screen.
@@ -147,19 +147,31 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
 
     displayTileset(tileset);
 
-    setCursor(0, TILE_HEIGHT);
-    putString("Up          - 'q'\n");
-    putString("Down        - 'a'\n");
-    putString("Left        - 'o'\n");
-    putString("Right       - 'p'\n");
-    putString("Bright      - 'b'\n");
-    putString("Flash       - 'f'\n");
-    putString("Reset       - 'r'\n");
-    putString("Ink color   - 0 - 7\n");
-    putString("Exit        - <SPACE>\n");
-    putString("Attr. address/len = 0x");
+    setCursor(16, 0);
+    putString("Up        - 'q'");
+    setCursor(16, 1);
+    putString("Down      - 'a'");
+    setCursor(16, 2);
+    putString("Left      - 'o'");
+    setCursor(16, 3);
+    putString("Right     - 'p'");
+    setCursor(16, 4);
+    putString("Bright    - 'b'");
+    setCursor(16, 5);
+    putString("Flash     - 'f'");
+    setCursor(16, 6);
+    putString("Reset     - 'r'");
+    setCursor(16, 7);
+    putString("Ink color - 0-7");
+    setCursor(16, 8);
+    putString("Exit   - <SPACE>");
+    setCursor(16, 10);
+    putString("Attr.");
+    setCursor(16, 11);
+    putString("  addr  = 0x");
     putHex((unsigned int) attrib);
-    putString("/");
+    setCursor(16, 12);
+    putString("  len   = 0x");
     putHex(TILE_WIDTH * TILE_HEIGHT);
 
     xorCursor(x, y);

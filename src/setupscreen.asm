@@ -1,25 +1,28 @@
         extern  _cls
-        extern  currentCoinTable
         extern  _coinTables
-        extern  setCurrentItemTable
-        extern  currentEggTable
-        extern  eggTables
-        extern  currentHeartTable
-        extern  heartTables
-        extern  _setCurrentTileMap
         extern  _currentTileMap
-        extern  _displayScreen
-        extern  displayItems
-        extern  display2BCD
-        extern  heartCount
-        extern  _displayScore
         extern  _scrollReset
-        extern  displayBanner
-        extern  spiderTables
+        extern  _setCurrentTileMap
+        extern  currentCoinTable
+        extern  currentEggTable
+        extern  currentHeartTable
         extern  currentSpiderTable
+        extern  display2BCD
+        extern  display4BCD
+        extern  displayBanner
+        extern  displayEggCount
+        extern  displayItems
+        extern  displayTileMap
+        extern  eggTables
+        extern  heartCount
+        extern  heartTables
+        extern  playerSprite
+        extern  score
+        extern  setCurrentItemTable
+        extern  spiderTables
+        extern  startSprite
         extern  xyPos
         extern  xyStartPos
-        extern  displayEggCount
 
         public  _setupScreen
 
@@ -57,10 +60,8 @@ _setupScreen:
 
         call    _setCurrentTileMap
 
-        halt
-
         ld      hl, (_currentTileMap)
-        call    _displayScreen
+        call    displayTileMap
 
         call    displayBanner
 
@@ -82,15 +83,19 @@ _setupScreen:
         ld      hl, heartCount          ; Point to 10's/1's
         call    display2BCD
 
-        call    _displayScore
+        ld      bc, 0x0103              ; Y/X screen location
+        ld      hl, score
+        call    display4BCD
 
         call    _scrollReset
 
-		; Save the location where the player entered
-		; the level. This is used as the starting
-		; location when they die.
+        ; Save the location (and direction) where the player entered
+        ; the level. This is used as the starting
+        ; location when they die.
         ld      hl, (xyPos)
         ld      (xyStartPos), hl
+        ld      hl, (playerSprite)
+        ld      (startSprite), hl
 
         popall
         ret

@@ -1,71 +1,74 @@
-        extern  _cls
-        extern  initISR
-        extern  _initItems
-        extern  _scrollInit
-        extern  _scroll
-        extern  _levels
-        extern  _updateDirection
-        extern  _lanternFlicker
-        extern  _lanternList
-        extern  _copyScreen
-        extern  _pasteScreen
-        extern  _displaySprite
-        extern  ticks
-        extern  playerSprite
         extern  _LeftKnight0
         extern  _RightKnight0
+        extern  _animateCoins
+        extern  _cls
+        extern  _coinTables
+        extern  _copyScreen
+        extern  _displaySprite
+        extern  _initItems
+        extern  _lanternFlicker
+        extern  _lanternList
+        extern  _levels
+        extern  _pasteScreen
+        extern  _scroll
+        extern  _scrollInit
+        extern  _setupScreen
+        extern  _updateDirection
+        extern  bank7Screen
+        extern  checkItemCollision
         extern  checkXCol
         extern  checkYCol
-        extern  _coinTables
+        extern  coinCollision
         extern  coins
-        extern  _animateCoins
-        extern  eggTables
-        extern  eggs
         extern  currentCoinTable
         extern  currentEggTable
-        extern  checkItemCollision
-        extern  coinCollision
+        extern  currentHeartTable
+        extern  currentSpiderTable
+        extern  decrementEggs
+        extern  detectKempston
+        extern  displayPixelItems
+        extern  displaySpiders
         extern  eggCollision
         extern  eggCount
-        extern  score
-        extern  currentHeartTable
-        extern  heartTables
-        extern  heartCount
-        extern  hearts
+        extern  eggTables
+        extern  eggs
         extern  heartCollision
-        extern  decrementEggs
-        extern  _setupScreen
-        extern  detectKempston
-        extern  readKempston
+        extern  heartCount
+        extern  heartTables
+        extern  hearts
+        extern  initISR
         extern  kjScan
         extern  mainMenu
+        extern  playerSprite
+        extern  printAttr
+        extern  readKempston
+        extern  score
+        extern  spiderCollision
         extern  spiderTables
         extern  spiders
-        extern  spiderCollision
-        extern  currentSpiderTable
-        extern  displayItems_pixel
-        extern  updateSpiderPos
-        extern  printAttr
-        extern  wyz_player_init
-        extern  bank7Screen
+        extern  ticks
         extern  titleScreen
+        extern  updateSpiderPos
         extern  wyz_play_sound
+        extern  wyz_player_init
 
         public  _currentTileMap
-        public  _setCurrentTileMap
+        public  _falling
+        public  _jumping
+        public  _main
         public  _mul_hla
+        public  _setCurrentTileMap
+        public  _spriteBuffer
         public  _tileMapX
         public  _tileMapY
         public  _xPos
-        public  _yPos
         public  _xSpeed
+        public  _yPos
         public  _ySpeed
-        public  _spriteBuffer
-        public  _jumping
-        public  _falling
-        public  _main
-        public  newGame
         public  gameOver
+        public  newGame
+        public  score
+        public  startSprite
         public  xyPos
         public  xyStartPos
 
@@ -84,9 +87,9 @@ _main:
 init:
         border  INK_BLACK
 
-		;
-		; Initialize the WYZ Player
-		;
+        ;
+        ; Initialize the WYZ Player
+        ;
         call    wyz_player_init
 
         ;
@@ -94,10 +97,10 @@ init:
         ;
         call    initISR
 
-		;
-		; Detect Kempston joystick and modify
-		; user input scanning code to poll it.
-		;
+        ;
+        ; Detect Kempston joystick and modify
+        ; user input scanning code to poll it.
+        ;
         call    detectKempston
         ret     z
         ld      a, JP_OPCODE
@@ -119,20 +122,20 @@ newGame:
         call    printAttr
 
         ;
-        ; Patch the animate coins routine to access
+        ; Patch the displayTile routine to access
         ; the screen memory at 0x4000
         ;
-        ld      hl, NOP_OPCODE<<8|NOP_OPCODE
-        ld      (bank7Screen), hl
+        ld      a, SCREEN_START>>8
+        ld      (bank7Screen+1), a
 
         ;
         ; Point the ULA at screen 0
         ;
         screen  0
 
-		;
-		; Select bank 0 @ 0xc000
-		;
+        ;
+        ; Select bank 0 @ 0xc000
+        ;
         bank    0
 
         ;
@@ -211,33 +214,33 @@ newGame:
         call    _copyScreen
 
 
-		;
-		; The game loop
-		;
-		; The game loop does the following basic operations.
-		; * Remove any moving items from the screen at their current position
-		; * Update user inputs
-		; * Update the position of any moving items
-		; * Re-draw any moving items at their new position
-		;
+        ;
+        ; The game loop
+        ;
+        ; The game loop does the following basic operations.
+        ; * Remove any moving items from the screen at their current position
+        ; * Update user inputs
+        ; * Update the position of any moving items
+        ; * Re-draw any moving items at their new position
+        ;
 gameLoop:
         ;
         ; Wait for refresh interrupt
         ;
         halt
 
-		; ######################################
+        ; ######################################
         ;
         ; Update the scrolling message
         ;
-		; ######################################
+        ; ######################################
         call    _scroll
 
-		; ######################################
-		;
-		; Remove any moving items from the screen
-		;
-		; ######################################
+        ; ######################################
+        ;
+        ; Remove any moving items from the screen
+        ;
+        ; ######################################
 
         ;
         ; Re-draw the screen at the players current location
@@ -250,24 +253,24 @@ gameLoop:
         rrca
         jr      c, skipOddFrame2
 
-		;
-		; The below code is only executed on even frame numbers
-		;
+        ;
+        ; The below code is only executed on even frame numbers
+        ;
 
-		;
-		; Remove spiders
-		;
+        ;
+        ; Remove spiders
+        ;
         ld      a, ID_BLANK
         ld      hl, (currentSpiderTable)
-        call    displayItems_pixel
+        call    displayPixelItems
 
 skipOddFrame2:
 
-		; ######################################
-		;
-		; Update user input
-		;
-		; ######################################
+        ; ######################################
+        ;
+        ; Update user input
+        ;
+        ; ######################################
         call    _updateDirection
 
         ;
@@ -343,30 +346,30 @@ notMidpoint:
         ld      (_jumping), a
 notJumping:
 
-		; ######################################
-		;
-		; Check if player is colliding with platforms
-		; in the Y direction.
-		;
-		; ######################################
+        ; ######################################
+        ;
+        ; Check if player is colliding with platforms
+        ; in the Y direction.
+        ;
+        ; ######################################
         call    checkYCol
 
-		; ######################################
-		;
-		; Check if player is colliding with platforms
-		; in the Y direction.
-		;
-		; ######################################
+        ; ######################################
+        ;
+        ; Check if player is colliding with platforms
+        ; in the Y direction.
+        ;
+        ; ######################################
         ld      a, (_xSpeed)            ; If xSpeed != 0 player is moving
         or      a                       ; left or right.
         call    nz, checkXCol           ; Check for a collision.
 
-		; ######################################
+        ; ######################################
         ;
         ; Check for collisions with coins, eggs,
         ; hearts, and spiders, etc.
         ;
-		; ######################################
+        ; ######################################
         ld      hl, (currentCoinTable)
         ld      de, coinCollision
         call    checkItemCollision
@@ -380,11 +383,11 @@ notJumping:
         ld      de, spiderCollision
         call    checkItemCollision
 
-		; ######################################
-		;
-		; Rotate any visible coins.
-		;
-		; ######################################
+        ; ######################################
+        ;
+        ; Rotate any visible coins.
+        ;
+        ; ######################################
         ld      hl, coinRotate
         dec     (hl)
         jp      p, noAnimate
@@ -392,11 +395,11 @@ notJumping:
         call    _animateCoins
 noAnimate:
 
-		; ######################################
-		;
-		; Redraw any moving items.
-		;
-		; ######################################
+        ; ######################################
+        ;
+        ; Redraw any moving items.
+        ;
+        ; ######################################
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _copyScreen
@@ -408,16 +411,13 @@ noAnimate:
         rrca
         jr      c, skipOddFrame
 
-		; ######################################
-		;
-		; The below code is only executed on even frame numbers
-		;
-		; ######################################
+        ; ######################################
+        ;
+        ; The below code is only executed on even frame numbers
+        ;
+        ; ######################################
         call    updateSpiderPos
-
-        ld      a, ID_SPIDER
-        ld      hl, (currentSpiderTable)
-        call    displayItems_pixel
+        call    displaySpiders
         ;
         ; Flicker any lanterns on the screen
         ;
@@ -497,6 +497,8 @@ mulDone:
         ret
 
         section BSS_2
+score:                                  ; Score in BCD
+        ds      2
 coinRotate:
         ds      1
 _currentTileMap:
@@ -519,6 +521,8 @@ _jumping:
         ds      1
 _falling:
         ds      1
+startSprite:
+        ds      2
 xyStartPos:                             ; Position where player entered the level
         ds      2
 _spriteBuffer:

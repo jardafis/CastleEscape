@@ -95,19 +95,32 @@ clearAttr:
         ;		c - X location
         ;		a - Attribute
         ;
+        ; Notes:
+        ;	'a' is not preserved.
+        ;
 setAttr:
-        push    bc
         push    hl
-        ld      l, b
-        ld      h, 0
-        hlx     32
-        ld      b, 0
-        add     hl, bc
-        ld      bc, SCREEN_ATTR_START
-        add     hl, bc
-        ld      (hl), a
+
+        ld      (attribVal+1), a
+
+        ld      a, b
+        rrca
+        rrca
+        rrca
+        ld      h, a
+        and     %11100000
+        or      c
+        ld      l, a
+
+        ld      a, h
+        and     %00000011
+        or      SCREEN_ATTR_START>>8
+        ld      h, a
+
+attribVal:
+        ld      (hl), -1
+
         pop     hl
-        pop     bc
         ret
 
         section BSS_2

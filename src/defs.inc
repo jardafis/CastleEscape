@@ -3,6 +3,11 @@
         extern  bankedCall
 
         ;
+        ; Points
+        ;
+        defc    COIN_POINTS=0x05
+
+        ;
         ; WYZTracker Songs
         ;
         defc    TITLE_MUSIC=0
@@ -19,9 +24,9 @@
         defc    AYFX_FALLING=5
         defc    AYFX_DIE=6
 
-		;
-		; Game Configuration
-		;
+        ;
+        ; Game Configuration
+        ;
         defc    START_X=40
         defc    START_Y=120
         defc    START_LIVES=0x03
@@ -45,14 +50,14 @@
         defc    SIZEOF_byte=0x01
 
 
-		;
-		; Max items per level
-		;
+        ;
+        ; Max items per level
+        ;
         defc    MAX_LANTERNS=8
         defc    MAX_HEARTS=8
         defc    MAX_EGGS=8
         defc    MAX_COINS=8
-        defc    MAX_SPIDERS=4
+        defc    MAX_SPIDERS=8
 
         ;
         ; Tilemap definitions
@@ -89,22 +94,26 @@
         defc    MAX_X_POS=256
         defc    MAX_Y_POS=192
 
-		;
+        ;
         ; Sprite ID's
         ;
+        defc    TILE_SHEET_WIDTH=16
+        defc    TILE_SHEET_HEIGHT=16
+
         defc    ID_LANTERN=3
         defc    ID_BLANK=11
-        defc    ID_COIN=6*12
-        defc    ID_EGG=31
-        defc    ID_EGG0=5*12
-        defc    ID_HEART=34
-        defc    ID_SPIDER=4*12+3
-        defc    ID_PLATFORM=11*12+9
+        defc    ID_COIN=6*TILE_SHEET_WIDTH
+        defc    ID_EGG=2*TILE_SHEET_WIDTH+7
+        defc    ID_EGG0=5*TILE_SHEET_WIDTH
+        defc    ID_HEART=2*TILE_SHEET_WIDTH+10
+        defc    ID_SPIDER=4*TILE_SHEET_WIDTH+3
+        defc    ID_PLATFORM=11*TILE_SHEET_WIDTH+9
 
 
         ;
         ; Screen addresses
         ;
+        defc    SCREEN1_START=0xc000
         defc    SCREEN_START=0x4000
         defc    SCREEN_LENGTH=0x1800
         defc    SCREEN_END=(SCREEN_START+SCREEN_LENGTH)
@@ -153,12 +162,10 @@
         defc    IO_KEMPSTON=0x1f
         defc    MIC_OUTPUT=0x08
 
-		;
-		; OpCodes
-		;
+        ;
+        ; OpCodes
+        ;
         defc    JP_OPCODE=0xc3
-        defc    NOP_OPCODE=0x00
-        defc    SET_7_B_OPCODE=0xf8cb
 
         ;
         ; Macros for use with asmpp.pl
@@ -253,7 +260,7 @@ entry   MACRO
         push    de
         push    hl
         push    ix
-        ld      ix, 12                  ; the 6 pushes above plus return address
+        ld      ix, 12                  ; the 5 pushes above plus return address
         add     ix, sp
         ENDM
 
@@ -330,10 +337,11 @@ modLoop:
         add     a, val
         ENDM
 
-		;
-		; Calculate screen row address
-		;
+        ;
+        ; Calculate screen row address
+        ;
 calculateRow    MACRO   row
+        extern  _screenTab
         ld      l, row                  ; Get the screen y pixel position
         ld      h, 0
         add     hl, hl                  ; Multiply it by 2
@@ -342,11 +350,11 @@ calculateRow    MACRO   row
         ld      sp, hl                  ; Save the result in sp.
         ENDM
 
-		;
-		; Delay in increments of 1/50th of a second.
-		;
-		; Interrupts must be enabled!
-		;
+        ;
+        ; Delay in increments of 1/50th of a second.
+        ;
+        ; Interrupts must be enabled!
+        ;
 delay   MACRO   val
         LOCAL   delayLoop
         push    bc
@@ -368,11 +376,41 @@ border  MACRO   color
         out     (IO_BORDER), a
         ENDM
 
-		;
-		; Banked call to function
-		;
+        ;
+        ; Banked call to function
+        ;
 bcall   MACRO   function
         call    bankedCall
         db      function>>16|MEM_BANK_ROM
         dw      function
+        ENDM
+
+        ;
+        ; Convert Y/X pixel coords to character coords.
+        ;
+        ; Entry:
+        ;   Y - Y pixel location
+        ;   X - X pixel location
+        ;
+        ; Exit:
+        ;   Y - Y character location
+        ;   X - X character location
+        ;
+        ; Notes:
+        ;   On exit 'a' is the X character location
+        ;
+pixelToChar MACRO   Y, X
+        ld      a, Y                    ; Y char position
+        rrca                            ; Divide by 8
+        rrca
+        rrca
+        and     %00011111               ; Remove garbage
+        ld      Y, a
+
+        ld      a, X                    ; X char position
+        rrca                            ; Divide by 8
+        rrca
+        rrca
+        and     %00011111               ; Remove garbage
+        ld      X, a
         ENDM

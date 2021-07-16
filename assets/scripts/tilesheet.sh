@@ -59,8 +59,8 @@ tileWidth=8
 tileHeight=8
 
 # Width and Height in tiles
-width=12
-height=14
+width=16
+height=16
 
 tileSet=tiles.c
 

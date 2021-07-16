@@ -1,15 +1,15 @@
-        extern  _xPos
-        extern  _yPos
-        extern  _xSpeed
-        extern  _ySpeed
         extern  _currentTileMap
+        extern  _falling
+        extern  _jumping
         extern  _setupScreen
         extern  _tileMapX
         extern  _tileMapY
-        extern  _jumping
-        extern  _falling
-        extern  wyz_play_sound
+        extern  _xPos
+        extern  _xSpeed
+        extern  _yPos
+        extern  _ySpeed
         extern  die
+        extern  wyz_play_sound
 
         public  checkXCol
         public  checkYCol
@@ -17,8 +17,8 @@
         include "defs.inc"
         section CODE_2
 
-        defc    ID_SOLID_TILE=144
-        defc    ID_SOFT_TILE=10*12
+        defc    ID_SOLID_TILE=12*TILE_SHEET_WIDTH
+        defc    ID_SOFT_TILE=10*TILE_SHEET_WIDTH
         defc    FALL_DISTANCE=33
 
         ;
@@ -154,10 +154,10 @@ movingDown:
 endif2:
         add     hl, de
 
-		;
-		; Divide hl by 8 to remove the pixel offset.
-		; It could be negative at this point.
-		;
+        ;
+        ; Divide hl by 8 to remove the pixel offset.
+        ; It could be negative at this point.
+        ;
         ld      a, l
         sra     h
         rra
@@ -166,9 +166,9 @@ endif2:
         sra     h
         rra
         ld      l, a
-		;
-		; Multiply by TILEMAP_WIDTH
-		;
+        ;
+        ; Multiply by TILEMAP_WIDTH
+        ;
         hlx     TILEMAP_WIDTH
 
         ld      a, (_xPos)              ; Get the X pixel offset
@@ -186,7 +186,7 @@ endif2:
         ld      a, b
         or      a
         jp      m, test                 ; Player is moving upward, only check solid tiles
-										; Player is moving downward, include solid tiles also.
+        								; Player is moving downward, include solid tiles also.
         ld      d, ID_SOFT_TILE         ; Switch to ID_SOFT_TILE
 test:
 
@@ -230,9 +230,9 @@ noYCollision:
         call    z, wyz_play_sound
 
 updateYPos:
-		;
-		; Update y position
-		;
+    ;
+    ; Update y position
+    ;
         ld      a, (_yPos)
         add     b
         cp      MAX_Y_POS-PLAYER_HEIGHT
@@ -263,16 +263,16 @@ changeYLevel:
         ret
 
 yCollision:
-		;
-		; If player was moving down, stop moving
-		;
+	    ;
+	    ; If player was moving down, stop moving
+	    ;
         ld      a, b
         or      a
         jp      p, landed
 
-		;
-		; Player is going up check for ID_SOFT_TILE
-		;
+	    ;
+	    ; Player is going up check for ID_SOFT_TILE
+	    ;
         ld      a, d
         cp      ID_SOFT_TILE
         jr      z, noYCollision

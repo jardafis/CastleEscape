@@ -1,5 +1,5 @@
-        public  _RightKnight0
         public  _LeftKnight0
+        public  _RightKnight0
 
         section RODATA_2
 

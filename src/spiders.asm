@@ -1,28 +1,30 @@
-        extern  die
-        extern  rand
         extern  _currentTileMap
+        extern  die
+        extern  displayPixelTile
+        extern  rand
 
+        public  currentSpiderTable
+        public  displaySpiders
         public  spiderCollision
         public  spiderTables
         public  spiders
-        public  currentSpiderTable
         public  updateSpiderPos
 
-		;
-		;	Flag bits:
-		;	+---------------+
-		;	|7|6|5|4|3|2|1|0|
-		;	+---------------+
-		;	 | | | | | | | |
-		;	 | | | | | | | +-- Visible
-		;	 | | | | | | +---- Unused
-		;	 | | | | | +------ Unused
-		;	 | | | | +-------- Down
-		;	 | | | +---------- Up
-		;	 | | +------------ Unused
-		;	 | +-------------- Unused
-		;	 +---------------- End of table
-		;
+        ;
+        ;	Flag bits:
+        ;	+---------------+
+        ;	|7|6|5|4|3|2|1|0|
+        ;	+---------------+
+        ;	 | | | | | | | |
+        ;	 | | | | | | | +-- Visible
+        ;	 | | | | | | +---- Unused
+        ;	 | | | | | +------ Unused
+        ;	 | | | | +-------- Down
+        ;	 | | | +---------- Up
+        ;	 | | +------------ Unused
+        ;	 | +-------------- Unused
+        ;	 +---------------- End of table
+        ;
 
         include "defs.inc"
 
@@ -47,17 +49,17 @@ nextSpider:
 
         cp      110
         jr      nc, down
-		; a >= val
+        ; a >= val
         ld      b, UP<<1
         jr      done
 down:
         cp      220
         jr      nc, stop
-		; a >= val
+        ; a >= val
         ld      b, DOWN<<1
         jr      done
 stop:
-		; a < val
+        ; a < val
         ld      b, 0
 done:
         pop     hl
@@ -125,16 +127,41 @@ collision:
         add     hl, de
         jr      updatePosition
 
-		;
-		; Check if a spider has collided with a tile.
-		;
-		; Entry:
-		;		a - Spider y pixel position
-		;		c - Spider x pixel position
-		;
-		; Exit:
-		;		nz - Collision detected.
-		;
+        ;
+        ; Display the spiders from the current spider table.
+        ;
+displaySpiders:
+        ld      hl, (currentSpiderTable)
+nextItem:
+        ld      a, (hl)                 ; Flags
+        or      a
+        ret     m
+        inc     hl
+
+        ld      c, (hl)                 ; X pixel position
+        inc     hl
+        ld      b, (hl)                 ; Y pixel position
+        inc     hl
+
+        inc     hl                      ; Skip animation frame
+
+        ld      a, b                    ; Determine the animation from the Y pixel position
+        and     %00000001
+        add     ID_SPIDER
+
+        call    displayPixelTile        ; Display tile
+        jp      nextItem
+
+        ;
+        ; Check if a spider has collided with a tile.
+        ;
+        ; Entry:
+        ;		a - Spider y pixel position
+        ;		c - Spider x pixel position
+        ;
+        ; Exit:
+        ;		nz - Collision detected.
+        ;
 checkCollision:
         push    hl
         srl     c
@@ -148,9 +175,9 @@ checkCollision:
 
         ld      l, a
         ld      h, 0
-		;
-		; Multiply by TILEMAP_WIDTH
-		;
+        ;
+        ; Multiply by TILEMAP_WIDTH
+        ;
         hlx     TILEMAP_WIDTH
         ld      de, (_currentTileMap)
         add     hl, de

@@ -1,22 +1,22 @@
+        extern  _animateCoins
         extern  _attribEdit
+        extern  _lanternFlicker
         extern  _tile0
         extern  _tileAttr
-        extern  newGame
+        extern  bank7Screen
+        extern  currentCoinTable
+        extern  defineKeys
         extern  keyboardScan
-        extern  readKempston
         extern  kjPresent
+        extern  newGame
+        extern  readKempston
         extern  wyz_play_song
         extern  wyz_player_stop
-        extern  _lanternFlicker
-        extern  currentCoinTable
-        extern  _animateCoins
-        extern  bank7Screen
-        extern  defineKeys
 
+        public  animateMenu
         public  mainMenu
         public  rotateCount
         public  rotateCount
-        public  animateMenu
         public  waitReleaseKey
 
         section CODE_5
@@ -24,10 +24,10 @@
         include "defs.inc"
 
         defc    BORDER_COLOR=INK_YELLOW
-		;
-		; Display the game main menu. Options to configure and start
-		; the game are on this screen.
-		;
+        ;
+        ; Display the game main menu. Options to configure and start
+        ; the game are on this screen.
+        ;
 mainMenu:
         ;
         ; Start main menu song
@@ -43,11 +43,11 @@ displayScreen:
         ld      (currentCoinTable), hl
 
         ;
-        ; Patch the animate coins routine to access
+        ; Patch the displayTile routine to access
         ; memory @ 0xc000
         ;
-        ld      hl, SET_7_B_OPCODE
-        ld      (bank7Screen), hl
+        ld      a, SCREEN1_START>>8
+        ld      (bank7Screen+1), a
 
         ;
         ; Point the ULA at screen 1
@@ -142,6 +142,12 @@ attribEdit:
         ;
         bank    0
         screen  0
+        ;
+        ; Patch the displayTile routine to access
+        ; memory @ 0x4000
+        ;
+        ld      a, SCREEN_START>>8
+        ld      (bank7Screen+1), a
 
         ld      hl, _tile0
         push    hl

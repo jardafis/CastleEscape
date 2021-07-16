@@ -1,13 +1,15 @@
-        extern  heartCount
-        extern  subBCD
-        extern  display2BCD
-        extern  gameOver
-        extern  xyPos
-        extern  xyStartPos
+        extern  _falling
         extern  _jumping
         extern  _ySpeed
-        extern  _falling
+        extern  decBCD
+        extern  display2BCD
+        extern  gameOver
+        extern  heartCount
+        extern  playerSprite
+        extern  startSprite
         extern  wyz_play_song
+        extern  xyPos
+        extern  xyStartPos
 
         public  die
 
@@ -15,9 +17,9 @@
 
         section CODE_2
 
-		;
-		; Routine called when plater dies.
-		;
+        ;
+        ; Routine called when plater dies.
+        ;
 die:
         push    af
         push    bc
@@ -45,28 +47,29 @@ delayLoop:
         ;
         border  INK_BLACK
 
-		;
-		; Decrement the heart count
-		;
-        ld      l, 0x01
+        ;
+        ; Decrement the heart count
+        ;
         ld      de, heartCount
-        call    subBCD
+        call    decBCD
         ld      bc, 0x011d              ; y,x screen location
         ex      de, hl
         call    display2BCD
 
-		;
-		; If the heart count is zero, game over!
-		; hl points to heartCount
-		;
+        ;
+        ; If the heart count is zero, game over!
+        ; hl points to heartCount
+        ;
         ld      a, (hl)
         or      a
         jp      z, gameOver
 
-		; Set player X/Y position to where
-		; they entered the level.
+        ; Set player X/Y position (and sprite direction) to where
+        ; they entered the level.
         ld      hl, (xyStartPos)
         ld      (xyPos), hl
+        ld      hl, (startSprite)
+        ld      (playerSprite), hl
         xor     a
         ld      (_jumping), a
         ld      (_ySpeed), a

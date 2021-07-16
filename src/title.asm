@@ -1,13 +1,12 @@
+        extern  _updateDirection
+        extern  animateMenu
+        extern  currentCoinTable
         extern  printAttr
         extern  wyz_play_song
         extern  wyz_player_stop
-        extern  _updateDirection
-        extern  rotateCount
-        extern  currentCoinTable
-        extern  animateMenu
 
-        public  titleScreen
         public  pressJumpMsg
+        public  titleScreen
 
         section BANK_5
         binary  "title.scr"

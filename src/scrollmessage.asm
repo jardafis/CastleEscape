@@ -1,4 +1,3 @@
-        extern  _screenTab
         extern  rand
 
         public  _scroll
@@ -26,16 +25,20 @@ _scrollInit:
         ;
         ; Initialize the screen address to top right corner
         ;
-        ld      de, _screenTab
-        ld      hl, Y                   ; Get Y offset
-        hlx     16                      ; x16
-        add     hl, de                  ; Index into the screen table
-        ld      e, (hl)                 ; Get the screen address from the table
-        inc     hl                      ; into de
-        ld      d, (hl)
+        ; Calculate the screen address
+        ld      a, Y                    ; Y character position
+        rrca                            ; Move lower 3 bits to the upper 3 bits
+        rrca
+        rrca
+        and     %11100000               ; Bits 5-3 of pixel row
+        or      X+WIDTH-1               ; X character position
+        ld      l, a
 
-        ld      hl, X+WIDTH-1           ; Add the X offset and WIDTH to get
-        add     hl, de                  ; the right hand side of the message
+        ld      a, Y                    ; Y character position
+        and     %00011000               ; Bits 7-6 of pixel row
+        or      0x40                    ; 0x40 or 0xc0
+        ld      h, a
+
         ld      (screenAddr), hl        ; Save this screen address for use by the scroll routine
 
         ;
