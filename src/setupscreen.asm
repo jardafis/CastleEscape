@@ -1,28 +1,28 @@
         extern  _cls
-        extern  currentCoinTable
         extern  _coinTables
-        extern  setCurrentItemTable
-        extern  currentEggTable
-        extern  eggTables
-        extern  currentHeartTable
-        extern  heartTables
-        extern  _setCurrentTileMap
         extern  _currentTileMap
-        extern  displayTileMap
-        extern  displayItems
+        extern  _scrollReset
+        extern  _setCurrentTileMap
+        extern  currentCoinTable
+        extern  currentEggTable
+        extern  currentHeartTable
+        extern  currentSpiderTable
         extern  display2BCD
         extern  display4BCD
-        extern  heartCount
-        extern  _scrollReset
         extern  displayBanner
+        extern  displayEggCount
+        extern  displayItems
+        extern  displayTileMap
+        extern  eggTables
+        extern  heartCount
+        extern  heartTables
+        extern  playerSprite
+        extern  score
+        extern  setCurrentItemTable
         extern  spiderTables
-        extern  currentSpiderTable
+        extern  startSprite
         extern  xyPos
         extern  xyStartPos
-        extern  displayEggCount
-        extern  playerSprite
-        extern  startSprite
-        extern  score
 
         public  _setupScreen
 

@@ -1,11 +1,11 @@
         extern  _tile0
-        extern  setAttr
         extern  _tileAttr
+        extern  setAttr
 
         public  _displayTile
-        public  displayTilePixel
-        public  displayTile
         public  bank7Screen
+        public  displayTile
+        public  displayTilePixel
         public  setTileAttr
 
         include "defs.inc"

@@ -1,13 +1,13 @@
-        extern  incBCD
         extern  display2BCD
-        extern  wyz_play_sound
+        extern  incBCD
         extern  removeItem
+        extern  wyz_play_sound
 
-        public  heartCount
         public  currentHeartTable
+        public  heartCollision
+        public  heartCount
         public  heartTables
         public  hearts
-        public  heartCollision
 
         include "defs.inc"
 

@@ -1,22 +1,22 @@
+        extern  _animateCoins
         extern  _attribEdit
+        extern  _lanternFlicker
         extern  _tile0
         extern  _tileAttr
-        extern  newGame
+        extern  bank7Screen
+        extern  currentCoinTable
+        extern  defineKeys
         extern  keyboardScan
-        extern  readKempston
         extern  kjPresent
+        extern  newGame
+        extern  readKempston
         extern  wyz_play_song
         extern  wyz_player_stop
-        extern  _lanternFlicker
-        extern  currentCoinTable
-        extern  _animateCoins
-        extern  bank7Screen
-        extern  defineKeys
 
+        public  animateMenu
         public  mainMenu
         public  rotateCount
         public  rotateCount
-        public  animateMenu
         public  waitReleaseKey
 
         section CODE_5

@@ -1,12 +1,12 @@
         extern  assert
 
-        public  keyboardScan
         public  _updateDirection
-        public  kjScan
-        public  waitKey
         public  _waitKey
+        public  keyboardScan
+        public  kjScan
         public  lookupScanCode
         public  scanCodes
+        public  waitKey
 
         section CODE_2
 

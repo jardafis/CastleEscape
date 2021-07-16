@@ -1,18 +1,18 @@
-        extern  displayBCD
         extern  addBCD
-        extern  displayTile
         extern  decBCD
-        extern  wyz_play_sound
+        extern  displayBCD
+        extern  displayTile
         extern  removeItem
+        extern  wyz_play_sound
 
-        public  eggTables
-        public  eggs
         public  currentEggTable
-        public  eggCollision
-        public  eggCount
-        public  updateEggImage
         public  decrementEggs
         public  displayEggCount
+        public  eggCollision
+        public  eggCount
+        public  eggTables
+        public  eggs
+        public  updateEggImage
 
         include "defs.inc"
 

@@ -1,19 +1,19 @@
-        extern  _yPos
-        extern  _xPos
         extern  _levels
-        extern  _tileMapX
         extern  _tile0
+        extern  _tileMapX
+        extern  _xPos
+        extern  _yPos
         extern  clearAttr
         extern  displayTile
         extern  displayTilePixel
         extern  setTileAttr
 
         public  _initItems
-        public  setCurrentItemTable
-        public  displayItems
         public  checkItemCollision
-        public  removeItem
+        public  displayItems
         public  displayItems_pixel
+        public  removeItem
+        public  setCurrentItemTable
 
         include "defs.inc"
 

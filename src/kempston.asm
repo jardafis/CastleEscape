@@ -1,6 +1,6 @@
         public  detectKempston
-        public  readKempston
         public  kjPresent
+        public  readKempston
 
         include "defs.inc"
 

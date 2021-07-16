@@ -1,9 +1,9 @@
         extern  setAttr
 
-        public  print
-        public  printChar
-        public  printAttr
         public  _printChar
+        public  print
+        public  printAttr
+        public  printChar
 
         section CODE_2
 

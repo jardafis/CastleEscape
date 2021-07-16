@@ -1,11 +1,11 @@
+        extern  _currentTileMap
         extern  die
         extern  rand
-        extern  _currentTileMap
 
+        public  currentSpiderTable
         public  spiderCollision
         public  spiderTables
         public  spiders
-        public  currentSpiderTable
         public  updateSpiderPos
 
 		;

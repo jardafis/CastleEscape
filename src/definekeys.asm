@@ -1,16 +1,16 @@
-        extern  printAttr
-        extern  pressJumpMsg
+        extern  __BANK_7_head
         extern  _updateDirection
-        extern  lookupScanCode
-        extern  scanCodes
-        extern  setAttr
+        extern  animateMenu
+        extern  bank7Screen
         extern  displayTile
         extern  keyboardScan
-        extern  bank7Screen
-        extern  animateMenu
-        extern  waitReleaseKey
+        extern  lookupScanCode
+        extern  pressJumpMsg
+        extern  printAttr
+        extern  scanCodes
+        extern  setAttr
         extern  setTileAttr
-        extern  __BANK_7_head
+        extern  waitReleaseKey
 
         public  defineKeys
 

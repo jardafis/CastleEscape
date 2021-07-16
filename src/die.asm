@@ -1,15 +1,15 @@
-        extern  heartCount
+        extern  _falling
+        extern  _jumping
+        extern  _ySpeed
         extern  decBCD
         extern  display2BCD
         extern  gameOver
-        extern  xyPos
-        extern  xyStartPos
-        extern  _jumping
-        extern  _ySpeed
-        extern  _falling
-        extern  wyz_play_song
+        extern  heartCount
         extern  playerSprite
         extern  startSprite
+        extern  wyz_play_song
+        extern  xyPos
+        extern  xyStartPos
 
         public  die
 

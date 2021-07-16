@@ -1,15 +1,15 @@
         extern  addBCD
         extern  display4BCD
+        extern  displayTilePixel
+        extern  removeItem
         extern  score
         extern  wyz_play_sound
-        extern  removeItem
-        extern  displayTilePixel
 
         public  _animateCoins
         public  _coinTables
+        public  coinCollision
         public  coins
         public  currentCoinTable
-        public  coinCollision
 
         include "defs.inc"
 

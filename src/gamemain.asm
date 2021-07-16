@@ -1,75 +1,75 @@
-        extern  _cls
-        extern  initISR
-        extern  _initItems
-        extern  _scrollInit
-        extern  _scroll
-        extern  _levels
-        extern  _updateDirection
-        extern  _lanternFlicker
-        extern  _lanternList
-        extern  _copyScreen
-        extern  _pasteScreen
-        extern  _displaySprite
-        extern  ticks
-        extern  playerSprite
         extern  _LeftKnight0
         extern  _RightKnight0
+        extern  _animateCoins
+        extern  _cls
+        extern  _coinTables
+        extern  _copyScreen
+        extern  _displaySprite
+        extern  _initItems
+        extern  _lanternFlicker
+        extern  _lanternList
+        extern  _levels
+        extern  _pasteScreen
+        extern  _scroll
+        extern  _scrollInit
+        extern  _setupScreen
+        extern  _updateDirection
+        extern  bank7Screen
+        extern  checkItemCollision
         extern  checkXCol
         extern  checkYCol
-        extern  _coinTables
+        extern  coinCollision
         extern  coins
-        extern  _animateCoins
-        extern  eggTables
-        extern  eggs
         extern  currentCoinTable
         extern  currentEggTable
-        extern  checkItemCollision
-        extern  coinCollision
+        extern  currentHeartTable
+        extern  currentSpiderTable
+        extern  decrementEggs
+        extern  detectKempston
+        extern  displayItems_pixel
         extern  eggCollision
         extern  eggCount
-        extern  score
-        extern  currentHeartTable
-        extern  heartTables
-        extern  heartCount
-        extern  hearts
+        extern  eggTables
+        extern  eggs
         extern  heartCollision
-        extern  decrementEggs
-        extern  _setupScreen
-        extern  detectKempston
-        extern  readKempston
+        extern  heartCount
+        extern  heartTables
+        extern  hearts
+        extern  initISR
         extern  kjScan
         extern  mainMenu
+        extern  playerSprite
+        extern  printAttr
+        extern  readKempston
+        extern  score
+        extern  spiderCollision
         extern  spiderTables
         extern  spiders
-        extern  spiderCollision
-        extern  currentSpiderTable
-        extern  displayItems_pixel
-        extern  updateSpiderPos
-        extern  printAttr
-        extern  wyz_player_init
-        extern  bank7Screen
+        extern  ticks
         extern  titleScreen
+        extern  updateSpiderPos
         extern  wyz_play_sound
+        extern  wyz_player_init
 
         public  _currentTileMap
-        public  _setCurrentTileMap
+        public  _falling
+        public  _jumping
+        public  _main
         public  _mul_hla
+        public  _setCurrentTileMap
+        public  _spriteBuffer
         public  _tileMapX
         public  _tileMapY
         public  _xPos
-        public  _yPos
         public  _xSpeed
+        public  _yPos
         public  _ySpeed
-        public  _spriteBuffer
-        public  _jumping
-        public  _falling
-        public  _main
-        public  newGame
         public  gameOver
+        public  newGame
+        public  score
+        public  startSprite
         public  xyPos
         public  xyStartPos
-        public  startSprite
-        public  score
 
         include "defs.inc"
 

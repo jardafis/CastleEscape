@@ -1,15 +1,15 @@
-        extern  _xPos
-        extern  _yPos
-        extern  _xSpeed
-        extern  _ySpeed
         extern  _currentTileMap
+        extern  _falling
+        extern  _jumping
         extern  _setupScreen
         extern  _tileMapX
         extern  _tileMapY
-        extern  _jumping
-        extern  _falling
-        extern  wyz_play_sound
+        extern  _xPos
+        extern  _xSpeed
+        extern  _yPos
+        extern  _ySpeed
         extern  die
+        extern  wyz_play_sound
 
         public  checkXCol
         public  checkYCol

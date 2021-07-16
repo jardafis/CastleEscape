@@ -1,9 +1,8 @@
-
         extern  displayTile
         extern  setTileAttr
 
-        public  displayBanner
         public  bannerData
+        public  displayBanner
 
         include "defs.inc"
 

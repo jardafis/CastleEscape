@@ -1,12 +1,12 @@
         extern  printChar
 
         public  addBCD
-        public  subBCD
-        public  incBCD
         public  decBCD
-        public  display4BCD
         public  display2BCD
+        public  display4BCD
         public  displayBCD
+        public  incBCD
+        public  subBCD
 
         include "defs.inc"
         section CODE_2
