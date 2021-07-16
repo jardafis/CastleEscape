@@ -26,8 +26,8 @@ wyz_play_frame:
         LDIR
         CALL    REPRODUCE_SONIDO
         JP      PLAY
-		; CALL	REPRODUCE_EFECTO
-		; RET
+        ; CALL	REPRODUCE_EFECTO
+        ; RET
 
 
 
@@ -83,7 +83,7 @@ NO_ENVOLVENTES_SONIDO:
 
         LD      A, B
         and     $7f                     ; RES	7,A
-			; AND	A
+        	; AND	A
         JR      Z, NO_RUIDO
         LD      (PSG_REG_SEC+6), A
         LD      A, (SFX_MIX)
@@ -104,7 +104,7 @@ FIN_SONIDO:
         LD      A, (ENVOLVENTE_BACK)    ;NO RESTAURA LA ENVOLVENTE SI ES 0
         AND     A
         JR      Z, FIN_NOPLAYER
-		;xor	a ; ***
+        ;xor	a ; ***
         LD      (PSG_REG_SEC+13), A     ;08.13 RESTAURA LA ENVOLVENTE TRAS EL SFX
 
 FIN_NOPLAYER:
@@ -157,7 +157,7 @@ LOUT:   OUT     (C), A
 
 wyz_play_sound:
 INICIA_SONIDO:                          ;CP	8		;SFX SPEECH
-		;JP	Z,SLOOP		;
+        ;JP	Z,SLOOP		;
 
         LD      HL, TABLA_SONIDOS
         CALL    EXT_WORD
@@ -188,7 +188,7 @@ wyz_player_stop:
 PLAYER_OFF:
         XOR     A                       ;***** IMPORTANTE SI NO HAY MUSICA ****
         LD      (INTERR), A
-		;LD	(FADE),A		;solo si hay fade out
+        ;LD	(FADE),A		;solo si hay fade out
 
 CLEAR_PSG_BUFFER:
         LD      HL, PSG_REG
@@ -257,7 +257,7 @@ DECODE_SONG:
 
 NPTJP0: AND     00000110B
         RRA
-		;LD	(SELECT_CANAL_P),A
+        ;LD	(SELECT_CANAL_P),A
 
         PUSH    DE
         LD      HL, TABLA_DATOS_CANAL_SFX
@@ -416,13 +416,13 @@ NO_PUNTILLO:
         INC     HL
         INC     DE
         ldi                             ; LD	A,(HL)		;N� DE INSTRUMENTO
-			; LD	(DE),A
-			; INC	DE
-			; INC	HL
+	        ; LD	(DE),A
+	        ; INC	DE
+	        ; INC	HL
         ldi                             ; LD	A,(HL)		;VOLUMEN RELATIVO DEL INSTRUMENTO
-			; LD	(DE),A
-			; INC	DE
-			; INC	HL
+	        ; LD	(DE),A
+	        ; INC	DE
+	        ; INC	HL
         JR      DECODE_CANAL
 
 NO_INSTRUMENTO:
@@ -433,9 +433,9 @@ NO_INSTRUMENTO:
         INC     DE
         INC     HL
         ldi                             ; LD	A,(HL)
-			; LD	(DE),A
-			; INC	DE
-			; INC	HL
+    	    ; LD	(DE),A
+	        ; INC	DE
+	        ; INC	HL
         JR      DECODE_CANAL
 
 NO_ENVOLVENTE:
@@ -454,7 +454,7 @@ NO_MODIFICA:
         XOR     A
         DJNZ    NO_MODIFICA
         or      $81                     ; SET	7,A
-			; SET	0,A
+	        ; SET	0,A
         LD      (DE), A
         INC     DE
         INC     HL
@@ -593,7 +593,7 @@ NO_INC_TEMPO:
         XOR     A
         LD      (PSG_REG_SEC+13), A
         LD      (PSG_REG+13), A
-		;LD	(ENVOLVENTE_BACK),A		;08.13 / RESETEA EL BACKUP DE LA ENVOLVENTE
+        ;LD	(ENVOLVENTE_BACK),A		;08.13 / RESETEA EL BACKUP DE LA ENVOLVENTE
         JR      LOCALIZA_NOTA
 
 COM_EFECTO:
@@ -898,7 +898,7 @@ TABLA_NOTAS:
 
 EVOLVENTES:
         LD      HL, DATOS_NOTAS
-		;SUB	12
+    ;SUB	12
         RLCA                            ;X2
         LD      D, 0
         LD      E, A
@@ -919,16 +919,16 @@ FRECUENCIA_OFF:
         LD      DE, $0000
         LD      (IY+0), E
         LD      (IY+1), D
-					;CALCULO DEL RATIO (OCTAVA ARRIBA)
+			        ;CALCULO DEL RATIO (OCTAVA ARRIBA)
 CONT_ENV:
         POP     DE
         PUSH    AF
         PUSH    BC
         AND     00000011B
         LD      B, A
-		;INC	B
+        ;INC	B
 
-		;AND	A			;1/2
+        ;AND	A			;1/2
         RR      D
         RR      E
 CRTBC0:                                 ;AND	A			;1/4 - 1/8 - 1/16
@@ -997,11 +997,11 @@ SELECT_CANAL_C:
 
 
 INTERR: DB      0                       ;INTERRUPTORES 1=ON 0=OFF
-					;BIT 0=CARGA CANCION ON/OFF
-					;BIT 1=PLAYER ON/OFF
-					;BIT 2=EFECTOS ON/OFF
-					;BIT 3=SFX ON/OFF
-					;BIT 4=LOOP
+			        ;BIT 0=CARGA CANCION ON/OFF
+			        ;BIT 1=PLAYER ON/OFF
+			        ;BIT 2=EFECTOS ON/OFF
+			        ;BIT 3=SFX ON/OFF
+			        ;BIT 4=LOOP
 ;CONTROL DE LAS INTERRUPCIONES
 
 ;HOOK:		 DB	0
@@ -1115,9 +1115,9 @@ PSG_REG_SEC:
         DS      16
 ENVOLVENTE:
         DB      0                       ;DB : FORMA DE LA ENVOLVENTE
-					;BIT 0	  : FRECUENCIA CANAL ON/OFF
-					;BIT 1-2  : RATIO
-					;BIT 3-3  : FORMA
+			        ;BIT 0	  : FRECUENCIA CANAL ON/OFF
+			        ;BIT 1-2  : RATIO
+			        ;BIT 3-3  : FORMA
 ENVOLVENTE_BACK:
         DB      0                       ;DB:	BACKUP DE LA FORMA DE LA ENVOLENTE
 

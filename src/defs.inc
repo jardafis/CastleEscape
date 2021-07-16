@@ -24,9 +24,9 @@
         defc    AYFX_FALLING=5
         defc    AYFX_DIE=6
 
-		;
-		; Game Configuration
-		;
+        ;
+        ; Game Configuration
+        ;
         defc    START_X=40
         defc    START_Y=120
         defc    START_LIVES=0x03
@@ -50,9 +50,9 @@
         defc    SIZEOF_byte=0x01
 
 
-		;
-		; Max items per level
-		;
+        ;
+        ; Max items per level
+        ;
         defc    MAX_LANTERNS=8
         defc    MAX_HEARTS=8
         defc    MAX_EGGS=8
@@ -94,7 +94,7 @@
         defc    MAX_X_POS=256
         defc    MAX_Y_POS=192
 
-		;
+        ;
         ; Sprite ID's
         ;
         defc    TILE_SHEET_WIDTH=16
@@ -162,9 +162,9 @@
         defc    IO_KEMPSTON=0x1f
         defc    MIC_OUTPUT=0x08
 
-		;
-		; OpCodes
-		;
+        ;
+        ; OpCodes
+        ;
         defc    JP_OPCODE=0xc3
 
         ;
@@ -337,9 +337,9 @@ modLoop:
         add     a, val
         ENDM
 
-		;
-		; Calculate screen row address
-		;
+        ;
+        ; Calculate screen row address
+        ;
 calculateRow    MACRO   row
         extern  _screenTab
         ld      l, row                  ; Get the screen y pixel position
@@ -350,11 +350,11 @@ calculateRow    MACRO   row
         ld      sp, hl                  ; Save the result in sp.
         ENDM
 
-		;
-		; Delay in increments of 1/50th of a second.
-		;
-		; Interrupts must be enabled!
-		;
+        ;
+        ; Delay in increments of 1/50th of a second.
+        ;
+        ; Interrupts must be enabled!
+        ;
 delay   MACRO   val
         LOCAL   delayLoop
         push    bc
@@ -376,9 +376,9 @@ border  MACRO   color
         out     (IO_BORDER), a
         ENDM
 
-		;
-		; Banked call to function
-		;
+        ;
+        ; Banked call to function
+        ;
 bcall   MACRO   function
         call    bankedCall
         db      function>>16|MEM_BANK_ROM

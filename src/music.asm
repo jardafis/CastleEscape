@@ -6,17 +6,17 @@
 
         section CODE_5
 
-		;
-		; Assembly player from https://github.com/AugustoRuiz/WYZTracker
-		;
-		; Minor tweaks to change some routine names to English
-		;
+        ;
+        ; Assembly player from https://github.com/AugustoRuiz/WYZTracker
+        ;
+        ; Minor tweaks to change some routine names to English
+        ;
         include "wyzproplay47c_zx.inc"
 
         section RODATA_2
-		;
-		; Table of songs...
-		;
+        ;
+        ; Table of songs...
+        ;
 TABLA_SONG:
         dw      SONG_0, SONG_1, SONG_2
 
@@ -25,9 +25,9 @@ TABLA_SONG:
         ;
         include "music/CastleEscape.mus.inc"
 
-		;
-		; Songs exported from WYZTracker
-		;
+        ;
+        ; Songs exported from WYZTracker
+        ;
 SONG_0:
         binary  "music/gothic.mus"
 SONG_1:

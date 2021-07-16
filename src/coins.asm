@@ -53,10 +53,10 @@ notVisible:
         ;
         ; Called when a collision is detected
         ;
-		;	Entry:
-		;		hl - Pointer to items flags
-		;		b  - Screen y character position
-		;		c  - screen x character position
+        ;	Entry:
+        ;		hl - Pointer to items flags
+        ;		b  - Screen y character position
+        ;		c  - screen x character position
         ;
 coinCollision:
         call    removeItem              ; Remove the item from the screen

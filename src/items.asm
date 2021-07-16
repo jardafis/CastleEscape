@@ -20,21 +20,21 @@
         defc    ITEM_WIDTH=0x08
         defc    ITEM_HEIGHT=0x08
 
-		;
-		;	Flag bits:
-		;	+---------------+
-		;	|7|6|5|4|3|2|1|0|
-		;	+---------------+
-		;	 | | | | | | | |
-		;	 | | | | | | | +-- Visible
-		;	 | | | | | | +---- Unused
-		;	 | | | | | +------ Unused
-		;	 | | | | +-------- Unused
-		;	 | | | +---------- Unused
-		;	 | | +------------ Unused
-		;	 | +-------------- Unused
-		;	 +---------------- End of table
-		;
+        ;
+        ;	Flag bits:
+        ;	+---------------+
+        ;	|7|6|5|4|3|2|1|0|
+        ;	+---------------+
+        ;	 | | | | | | | |
+        ;	 | | | | | | | +-- Visible
+        ;	 | | | | | | +---- Unused
+        ;	 | | | | | +------ Unused
+        ;	 | | | | +-------- Unused
+        ;	 | | | +---------- Unused
+        ;	 | | +------------ Unused
+        ;	 | +-------------- Unused
+        ;	 +---------------- End of table
+        ;
 
         section CODE_2
         ;
@@ -372,15 +372,15 @@ notVisible3:
         addhl
         jp      nextItem
 
-		;
-		; Remove an item from the screen and change
-		; it's flags so that it is no longer visible.
-		;
-		;	Entry:
-		;		hl - Pointer to items flags
-		;		b  - Screen y character position
-		;		c  - screen x character position
-		;
+        ;
+        ; Remove an item from the screen and change
+        ; it's flags so that it is no longer visible.
+        ;
+        ;	Entry:
+        ;		hl - Pointer to items flags
+        ;		b  - Screen y character position
+        ;		c  - screen x character position
+        ;
 removeItem:
         ld      (hl), 0                 ; Zero flags and save in item table
         call    clearAttr               ; Remove the item and attribute

@@ -9,12 +9,12 @@
 
         section CODE_2
 
-		;
-		; Entry:
-		;		de - Pointer to buffer
-		;		b  - Start screen y location
-		;		c  - Start screen x location
-		;
+        ;
+        ; Entry:
+        ;		de - Pointer to buffer
+        ;		b  - Start screen y location
+        ;		c  - Start screen x location
+        ;
 _copyScreen:
         di
         ld      (copyTempSP+1), sp      ; Optimization, self modifying code
@@ -46,12 +46,12 @@ copyTempSP:
         ei
         ret
 
-		;
-		; Entry:
-		;		de - Pointer to buffer
-		;		b  - Start screen y location
-		;		c  - Start screen x location
-		;
+        ;
+        ; Entry:
+        ;		de - Pointer to buffer
+        ;		b  - Start screen y location
+        ;		c  - Start screen x location
+        ;
 _pasteScreen:
         di
         ld      (pasteTempSP+1), sp     ; Optimization, self modifying code
@@ -87,8 +87,8 @@ pasteTempSP:
 
         ;
         ; Entry:
-		;		b  - Screen y location
-		;		c  - Screen x location
+        ;		b  - Screen y location
+        ;		c  - Screen x location
         ;
 _displaySprite:
         di
@@ -175,13 +175,13 @@ displaySpriteSP:
         ret
 
 nextCharRow:
-		; Increment char row
+        ; Increment char row
         ld      a, l
         add     0x20
         ld      l, a
         jr      c, nextThird
 
-		; Same third
+        ; Same third
         ld      a, h
         sub     0x08
         ld      h, a

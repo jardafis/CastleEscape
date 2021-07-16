@@ -2,20 +2,20 @@
 
         section CODE_2
 
-		;
-		; Xorshift PRNG
-		;
-		; https://wikiti.brandonw.net/index.php?title=Z80_Routines:Math:Random
-		;
-		; Input:
-		;		None
-		;
-		; Output:
-		; 		hl - PRN
-		;
-		; Corrupts:
-		;		a
-		;
+        ;
+        ; Xorshift PRNG
+        ;
+        ; https://wikiti.brandonw.net/index.php?title=Z80_Routines:Math:Random
+        ;
+        ; Input:
+        ;		None
+        ;
+        ; Output:
+        ; 		hl - PRN
+        ;
+        ; Corrupts:
+        ;		a
+        ;
 rand:
         ld      hl, 1                   ; seed must not be 0
 

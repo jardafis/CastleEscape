@@ -24,10 +24,10 @@
         include "defs.inc"
 
         defc    BORDER_COLOR=INK_YELLOW
-		;
-		; Display the game main menu. Options to configure and start
-		; the game are on this screen.
-		;
+        ;
+        ; Display the game main menu. Options to configure and start
+        ; the game are on this screen.
+        ;
 mainMenu:
         ;
         ; Start main menu song

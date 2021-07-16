@@ -9,11 +9,11 @@
 
         include "defs.inc"
 
-		;
-		; Display a char at the specified location.
-		; Callable from 'C', parameters are passed on
-		; the stack.
-		;
+        ;
+        ; Display a char at the specified location.
+        ; Callable from 'C', parameters are passed on
+        ; the stack.
+        ;
         defvars 0                       ; Define the stack variables used
         {
             yPos        ds.b 2
@@ -33,20 +33,20 @@ _printChar:
         exit
         ret
 
-		;
-		; Display a string with attributes.
-		;
-		;	Entry:
-		;		hl - Pointer to string
-		;		b  - Y screen start position
-		;		c  - X screen start position
-		;		a  - Screen attributes
-		;
-		;	Exit:
-		;		hl - Points to the memory location following the strings
-		;			 null terminator.
-		;		c  - Screen X position following the string
-		;
+        ;
+        ; Display a string with attributes.
+        ;
+        ;	Entry:
+        ;		hl - Pointer to string
+        ;		b  - Y screen start position
+        ;		c  - X screen start position
+        ;		a  - Screen attributes
+        ;
+        ;	Exit:
+        ;		hl - Points to the memory location following the strings
+        ;			 null terminator.
+        ;		c  - Screen X position following the string
+        ;
 printAttr:
         push    af
         push    de
@@ -69,19 +69,19 @@ L1f:
         pop     af
         ret
 
-		;
-		; Display a string.
-		;
-		;	Entry:
-		;		hl - Pointer to string
-		;		b  - Y screen start position
-		;		c  - X screen start position
-		;
-		;	Exit:
-		;		hl - Points to the memory location following the strings
-		;			 null terminator.
-		;		c  - Screen X position following the string
-		;
+        ;
+        ; Display a string.
+        ;
+        ;	Entry:
+        ;		hl - Pointer to string
+        ;		b  - Y screen start position
+        ;		c  - X screen start position
+        ;
+        ;	Exit:
+        ;		hl - Points to the memory location following the strings
+        ;			 null terminator.
+        ;		c  - Screen X position following the string
+        ;
 print:
         push    af
 L2b:
@@ -98,14 +98,14 @@ L2f:
         pop     af
         ret
 
-		;
-		; Display a character at the specified position.
-		;
-		; Input:
-		;		b - Y character position
-		;		c - X character position
-		;		a - Character to display
-		;
+        ;
+        ; Display a character at the specified position.
+        ;
+        ; Input:
+        ;		b - Y character position
+        ;		c - X character position
+        ;		a - Character to display
+        ;
 printChar:
         push    af
         push    bc

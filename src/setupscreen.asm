@@ -89,9 +89,9 @@ _setupScreen:
 
         call    _scrollReset
 
-		; Save the location (and direction) where the player entered
-		; the level. This is used as the starting
-		; location when they die.
+        ; Save the location (and direction) where the player entered
+        ; the level. This is used as the starting
+        ; location when they die.
         ld      hl, (xyPos)
         ld      (xyStartPos), hl
         ld      hl, (playerSprite)

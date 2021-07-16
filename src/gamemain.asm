@@ -87,9 +87,9 @@ _main:
 init:
         border  INK_BLACK
 
-		;
-		; Initialize the WYZ Player
-		;
+        ;
+        ; Initialize the WYZ Player
+        ;
         call    wyz_player_init
 
         ;
@@ -97,10 +97,10 @@ init:
         ;
         call    initISR
 
-		;
-		; Detect Kempston joystick and modify
-		; user input scanning code to poll it.
-		;
+        ;
+        ; Detect Kempston joystick and modify
+        ; user input scanning code to poll it.
+        ;
         call    detectKempston
         ret     z
         ld      a, JP_OPCODE
@@ -133,9 +133,9 @@ newGame:
         ;
         screen  0
 
-		;
-		; Select bank 0 @ 0xc000
-		;
+        ;
+        ; Select bank 0 @ 0xc000
+        ;
         bank    0
 
         ;
@@ -214,33 +214,33 @@ newGame:
         call    _copyScreen
 
 
-		;
-		; The game loop
-		;
-		; The game loop does the following basic operations.
-		; * Remove any moving items from the screen at their current position
-		; * Update user inputs
-		; * Update the position of any moving items
-		; * Re-draw any moving items at their new position
-		;
+        ;
+        ; The game loop
+        ;
+        ; The game loop does the following basic operations.
+        ; * Remove any moving items from the screen at their current position
+        ; * Update user inputs
+        ; * Update the position of any moving items
+        ; * Re-draw any moving items at their new position
+        ;
 gameLoop:
         ;
         ; Wait for refresh interrupt
         ;
         halt
 
-		; ######################################
+        ; ######################################
         ;
         ; Update the scrolling message
         ;
-		; ######################################
+        ; ######################################
         call    _scroll
 
-		; ######################################
-		;
-		; Remove any moving items from the screen
-		;
-		; ######################################
+        ; ######################################
+        ;
+        ; Remove any moving items from the screen
+        ;
+        ; ######################################
 
         ;
         ; Re-draw the screen at the players current location
@@ -253,24 +253,24 @@ gameLoop:
         rrca
         jr      c, skipOddFrame2
 
-		;
-		; The below code is only executed on even frame numbers
-		;
+        ;
+        ; The below code is only executed on even frame numbers
+        ;
 
-		;
-		; Remove spiders
-		;
+        ;
+        ; Remove spiders
+        ;
         ld      a, ID_BLANK
         ld      hl, (currentSpiderTable)
         call    displayPixelItems
 
 skipOddFrame2:
 
-		; ######################################
-		;
-		; Update user input
-		;
-		; ######################################
+        ; ######################################
+        ;
+        ; Update user input
+        ;
+        ; ######################################
         call    _updateDirection
 
         ;
@@ -346,30 +346,30 @@ notMidpoint:
         ld      (_jumping), a
 notJumping:
 
-		; ######################################
-		;
-		; Check if player is colliding with platforms
-		; in the Y direction.
-		;
-		; ######################################
+        ; ######################################
+        ;
+        ; Check if player is colliding with platforms
+        ; in the Y direction.
+        ;
+        ; ######################################
         call    checkYCol
 
-		; ######################################
-		;
-		; Check if player is colliding with platforms
-		; in the Y direction.
-		;
-		; ######################################
+        ; ######################################
+        ;
+        ; Check if player is colliding with platforms
+        ; in the Y direction.
+        ;
+        ; ######################################
         ld      a, (_xSpeed)            ; If xSpeed != 0 player is moving
         or      a                       ; left or right.
         call    nz, checkXCol           ; Check for a collision.
 
-		; ######################################
+        ; ######################################
         ;
         ; Check for collisions with coins, eggs,
         ; hearts, and spiders, etc.
         ;
-		; ######################################
+        ; ######################################
         ld      hl, (currentCoinTable)
         ld      de, coinCollision
         call    checkItemCollision
@@ -383,11 +383,11 @@ notJumping:
         ld      de, spiderCollision
         call    checkItemCollision
 
-		; ######################################
-		;
-		; Rotate any visible coins.
-		;
-		; ######################################
+        ; ######################################
+        ;
+        ; Rotate any visible coins.
+        ;
+        ; ######################################
         ld      hl, coinRotate
         dec     (hl)
         jp      p, noAnimate
@@ -395,11 +395,11 @@ notJumping:
         call    _animateCoins
 noAnimate:
 
-		; ######################################
-		;
-		; Redraw any moving items.
-		;
-		; ######################################
+        ; ######################################
+        ;
+        ; Redraw any moving items.
+        ;
+        ; ######################################
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _copyScreen
@@ -411,11 +411,11 @@ noAnimate:
         rrca
         jr      c, skipOddFrame
 
-		; ######################################
-		;
-		; The below code is only executed on even frame numbers
-		;
-		; ######################################
+        ; ######################################
+        ;
+        ; The below code is only executed on even frame numbers
+        ;
+        ; ######################################
         call    updateSpiderPos
         call    displaySpiders
         ;

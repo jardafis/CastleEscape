@@ -51,7 +51,7 @@ displayTile:
         push    bc
         push    hl
 
-		; hl = a * 8
+        ; hl = a * 8
         rlca
         rlca
         rlca
@@ -135,8 +135,8 @@ TempSP2:
         ; All used registers are preserved by this function.
         ;
         ; Entry:
-        ;		b - Y character location
-        ;		c - X character location
+        ;		b - Y pixel location
+        ;		c - X pixel location
         ;		a - Tile ID of item
         ;
 displayPixelTile:
@@ -150,8 +150,8 @@ displayPixelTile:
 
         calculateRow    b
 
-		; Calculate the index into the tilesheet
-		; hl = tileID * 8
+        ; Calculate the index into the tilesheet
+        ; hl = tileID * 8
         rlca
         rlca
         rlca
@@ -172,10 +172,10 @@ displayPixelTile:
         and     %00011111
         ld      c, a
 
-		; Write the tile data to the screen
-		; de - Pointer to screen
-		; hl - Pointer to tile data
-		; c  - Tile X character offset
+        ; Write the tile data to the screen
+        ; de - Pointer to screen
+        ; hl - Pointer to tile data
+        ; c  - Tile X character offset
 
         pop     de                      ; Pop screen address
 

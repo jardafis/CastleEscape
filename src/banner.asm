@@ -10,9 +10,9 @@
 
         defc    BANNER_HEIGHT=0x03
 
-		;
-		; Display the in-game banner.
-		;
+        ;
+        ; Display the in-game banner.
+        ;
 displayBanner:
         push    af
         push    bc
@@ -29,13 +29,13 @@ xLoop:
         call    displayTile
         call    setTileAttr
 
-		; x loop counter
+        ; x loop counter
         inc     c
         ld      a, c
         cmp     SCREEN_WIDTH
         jr      nz, xLoop
 
-		; y loop counter
+        ; y loop counter
         inc     b
         ld      a, b
         cmp     BANNER_HEIGHT
