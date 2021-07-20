@@ -10,7 +10,7 @@
 _lanternFlicker:
         ld      a, (hl)                 ; Number of lanterns
         or      a
-        jr      z, done                 ; No lanterns
+        ret     z                       ; No lanterns
         inc     hl                      ; Point to first attribute address
 
         di

@@ -113,20 +113,15 @@ _waitKey:
         ;		a - ASCII code for the key pressed
         ;
 waitKey:
-        push    bc
-
-waitKeyPress:
         call    keyboardScan
-        jr      z, waitKeyPress
+        jr      z, waitKey
+        ex      af, af'                 ; Save the value of the key pressed
 
-        ld      b, a                    ; Save the value of the key pressed
 waitKeyRelease:
         call    keyboardScan
         jr      nz, waitKeyRelease
 
-        ld      a, b                    ; Restore the value of the key pressed
-
-        pop     bc
+        ex      af, af'                 ; Restore the value of the key pressed
         ret
 
         ;

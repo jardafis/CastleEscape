@@ -1,5 +1,11 @@
 .PHONY: clean all install
-all: build/levels.inc build/banner.inc build/tilesheet.inc build/RightKnight.inc build/LeftKnight.inc
+all: build/levels.inc \
+	build/banner.inc \
+	build/tilesheet.inc \
+	build/RightKnight.inc \
+	build/LeftKnight.inc \
+	build/RightJumpKnight.inc \
+	build/LeftJumpKnight.inc
 
 clean:
 	rm -rf build
@@ -22,3 +28,9 @@ build/RightKnight.inc: gimp/RightKnight.png gimp/RightMasks.png
 build/LeftKnight.inc: gimp/LeftKnight.png gimp/LeftMasks.png
 	./scripts/genSprites.sh $^ -o $@
 
+build/RightJumpKnight.inc: gimp/RightJump.png gimp/RightJumpMask.png
+	./scripts/genSprites.sh $^ -o $@
+
+build/LeftJumpKnight.inc: gimp/LeftJump.png gimp/LeftJumpMask.png
+	./scripts/genSprites.sh $^ -o $@
+	
