@@ -2,6 +2,7 @@
         extern  die
         extern  displayPixelTile
         extern  rand
+        extern  ticks
 
         public  currentSpiderTable
         public  displaySpiders
@@ -74,6 +75,9 @@ done:
         jr      nextSpider
 
 update:
+        ld      a, (ticks)
+        rrca
+        ret     c
         ld      hl, (currentSpiderTable)
 updatePosition:
         ld      a, (hl)                 ; Flags

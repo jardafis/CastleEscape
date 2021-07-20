@@ -231,13 +231,6 @@ gameLoop:
 
         ; ######################################
         ;
-        ; Update the scrolling message
-        ;
-        ; ######################################
-        call    _scroll
-
-        ; ######################################
-        ;
         ; Remove any moving items from the screen
         ;
         ; ######################################
@@ -249,22 +242,12 @@ gameLoop:
         ld      bc, (_xPos)
         call    _pasteScreen
 
-        ld      a, (ticks)
-        rrca
-        jr      c, skipOddFrame2
-
-        ;
-        ; The below code is only executed on even frame numbers
-        ;
-
         ;
         ; Remove spiders
         ;
         ld      a, ID_BLANK
         ld      hl, (currentSpiderTable)
         call    displayPixelItems
-
-skipOddFrame2:
 
         ; ######################################
         ;
@@ -407,15 +390,6 @@ noAnimate:
         ld      bc, (_xPos)
         call    _displaySprite
 
-        ld      a, (ticks)
-        rrca
-        jr      c, skipOddFrame
-
-        ; ######################################
-        ;
-        ; The below code is only executed on even frame numbers
-        ;
-        ; ######################################
         call    updateSpiderPos
         call    displaySpiders
         ;
@@ -424,11 +398,17 @@ noAnimate:
         ld      hl, _lanternList
         call    _lanternFlicker
 
-skipOddFrame:
         ;
         ; See if the egg count needs to be decremented
         ;
         call    decrementEggs
+
+        ; ######################################
+        ;
+        ; Update the scrolling message
+        ;
+        ; ######################################
+        call    _scroll
 
         jp      gameLoop
 
