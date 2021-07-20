@@ -1,8 +1,12 @@
         extern  _falling
         extern  _jumping
+        extern  _pasteScreen
+        extern  _spriteBuffer
+        extern  _xPos
         extern  _ySpeed
         extern  decBCD
         extern  display2BCD
+        extern  displayPixelTile
         extern  gameOver
         extern  heartCount
         extern  playerSprite
@@ -25,6 +29,29 @@ die:
         push    bc
         push    de
         push    hl
+
+		;
+		; Display headstone where player died
+		;
+        ld      bc, (_xPos)
+        ld      a, 12
+        call    displayPixelTile
+        ld      a, c
+        add     8
+        ld      c, a
+        ld      a, 13
+        call    displayPixelTile
+        ld      a, b
+        add     8
+        ld      b, a
+        ld      a, 13+16
+        call    displayPixelTile
+        ld      a, c
+        sub     8
+        ld      c, a
+        ld      a, 12+16
+        call    displayPixelTile
+
         ;
         ; Start the death march
         ;
@@ -63,6 +90,13 @@ delayLoop:
         ld      a, (hl)
         or      a
         jp      z, gameOver
+
+        ;
+        ; Remove the headstone
+        ;
+        ld      de, _spriteBuffer
+        ld      bc, (_xPos)
+        call    _pasteScreen
 
         ; Set player X/Y position (and sprite direction) to where
         ; they entered the level.
