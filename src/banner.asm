@@ -1,9 +1,8 @@
-
         extern  displayTile
         extern  setTileAttr
 
-        public  displayBanner
         public  bannerData
+        public  displayBanner
 
         include "defs.inc"
 
@@ -11,41 +10,38 @@
 
         defc    BANNER_HEIGHT=0x03
 
-		;
-		; Display the in-game banner.
-		;
+        ;
+        ; Display the in-game banner.
+        ;
 displayBanner:
         push    af
         push    bc
-        push    de
         push    hl
 
         ld      hl, bannerData
-        ld      d, 0x00                 ; Initial y position
-        ld      c, BANNER_HEIGHT
+        ld      b, 0                    ; Starting screen Y position
 yLoop:
-        ld      e, 0x00                 ; Initial x position
-        ld      b, SCREEN_WIDTH
+        ld      c, 0                    ; starting screen X position
 xLoop:
-        push    bc                      ; Save the loop counts
-
-        ld      bc, de                  ; Setup the y,x coords for displayTile
         ld      a, (hl)                 ; Get the tile ID
+        inc     hl                      ; Point to next tile
+
         call    displayTile
         call    setTileAttr
 
-        pop     bc                      ; Restore loop counts
+        ; x loop counter
+        inc     c
+        ld      a, c
+        cmp     SCREEN_WIDTH
+        jr      nz, xLoop
 
-        inc     hl                      ; Point to next tile
-        inc     e                       ; Increment x position
-        djnz    xLoop
-
-        inc     d                       ; Increment y position
-        dec     c
+        ; y loop counter
+        inc     b
+        ld      a, b
+        cmp     BANNER_HEIGHT
         jr      nz, yLoop
 
         pop     hl
-        pop     de
         pop     bc
         pop     af
         ret

@@ -1,19 +1,19 @@
-        extern  _screenTab
         extern  setAttr
 
+        public  _printChar
         public  print
         public  printAttr
+        public  printChar
 
         section CODE_2
 
         include "defs.inc"
 
-        public  _printChar
-		;
-		; Display a char at the specified location.
-		; Callable from 'C', parameters are passed on
-		; the stack.
-		;
+        ;
+        ; Display a char at the specified location.
+        ; Callable from 'C', parameters are passed on
+        ; the stack.
+        ;
         defvars 0                       ; Define the stack variables used
         {
             yPos        ds.b 2
@@ -33,20 +33,20 @@ _printChar:
         exit
         ret
 
-		;
-		; Display a string with attributes.
-		;
-		;	Entry:
-		;		hl - Pointer to string
-		;		b  - Y screen start position
-		;		c  - X screen start position
-		;		a  - Screen attributes
-		;
-		;	Exit:
-		;		hl - Points to the memory location following the strings
-		;			 null terminator.
-		;		c  - Screen X position following the string
-		;
+        ;
+        ; Display a string with attributes.
+        ;
+        ;	Entry:
+        ;		hl - Pointer to string
+        ;		b  - Y screen start position
+        ;		c  - X screen start position
+        ;		a  - Screen attributes
+        ;
+        ;	Exit:
+        ;		hl - Points to the memory location following the strings
+        ;			 null terminator.
+        ;		c  - Screen X position following the string
+        ;
 printAttr:
         push    af
         push    de
@@ -69,19 +69,19 @@ L1f:
         pop     af
         ret
 
-		;
-		; Display a string.
-		;
-		;	Entry:
-		;		hl - Pointer to string
-		;		b  - Y screen start position
-		;		c  - X screen start position
-		;
-		;	Exit:
-		;		hl - Points to the memory location following the strings
-		;			 null terminator.
-		;		c  - Screen X position following the string
-		;
+        ;
+        ; Display a string.
+        ;
+        ;	Entry:
+        ;		hl - Pointer to string
+        ;		b  - Y screen start position
+        ;		c  - X screen start position
+        ;
+        ;	Exit:
+        ;		hl - Points to the memory location following the strings
+        ;			 null terminator.
+        ;		c  - Screen X position following the string
+        ;
 print:
         push    af
 L2b:
@@ -98,32 +98,24 @@ L2f:
         pop     af
         ret
 
+        ;
+        ; Display a character at the specified position.
+        ;
+        ; Input:
+        ;		b - Y character position
+        ;		c - X character position
+        ;		a - Character to display
+        ;
 printChar:
         push    af
         push    bc
-        push    de
         push    hl
 
         di
         ld      (TempSP+1), sp
 
-        sub     ' '                     ; Font data starts at SPACE
-        ld      d, a                    ; Save char to be displayed
-
-        ; Calculate the screen address
-        ld      l, b                    ; Y screen position
-        ld      h, 0
-        hlx     16
-        ld      sp, _screenTab
-        add     hl, sp
-        ld      sp, hl
-
-        ld      a, c                    ; Get X offset
-        pop     bc
-        add     c                       ; Add it to the screen address
-        ld      c, a
-
-        ld      l, d                    ; Get char to display
+        sub     ' '                     ; Font data starts at <SPACE>
+        ld      l, a                    ; Get char to display
         ld      h, 0
         hlx     8
         ld      sp, FONT
@@ -131,16 +123,28 @@ printChar:
 
         ; Point the stack at the font data
         ld      sp, hl
-        ; Point hl at the screen address
-        ld      hl, bc
+
+        ; Calculate the screen address
+        ld      a, b                    ; Y character position
+        rrca                            ; Move lower 3 bits to the upper 3 bits
+        rrca
+        rrca
+        and     %11100000               ; Bits 5-3 of pixel row
+        or      c                       ; X character position
+        ld      l, a
+
+        ld      a, b                    ; Y character position
+        and     %00011000               ; Bits 7-6 of pixel row
+        or      0x40                    ; 0x40 or 0xc0
+        ld      h, a
 
         ; Pop 2 bytes of font data and store it
         ; to the screen.
-        pop     bc                      ; 10
-        ld      (hl), c                 ; 7
-        inc     h                       ; Add 256 to screen address 4
-        ld      (hl), b                 ; 7
-        inc     h                       ; Add 256 to screen address 4
+        pop     bc
+        ld      (hl), c
+        inc     h                       ; Add 256 to screen address
+        ld      (hl), b
+        inc     h                       ; Add 256 to screen address
 
         ; Pop 2 bytes of font data and store it
         ; to the screen.
@@ -171,7 +175,6 @@ TempSP:
         ei
 
         pop     hl
-        pop     de
         pop     bc
         pop     af
         ret

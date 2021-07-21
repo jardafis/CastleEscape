@@ -45,11 +45,10 @@ IFDEF   SOUND
 ENDIF
 
         ;
-        ; Increment the 16-bit ticks count
+        ; Increment the 8-bit ticks count
         ;
-        ld      hl, (ticks)
-        inc     hl
-        ld      (ticks), hl
+        ld      hl, ticks
+        inc     (hl)
 
         pop     iy
         pop     ix
@@ -62,4 +61,4 @@ ENDIF
 
         section BSS_2
 ticks:
-        ds      2
+        ds      1

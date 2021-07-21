@@ -1,6 +1,21 @@
         public  _screenTab
         section RODATA_2
 
+        ; Screen address decoding:
+        ;        Hi                Lo
+        ; +---------------+ +---------------+
+        ; |7|6|5|4|3|2|1|0| |7|6|5|4|3|2|1|0|
+        ; +---------------+ +---------------+
+        ; |   | |   |     | |     |         |
+        ; +---+ +---+-----+ +-----+---------+
+        ;   |     |    |       |        |
+        ;   |     |    |       |        +-- Character column (0-31)
+        ;   |     |    |       +----------- Character row lower bits (0-7)
+        ;   |     |    +------------------- Pixel row within character (0-7)
+        ;   |     +------------------------ Character row upper bits (0-2)
+        ;   +------------------------------ Bank (1 or 3)
+
+
         ;
         ; The screen table contains the address of the
         ; first byte of each pixel row of screen memory

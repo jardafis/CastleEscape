@@ -1,15 +1,19 @@
-        extern  heartCount
-        extern  subBCD
-        extern  display2BCD
-        extern  gameOver
-        extern  xyPos
-        extern  xyStartPos
-        extern  _jumping
-        extern  _ySpeed
         extern  _falling
-        extern  wyz_play_song
+        extern  _jumping
+        extern  _pasteScreen
+        extern  _spriteBuffer
+        extern  _xPos
+        extern  _ySpeed
+        extern  decBCD
+        extern  display2BCD
+        extern  displayPixelTile
+        extern  gameOver
+        extern  heartCount
         extern  playerSprite
         extern  startSprite
+        extern  wyz_play_song
+        extern  xyPos
+        extern  xyStartPos
 
         public  die
 
@@ -17,14 +21,37 @@
 
         section CODE_2
 
-		;
-		; Routine called when plater dies.
-		;
+        ;
+        ; Routine called when plater dies.
+        ;
 die:
         push    af
         push    bc
         push    de
         push    hl
+
+		;
+		; Display headstone where player died
+		;
+        ld      bc, (_xPos)
+        ld      a, 12
+        call    displayPixelTile
+        ld      a, c
+        add     8
+        ld      c, a
+        ld      a, 13
+        call    displayPixelTile
+        ld      a, b
+        add     8
+        ld      b, a
+        ld      a, 13+16
+        call    displayPixelTile
+        ld      a, c
+        sub     8
+        ld      c, a
+        ld      a, 12+16
+        call    displayPixelTile
+
         ;
         ; Start the death march
         ;
@@ -47,26 +74,32 @@ delayLoop:
         ;
         border  INK_BLACK
 
-		;
-		; Decrement the heart count
-		;
-        ld      l, 0x01
+        ;
+        ; Decrement the heart count
+        ;
         ld      de, heartCount
-        call    subBCD
+        call    decBCD
         ld      bc, 0x011d              ; y,x screen location
         ex      de, hl
         call    display2BCD
 
-		;
-		; If the heart count is zero, game over!
-		; hl points to heartCount
-		;
+        ;
+        ; If the heart count is zero, game over!
+        ; hl points to heartCount
+        ;
         ld      a, (hl)
         or      a
         jp      z, gameOver
 
-		; Set player X/Y position (and sprite direction) to where
-		; they entered the level.
+        ;
+        ; Remove the headstone
+        ;
+        ld      de, _spriteBuffer
+        ld      bc, (_xPos)
+        call    _pasteScreen
+
+        ; Set player X/Y position (and sprite direction) to where
+        ; they entered the level.
         ld      hl, (xyStartPos)
         ld      (xyPos), hl
         ld      hl, (startSprite)

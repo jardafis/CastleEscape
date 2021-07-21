@@ -10,7 +10,7 @@
 _lanternFlicker:
         ld      a, (hl)                 ; Number of lanterns
         or      a
-        jr      z, done                 ; No lanterns
+        ret     z                       ; No lanterns
         inc     hl                      ; Point to first attribute address
 
         di
@@ -21,7 +21,7 @@ _lanternFlicker:
 
         ld      hl, colors              ; Pointer to color table
         ld      a, r                    ; Use 'r' as the color table index
-        and     0x07                    ; Bottom 3 bits only
+        and     0x03                    ; Bottom 2 bits only
         addhl
         ld      a, (hl)                 ; Read attribute
 
@@ -31,7 +31,7 @@ loop:
         djnz    loop                    ; Loop for all lanterns
 
 tempSP:
-        ld      sp, 0x0000              ; Restore the stack
+        ld      sp, -1                  ; Restore the stack
         ei
 done:
         ret
@@ -42,10 +42,6 @@ colors:
         db      INK_RED
         db      (INK_YELLOW|BRIGHT)
         db      (INK_RED|BRIGHT)
-        db      (INK_YELLOW|BRIGHT)
-        db      (INK_RED|BRIGHT)
-        db      INK_YELLOW
-        db      INK_RED
 
         section BSS_2
 _lanternList:                           ; Max of 8 lanterns on any screen

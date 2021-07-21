@@ -1,26 +1,26 @@
         extern  assert
 
-        public  keyboardScan
         public  _updateDirection
-        public  kjScan
-        public  waitKey
         public  _waitKey
+        public  keyboardScan
+        public  kjScan
         public  lookupScanCode
         public  scanCodes
+        public  waitKey
 
         section CODE_2
 
         include "defs.inc"
 
-		;
-		; Scan the keyboard for input.
-		;
-		;	Entry:
-		;		None
-		;
-		;	Exit:
-		;		a - ASCII code for key pressed or 0 if no keys are pressed
-		;		Z - Zero flag set if no key pressed
+        ;
+        ; Scan the keyboard for input.
+        ;
+        ;	Entry:
+        ;		None
+        ;
+        ;	Exit:
+        ;		a - ASCII code for key pressed or 0 if no keys are pressed
+        ;		Z - Zero flag set if no key pressed
         ;
         ; Taken from http://www.breakintoprogram.co.uk/computers/zx-spectrum/keyboard
         ; with optimizations by IrataHack.
@@ -54,11 +54,11 @@ foundKey:
         pop     BC
         ret
 
-		;
-		; Inputs: None
-		; Outputs:
-		;		e	-	Direction bits
-		;
+        ;
+        ; Inputs: None
+        ; Outputs:
+        ;		e	-	Direction bits
+        ;
 _updateDirection:
         ld      hl, scanCodes           ; Point to the scan codes
         ld      e, 0                    ; Clear our return value
@@ -78,27 +78,27 @@ notPressed:
         inc     hl                      ; Point to next key
         jr      nextScanCode            ; Loop until we have checked all scan codes
 
-		;
-		; The 3 opcode below will be replaced with
-		; jp	readKempston if a Kempston joystick
-		; was detected during game initialization.
-		;
+        ;
+        ; The 3 opcode below will be replaced with
+        ; jp	readKempston if a Kempston joystick
+        ; was detected during game initialization.
+        ;
 kjScan:
         ret
         nop
         nop
         ret
 
-		;
-		; C Wrapper.
-		; Wait for a key to be pressed and released
-		;
-		;	Entry:
-		;		None
-		;
-		;	Exit:
-		;		l - ASCII code for key pressed or 0 if no keys are pressed
-		;
+        ;
+        ; C Wrapper.
+        ; Wait for a key to be pressed and released
+        ;
+        ;	Entry:
+        ;		None
+        ;
+        ;	Exit:
+        ;		l - ASCII code for key pressed or 0 if no keys are pressed
+        ;
 _waitKey:
         push    af
         call    waitKey
@@ -106,27 +106,22 @@ _waitKey:
         pop     af
         ret
 
-		;
-		; Wait for a key to be pressed.
-		;
-		;	Exit:
-		;		a - ASCII code for the key pressed
-		;
+        ;
+        ; Wait for a key to be pressed.
+        ;
+        ;	Exit:
+        ;		a - ASCII code for the key pressed
+        ;
 waitKey:
-        push    bc
-
-waitKeyPress:
         call    keyboardScan
-        jr      z, waitKeyPress
+        jr      z, waitKey
+        ex      af, af'                 ; Save the value of the key pressed
 
-        ld      b, a                    ; Save the value of the key pressed
 waitKeyRelease:
         call    keyboardScan
         jr      nz, waitKeyRelease
 
-        ld      a, b                    ; Restore the value of the key pressed
-
-        pop     bc
+        ex      af, af'                 ; Restore the value of the key pressed
         ret
 
         ;

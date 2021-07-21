@@ -1,23 +1,23 @@
         extern  _screenTab
 
         public  _copyScreen
-        public  _pasteScreen
         public  _displaySprite
+        public  _pasteScreen
         public  playerSprite
 
         include "defs.inc"
 
         section CODE_2
 
-		;
-		; Entry:
-		;		de - Pointer to buffer
-		;		b  - Start screen y location
-		;		c  - Start screen x location
-		;
+        ;
+        ; Entry:
+        ;		de - Pointer to buffer
+        ;		b  - Start screen y location
+        ;		c  - Start screen x location
+        ;
 _copyScreen:
         di
-        ld      (copyTempSP), sp        ; Optimization, self modifying code
+        ld      (copyTempSP+1), sp      ; Optimization, self modifying code
 
         calculateRow    b
 
@@ -41,20 +41,20 @@ copyloop:
         inc     de
         djnz    copyloop
 
-copyTempSP  equ $+1
-        ld      sp, 0x0000
+copyTempSP:
+        ld      sp, -1
         ei
         ret
 
-		;
-		; Entry:
-		;		de - Pointer to buffer
-		;		b  - Start screen y location
-		;		c  - Start screen x location
-		;
+        ;
+        ; Entry:
+        ;		de - Pointer to buffer
+        ;		b  - Start screen y location
+        ;		c  - Start screen x location
+        ;
 _pasteScreen:
         di
-        ld      (pasteTempSP), sp       ; Optimization, self modifying code
+        ld      (pasteTempSP+1), sp     ; Optimization, self modifying code
 
         calculateRow    b
 
@@ -80,62 +80,71 @@ pasteloop:
         inc     hl
         djnz    pasteloop
 
-pasteTempSP equ $+1
-        ld      sp, 0x0000
+pasteTempSP:
+        ld      sp, -1
         ei
-
         ret
 
         ;
         ; Entry:
-		;		b  - Screen y location
-		;		c  - Screen x location
+        ;		b  - Screen y location
+        ;		c  - Screen x location
         ;
 _displaySprite:
         di
-        ld      (displaySpriteSP), sp
+        ld      (displaySpriteSP+1), sp
 
-        ; Calculate the offset into the screen table
+        ld      a, c
+        and     0x07                    ; Get the sprite shift index
+
+        rrca                            ; Multiply by 32
+        rrca
+        rrca
+        ld      h, a
+        and     %11100000
+        ld      l, a
+        ld      a, h
+        and     %00011111
+        ld      h, a
+
+        ld      de, hl                  ; Save 32x in de
+        hlx     2                       ; 64x
+        add     hl, de                  ; 32x + 64x
+        ld      de, (playerSprite)
+        add     hl, de
+        ld      sp, hl                  ; Sprite pointer
+
+        ; Calculate the screen address
         ld      l, b
         ld      h, 0
         add     hl, hl                  ; multiply by 2
         ld      de, _screenTab
         add     hl, de
-        push    hl
-        exx
-        pop     hl
-        exx
+        ld      e, (hl)
+        inc     hl
+        ld      d, (hl)
+        ex      de, hl
 
-        ld      a, c
-        and     0x07                    ; Get the sprite shift index
+        ld      a, c                    ; X pixel position
+
+        rrca                            ; Divide by 8
+        rrca
+        rrca
+
+        and     %00011111               ; Mask off garbage bits
+
+        add     l                       ; Add to screen address
         ld      l, a
-        ld      h, 0
-        ; Multiple by 96
-        hlx     32
-        ld      de, hl                  ; Save 32x
-        hlx     2                       ; 64x
-        add     hl, de                  ; Add 32x
-        ld      de, (playerSprite)
-        add     hl, de
-        ld      (spriteStore), hl
 
-        srl     c                       ; Divide the screen x pixel
-        srl     c                       ; position by 8 to get the
-        srl     c                       ; byte address.
+        ld      c, 0x07
         ld      b, PLAYER_HEIGHT
-loop2:
-        exx
-        ld      sp, hl
-        inc     hl
-        inc     hl
-        exx
-        pop     hl
-        ld      a, l
-        add     c                       ; add x offset
-        ld      l, a
-
-spriteStore equ $+1
-        ld      sp, 0x0000              ; Get the sprite pointer
+yLoop:
+        pop     de                      ; Pop sprite data
+        ld      a, (hl)                 ; Read the screen contents
+        and     e                       ; and with mask
+        or      d                       ; or with sprite data
+        ld      (hl), a                 ; save it back to the screen
+        inc     l                       ; Next screen position to the right
 
         pop     de                      ; Pop sprite data
         ld      a, (hl)                 ; Read the screen contents
@@ -144,27 +153,42 @@ spriteStore equ $+1
         ld      (hl), a                 ; save it back to the screen
         inc     l                       ; Next screen position to the right
 
-        pop     de
-        ld      a, (hl)
-        and     e
-        or      d
-        ld      (hl), a
-        inc     l
+        pop     de                      ; Pop sprite data
+        ld      a, (hl)                 ; Read the screen contents
+        and     e                       ; and with mask
+        or      d                       ; or with sprite data
+        ld      (hl), a                 ; save it back to the screen
 
-        pop     de
-        ld      a, (hl)
-        and     e
-        or      d
-        ld      (hl), a
+        dec     l
+        dec     l
 
-        ld      (spriteStore), sp
+        inc     h                       ; Next pixel line
+        ld      a, h                    ; Check for char boundary crossing
+        and     c                       ; and 0x07
+        jr      z, nextCharRow
 
-        djnz    loop2
-displaySpriteSP equ $+1
-        ld      sp, 0x0000
+        djnz    yLoop                   ; Loop for next row of sprite
+
+displaySpriteSP:
+        ld      sp, -1
         ei
-
         ret
+
+nextCharRow:
+        ; Increment char row
+        ld      a, l
+        add     0x20
+        ld      l, a
+        jr      c, nextThird
+
+        ; Same third
+        ld      a, h
+        sub     0x08
+        ld      h, a
+
+nextThird:
+        djnz    yLoop                   ; Loop for next row of sprite
+        jr      displaySpriteSP
 
         section BSS_2
 playerSprite:

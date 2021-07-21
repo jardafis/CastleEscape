@@ -7,9 +7,9 @@
 ; When executed this loader will copy the crt0 to is runtime
 ; location and jump to it.
 ;
-        EXTERN  crt0
-        EXTERN  crt0_end
-        SECTION LOADER
+        extern  crt0
+        extern  crt0_end
+        section LOADER
         org     23766                   ; Start address used by bin2rem
         di
         ld      hl, data                ; crt0 binary image address

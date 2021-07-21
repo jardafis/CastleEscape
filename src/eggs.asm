@@ -1,33 +1,41 @@
-        extern  displayBCD
         extern  addBCD
-        extern  displayTile
         extern  decBCD
-        extern  wyz_play_sound
+        extern  displayBCD
+        extern  displayTile
         extern  removeItem
+        extern  wyz_play_sound
 
-        public  eggTables
-        public  eggs
         public  currentEggTable
-        public  eggCollision
-        public  eggCount
-        public  updateEggImage
         public  decrementEggs
         public  displayEggCount
+        public  eggCollision
+        public  eggCount
+        public  eggTables
+        public  eggs
+        public  updateEggImage
 
         include "defs.inc"
 
         section CODE_2
+
         ;
-        ; Increment and display the egg count
+        ; Called when a collision is detected
+        ;
+        ;	Entry:
+        ;		hl - Pointer to items flags
+        ;		b  - Screen y character position
+        ;		c  - screen x character position
         ;
 eggCollision:
         call    removeItem              ; Remove the item from the screen
 
-        ld      l, 0x10
+        ld      l, 0x10                 ; Add eggs
         ld      de, eggCount
         call    addBCD
+
         call    displayEggCount
-        ld      a, AYFX_COLLECT_EGG
+
+        ld      a, AYFX_COLLECT_EGG     ; Play a sound
         call    wyz_play_sound
         ret
 
