@@ -1,5 +1,7 @@
         extern  _LeftKnight0
         extern  _RightKnight0
+        extern  RightJumpKnight0
+        extern  LeftJumpKnight0
         extern  _animateCoins
         extern  _cls
         extern  _coinTables
@@ -231,13 +233,6 @@ gameLoop:
 
         ; ######################################
         ;
-        ; Update the scrolling message
-        ;
-        ; ######################################
-        call    _scroll
-
-        ; ######################################
-        ;
         ; Remove any moving items from the screen
         ;
         ; ######################################
@@ -249,22 +244,12 @@ gameLoop:
         ld      bc, (_xPos)
         call    _pasteScreen
 
-        ld      a, (ticks)
-        rrca
-        jr      c, skipOddFrame2
-
-        ;
-        ; The below code is only executed on even frame numbers
-        ;
-
         ;
         ; Remove spiders
         ;
         ld      a, ID_BLANK
         ld      hl, (currentSpiderTable)
         call    displayPixelItems
-
-skipOddFrame2:
 
         ; ######################################
         ;
@@ -326,15 +311,28 @@ updateXSpeedDone:
 smallJump:
         ld      (_jumping), a           ; Save jump distance
         rrca                            ; Divide by 2 for direction change. Only works if bit 0 is 0
-        ld      (jumpMidpoint), a       ; Save for compare below
+        ld      (jumpMidpoint+1), a     ; Save for compare below
         ld      a, b
+        push    de                      ; Save direction bits in 'e'
         call    wyz_play_sound
+        pop     de                      ; Restore direction bits in 'e'
 cantJump:
 
         ld      a, (_jumping)
         or      a
         jr      z, notJumping
-jumpMidpoint    equ $+1
+
+        bit     RIGHT_BIT, e
+        jr      z, checkLeftJump
+        ld      hl, RightJumpKnight0
+        ld      (playerSprite), hl
+        jr      jumpMidpoint
+checkLeftJump:
+        bit     LEFT_BIT, e
+        jr      z, jumpMidpoint
+        ld      hl, LeftJumpKnight0
+        ld      (playerSprite), hl
+jumpMidpoint:
         cp      -1                      ; Compare value will be different if player has collected eggs
         jr      nz, notMidpoint
         ex      af, af'                 ; Save the jump counter
@@ -407,15 +405,6 @@ noAnimate:
         ld      bc, (_xPos)
         call    _displaySprite
 
-        ld      a, (ticks)
-        rrca
-        jr      c, skipOddFrame
-
-        ; ######################################
-        ;
-        ; The below code is only executed on even frame numbers
-        ;
-        ; ######################################
         call    updateSpiderPos
         call    displaySpiders
         ;
@@ -424,11 +413,17 @@ noAnimate:
         ld      hl, _lanternList
         call    _lanternFlicker
 
-skipOddFrame:
         ;
         ; See if the egg count needs to be decremented
         ;
         call    decrementEggs
+
+        ; ######################################
+        ;
+        ; Update the scrolling message
+        ;
+        ; ######################################
+        call    _scroll
 
         jp      gameLoop
 
