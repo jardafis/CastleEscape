@@ -52,12 +52,12 @@ xLoop:
 
         inc     c                       ; Increment the screen X position
         ld      a, c
-        cmp     0x06+0x13
+        cp      0x06+0x13
         jr      nz, xLoop               ; and loop if not zero
 
         inc     b                       ; Increment the screen Y position
         ld      a, b
-        cmp     0x0d+0x08
+        cp      0x0d+0x08
         jr      nz, yLoop               ; and loop if not zero
 
         ;

@@ -33,25 +33,25 @@ yloop:
         ld      c, 0                    ; Start screen X character position
 xloop:
         ld      a, (hl)                 ; read the tile index
-        cmp     ID_BLANK                ; Check for blank
+        cp      ID_BLANK                ; Check for blank
         jr      z, nextTile             ; On to the next tile
 
         ;
         ; Don't display collectible or moving items.
         ;
-        cmp     ID_COIN
+        cp      ID_COIN
         jr      z, nextTile
-        cmp     ID_EGG
+        cp      ID_EGG
         jr      z, nextTile
-        cmp     ID_HEART
+        cp      ID_HEART
         jr      z, nextTile
-        cmp     ID_SPIDER
+        cp      ID_SPIDER
         jr      z, nextTile
 
         ;
         ; Check for lanterns and add them to the lanter table for this level
         ;
-        cmp     ID_LANTERN
+        cp      ID_LANTERN
         call    z, addLantern
 
         call    displayTile
@@ -62,7 +62,7 @@ nextTile:
 
         inc     c
         ld      a, c
-        cmp     SCREEN_WIDTH
+        cp      SCREEN_WIDTH
         jr      nz, xloop
 
         ld      de, TILEMAP_WIDTH-SCREEN_WIDTH
@@ -70,7 +70,7 @@ nextTile:
 
         inc     b
         ld      a, b
-        cmp     LEVEL_HEIGHT+3          ; Level height + screen offset
+        cp      LEVEL_HEIGHT+3          ; Level height + screen offset
         jr      nz, yloop
 
         pop     hl
