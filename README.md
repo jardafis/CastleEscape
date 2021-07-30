@@ -52,6 +52,7 @@ sudo snap alias z88dk.zcc zcc
 sudo snap alias z88dk.z88dk-asmpp z88dk-asmpp
 sudo snap alias z88dk.z88dk-asmstyle z88dk-asmstyle
 sudo snap alias z88dk.z88dk-appmake z88dk-appmake
+sudo snap alias z88dk.z88dk-dis z88dk-dis
 ```
 
 From the cloned repo use the following commands to build the game.
