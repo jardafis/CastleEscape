@@ -323,6 +323,7 @@ IFDEF   CRT_ORG_BANK_2
         SECTION BANK_2
         org     CRT_ORG_BANK_2
         SECTION code_crt0_sccz80
+        SECTION code_l_sccz80
         SECTION CODE_2
         SECTION RODATA_2
         SECTION DATA_2
