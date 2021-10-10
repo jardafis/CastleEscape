@@ -9,7 +9,7 @@ ASMSRC=$(wildcard *.asm)
 CSRC=$(wildcard *.c)
 BIN2REM=./bin2rem/bin2rem
 
-CFLAGS=$(TARGET) -c \
+CFLAGS=$(TARGET) -O2 -c \
 		--codeseg=CODE_5 \
 		--constseg=RODATA_5 \
 		--dataseg=DATA_5 \
