@@ -1,6 +1,6 @@
 # Castle Escape - An IrataHack Production
 
-A ZX Spectrum game written using [Z88DK](https://github.com/z88dk/z88dk) for [FUSE](http://fuse-emulator.sourceforge.net) (but should work on a real ZX Spectrum 128K).
+A ZX Spectrum game written using [Z88DK](https://github.com/z88dk/z88dk) for [FUSE](http://fuse-emulator.sourceforge.net) (but should work on a real ZX Spectrum 128K, +2, +3).
 
 ## Credits
 
@@ -10,6 +10,7 @@ A ZX Spectrum game written using [Z88DK](https://github.com/z88dk/z88dk) for [FU
 * Sound Effects - Created using [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
 * Levels - Designed with [Tiled](https://www.mapeditor.org/)
 * PNG to SCR - Converted with [PNG-to-SCR](https://github.com/MatejJan/PNG-to-SCR)
+* Boot Loader - Created with BIN2REM Version 2.1, by Paolo Ferraris (pieffe8_at_libero.it)
 
 ## Synopsis
 
@@ -32,7 +33,7 @@ The latest release can be downloaded from [here](https://github.com/iratahack/Ca
 
 The larger images include the ZX Spectrum border, smaller images do not.
 
-![Title](assets/title.png "SCREEN$")  ![Main Menu](assets/mainmenu.png "Main Menu")
+![Title](assets/title.png "SCREEN$") ![Main Menu](assets/mainmenu.png "Main Menu")
 
 ### In-game Play
 
@@ -40,18 +41,18 @@ The larger images include the ZX Spectrum border, smaller images do not.
 
 ### Level Map
 
-The game consists 24 levels arranged in a 4x6 grid.
+The game consists 24 levels arranged in a 4x6 grid, shown below.
 
 ![Level Map](assets/tiled/levels.png "Level Map")
 
 ## Building Sources
 
-The latest version of Z88DK must be in the path including *z88dk-asmpp* (pre-processor)
-and *z88dk-asmstyle* (assembly code formatter). Install Z88DK on Ubuntu with the commands
-below or on another OS by following the instructions [here](https://github.com/z88dk/z88dk/wiki/installation).
+The latest version of Z88DK must be in the path. Install Z88DK from the Snap Store with the commands
+below or by following the instructions [here](https://github.com/z88dk/z88dk/wiki/installation).
 
 ```sh
 sudo snap install --edge z88dk
+
 sudo snap alias z88dk.zcc zcc
 sudo snap alias z88dk.z88dk-asmpp z88dk-asmpp
 sudo snap alias z88dk.z88dk-asmstyle z88dk-asmstyle
@@ -59,14 +60,13 @@ sudo snap alias z88dk.z88dk-appmake z88dk-appmake
 sudo snap alias z88dk.z88dk-dis z88dk-dis
 ```
 
-From the cloned repo use the following commands to build the game.
+From the cloned repo use the command below to build and run the game.
 
 ```sh
-make -C assets install
-make -C src all
+make -C ./src/ run
 ```
 
-The result of the build should be a *CastleEscape.tap* (tape image file) in the *src* directory which can be loaded and executed with Spectrum emulator.
+The result of the build should be a *CastleEscape.tap* (tape image) file in the *src* directory which can be loaded and executed with a ZX Spectrum emulator.
 
 ### Make Targets
 
@@ -76,7 +76,7 @@ The result of the build should be a *CastleEscape.tap* (tape image file) in the 
   * install - Copy the asset files to the src directory
 * *src* Directory
   * clean - remove all derived files
-  * all - build game *CastleEscape.tap* file
+  * all - build *CastleEscape.tap* file
   * dis - build and disassemble
     * Add 'BANK=&lt;bankname&gt;' to disassemble a specific bank, the default is BANK_2
   * run - build and run with FUSE which must be on the path
