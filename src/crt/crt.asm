@@ -53,15 +53,20 @@ ENDIF
         PUBLIC  crt0
         PUBLIC  crt0_end
 
+IFDEF LOADER
         SECTION CODE
         ORG     CRT_ORG_CODE
+ELSE
+        SECTION BANK_5
+        org     CRT_ORG_BANK_5
+ENDIF
 crt0:
         di
 		;
 		; Setup a stack for the loader
 		;
         ld      sp, REGISTER_SP
-
+IFDEF   LOADER
 		; Set border to black; MIC output off
         ld      a, CRT_BORDER_COLOR|8
         out     (IO_BORDER), a
@@ -73,7 +78,7 @@ crt0:
         ldir
 
         call    loadBanks
-
+ENDIF
 IF  CRT_INITIALIZE_BSS
         call    bssInit
 ENDIF
@@ -95,6 +100,7 @@ fillStackLoop:
         ld      sp, REGISTER_SP
 ENDIF
 
+IFDEF LOADER
         ;
         ; Ensure memory bank 0 is paged into 0xc000
         ;
@@ -102,9 +108,10 @@ ENDIF
         ld      (currentBank), a
         ld      bc, IO_BANK
         out     (c), a
-
+ENDIF
         jp      _main
 
+IFDEF LOADER
 loadBanks:
         ld      hl, bankTable
 loadNextBank:
@@ -149,6 +156,7 @@ ENDIF
 
         pop     hl                      ; Restore the table pointer.
         jr      loadNextBank            ; On to the next bank.
+ENDIF
 
 IF  CRT_INITIALIZE_BSS
 		;
@@ -200,11 +208,16 @@ sectionDone:
         jr      nextBSSSection
 
 ENDIF
+
 IF  CRT_CUSTOM_LOADER
         include "ld_bytes.asm"
 ENDIF
 
+IFDEF LOADER
         SECTION RODATA
+ELSE
+        SECTION RODATA_5
+ENDIF
 bssTable:
 IFDEF   CRT_ORG_BANK_0
         dw      __BSS_0_head
@@ -247,6 +260,7 @@ IFDEF   CRT_ORG_BANK_7
         dw      __BSS_7_tail-__BSS_7_head
 ENDIF
         dw      0x0000
+IFDEF LOADER
 bankTable:
 		;
 		; Bank 5 is always loaded first because it should
@@ -293,11 +307,23 @@ IFDEF   CRT_ORG_BANK_7
         db      MEM_BANK_ROM|0x7
 ENDIF
         dw      0x0000
+ENDIF
 crt0_end:
 
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    		; Define Memory Banks
    		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+IFDEF   CRT_ORG_BANK_5
+        ; BANK 5 follows on from crt0
+;        SECTION BANK_5
+;        org     CRT_ORG_BANK_5
+        SECTION CODE_5
+        SECTION RODATA_5
+        SECTION DATA_5
+        SECTION BSS_5
+        org     -1
+ENDIF
 
 IFDEF   CRT_ORG_BANK_0
         SECTION BANK_0
@@ -322,6 +348,7 @@ ENDIF
 IFDEF   CRT_ORG_BANK_2
         SECTION BANK_2
         org     CRT_ORG_BANK_2
+        ds      0x184
         SECTION code_clib
         SECTION code_l_sccz80
         SECTION CODE_2
@@ -348,16 +375,6 @@ IFDEF   CRT_ORG_BANK_4
         SECTION RODATA_4
         SECTION DATA_4
         SECTION BSS_4
-        org     -1
-ENDIF
-
-IFDEF   CRT_ORG_BANK_5
-        SECTION BANK_5
-        org     CRT_ORG_BANK_5
-        SECTION CODE_5
-        SECTION RODATA_5
-        SECTION DATA_5
-        SECTION BSS_5
         org     -1
 ENDIF
 
