@@ -7,7 +7,7 @@ PROJ_NAME=CastleEscape
 PRAGMA_FILE=zpragma.inc
 ASMSRC=$(wildcard *.asm)
 CSRC=$(wildcard *.c)
-BIN2REM=./bin2rem/bin2rem
+ZXSTLC=~/zxstlc/zxstlc_linux
 
 CFLAGS=$(TARGET) -O2 -c \
 		--codeseg=CODE_5 \
@@ -22,15 +22,6 @@ LDFLAGS=$(TARGET) -crt0 crt/crt.asm -m -pragma-include:$(PRAGMA_FILE)
 #ASFLAGS=-opt-speed
 OBJECTS=$(CSRC:.c=.o) $(ASMSRC:.asm=.o)
 
-# Tape files must be in the correct order and matching the 'bankTable' in crt0.asm
-# loader.tap is a BASIC loader with embedded machine code bank 5 comes next as this
-# has the loading screen. All other bank tape files come after in order.
-TAPS:=	loader.tap \
-		$(PROJ_NAME)_BANK_5.tap \
-		$(PROJ_NAME)_BANK_0.tap \
-		$(PROJ_NAME)_BANK_2.tap \
-		$(PROJ_NAME)_BANK_7.tap
-
 # Default to the CODE bank if no other is specified
 BANK ?= BANK_2
 # Find the start addres of the BANK and replace $ with 0x
@@ -43,12 +34,12 @@ all: $(PROJ_NAME).tap
 	@grep -E "__(CODE|RODATA|DATA|BSS|code)_([0-7]|user|crt.*)_(sccz80|head|tail|size).*" $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
 
 clean:
-	rm -f *.[oid] *.tap *.bin *.map zcc_opt.inc
+	rm -f *.[oid] *.tap *.bin *.map *.dsk zcc_opt.inc
 
 run: $(PROJ_NAME).tap
 	fuse $<
 
-dis: $(PROJ_NAME)_CODE.bin
+dis: $(PROJ_NAME)_BANK_2.bin
 	z88dk-dis -o $(HEAD) -x $(PROJ_NAME).map $(PROJ_NAME)_$(BANK).bin | less
 
 ifeq (,$(findstring $(MAKECMDGOALS),clean))
@@ -58,9 +49,6 @@ ifeq (,$(findstring $(MAKECMDGOALS),clean))
 %.d: %.c
 	@./mkdep.sh $< > $@
 endif
-
-$(BIN2REM):
-	make -C bin2rem
 
 zcc_opt.inc: $(PRAGMA_FILE)
 	@echo "Creating $@"
@@ -73,21 +61,17 @@ zcc_opt.inc: $(PRAGMA_FILE)
 %.o: %.asm zcc_opt.inc
 	@$(AS) $(ASFLAGS) $<
 
-$(PROJ_NAME)_CODE.bin: $(OBJECTS) $(PRAGMA_FILE)
+$(PROJ_NAME)_BANK_2.bin: $(OBJECTS) $(PRAGMA_FILE)
 	 @echo "Linking $@"
 	 @$(LD) $(LDFLAGS) $(OBJECTS) -o $(PROJ_NAME).bin
 
-%.tap: $(PROJ_NAME)_CODE.bin
+$(PROJ_NAME).tap: $(PROJ_NAME)_BANK_2.bin
 	@echo "Creating $@"
-	@z88dk-appmake $(TARGET) -b ${@:.tap=.bin} -o $@ --noloader --noheader --org 0
-
-loader.tap: $(PROJ_NAME)_CODE.bin $(BIN2REM)
-	@echo "Creating $@"
-	@cat $(PROJ_NAME)_CODE.bin >> $(PROJ_NAME)_LOADER.bin
-	@$(BIN2REM) $(PROJ_NAME)_LOADER.bin $@ CastleEsc
-
-$(PROJ_NAME).tap: $(TAPS)
-	@echo "Creating $@"
-	@cat $+ > $@ 
+	@dd if=/dev/null of=$(PROJ_NAME)_BANK_5.bin bs=1 count=1 seek=8192
+	#@dd if=/dev/null of=$(PROJ_NAME)_BANK_2.bin bs=1 count=1 seek=16384
+	@cat $(PROJ_NAME)_BANK_5.bin > $(PROJ_NAME).bin
+	@cat $(PROJ_NAME)_BANK_2.bin >> $(PROJ_NAME).bin
+	#@cat $(PROJ_NAME)_BANK_0.bin >> $(PROJ_NAME).bin
+	$(ZXSTLC) -b $(PROJ_NAME).bin 24576 24576 -l title.scr -n CastleEsc -0 $(PROJ_NAME)_BANK_0.bin -7 $(PROJ_NAME)_BANK_7.bin
 
 -include $(ASMSRC:.asm=.d) $(CSRC:.c=.d)

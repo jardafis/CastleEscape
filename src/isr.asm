@@ -2,6 +2,7 @@
 
         public  initISR
         public  ticks
+        public  isr
         section CODE_2
 
         include "defs.inc"
@@ -13,16 +14,16 @@
 initISR:
         pushall
 
-        ld      bc, 0x100               ; bytes of the vector table
-        ld      hl, VECTOR_TABLE        ; Get vector table address
-        ld      de, VECTOR_TABLE+1
-        ld      (hl), JUMP_ADDR_BYTE    ; Store JUMP_ADDR in first byte of vector table
-        ldir
+;        ld      bc, 0x100               ; bytes of the vector table
+;        ld      hl, VECTOR_TABLE        ; Get vector table address
+;        ld      de, VECTOR_TABLE+1
+;        ld      (hl), JUMP_ADDR_BYTE    ; Store JUMP_ADDR in first byte of vector table
+;        ldir
 
-        ld      a, JP_OPCODE            ; Store the opcode for JP
-        ld      (JUMP_ADDR), a
-        ld      de, isr                 ; Store the jump address which is the address of the
-        ld      (JUMP_ADDR+1), de
+;        ld      a, JP_OPCODE            ; Store the opcode for JP
+;        ld      (JUMP_ADDR), a
+;        ld      de, isr                 ; Store the jump address which is the address of the
+;        ld      (JUMP_ADDR+1), de
 
         ld      a, VECTOR_TABLE_HIGH    ; Write the address of the vector table
         ld      i, a                    ; to the i register

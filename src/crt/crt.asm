@@ -315,8 +315,7 @@ crt0_end:
    		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 IFDEF   CRT_ORG_BANK_5
-        ; BANK 5 follows on from crt0
-;        SECTION BANK_5
+        SECTION BANK_5
 ;        org     CRT_ORG_BANK_5
         SECTION CODE_5
         SECTION RODATA_5
@@ -348,10 +347,13 @@ ENDIF
 IFDEF   CRT_ORG_BANK_2
         SECTION BANK_2
         org     CRT_ORG_BANK_2
-        ds      0x184
+        ds      0x101, 0x81             ; 257 byte vector table
+        ds      0x80, 0x55              ; 128 bytes of stack
+        extern  isr
+        jp      isr                     ; ISR
+        SECTION CODE_2
         SECTION code_clib
         SECTION code_l_sccz80
-        SECTION CODE_2
         SECTION RODATA_2
         SECTION DATA_2
         SECTION BSS_2
