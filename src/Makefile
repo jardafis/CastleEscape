@@ -7,7 +7,7 @@ PROJ_NAME=CastleEscape
 PRAGMA_FILE=zpragma.inc
 ASMSRC=$(wildcard *.asm)
 CSRC=$(wildcard *.c)
-ZXSTLC=~/zxstlc/zxstlc_linux
+ZXSTLC=./tools/zxstlc_linux
 
 CFLAGS=$(TARGET) -O2 -c \
 		--codeseg=CODE_5 \
@@ -62,8 +62,8 @@ zcc_opt.inc: $(PRAGMA_FILE)
 	@$(AS) $(ASFLAGS) $<
 
 $(PROJ_NAME)_BANK_2.bin: $(OBJECTS) $(PRAGMA_FILE)
-	 @echo "Linking $@"
-	 @$(LD) $(LDFLAGS) $(OBJECTS) -o $(PROJ_NAME).bin
+	@echo "Linking $@"
+	@$(LD) $(LDFLAGS) $(OBJECTS) -o $(PROJ_NAME)
 
 $(PROJ_NAME).tap: $(PROJ_NAME)_BANK_2.bin
 	@echo "Creating $@"

@@ -2,13 +2,6 @@
 
         EXTERN  _main
 
-        DEFC    IO_BANK=0x7ffd
-        DEFC    MEM_BANK_ROM=0x10
-
-IFNDEF  CRT_INITIALIZE_BSS
-        DEFC    CRT_INITIALIZE_BSS=1
-ENDIF
-
         SECTION BANK_5
         org     CRT_ORG_BANK_5
         SECTION CODE_5

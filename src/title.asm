@@ -8,9 +8,6 @@
         public  pressJumpMsg
         public  titleScreen
 
-        section BANK_5
-;        binary  "title.scr"
-
         section CODE_5
         include "defs.inc"
 
