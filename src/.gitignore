@@ -1,7 +1,7 @@
 *.lis
 *.bin
 *.tap
-*.bak
+*.dsk
 *.map
 *.o
 *.sym
@@ -9,4 +9,3 @@
 *.bak
 *.d
 zcc_opt.inc
-bas2tap
