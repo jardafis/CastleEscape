@@ -46,3 +46,4 @@ jobs:
           title: "Development Build"
           files: |
             src/CastleEscape.tap
+            src/CastleEscape.dsk
