@@ -9,8 +9,8 @@ A ZX Spectrum game written using [Z88DK](https://github.com/z88dk/z88dk) for [FU
 * Music - Borrowed from [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
 * Sound Effects - Created using [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
 * Levels - Designed with [Tiled](https://www.mapeditor.org/)
-* PNG to SCR - Converted with [PNG-to-SCR](https://github.com/MatejJan/PNG-to-SCR)
-* Boot Loader - Created with BIN2REM Version 2.1, by Paolo Ferraris (pieffe8_at_libero.it)
+* screen$ - Converted with [PNG-to-SCR](https://github.com/MatejJan/PNG-to-SCR)
+* Boot Loader - Courtesy of [ZXSTLC](https://tomdalby.com/other/zxstlc.html)
 
 ## Synopsis
 
