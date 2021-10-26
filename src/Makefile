@@ -68,10 +68,8 @@ $(PROJ_NAME)_BANK_2.bin: $(OBJECTS) $(PRAGMA_FILE)
 $(PROJ_NAME).tap: $(PROJ_NAME)_BANK_2.bin
 	@echo "Creating $@"
 	@dd if=/dev/null of=$(PROJ_NAME)_BANK_5.bin bs=1 count=1 seek=8192
-	#@dd if=/dev/null of=$(PROJ_NAME)_BANK_2.bin bs=1 count=1 seek=16384
 	@cat $(PROJ_NAME)_BANK_5.bin > $(PROJ_NAME).bin
 	@cat $(PROJ_NAME)_BANK_2.bin >> $(PROJ_NAME).bin
-	#@cat $(PROJ_NAME)_BANK_0.bin >> $(PROJ_NAME).bin
 	$(ZXSTLC) -b $(PROJ_NAME).bin 24576 24576 -l title.scr -n CastleEsc -0 $(PROJ_NAME)_BANK_0.bin -7 $(PROJ_NAME)_BANK_7.bin
 
 -include $(ASMSRC:.asm=.d) $(CSRC:.c=.d)

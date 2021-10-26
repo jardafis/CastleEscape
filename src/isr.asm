@@ -7,30 +7,16 @@
 
         include "defs.inc"
         defc    VECTOR_TABLE_HIGH=0x80
-        defc    VECTOR_TABLE=(VECTOR_TABLE_HIGH<<8)
-        defc    JUMP_ADDR_BYTE=0x81
-        defc    JUMP_ADDR=(JUMP_ADDR_BYTE<<8)|JUMP_ADDR_BYTE
 
 initISR:
-        pushall
-
-;        ld      bc, 0x100               ; bytes of the vector table
-;        ld      hl, VECTOR_TABLE        ; Get vector table address
-;        ld      de, VECTOR_TABLE+1
-;        ld      (hl), JUMP_ADDR_BYTE    ; Store JUMP_ADDR in first byte of vector table
-;        ldir
-
-;        ld      a, JP_OPCODE            ; Store the opcode for JP
-;        ld      (JUMP_ADDR), a
-;        ld      de, isr                 ; Store the jump address which is the address of the
-;        ld      (JUMP_ADDR+1), de
+        push    af
 
         ld      a, VECTOR_TABLE_HIGH    ; Write the address of the vector table
         ld      i, a                    ; to the i register
         im      2                       ; Enable interrupt mode 2
         ei                              ; Enable interrupts
 
-        popall
+        pop     af
         ret
 
 isr:
@@ -46,10 +32,13 @@ IFDEF   SOUND
 ENDIF
 
         ;
-        ; Increment the 8-bit ticks count
+        ; Increment tick count
         ;
         ld      hl, ticks
+nextByte:
         inc     (hl)
+        inc     hl
+        jr      z, nextByte
 
         pop     iy
         pop     ix
@@ -62,4 +51,6 @@ ENDIF
 
         section BSS_2
 ticks:
-        ds      1
+        ds      5                       ; 48-bits incremented every 1/50 second
+                                        ; ~178000 years before it wraps and clobbers
+                                        ; something. Should be enough ;)
