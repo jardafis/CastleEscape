@@ -34,7 +34,7 @@ all: $(PROJ_NAME).tap
 	@grep -E "__(CODE|RODATA|DATA|BSS|code)_([0-7]|user|crt.*)_(sccz80|head|tail|size).*" $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
 
 clean:
-	rm -f *.[oid] *.tap *.bin *.map *.dsk zcc_opt.inc
+	rm -f *.[oid] *.tap *.bin *.map *.dsk
 
 run: $(PROJ_NAME).tap
 	fuse $<
@@ -50,15 +50,11 @@ ifeq (,$(findstring $(MAKECMDGOALS),clean))
 	@./mkdep.sh $< > $@
 endif
 
-zcc_opt.inc: $(PRAGMA_FILE)
-	@echo "Creating $@"
-	@cat $(PRAGMA_FILE) |  sed 's/#pragma\s*output\s*/defc /g' > $@
-
 %.o: %.c $(PRAGMA_FILE)
 	@echo "Compiling $<"
 	@$(CC) $(CFLAGS) -o $@ $<
 
-%.o: %.asm zcc_opt.inc
+%.o: %.asm
 	@$(AS) $(ASFLAGS) $<
 
 $(PROJ_NAME)_BANK_2.bin: $(OBJECTS) $(PRAGMA_FILE)
@@ -67,8 +63,8 @@ $(PROJ_NAME)_BANK_2.bin: $(OBJECTS) $(PRAGMA_FILE)
 
 $(PROJ_NAME).tap: $(PROJ_NAME)_BANK_2.bin
 	@echo "Creating $@"
-	@dd if=/dev/null of=$(PROJ_NAME)_BANK_5.bin bs=1 count=1 seek=8192
-	@cat $(PROJ_NAME)_BANK_5.bin > $(PROJ_NAME).bin
+	@cp $(PROJ_NAME)_BANK_5.bin $(PROJ_NAME).bin
+	@dd if=/dev/null of=$(PROJ_NAME).bin bs=1 count=1 seek=8192
 	@cat $(PROJ_NAME)_BANK_2.bin >> $(PROJ_NAME).bin
 	$(ZXSTLC) -b $(PROJ_NAME).bin 24576 24576 -l title.scr -n CastleEsc -0 $(PROJ_NAME)_BANK_0.bin -7 $(PROJ_NAME)_BANK_7.bin
 
