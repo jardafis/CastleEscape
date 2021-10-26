@@ -1,13 +1,14 @@
+        include "defs.inc"
+
         extern  wyz_play_frame
 
         public  initISR
         public  ticks
         public  isr
-        section CODE_2
 
-        include "defs.inc"
         defc    VECTOR_TABLE_HIGH=0x80
 
+        section CODE_5
 initISR:
         push    af
 
@@ -19,6 +20,7 @@ initISR:
         pop     af
         ret
 
+        section CODE_2
 isr:
         push    af
         push    bc
