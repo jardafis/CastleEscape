@@ -76,7 +76,7 @@
 
         include "defs.inc"
 
-        section CODE_2
+        section CODE_5
 _main:
         call    init
 
@@ -112,6 +112,7 @@ init:
 
         ret
 
+        section CODE_2
 newGame:
         ld      (gameOver+1), sp
 
