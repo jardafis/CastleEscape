@@ -193,7 +193,7 @@ PLAYER_OFF:
 CLEAR_PSG_BUFFER:
         LD      HL, PSG_REG
         LD      DE, PSG_REG+1
-        LD      BC, 14
+        LD      BC, 14-1
         LD      (HL), A
         LDIR
 
@@ -1110,9 +1110,9 @@ PUNTERO_SONIDO:
 ;DB (13) BUFFERs DE REGISTROS DEL PSG
 
 PSG_REG:
-        DS      16
+        DS      14
 PSG_REG_SEC:
-        DS      16
+        DS      14
 ENVOLVENTE:
         DB      0                       ;DB : FORMA DE LA ENVOLVENTE
 			        ;BIT 0	  : FRECUENCIA CANAL ON/OFF
