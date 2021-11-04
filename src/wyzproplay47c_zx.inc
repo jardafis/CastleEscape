@@ -17,12 +17,14 @@
 ;______________________________________________________
 
 
+        defc    PSG_NUM_REG=14
+        defc    CHANNEL_BUFF_SIZE=0x10
 wyz_play_frame:
         CALL    ROUT
 
         LD      HL, PSG_REG
         LD      DE, PSG_REG_SEC
-        LD      BC, 14
+        LD      BC, PSG_NUM_REG
         LDIR
         CALL    REPRODUCE_SONIDO
         JP      PLAY
@@ -193,7 +195,7 @@ PLAYER_OFF:
 CLEAR_PSG_BUFFER:
         LD      HL, PSG_REG
         LD      DE, PSG_REG+1
-        LD      BC, 14-1
+        LD      BC, PSG_NUM_REG-1
         LD      (HL), A
         LDIR
 
@@ -202,7 +204,7 @@ CLEAR_PSG_BUFFER:
 
         LD      HL, PSG_REG
         LD      DE, PSG_REG_SEC
-        LD      BC, 14
+        LD      BC, PSG_NUM_REG
         LDIR
 
         JP      ROUT
@@ -1107,12 +1109,12 @@ PUNTERO_SONIDO:
 
 
 
-;DB (13) BUFFERs DE REGISTROS DEL PSG
+; BUFFERs DE REGISTROS DEL PSG
 
 PSG_REG:
-        DS      14
+        DS      PSG_NUM_REG
 PSG_REG_SEC:
-        DS      14
+        DS      PSG_NUM_REG
 ENVOLVENTE:
         DB      0                       ;DB : FORMA DE LA ENVOLVENTE
 			        ;BIT 0	  : FRECUENCIA CANAL ON/OFF
@@ -1122,11 +1124,11 @@ ENVOLVENTE_BACK:
         DB      0                       ;DB:	BACKUP DE LA FORMA DE LA ENVOLENTE
 
 BUFFER_CANAL_A:
-        ds      0x10
+        ds      CHANNEL_BUFF_SIZE
 BUFFER_CANAL_B:
-        ds      0x10
+        ds      CHANNEL_BUFF_SIZE
 BUFFER_CANAL_C:
-        ds      0x10
+        ds      CHANNEL_BUFF_SIZE
 BUFFER_CANAL_P:
-        ds      0x10
+        ds      CHANNEL_BUFF_SIZE
 
