@@ -1,50 +1,120 @@
 ; ZX PSG proPLAYER V 0.47c - WYZ 19.03.2016
 ; (WYZTracker 2.0 o superior)
 
-
 ; ENSAMBLAR CON AsMSX
-
-
 
 ; LOS DATOS QUE HAY QUE VARIAR :
 ; * BUFFER DE SONIDO DONDE SE DECODIFICA TOTALMENTE EL ARCHIVO MUS
 ; * N� DE CANCION.
 ; * TABLA DE CANCIONES
-
-
-
-
 ;______________________________________________________
-
 
         defc    PSG_NUM_REG=14
         defc    CHANNEL_BUFF_SIZE=0x10
-wyz_play_frame:
-        CALL    ROUT
+wyz_player_init:
+WYZPLAYER_INIT:
+        CALL    PLAYER_OFF
 
+        LD      DE, CHANNEL_BUFF_SIZE   ; No. BYTES RESERVADOS POR CANAL
+
+        LD      HL, BUFFER_DEC          ;* RESERVAR MEMORIA PARA BUFFER DE SONIDO!!!!!
+        LD      (CANAL_A), HL
+        ADD     HL, DE
+        LD      (CANAL_B), HL
+        ADD     HL, DE
+        LD      (CANAL_C), HL
+        ADD     HL, DE
+        LD      (CANAL_P), HL
+        RET
+
+wyz_play_frame:
+INICIO:
+        CALL    ROUT
         LD      HL, PSG_REG
         LD      DE, PSG_REG_SEC
         LD      BC, PSG_NUM_REG
         LDIR
+
         CALL    REPRODUCE_SONIDO
-        JP      PLAY
-        ; CALL	REPRODUCE_EFECTO
-        ; RET
+        CALL    PLAY
+        JP      REPRODUCE_EFECTO
 
+; REPRODUCE UN SONIDO POR EL CANAL ESPECIFICADO
+; IN
+; A = NUMERO DE SONIDO
+; B = CANAL
+wyz_play_sound:
+INICIA_SONIDO:
+        LD      HL, TABLA_SONIDOS
+        CALL    EXT_WORD
+        LD      (PUNTERO_SONIDO), DE
+        LD      HL, INTERR
+        SET     2, (HL)
+        LD      A, B
+        LD      HL, TABLA_DATOS_CANAL_SFX
+        CALL    EXT_WORD
+        LD      (SONIDO_REGS), DE
+        RET
 
+; REPRODUCE UN FX POR EL CANAL ESPECIFICADO
+; IN
+; A = NUMERO DE SONIDO
+; B = CANAL
+INICIA_EFECTO:
+        LD      HL, TABLA_SONIDOS
+        CALL    EXT_WORD
+        LD      (PUNTERO_EFECTO), DE
+        LD      HL, INTERR
+        SET     3, (HL)
+        LD      A, B
+        LD      HL, TABLA_DATOS_CANAL_SFX
+        CALL    EXT_WORD
+        LD      (EFECTO_REGS), DE
+        RET
 
 ;REPRODUCE EFECTOS DE SONIDO
-
 REPRODUCE_SONIDO:
-
         LD      HL, INTERR
         BIT     2, (HL)                 ;ESTA ACTIVADO EL EFECTO?
         RET     Z
+        LD      HL, (SONIDO_REGS)
+        PUSH    HL
+        POP     IX
         LD      HL, (PUNTERO_SONIDO)
+        CALL    REPRODUCE_SONIDO_O_EFECTO
+        OR      A
+        JR      Z, REPRODUCE_SONIDO_LIMPIA_BIT
+        LD      (PUNTERO_SONIDO), HL
+        RET
+REPRODUCE_SONIDO_LIMPIA_BIT:
+        LD      HL, INTERR
+        RES     2, (HL)
+        RET
+
+REPRODUCE_EFECTO:
+        LD      HL, INTERR
+        BIT     3, (HL)
+        RET     Z
+        LD      HL, (EFECTO_REGS)
+        PUSH    HL
+        POP     IX
+        LD      HL, (PUNTERO_EFECTO)
+        CALL    REPRODUCE_SONIDO_O_EFECTO
+        OR      A
+        JR      Z, REPRODUCE_EFECTO_LIMPIA_BIT
+        LD      (PUNTERO_EFECTO), HL
+        RET
+REPRODUCE_EFECTO_LIMPIA_BIT:
+        LD      HL, INTERR
+        RES     3, (HL)
+        RET
+
+REPRODUCE_SONIDO_O_EFECTO:
         LD      A, (HL)
         CP      $FF
         JR      Z, FIN_SONIDO
-        LD      DE, (SFX_L)
+        LD      E, (IX+0)               ; IX+0 -> SFX_L LO
+        LD      D, (IX+1)               ; IX+1 -> SFX_L HI
         LD      (DE), A
         INC     HL
         LD      A, (HL)
@@ -53,11 +123,13 @@ REPRODUCE_SONIDO:
         RRCA
         RRCA
         AND     00001111B
-        LD      DE, (SFX_H)
+        LD      E, (IX+2)               ; IX+2 -> SFX_H LO
+        LD      D, (IX+3)               ; IX+3 -> SFX_H HI
         LD      (DE), A
         LD      A, (HL)
         AND     00001111B
-        LD      DE, (SFX_V)
+        LD      E, (IX+4)               ; IX+4 -> SFX_V LO
+        LD      D, (IX+5)               ; IX+5 -> SFX_V HI
         LD      (DE), A
 
         INC     HL
@@ -80,15 +152,12 @@ REPRODUCE_SONIDO:
                                         ;NO ESCRIBE LA ENVOLVENTE SI SU VALOR ES 1
         LD      (PSG_REG_SEC+13), A
 
-
 NO_ENVOLVENTES_SONIDO:
-
         LD      A, B
-        and     $7f                     ; RES	7,A
-        	; AND	A
+        AND     $7F                     ; RES 7,A ; AND A
         JR      Z, NO_RUIDO
         LD      (PSG_REG_SEC+6), A
-        LD      A, (SFX_MIX)
+        LD      A, (IX+6)               ; IX+6 -> SFX_MIX
         JR      SI_RUIDO
 NO_RUIDO:
         XOR     A
@@ -96,43 +165,32 @@ NO_RUIDO:
         LD      A, 10111000B
 SI_RUIDO:
         LD      (PSG_REG_SEC+7), A
-
         INC     HL
-        LD      (PUNTERO_SONIDO), HL
+        LD      A, 1
         RET
 FIN_SONIDO:
-        LD      HL, INTERR
-        RES     2, (HL)
         LD      A, (ENVOLVENTE_BACK)    ;NO RESTAURA LA ENVOLVENTE SI ES 0
         AND     A
         JR      Z, FIN_NOPLAYER
-        ;xor	a ; ***
+ ;xor a ; ***
         LD      (PSG_REG_SEC+13), A     ;08.13 RESTAURA LA ENVOLVENTE TRAS EL SFX
 
 FIN_NOPLAYER:
         LD      A, 10111000B
         LD      (PSG_REG_SEC+7), A
-
+        XOR     A
         RET
 
-
-
 ;VUELCA BUFFER DE SONIDO AL PSG
-
-ROUT:   LD      A, (PSG_REG+13)
+ROUT:
+        LD      A, (PSG_REG+13)
         AND     A                       ;ES CERO?
         JR      Z, NO_BACKUP_ENVOLVENTE
         LD      (ENVOLVENTE_BACK), A    ;08.13 / GUARDA LA ENVOLVENTE EN EL BACKUP
-
-
         XOR     A
 
-
 NO_BACKUP_ENVOLVENTE:
-
-;VUELCA BUFFER DE SONIDO AL PSG DEL SPECTRUM
-
-ROUT_A0:
+;VUELCA BUFFER DE SONIDO AL PSG
         LD      DE, $FFBF
         LD      BC, $FFFD
         LD      HL, PSG_REG_SEC
@@ -154,43 +212,12 @@ LOUT:   OUT     (C), A
         LD      (PSG_REG+13), A
         RET
 
-
-;INICIA EL SONIDO N� (A)
-
-wyz_play_sound:
-INICIA_SONIDO:                          ;CP	8		;SFX SPEECH
-        ;JP	Z,SLOOP		;
-
-        LD      HL, TABLA_SONIDOS
-        CALL    EXT_WORD
-        LD      (PUNTERO_SONIDO), DE
-        LD      HL, INTERR
-        SET     2, (HL)
-        RET
-
-;PLAYER INIT
-
-wyz_player_init:
-PLAYER_INIT:
-        LD      HL, BUFFER_CANAL_A      ;RESERVAR MEMORIA PARA BUFFER DE SONIDO!!!!!
-        LD      (CANAL_A), HL           ;RECOMENDABLE $10 O MAS BYTES POR CANAL.
-
-        LD      HL, BUFFER_CANAL_B
-        LD      (CANAL_B), HL
-
-        LD      HL, BUFFER_CANAL_C
-        LD      (CANAL_C), HL
-
-        LD      HL, BUFFER_CANAL_P
-        LD      (CANAL_P), HL
-
 ;PLAYER OFF
-
 wyz_player_stop:
 PLAYER_OFF:
         XOR     A                       ;***** IMPORTANTE SI NO HAY MUSICA ****
         LD      (INTERR), A
-        ;LD	(FADE),A		;solo si hay fade out
+ ;LD (FADE),A ;solo si hay fade out
 
 CLEAR_PSG_BUFFER:
         LD      HL, PSG_REG
@@ -209,26 +236,19 @@ CLEAR_PSG_BUFFER:
 
         JP      ROUT
 
-
 ;CARGA UNA CANCION
 ;IN:(A)=N� DE CANCION
-
 wyz_play_song:
-LOAD_SONG:
+CARGA_CANCION:
         LD      HL, INTERR              ;CARGA CANCION
-
         SET     1, (HL)                 ;REPRODUCE CANCION
         LD      HL, SONG
         LD      (HL), A                 ;N� A
 
-
-
 ;DECODIFICAR
 ;IN-> INTERR 0 ON
-;     SONG
-
+; SONG
 ;CARGA CANCION SI/NO
-
 DECODE_SONG:
         LD      A, (SONG)
 
@@ -243,7 +263,7 @@ DECODE_SONG:
         LD      (TTEMPO), A
 
 ;HEADER BYTE 1
-;(-|-|-|-|  3-1 | 0  )
+;(-|-|-|-| 3-1 | 0 )
 ;(-|-|-|-|FX CHN|LOOP)
 
         INC     DE                      ;LOOP 1=ON/0=OFF?
@@ -253,33 +273,16 @@ DECODE_SONG:
         LD      HL, INTERR
         SET     4, (HL)
 
-
-
 ;SELECCION DEL CANAL DE EFECTOS DE RITMO
-
-NPTJP0: AND     00000110B
+NPTJP0:
+        AND     00000110B
         RRA
-        ;LD	(SELECT_CANAL_P),A
+ ;LD (SELECT_CANAL_P),A
 
         PUSH    DE
         LD      HL, TABLA_DATOS_CANAL_SFX
         CALL    EXT_WORD
-        PUSH    DE
-        POP     IX
-        LD      E, (IX+0)
-        LD      D, (IX+1)
-        LD      (SFX_L), DE
-
-        LD      E, (IX+2)
-        LD      D, (IX+3)
-        LD      (SFX_H), DE
-
-        LD      E, (IX+4)
-        LD      D, (IX+5)
-        LD      (SFX_V), DE
-
-        LD      A, (IX+6)
-        LD      (SFX_MIX), A
+        LD      (SONIDO_REGS), DE
         POP     HL
 
         INC     HL                      ;2 BYTES RESERVADOS
@@ -397,7 +400,7 @@ DECODE_CANAL:
 
         CP      00000001B               ;ES SILENCIO?
         JR      NZ, NO_SILENCIO
-        or      $40                     ; SET	6,A
+        OR      $40                     ; SET 6,A
         JR      NO_MODIFICA
 
 NO_SILENCIO:
@@ -417,14 +420,16 @@ NO_PUNTILLO:
         LD      (DE), A
         INC     HL
         INC     DE
-        ldi                             ; LD	A,(HL)		;N� DE INSTRUMENTO
-	        ; LD	(DE),A
-	        ; INC	DE
-	        ; INC	HL
-        ldi                             ; LD	A,(HL)		;VOLUMEN RELATIVO DEL INSTRUMENTO
-	        ; LD	(DE),A
-	        ; INC	DE
-	        ; INC	HL
+        LDI                             ;N� DE INSTRUMENTO
+ ; LD A,(HL)
+ ; LD (DE),A
+ ; INC DE
+ ; INC HL
+        LDI                             ;VOLUMEN RELATIVO DEL INSTRUMENTO
+ ; LD A,(HL)
+ ; LD (DE),A
+ ; INC DE
+ ; INC HL
         JR      DECODE_CANAL
 
 NO_INSTRUMENTO:
@@ -434,10 +439,11 @@ NO_INSTRUMENTO:
         LD      (DE), A
         INC     DE
         INC     HL
-        ldi                             ; LD	A,(HL)
-    	    ; LD	(DE),A
-	        ; INC	DE
-	        ; INC	HL
+        LDI
+ ; LD A,(HL)
+ ; LD (DE),A
+ ; INC DE
+ ; INC HL
         JR      DECODE_CANAL
 
 NO_ENVOLVENTE:
@@ -455,15 +461,14 @@ NO_MODIFICA:
         INC     DE
         XOR     A
         DJNZ    NO_MODIFICA
-        or      $81                     ; SET	7,A
-	        ; SET	0,A
+        OR      $81                     ; SET 7,A ; SET 0,A
         LD      (DE), A
         INC     DE
         INC     HL
-        RET                             ;** JR	    DECODE_CANAL
+        RET                             ;** JR DECODE_CANAL
 
 FIN_DEC_CANAL:
-        or      $80                     ; SET	7,A
+        OR      $80                     ; SET 7,A
         LD      (DE), A
         INC     DE
         RET
@@ -484,13 +489,7 @@ DCBC0:  RLCA
         POP     AF
         RET
 
-
-
-
-
 ;PLAY __________________________________________________
-
-
 PLAY:   LD      HL, INTERR              ;PLAY BIT 1 ON?
         BIT     1, (HL)
         RET     Z
@@ -520,7 +519,8 @@ PLAY:   LD      HL, INTERR              ;PLAY BIT 1 ON?
 
 ;PAUTAS
 
-PAUTAS: LD      IY, PSG_REG+0
+PAUTAS:
+        LD      IY, PSG_REG+0
         LD      IX, PUNTERO_P_A
         LD      HL, PSG_REG+8
         CALL    PAUTA                   ;PAUTA CANAL A
@@ -595,7 +595,7 @@ NO_INC_TEMPO:
         XOR     A
         LD      (PSG_REG_SEC+13), A
         LD      (PSG_REG+13), A
-        ;LD	(ENVOLVENTE_BACK),A		;08.13 / RESETEA EL BACKUP DE LA ENVOLVENTE
+ ;LD (ENVOLVENTE_BACK),A ;08.13 / RESETEA EL BACKUP DE LA ENVOLVENTE
         JR      LOCALIZA_NOTA
 
 COM_EFECTO:
@@ -625,7 +625,8 @@ COM_ENVOLVENTE:
         JR      LOCALIZA_NOTA
 
 
-LNJP0:  LD      A, (HL)
+LNJP0:
+        LD      A, (HL)
         INC     HL
         BIT     7, A
         JR      Z, NO_FIN_CANAL_A       ;
@@ -725,7 +726,8 @@ LOCALIZA_EFECTO:
         JP      INICIA_SONIDO
 
 
-LEJP0:  INC     HL
+LEJP0:
+        INC     HL
         BIT     7, A
         JR      Z, NO_FIN_CANAL_P       ;
         BIT     0, A
@@ -753,14 +755,15 @@ NO_FIN_CANAL_P:
 
 ; PAUTA DE LOS 3 CANALES
 ; IN:(IX):PUNTERO DE LA PAUTA
-;    (HL):REGISTRO DE VOLUMEN
-;    (IY):REGISTROS DE FRECUENCIA
+; (HL):REGISTRO DE VOLUMEN
+; (IY):REGISTROS DE FRECUENCIA
 
 ; FORMATO PAUTA
-;	    7	 6     5     4	 3-0			    3-0
+; 7 6 5 4 3-0 3-0
 ; BYTE 1 (LOOP|OCT-1|OCT+1|ORNMT|VOL) - BYTE 2 ( | | | |PITCH/NOTA)
 
-PAUTA:  BIT     4, (HL)                 ;SI LA ENVOLVENTE ESTA ACTIVADA NO ACTUA PAUTA
+PAUTA:
+        BIT     4, (HL)                 ;SI LA ENVOLVENTE ESTA ACTIVADA NO ACTUA PAUTA
         RET     NZ
 
         LD      A, (IY+0)
@@ -771,7 +774,8 @@ PAUTA:  BIT     4, (HL)                 ;SI LA ENVOLVENTE ESTA ACTIVADA NO ACTUA
 
         PUSH    HL
 
-PCAJP4: LD      L, (IX+0)
+PCAJP4:
+        LD      L, (IX+0)
         LD      H, (IX+1)
         LD      A, (HL)
 
@@ -784,7 +788,8 @@ PCAJP4: LD      L, (IX+0)
         SBC     HL, DE
         LD      A, (HL)
 
-PCAJP0: BIT     6, A                    ;OCTAVA -1
+PCAJP0:
+        BIT     6, A                    ;OCTAVA -1
         JR      Z, PCAJP1
         LD      E, (IY+0)
         LD      D, (IY+1)
@@ -796,7 +801,8 @@ PCAJP0: BIT     6, A                    ;OCTAVA -1
         LD      (IY+1), D
         JR      PCAJP2
 
-PCAJP1: BIT     5, A                    ;OCTAVA +1
+PCAJP1:
+        BIT     5, A                    ;OCTAVA +1
         JR      Z, PCAJP2
         LD      E, (IY+0)
         LD      D, (IY+1)
@@ -810,7 +816,8 @@ PCAJP1: BIT     5, A                    ;OCTAVA +1
 
 
 
-PCAJP2: LD      A, (HL)
+PCAJP2:
+        LD      A, (HL)
         BIT     4, A
         JR      NZ, PCAJP6              ;ORNAMENTOS SELECCIONADOS
 
@@ -834,9 +841,11 @@ PCAJP2: LD      A, (HL)
         JR      Z, ORNNEG
         LD      H, $FF
         JR      PCAJP3
-ORNNEG: LD      H, 0
+ORNNEG:
+        LD      H, 0
 
-PCAJP3: LD      E, (IY+0)
+PCAJP3:
+        LD      E, (IY+0)
         LD      D, (IY+1)
         ADC     HL, DE
         LD      (IY+0), L
@@ -844,14 +853,15 @@ PCAJP3: LD      E, (IY+0)
         JR      ORNMJP1
 
 
-PCAJP6: INC     HL                      ;______________________ FUNCION ORNAMENTOS__________________
+PCAJP6:
+        INC     HL                      ;______________________ FUNCION ORNAMENTOS__________________
 
         PUSH    HL
         PUSH    AF
         LD      A, (IX+REG_NOTA_A-PUNTERO_P_A)
                                         ;RECUPERA REGISTRO DE NOTA EN EL CANAL
         LD      E, (HL)                 ;
-        ADC     A, E                    ;+- NOTA
+        ADC     E                       ;+- NOTA
         CALL    TABLA_NOTAS
         POP     AF
 
@@ -862,24 +872,27 @@ ORNMJP1:
         INC     HL
         LD      (IX+0), L
         LD      (IX+1), H
-PCAJP5: POP     HL
+PCAJP5:
+        POP     HL
         LD      B, (IX+VOL_INST_A-PUNTERO_P_A)
                                         ;VOLUMEN RELATIVO
-        ADD     A, B
+        ADD     B
         JP      P, PCAJP7
         LD      A, 1                    ;NO SE EXTIGUE EL VOLUMEN
-PCAJP7: AND     00001111B               ;VOLUMEN FINAL MODULADO
+PCAJP7:
+        AND     00001111B               ;VOLUMEN FINAL MODULADO
         LD      (HL), A
         RET
 
 
 
-;NOTA : REPRODUCE UNA NOTA
+;NOTA -  REPRODUCE UNA NOTA
 ;IN (A)=CODIGO DE LA NOTA
-;   (IY)=REGISTROS DE FRECUENCIA
+; (IY)=REGISTROS DE FRECUENCIA
 
 
-NOTA:   LD      L, C
+NOTA:
+        LD      L, C
         LD      H, B
         BIT     4, (HL)
         LD      B, A
@@ -896,11 +909,11 @@ TABLA_NOTAS:
 
 
 ;IN (A)=CODIGO DE LA ENVOLVENTE
-;   (IY)=REGISTRO DE FRECUENCIA
+; (IY)=REGISTRO DE FRECUENCIA
 
 EVOLVENTES:
         LD      HL, DATOS_NOTAS
-    ;SUB	12
+ ;SUB 12
         RLCA                            ;X2
         LD      D, 0
         LD      E, A
@@ -921,19 +934,20 @@ FRECUENCIA_OFF:
         LD      DE, $0000
         LD      (IY+0), E
         LD      (IY+1), D
-			        ;CALCULO DEL RATIO (OCTAVA ARRIBA)
+ ;CALCULO DEL RATIO (OCTAVA ARRIBA)
 CONT_ENV:
         POP     DE
         PUSH    AF
         PUSH    BC
         AND     00000011B
         LD      B, A
-        ;INC	B
+ ;INC B
 
-        ;AND	A			;1/2
+ ;AND A ;1/2
         RR      D
         RR      E
-CRTBC0:                                 ;AND	A			;1/4 - 1/8 - 1/16
+CRTBC0:
+ ;AND A ;1/4 - 1/8 - 1/16
         RR      D
         RR      E
         DJNZ    CRTBC0
@@ -947,7 +961,7 @@ CRTBC0:                                 ;AND	A			;1/4 - 1/8 - 1/16
 
         RRA
         AND     00000110B               ;$08,$0A,$0C,$0E
-        ADD     A, 8
+        ADD     8
         LD      (PSG_REG+13), A
         LD      (ENVOLVENTE_BACK), A
         RET
@@ -955,7 +969,7 @@ CRTBC0:                                 ;AND	A			;1/4 - 1/8 - 1/16
 
 ;EXTRAE UN WORD DE UNA TABLA
 ;IN:(HL)=DIRECCION TABLA
-;   (A)= POSICION
+; (A)= POSICION
 ;OUT(DE)=WORD
 
 EXT_WORD:
@@ -999,14 +1013,14 @@ SELECT_CANAL_C:
 
 
 INTERR: DB      0                       ;INTERRUPTORES 1=ON 0=OFF
-			        ;BIT 0=CARGA CANCION ON/OFF
-			        ;BIT 1=PLAYER ON/OFF
-			        ;BIT 2=EFECTOS ON/OFF
-			        ;BIT 3=SFX ON/OFF
-			        ;BIT 4=LOOP
+ ;BIT 0=CARGA CANCION ON/OFF
+ ;BIT 1=PLAYER ON/OFF
+ ;BIT 2=EFECTOS ON/OFF
+ ;BIT 3=SFX ON/OFF
+ ;BIT 4=LOOP
 ;CONTROL DE LAS INTERRUPCIONES
 
-;HOOK:		 DB	0
+;HOOK: DB 0
 
 ;MUSICA **** EL ORDEN DE LAS VARIABLES ES FIJO ******
 
@@ -1065,7 +1079,7 @@ VOL_INST_A:
 REG_NOTA_B:
         DB      0                       ;DB REGISTRO DE LA NOTA EN EL CANAL B
 VOL_INST_B:
-        DB      0                       ;DB VOLUMEN RELATIVO DEL INSTRUMENTO DEL CANAL B					;VACIO
+        DB      0                       ;DB VOLUMEN RELATIVO DEL INSTRUMENTO DEL CANAL B ;VACIO
 REG_NOTA_C:
         DB      0                       ;DB REGISTRO DE LA NOTA EN EL CANAL C
 VOL_INST_C:
@@ -1090,7 +1104,7 @@ PUNTERO_DECP:
         DW      0                       ;DW PUNTERO DECODER CANAL P
 PUNTERO_L_DECP:
         DW      0                       ;DW PUNTERO DE INICIO DEL LOOP DEL DECODER CANAL P
-;SELECT_CANAL_P	DB	INTERR+$36	;DB SELECCION DE CANAL DE EFECTOS DE RITMO
+;SELECT_CANAL_P DB INTERR+$36 ;DB SELECCION DE CANAL DE EFECTOS DE RITMO
 
 
 SFX_L:  DW      0                       ;DW DIRECCION BUFFER EFECTOS DE RITMO REGISTRO BAJO
@@ -1109,7 +1123,7 @@ PUNTERO_SONIDO:
 
 
 
-; BUFFERs DE REGISTROS DEL PSG
+;DB (13) BUFFERs DE REGISTROS DEL PSG
 
 PSG_REG:
         DS      PSG_NUM_REG
@@ -1117,18 +1131,16 @@ PSG_REG_SEC:
         DS      PSG_NUM_REG
 ENVOLVENTE:
         DB      0                       ;DB : FORMA DE LA ENVOLVENTE
-			        ;BIT 0	  : FRECUENCIA CANAL ON/OFF
-			        ;BIT 1-2  : RATIO
-			        ;BIT 3-3  : FORMA
+ ;BIT 0 : FRECUENCIA CANAL ON/OFF
+ ;BIT 1-2 : RATIO
+ ;BIT 3-3 : FORMA
 ENVOLVENTE_BACK:
-        DB      0                       ;DB:	BACKUP DE LA FORMA DE LA ENVOLENTE
-
-BUFFER_CANAL_A:
-        ds      CHANNEL_BUFF_SIZE
-BUFFER_CANAL_B:
-        ds      CHANNEL_BUFF_SIZE
-BUFFER_CANAL_C:
-        ds      CHANNEL_BUFF_SIZE
-BUFFER_CANAL_P:
-        ds      CHANNEL_BUFF_SIZE
-
+        DB      0                       ;DB: BACKUP DE LA FORMA DE LA ENVOLENTE
+BUFFER_DEC:
+        ds      CHANNEL_BUFF_SIZE*4
+SONIDO_REGS:
+        ds      2
+EFECTO_REGS:
+        ds      2
+PUNTERO_EFECTO:
+        ds      2

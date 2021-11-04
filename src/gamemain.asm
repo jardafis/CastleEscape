@@ -315,6 +315,7 @@ smallJump:
         ld      (jumpMidpoint+1), a     ; Save for compare below
         ld      a, b
         push    de                      ; Save direction bits in 'e'
+        ld      b, 2                    ; Use channel #2
         di
         call    wyz_play_sound
         ei

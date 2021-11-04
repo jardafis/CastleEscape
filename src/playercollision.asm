@@ -227,6 +227,7 @@ noYCollision:
         ld      a, FALL_DISTANCE        ; Distance before falling starts
         cp      (hl)
         ld      a, AYFX_FALLING
+        ld      b, 2                    ; Use channel #2
         di
         call    z, wyz_play_sound
         ei
