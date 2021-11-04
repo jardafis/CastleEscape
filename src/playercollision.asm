@@ -227,15 +227,17 @@ noYCollision:
         ld      a, FALL_DISTANCE        ; Distance before falling starts
         cp      (hl)
         ld      a, AYFX_FALLING
+        push    bc
         ld      b, 2                    ; Use channel #2
         di
         call    z, wyz_play_sound
         ei
+        pop     bc
 
 updateYPos:
-    ;
-    ; Update y position
-    ;
+        ;
+        ; Update y position
+        ;
         ld      a, (_yPos)
         add     b
         cp      MAX_Y_POS-PLAYER_HEIGHT
