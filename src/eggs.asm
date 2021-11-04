@@ -36,7 +36,9 @@ eggCollision:
         call    displayEggCount
 
         ld      a, AYFX_COLLECT_EGG     ; Play a sound
+        di
         call    wyz_play_sound
+        ei
         ret
 
 updateEggImage:

@@ -315,7 +315,9 @@ smallJump:
         ld      (jumpMidpoint+1), a     ; Save for compare below
         ld      a, b
         push    de                      ; Save direction bits in 'e'
+        di
         call    wyz_play_sound
+        ei
         pop     de                      ; Restore direction bits in 'e'
 cantJump:
 

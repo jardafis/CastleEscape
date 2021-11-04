@@ -227,7 +227,9 @@ noYCollision:
         ld      a, FALL_DISTANCE        ; Distance before falling starts
         cp      (hl)
         ld      a, AYFX_FALLING
+        di
         call    z, wyz_play_sound
+        ei
 
 updateYPos:
     ;

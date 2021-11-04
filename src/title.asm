@@ -16,7 +16,9 @@ titleScreen:
         ; Start the title song
         ;
         ld      a, TITLE_MUSIC
+        di
         call    wyz_play_song
+        ei
 
         ;
         ; Display the continue message
@@ -49,7 +51,9 @@ waitNoJump:
         and     JUMP
         jr      nz, waitNoJump
 
+        di
         call    wyz_player_stop
+        ei
 
         ret
 

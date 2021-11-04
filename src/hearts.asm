@@ -31,7 +31,9 @@ heartCollision:
         call    display2BCD
 
         ld      a, AYFX_COLLECT_HEART   ; Play a sound
+        di
         call    wyz_play_sound
+        ei
         ret
 
         section BSS_2

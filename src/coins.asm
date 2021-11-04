@@ -70,7 +70,9 @@ coinCollision:
         call    display4BCD
 
         ld      a, AYFX_COLLECT_COIN    ; Play a sound
+        di
         call    wyz_play_sound
+        ei
         ret
 
         section BSS_2

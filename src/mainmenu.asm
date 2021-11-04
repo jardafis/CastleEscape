@@ -32,8 +32,11 @@ mainMenu:
         ;
         ; Start main menu song
         ;
+        di
+        call    wyz_player_stop
         ld      a, MAIN_MENU_MUSIC
         call    wyz_play_song
+        ei
 
 displayScreen:
         ;
@@ -164,12 +167,16 @@ attribEdit:
         ; restart menu music.
         ;
 play:
+        di
         call    wyz_player_stop
+        ei
 
         call    newGame
 
         ld      a, MAIN_MENU_MUSIC
+        di
         call    wyz_play_song
+        ei
 
         jp      mainMenu
 

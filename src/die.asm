@@ -56,7 +56,9 @@ die:
         ; Start the death march
         ;
         ld      a, DEATH_MARCH
+        di
         call    wyz_play_song
+        ei
 
         ;
         ; Delay for 200 1/50's of a second (4 seconds) and flash
