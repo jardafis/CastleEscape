@@ -162,15 +162,7 @@ attribEdit:
 
         jp      displayScreen
 
-        ;
-        ; Stop menu music and start a new game. Upon return
-        ; restart menu music.
-        ;
 play:
-        di
-        call    wyz_player_stop
-        ei
-
         call    newGame
 
         ld      a, MAIN_MENU_MUSIC

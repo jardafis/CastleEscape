@@ -12,6 +12,7 @@
         extern  playerSprite
         extern  startSprite
         extern  wyz_play_song
+        extern  wyz_player_stop
         extern  xyPos
         extern  xyStartPos
 
@@ -53,10 +54,12 @@ die:
         call    displayPixelTile
 
         ;
-        ; Start the death march
+        ; Stop in-game music and
+        ; start the death march
         ;
-        ld      a, DEATH_MARCH
         di
+        call    wyz_player_stop
+        ld      a, DEATH_MARCH
         call    wyz_play_song
         ei
 
@@ -92,6 +95,12 @@ delayLoop:
         ld      a, (hl)
         or      a
         jp      z, gameOver
+
+		; Restart in-game music
+        ld      a, MAIN_MENU_MUSIC
+        di
+        call    wyz_play_song
+        ei
 
         ;
         ; Remove the headstone
