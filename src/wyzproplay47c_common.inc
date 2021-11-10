@@ -201,11 +201,12 @@ CLEAR_PSG_BUFFER:
 
         LD      A, 10111000B            ; **** POR SI ACASO ****
         LD      (PSG_REG+7), A
+        LD      (PSG_REG_SEC+7), A
 
-        LD      HL, PSG_REG
-        LD      DE, PSG_REG_SEC
-        LD      BC, PSG_NUM_REG
-        LDIR
+;        LD      HL, PSG_REG
+;        LD      DE, PSG_REG_SEC
+;        LD      BC, PSG_NUM_REG
+;        LDIR
 
         JP      ROUT
 
