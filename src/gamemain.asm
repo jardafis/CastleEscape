@@ -122,7 +122,7 @@ newGame:
         ld      bc, 0x0b0c
         ld      hl, readyMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT
-        call    printAttr
+        bcall   printAttr
 
         ;
         ; Patch the displayTile routine to access
@@ -437,7 +437,7 @@ gameOver:
         ld      bc, 0x0b0a
         ld      hl, gameOverMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT
-        call    printAttr
+        bcall   printAttr
 
         delay   200
 

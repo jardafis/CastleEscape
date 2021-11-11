@@ -156,7 +156,7 @@ attribEdit:
         push    hl
         ld      hl, _tileAttr
         push    hl
-        call    _attribEdit
+        bcall   _attribEdit
         pop     hl
         pop     hl
 

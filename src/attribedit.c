@@ -3,7 +3,7 @@
 extern void cls(char attr)
 __z88dk_fastcall;
 extern unsigned char *screenTab[];
-extern void printChar(unsigned char c, unsigned char x, unsigned char y);
+extern void printChar(unsigned char c, unsigned char x, unsigned char y) __banked;
 extern void displayTile(unsigned char tile, unsigned char x, unsigned y);
 extern unsigned char waitKey(void);
 

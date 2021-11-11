@@ -10,10 +10,10 @@ CSRC=$(wildcard *.c)
 ZXSTLC=./tools/zxstlc_linux
 
 CFLAGS=$(TARGET) -O2 -c \
-		--codeseg=CODE_5 \
-		--constseg=RODATA_5 \
-		--dataseg=DATA_5 \
-		--bssseg=BSS_5 \
+		--codeseg=CODE_4 \
+		--constseg=RODATA_4 \
+		--dataseg=DATA_4 \
+		--bssseg=BSS_4 \
 		-clib=new \
 		-pragma-include:$(PRAGMA_FILE)
 
@@ -66,6 +66,6 @@ $(PROJ_NAME).tap: $(PROJ_NAME)_BANK_2.bin
 	@cp $(PROJ_NAME)_BANK_5.bin $(PROJ_NAME).bin
 	@dd if=/dev/null of=$(PROJ_NAME).bin bs=1 count=1 seek=8192
 	@cat $(PROJ_NAME)_BANK_2.bin >> $(PROJ_NAME).bin
-	$(ZXSTLC) -b $(PROJ_NAME).bin 24576 24576 -l title.scr -n CastleEsc -0 $(PROJ_NAME)_BANK_0.bin -7 $(PROJ_NAME)_BANK_7.bin
+	$(ZXSTLC) -b $(PROJ_NAME).bin 24576 24576 -l title.scr -n CastleEsc -0 $(PROJ_NAME)_BANK_0.bin -4 $(PROJ_NAME)_BANK_4.bin -7 $(PROJ_NAME)_BANK_7.bin
 
 -include $(ASMSRC:.asm=.d) $(CSRC:.c=.d)

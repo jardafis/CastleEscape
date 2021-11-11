@@ -20,7 +20,7 @@ displayBCD:
         push    af
 
         add     '0'
-        call    printChar
+        bcall   printChar
 
         pop     af
         ret

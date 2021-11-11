@@ -1,6 +1,7 @@
         extern  _font_8x8_cpc_system
         extern  currentBank
         extern  bankedCall
+        extern  banked_call
 
         ;
         ; Points
@@ -380,9 +381,9 @@ border  MACRO   color
         ; Banked call to function
         ;
 bcall   MACRO   function
-        call    bankedCall
-        db      function>>16|MEM_BANK_ROM
+        call    banked_call
         dw      function
+        dw      function>>16|MEM_BANK_ROM
         ENDM
 
         ;

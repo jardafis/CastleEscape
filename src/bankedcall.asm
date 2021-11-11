@@ -1,7 +1,7 @@
         extern  currentBank
-        public  bankedCall
+        public  banked_call
 
-        section CODE_2
+        defc    CLIB_BANKING_STACK_SIZE=0x10
 
         include "defs.inc"
 
@@ -33,64 +33,84 @@
         ;
         ; Calling Convention:
         ; 		call	bankedCall
-        ;		db		<newBank>
         ;		dw		<bankedFunction>
+        ;       dw      <newBank>
         ; retAddr: <- actual return address from this function
         ;
-bankedCall:
-        ex      af, af'
+        section CODE_2
+banked_call:
+        di
         exx
-
-        ld      a, (currentBank)        ; Get the current bank number
-        ld      d, a                    ; and save it.
-
-        pop     hl                      ; Get the return address it points to the new bank
-        ld      a, (hl)                 ; New bank number
-        inc     hl
-
-        ; Switch to the new bank
-        ld      (currentBank), a
-        ld      bc, IO_BANK
-        out     (c), a
-
-        ld      c, (hl)                 ; Get the banked routine address
-        inc     hl
-        ld      b, (hl)
-        inc     hl                      ; hl now points to the address actual return address
-
-        ;
-        ; Build the new stack frame
-        ;
-
-        push    hl                      ; Return address from this function
-        push    de                      ; The old bank number
-
-        ld      hl, bankedReturn
-        push    hl                      ; Return address from banked function
-        push    bc                      ; Address of banked routine
-
-        exx                             ; Restore all the regs
         ex      af, af'
 
-        ; All registers are passed into the banked call
-        ret                             ; Jump to banked routine address on the stack
+        pop     hl                      ; Return address
 
-        ;
-        ; Banked routines will return here
-        ;
-bankedReturn:
-        ex      af, af'                 ; Save af from the banked call
-        exx
+        ld      (saveSP1+1), sp         ; Save the main SP
+        ld      sp, (tempsp)            ; Get banking SP
 
-        pop     af                      ; Get the old bank number from the stack
+        ld      a, (currentBank)
+        push    af                      ; Save the current bank number
 
-        ; Map in the old bank
-        ld      (currentBank), a
+        ld      e, (hl)                 ; Fetch the call address
+        inc     hl
+        ld      d, (hl)
+        inc     hl
+        ld      a, (hl)                 ; ...and page
+        inc     hl
+        inc     hl                      ; Yes this should be here
+
+        push    hl                      ; Push the real return address
+
+        ld      (tempsp), sp            ; Save banking SP
+saveSP1:
+        ld      sp, -1                  ; Restore main SP
+
         ld      bc, IO_BANK
+        ld      (currentBank), a
+        out     (c), a
+
+        ld      hl, continue
+        push    hl                      ; Return address
+        push    de                      ; Banked call address
+
+        exx
+        ex      af, af'
+        ei
+
+        ret                             ; Jump to banked call
+
+continue:
+        di
+        exx
+        ex      af, af'
+
+        ld      (saveSP2+1), sp
+
+        ld      sp, (tempsp)
+        pop     bc                      ; Get the return address
+        pop     af                      ; Pop the old bank
+        ld      (tempsp), sp
+
+saveSP2:
+        ld      sp, -1
+
+        push    bc                      ; Return address
+
+        ld      bc, IO_BANK
+        ld      (currentBank), a
         out     (c), a
 
         exx
-        ex      af, af'                 ; Restore af from the banked call
+        ex      af, af'
+        ei
 
-        ; All registers from the banked function are available here
         ret
+
+        SECTION DATA_2
+tempsp:
+        dw      bankingStack
+
+        SECTION BSS_2
+
+        ds      CLIB_BANKING_STACK_SIZE
+bankingStack:

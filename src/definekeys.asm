@@ -66,7 +66,7 @@ xLoop:
         ld      bc, 0x0d0a
         ld      hl, defineKeyMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT
-        call    printAttr
+        bcall   printAttr
 
         ;
         ; Underline the title
@@ -111,7 +111,7 @@ underline:
         ld      bc, 0x1505
         ld      hl, pressJumpMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT|FLASH
-        call    printAttr
+        bcall   printAttr
 
 waitJump:
         ld      hl, lanternList
@@ -147,7 +147,7 @@ waitJumpRelease:
         ;       de - Scan code for the key pressed
 getInput:
         ld      a, PAPER_BLACK|INK_WHITE
-        call    printAttr
+        bcall   printAttr
         push    hl
 
         ld      a, PAPER_BLACK|INK_GREEN|BRIGHT|FLASH
@@ -181,7 +181,7 @@ notEnter:
 
 printKey:
         ld      a, PAPER_BLACK|INK_GREEN|BRIGHT
-        call    printAttr
+        bcall   printAttr
 
         ld      a, (key)
         call    lookupScanCode

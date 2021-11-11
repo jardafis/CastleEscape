@@ -26,7 +26,7 @@ titleScreen:
         ld      bc, 0x1505
         ld      hl, pressJumpMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT|FLASH
-        call    printAttr
+        bcall   printAttr
 
         ;
         ; Setup the coin table for the main menu

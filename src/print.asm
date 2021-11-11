@@ -5,7 +5,7 @@
         public  printAttr
         public  printChar
 
-        section CODE_2
+        section CODE_4
 
         include "defs.inc"
 
