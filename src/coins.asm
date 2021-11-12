@@ -8,7 +8,6 @@
         public  _animateCoins
         public  _coinTables
         public  coinCollision
-        public  coins
         public  currentCoinTable
 
         include "defs.inc"
@@ -84,5 +83,3 @@ currentCoinTable:
 _coinTables:
         ds      MAX_LEVEL_X*MAX_LEVEL_Y*SIZEOF_ptr
 
-coins:
-        ds      SIZEOF_item*MAX_COINS*MAX_LEVEL_X*MAX_LEVEL_Y

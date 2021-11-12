@@ -58,7 +58,11 @@
         }
 
 _initItems:
-        pushall
+        push    af
+        push    bc
+        push    hl
+        push    ix
+        push    iy
 
         ;
         ; Save parameters passed in registers
@@ -159,7 +163,11 @@ itemID:
 tempSP:
         ld      sp, -1
 
-        popall
+        pop     iy
+        pop     ix
+        pop     hl
+        pop     bc
+        pop     af
         ret
 
         ;

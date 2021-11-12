@@ -8,7 +8,6 @@
         public  displaySpiders
         public  spiderCollision
         public  spiderTables
-        public  spiders
         public  updateSpiderPos
 
         ;
@@ -213,5 +212,3 @@ currentSpiderTable:
 spiderTables:
         ds      MAX_LEVEL_X*MAX_LEVEL_Y*SIZEOF_ptr
 
-spiders:
-        ds      SIZEOF_item*MAX_SPIDERS*MAX_LEVEL_X*MAX_LEVEL_Y

@@ -6,7 +6,7 @@ extern unsigned char *screenTab[];
 extern void printChar(unsigned char c, unsigned char x, unsigned char y) __banked;
 extern void displayTile(unsigned char tile, unsigned char x, unsigned y);
 extern unsigned char waitKey(void);
-
+extern unsigned int bank2HeapEnd;
 #define TILE_WIDTH      16
 #define TILE_HEIGHT     16
 
@@ -173,6 +173,9 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
     setCursor(16, 12);
     putString("  len   = 0x");
     putHex(TILE_WIDTH * TILE_HEIGHT);
+    setCursor(16, 14);
+    putString("Heapend = 0x");
+    putHex(bank2HeapEnd);
 
     xorCursor(x, y);
 

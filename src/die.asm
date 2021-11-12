@@ -1,6 +1,7 @@
         extern  _falling
         extern  _jumping
         extern  _pasteScreen
+        extern  _copyScreen
         extern  _spriteBuffer
         extern  _xPos
         extern  _ySpeed
@@ -30,6 +31,10 @@ die:
         push    bc
         push    de
         push    hl
+
+        ld      de, _spriteBuffer
+        ld      bc, (_xPos)
+        call    _copyScreen
 
 		;
 		; Display headstone where player died

@@ -21,7 +21,6 @@
         extern  checkXCol
         extern  checkYCol
         extern  coinCollision
-        extern  coins
         extern  currentCoinTable
         extern  currentEggTable
         extern  currentHeartTable
@@ -33,11 +32,9 @@
         extern  eggCollision
         extern  eggCount
         extern  eggTables
-        extern  eggs
         extern  heartCollision
         extern  heartCount
         extern  heartTables
-        extern  hearts
         extern  initISR
         extern  kjScan
         extern  mainMenu
@@ -47,12 +44,13 @@
         extern  score
         extern  spiderCollision
         extern  spiderTables
-        extern  spiders
         extern  ticks
         extern  titleScreen
         extern  updateSpiderPos
         extern  wyz_play_sound
         extern  wyz_player_init
+        extern  __HEAP_2_head
+        extern  __BANK_0_head
 
         public  _currentTileMap
         public  _falling
@@ -73,6 +71,7 @@
         public  startSprite
         public  xyPos
         public  xyStartPos
+        public  _bank2HeapEnd
 
         include "defs.inc"
 
@@ -144,31 +143,48 @@ newGame:
         ;
         ; Initialize the coin tables
         ;
+        ; The goal is to reduce memory footprint.
+        ; Since nothing else uses heap, just start
+        ; from the beginning each time
+        ld      de, __HEAP_2_head
         ld      hl, _coinTables
-        ld      de, coins
         ld      a, ID_COIN
         call    _initItems
         ;
         ; Initialize the egg tables
         ;
         ld      hl, eggTables
-        ld      de, eggs
         ld      a, ID_EGG
         call    _initItems
         ;
         ; Initialize the hearts tables
         ;
         ld      hl, heartTables
-        ld      de, hearts
         ld      a, ID_HEART
         call    _initItems
         ;
         ; Initialize the hearts tables
         ;
         ld      hl, spiderTables
-        ld      de, spiders
         ld      a, ID_SPIDER
         call    _initItems
+
+        ; Save the new end of heap pointer
+        ld      (_bank2HeapEnd), de
+
+        ; Check for heap overflow
+        xor     a                       ; Clear carry flag
+        ld      hl, __BANK_0_head
+        sbc     hl, de
+        jr      nc, heapGood
+
+        ld      b, a
+        ld      c, b
+        ld      a, INK_RED|PAPER_WHITE|BRIGHT|FLASH
+        ld      hl, heapMsg
+        bcall   printAttr
+        assert
+heapGood:
 
         ;
         ; Set the initial player sprite
@@ -528,10 +544,14 @@ _spriteBuffer:
         ds      48
 
         section DATA_2
+_bank2HeapEnd:
+        dw      __HEAP_2_head
 currentBank:
         db      MEM_BANK_ROM
 
         section RODATA_2
+heapMsg:
+        db      "Fatal: Heap overflow!", 0x00
 readyMsg:
         db      "Ready?", 0x00
 gameOverMsg:

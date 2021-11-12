@@ -30,8 +30,8 @@ HEAD=$(shell grep __$(BANK)_head *.map | awk '{gsub("^.", "0x", $$3); print $$3}
 .PHONY: all clean run dis
 
 all: $(PROJ_NAME).tap
-	@grep -E "__(CODE|RODATA|DATA|BSS)_(head|tail|size).*" $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
-	@grep -E "__(CODE|RODATA|DATA|BSS|code)_([0-7]|user|crt.*)_(sccz80|head|tail|size).*" $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep -E "__(CODE|RODATA|DATA|BSS|HEAP)_(head|tail|size).*" $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep -E "__(CODE|RODATA|DATA|BSS|HEAP|code)_([0-7]|user|crt.*)_(sccz80|head|tail|size).*" $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
 
 clean:
 	rm -f *.[oid] *.tap *.bin *.map *.dsk

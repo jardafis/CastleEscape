@@ -7,7 +7,6 @@
         public  heartCollision
         public  heartCount
         public  heartTables
-        public  hearts
 
         include "defs.inc"
 
@@ -47,5 +46,3 @@ currentHeartTable:
 heartTables:
         ds      MAX_LEVEL_X*MAX_LEVEL_Y*SIZEOF_ptr
 
-hearts:
-        ds      SIZEOF_item*MAX_HEARTS*MAX_LEVEL_X*MAX_LEVEL_Y

@@ -11,7 +11,6 @@
         public  eggCollision
         public  eggCount
         public  eggTables
-        public  eggs
         public  updateEggImage
 
         include "defs.inc"
@@ -105,5 +104,3 @@ currentEggTable:
 eggTables:
         ds      MAX_LEVEL_X*MAX_LEVEL_Y*SIZEOF_ptr
 
-eggs:
-        ds      SIZEOF_item*MAX_EGGS*MAX_LEVEL_X*MAX_LEVEL_Y
