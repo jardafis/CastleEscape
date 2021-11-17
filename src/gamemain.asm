@@ -44,7 +44,6 @@
         extern  score
         extern  spiderCollision
         extern  spiderTables
-        extern  ticks
         extern  titleScreen
         extern  updateSpiderPos
         extern  wyz_play_sound

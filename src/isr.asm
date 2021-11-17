@@ -1,26 +1,22 @@
         include "defs.inc"
 
         extern  wyz_play_frame
+        extern  __VECTORS_head
 
         public  initISR
         public  ticks
         public  isr
 
-        defc    VECTOR_TABLE_HIGH=0x80
-
         section CODE_5
 initISR:
-        push    af
-
-        ld      a, VECTOR_TABLE_HIGH    ; Write the address of the vector table
-        ld      i, a                    ; to the i register
+        di
+        ld      a, __VECTORS_head>>8    ; Write the high order byte of the
+        ld      i, a                    ; vector table address to the i register
         im      2                       ; Enable interrupt mode 2
         ei                              ; Enable interrupts
-
-        pop     af
         ret
 
-        section CODE_2
+        section ISR
 isr:
         push    af
         push    bc
@@ -53,6 +49,6 @@ nextByte:
 
         section BSS_2
 ticks:
-        ds      5                       ; 48-bits incremented every 1/50 second
-                                        ; ~178000 years before it wraps and clobbers
+        ds      5                       ; 40-bits incremented every 1/50 second
+                                        ; ~697 years before it wraps and clobbers
                                         ; something. Should be enough ;)

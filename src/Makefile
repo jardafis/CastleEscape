@@ -4,7 +4,6 @@ LD=zcc
 
 TARGET= +zx
 PROJ_NAME=CastleEscape
-PRAGMA_FILE=zpragma.inc
 ASMSRC=$(wildcard *.asm)
 CSRC=$(wildcard *.c)
 ZXSTLC=./tools/zxstlc_linux
@@ -14,10 +13,9 @@ CFLAGS=$(TARGET) -O2 -c \
 		--constseg=RODATA_4 \
 		--dataseg=DATA_4 \
 		--bssseg=BSS_4 \
-		-clib=new \
-		-pragma-include:$(PRAGMA_FILE)
+		-clib=new
 
-LDFLAGS=$(TARGET) -crt0 crt/crt.asm -m -pragma-include:$(PRAGMA_FILE)
+LDFLAGS=$(TARGET) -crt0 crt/crt.asm -m
 
 #ASFLAGS=-opt-speed
 OBJECTS=$(CSRC:.c=.o) $(ASMSRC:.asm=.o)
@@ -50,14 +48,14 @@ ifeq (,$(findstring $(MAKECMDGOALS),clean))
 	@./mkdep.sh $< > $@
 endif
 
-%.o: %.c $(PRAGMA_FILE)
+%.o: %.c
 	@echo "Compiling $<"
 	@$(CC) $(CFLAGS) -o $@ $<
 
 %.o: %.asm
 	@$(AS) $(ASFLAGS) $<
 
-$(PROJ_NAME)_BANK_2.bin: $(OBJECTS) $(PRAGMA_FILE)
+$(PROJ_NAME)_BANK_2.bin: $(OBJECTS)
 	@echo "Linking $@"
 	@$(LD) $(LDFLAGS) $(OBJECTS) -o $(PROJ_NAME)
 
@@ -66,6 +64,6 @@ $(PROJ_NAME).tap: $(PROJ_NAME)_BANK_2.bin
 	@cp $(PROJ_NAME)_BANK_5.bin $(PROJ_NAME).bin
 	@dd if=/dev/null of=$(PROJ_NAME).bin bs=1 count=1 seek=8192
 	@cat $(PROJ_NAME)_BANK_2.bin >> $(PROJ_NAME).bin
-	$(ZXSTLC) -b $(PROJ_NAME).bin 24576 24576 -l title.scr -n CastleEsc -0 $(PROJ_NAME)_BANK_0.bin -4 $(PROJ_NAME)_BANK_4.bin -7 $(PROJ_NAME)_BANK_7.bin
+	$(ZXSTLC) -b $(PROJ_NAME).bin 24576 24576 -l title.scr -n CastleEsc -0 $(PROJ_NAME)_BANK_0.bin -4 $(PROJ_NAME)_BANK_4.bin -7 $(PROJ_NAME)_BANK_7.bin -e
 
 -include $(ASMSRC:.asm=.d) $(CSRC:.c=.d)
