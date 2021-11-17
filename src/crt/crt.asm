@@ -2,30 +2,41 @@
 
         EXTERN  _main
 
-        SECTION BANK_5
-        org     CRT_ORG_BANK_5
-        SECTION CODE_5
-crt0:
-        di
-		;
-		; Setup a stack for the loader
-		;
-        ld      sp, REGISTER_SP
-        jp      _main
+IFNDEF  CRT_ORG_BANK_5
+        defc    CRT_ORG_BANK_5=0x06000
+ENDIF
+
+IFNDEF  CRT_ORG_BANK_2
+        defc    CRT_ORG_BANK_2=0x08000
+ENDIF
+
+IFNDEF  CRT_ORG_BANK_0
+        defc    CRT_ORG_BANK_0=0x0c000
+ENDIF
+
+IFNDEF  CRT_ORG_BANK_1
+        defc    CRT_ORG_BANK_1=0x1c000
+ENDIF
+
+IFNDEF  CRT_ORG_BANK_3
+        defc    CRT_ORG_BANK_3=0x3c000
+ENDIF
+
+IFNDEF  CRT_ORG_BANK_4
+        defc    CRT_ORG_BANK_4=0x4c000
+ENDIF
+
+IFNDEF  CRT_ORG_BANK_6
+        defc    CRT_ORG_BANK_6=0x6c000
+ENDIF
+
+IFNDEF  CRT_ORG_BANK_7
+        defc    CRT_ORG_BANK_7=0x7c000
+ENDIF
 
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    		; Define Memory Banks
    		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-IFDEF   CRT_ORG_BANK_5
-        SECTION BANK_5
-;        org     CRT_ORG_BANK_5
-        SECTION CODE_5
-        SECTION RODATA_5
-        SECTION DATA_5
-        SECTION BSS_5
-        SECTION HEAP_5
-ENDIF
 
 IFDEF   CRT_ORG_BANK_0
         SECTION BANK_0
@@ -50,10 +61,12 @@ ENDIF
 IFDEF   CRT_ORG_BANK_2
         SECTION BANK_2
         org     CRT_ORG_BANK_2
+        SECTION VECTORS
         ds      0x101, 0x81             ; 257 byte vector table
+        SECTION STACK
         ds      0x80, 0x55              ; 128 bytes of stack
-        extern  isr
-        jp      isr                     ; ISR
+stack:
+        SECTION ISR                     ; Interrupt subroutine
         SECTION CODE_2
         SECTION code_clib
         SECTION code_l_sccz80
@@ -81,6 +94,19 @@ IFDEF   CRT_ORG_BANK_4
         SECTION DATA_4
         SECTION BSS_4
         SECTION HEAP_4
+ENDIF
+
+IFDEF   CRT_ORG_BANK_5
+        SECTION BANK_5
+        org     CRT_ORG_BANK_5
+        SECTION CODE_5
+crt0:
+        ld      sp, stack
+        jp      _main
+        SECTION RODATA_5
+        SECTION DATA_5
+        SECTION BSS_5
+        SECTION HEAP_5
 ENDIF
 
 IFDEF   CRT_ORG_BANK_6
