@@ -136,6 +136,7 @@ releaseKey:
         pop     af
         ret
 
+IFDEF ATTRIB_EDIT
         ;
         ; Wrapper to call attribute edit function in 'C'
         ;
@@ -161,6 +162,7 @@ attribEdit:
         pop     hl
 
         jp      displayScreen
+ENDIF
 
 play:
         call    newGame
