@@ -50,6 +50,7 @@
         extern  wyz_player_init
         extern  __HEAP_2_head
         extern  __BANK_0_head
+        extern  heapCheck
 
         public  _currentTileMap
         public  _falling
@@ -71,6 +72,8 @@
         public  xyPos
         public  xyStartPos
         public  _bank2HeapEnd
+
+        defc    NEW_JUMP=1
 
         include "defs.inc"
 
@@ -170,20 +173,8 @@ newGame:
 
         ; Save the new end of heap pointer
         ld      (_bank2HeapEnd), de
-
-        ; Check for heap overflow
-        xor     a                       ; Clear carry flag
         ld      hl, __BANK_0_head
-        sbc     hl, de
-        jr      nc, heapGood
-
-        ld      b, a
-        ld      c, b
-        ld      a, INK_RED|PAPER_WHITE|BRIGHT|FLASH
-        ld      hl, heapMsg
-        bcall   printAttr
-        assert
-heapGood:
+        call    heapCheck
 
         ;
         ; Set the initial player sprite
@@ -301,6 +292,48 @@ noXMovement:
 updateXSpeedDone:
         ld      (_xSpeed), a
 
+IFDEF   NEW_JUMP
+        ; Check if the jump key is pressed
+        ; and try to start a jump
+        bit     JUMP_BIT, e
+        call    nz, startJump
+
+        ; Skip the code that follows if not jumping
+        ld      a, (_jumping)
+        or      a
+        jr      z, notJumping
+
+        ; Set right or left jump animation
+        bit     RIGHT_BIT, e
+        jr      z, checkLeftJump
+        ld      hl, RightJumpKnight0
+        ld      (playerSprite), hl
+        jr      jumpRightDone
+checkLeftJump:
+        bit     LEFT_BIT, e
+        jr      z, jumpRightDone
+        ld      hl, LeftJumpKnight0
+        ld      (playerSprite), hl
+jumpRightDone:
+
+        ; Get y speed from jump table
+        ld      hl, (jumpPos)
+        ld      a, (hl)
+        inc     hl
+        ld      (jumpPos), hl
+
+        ; Check for end of jump table
+        cp      0x80
+        jr      nz, stillJumping
+
+        ; Stop jumping, zero y speed
+        xor     a
+        ld      (_jumping), a
+stillJumping:
+        ld      (_ySpeed), a
+notJumping:
+
+ELSE
         ;
         ; Update the jump status
         ;
@@ -311,7 +344,6 @@ updateXSpeedDone:
 
         bit     JUMP_BIT, e
         jr      z, cantJump
-
 
         ld      a, JUMP_SPEED
         ld      (_ySpeed), a
@@ -355,14 +387,14 @@ jumpMidpoint:
         cp      -1                      ; Compare value will be different if player has collected eggs
         jr      nz, notMidpoint
         ex      af, af'                 ; Save the jump counter
-        ld      a, -JUMP_SPEED          ; Change jump direction, now going down.
+        xor     a                       ; Change jump direction, now going down.
         ld      (_ySpeed), a
         ex      af, af'                 ; Restore jump counter
 notMidpoint:
         dec     a
         ld      (_jumping), a
 notJumping:
-
+ENDIF
         ; ######################################
         ;
         ; Check if player is colliding with platforms
@@ -510,7 +542,45 @@ mulDone:
         pop     bc
         ret
 
+IFDEF   NEW_JUMP
+startJump:
+        ; Only start a jump if not currently jumping or falling
+        ld      hl, (jumpFall)
+        ld      a, h
+        or      l
+        ret     nz
+
+        ; Set the jumping flag
+        inc     l
+        ld      (jumpFall), hl
+
+        ; Big or short jump?
+        ld      a, (eggCount)           ; Get egg count
+        or      a
+
+        ; Setup for small jump
+        ld      hl, smallJump
+        ld      a, AYFX_JUMP
+        jr      z, small
+
+        ; Big jump instead
+        inc     a
+        ld      hl, bigJump
+small:
+        ld      (jumpPos), hl
+
+        ld      b, 2
+        push    de
+        di
+        call    wyz_play_sound
+        ei
+        pop     de
+        ret
+ENDIF
+
         section BSS_2
+jumpPos:
+        ds      2
 score:                                  ; Score in BCD
         ds      2
 coinRotate:
@@ -549,9 +619,26 @@ currentBank:
         db      MEM_BANK_ROM
 
         section RODATA_2
-heapMsg:
-        db      "Fatal: Heap overflow!", 0x00
 readyMsg:
         db      "Ready?", 0x00
 gameOverMsg:
         db      " Game Over! ", 0x80, " ", 0x00
+IFDEF   NEW_JUMP
+        ;
+        ; TODO: Compress these tables to <count>, <value> pairs.
+        ;
+smallJump:
+        db      0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe
+        db      0xff, 0xff, 0xff, 0xff
+        db      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        db      0x80
+bigJump:
+        db      0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe
+        db      0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe
+        db      0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe
+        db      0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
+        db      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        db      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        db      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        db      0x80
+ENDIF

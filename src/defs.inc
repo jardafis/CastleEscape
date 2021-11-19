@@ -86,7 +86,7 @@
         defc    JUMP_HEIGHT=24
         defc    LEFT_SPEED=-1
         defc    RIGHT_SPEED=1
-        defc    JUMP_SPEED=-1
+        defc    JUMP_SPEED=-2
         defc    DOWN_SPEED=1
         defc    UP_SPEED=-1
 

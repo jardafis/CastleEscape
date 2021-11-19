@@ -143,13 +143,13 @@ checkYCol:
         ld      l, a
         ld      h, 0
         ld      a, (_ySpeed)            ; Check if ySpeed is negative
+        add     1                       ; Add gravity
         ld      b, a
         or      a
         jp      p, movingDown           ; Moving down or stopped
         ld      de, -25                 ; Pixel position above the player
         jr      endif2
 movingDown:
-        ld      b, 1                    ; Force gravity as ySpeed could by 0
         ld      de, PLAYER_HEIGHT-24    ; Pixel position below the player
 endif2:
         add     hl, de
@@ -216,12 +216,9 @@ noYCollision:
         ;
         ; Transition to falling.
         ;  Clear X movement.
-        ;  set ySpeed to 1 (down).
-        ;  increment the falling counter.
+        ;  Increment the falling counter.
         xor     a
         ld      (_xSpeed), a
-        inc     a
-        ld      (_ySpeed), a
         ld      hl, _falling
         inc     (hl)
         ld      a, FALL_DISTANCE        ; Distance before falling starts

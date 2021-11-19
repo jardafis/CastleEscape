@@ -136,7 +136,7 @@ releaseKey:
         pop     af
         ret
 
-IFDEF ATTRIB_EDIT
+IFDEF   ATTRIB_EDIT
         ;
         ; Wrapper to call attribute edit function in 'C'
         ;
