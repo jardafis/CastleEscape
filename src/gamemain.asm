@@ -301,7 +301,7 @@ IFDEF   NEW_JUMP
         ; Skip the code that follows if not jumping
         ld      a, (_jumping)
         or      a
-        jr      z, notJumping
+        jr      z, continueJumping
 
         ; Set right or left jump animation
         bit     RIGHT_BIT, e
@@ -316,23 +316,18 @@ checkLeftJump:
         ld      (playerSprite), hl
 jumpRightDone:
 
-        ; Get y speed from jump table
-        ld      hl, (jumpPos)
-        ld      a, (hl)
-        inc     hl
-        ld      (jumpPos), hl
+        ld      hl, jumpCnt
+        dec     (hl)
+        jp      p, continueJumping
 
-        ; Check for end of jump table
-        cp      0x80
-        jr      nz, stillJumping
-
+        call    getJumpSequence
+        jr      c, stillJumping
+stopJumping:
         ; Stop jumping, zero y speed
-        xor     a
         ld      (_jumping), a
 stillJumping:
         ld      (_ySpeed), a
-notJumping:
-
+continueJumping:
 ELSE
         ;
         ; Update the jump status
@@ -560,15 +555,18 @@ startJump:
 
         ; Setup for small jump
         ld      hl, smallJump
-        ld      a, AYFX_JUMP
+        ld      c, AYFX_JUMP
         jr      z, small
 
         ; Big jump instead
-        inc     a
+        inc     c
         ld      hl, bigJump
 small:
-        ld      (jumpPos), hl
+        call    getJumpSequence1
+        ld      (_ySpeed), a
 
+
+        ld      a, c
         ld      b, 2
         push    de
         di
@@ -576,9 +574,34 @@ small:
         ei
         pop     de
         ret
+
+		;
+		; Get the next jump sequence from the jump table
+		;
+		; Exit:
+		;	a = jump speed
+		;	cf = 1 next jump sequence
+		;	cf = 0 end of jump sequence
+		;
+getJumpSequence:
+        ; Get count & y speed from jump table
+        ld      hl, (jumpPos)
+getJumpSequence1:
+        ld      a, (hl)                 ; Count
+        or      a
+        ret     z                       ; cf = 0
+        inc     hl
+        ld      (jumpCnt), a
+        ld      a, (hl)                 ; Jump speed
+        inc     hl
+        ld      (jumpPos), hl
+        scf                             ; cf = 1
+        ret
 ENDIF
 
         section BSS_2
+jumpCnt:
+        ds      1
 jumpPos:
         ds      2
 score:                                  ; Score in BCD
@@ -624,21 +647,14 @@ readyMsg:
 gameOverMsg:
         db      " Game Over! ", 0x80, " ", 0x00
 IFDEF   NEW_JUMP
-        ;
-        ; TODO: Compress these tables to <count>, <value> pairs.
-        ;
 smallJump:
-        db      0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe
-        db      0xff, 0xff, 0xff, 0xff
-        db      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-        db      0x80
+        db      0x0c, 0xfe              ; 12 frames up
+        db      0x04, 0xff              ; 4 frames hover
+        db      0x0c, 0x00              ; 12 frames down
+        db      0x00                    ; End of jump
 bigJump:
-        db      0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe
-        db      0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe
-        db      0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe
-        db      0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
-        db      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-        db      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-        db      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-        db      0x80
+        db      0x18, 0xfe              ; 24 frames up
+        db      0x08, 0xff              ; 8 frames hover
+        db      0x18, 0x00              ; 24 frames down
+        db      0x00                    ; End of jump
 ENDIF
