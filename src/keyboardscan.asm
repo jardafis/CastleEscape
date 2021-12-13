@@ -178,12 +178,12 @@ scanCodes:
         section RODATA_2
 
 keyMap:                                 ;Bit 0,  1,  2,  3,  4
-        db      0xFE, 0x00, "Z", "X", "C", "V"
+        db      0xFE, 0x01, "Z", "X", "C", "V"
         db      0xFD, "A", "S", "D", "F", "G"
         db      0xFB, "Q", "W", "E", "R", "T"
         db      0xF7, "1", "2", "3", "4", "5"
         db      0xEF, "0", "9", "8", "7", "6"
         db      0xDF, "P", "O", "I", "U", "Y"
-        db      0xBF, 0x0d, "L", "K", "J", "H"
-        db      0x7F, " ", 0x00, "M", "N", "B"
+        db      0xBF, "\r", "L", "K", "J", "H"
+        db      0x7F, " ", 0x02, "M", "N", "B"
         db      0x00                    ; No key pressed
