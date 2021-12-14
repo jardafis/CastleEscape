@@ -177,6 +177,16 @@ notSpace:
         ld      hl, enterMsg
         jr      printKey
 notEnter:
+        cp      SYM
+        jr      nz, notSYM
+        ld      hl, symMsg
+        jr      printKey
+notSYM:
+        cp      SHIFT
+        jr      nz, notShift
+        ld      hl, shiftMsg
+        jr      printKey
+notShift:
         ld      hl, key
 
 printKey:
@@ -215,3 +225,7 @@ spaceMsg:
         db      "SPACE", 0x00
 enterMsg:
         db      "ENTER", 0x00
+shiftMsg:
+        db      "SHIFT", 0x00
+symMsg:
+        db      "SYM", 0x00

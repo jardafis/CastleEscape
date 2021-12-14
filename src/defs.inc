@@ -70,6 +70,12 @@
         defc    LEVEL_HEIGHT=21
 
         ;
+        ; Non-printable keys
+        ;
+        defc    SHIFT=0x01
+        defc    SYM=0x02
+
+        ;
         ; Values numbers for control keys
         ;
         defc    JUMP=0x10
