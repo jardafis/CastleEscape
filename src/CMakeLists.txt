@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(CastleEscape C ASM)
+# Toolchain configuration
 set(CMAKE_C_COMPILER zcc)
 set(CMAKE_ASM_COMPILER z88dk-asmpp)
+
+project(CastleEscape C ASM)
+
 set(ZXSTLC ${PROJECT_SOURCE_DIR}/tools/zxstlc_linux)
 
 set(CMAKE_C_FLAGS
@@ -26,6 +29,8 @@ set(LDFLAGS
     -crt0 ${PROJECT_SOURCE_DIR}/crt/crt.asm \
     -m"
 )
+
+set(CMAKE_C_LINK_EXECUTABLE "<CMAKE_C_COMPILER> ${LDFLAGS} <OBJECTS> -o ${PROJECT_NAME}")
 
 set(SOURCES
     attribedit.c
@@ -66,7 +71,10 @@ set(SOURCES
     defs.inc
     )
 
-set(CMAKE_C_LINK_EXECUTABLE "<CMAKE_C_COMPILER> ${LDFLAGS} <OBJECTS> -o ${PROJECT_NAME}")
+set_property(SOURCE font.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/font_8x8_cpc_system.dat)
+set_property(SOURCE levels.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/attrib.dat)
+set_property(SOURCE menuscreen.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/mainmenu.scr)
+
 add_executable(${PROJECT_NAME}_BANK_2.bin ${SOURCES})
 
 set_target_properties(${PROJECT_NAME}_BANK_2.bin
@@ -82,3 +90,6 @@ add_custom_command(TARGET ${PROJECT_NAME}_BANK_2.bin POST_BUILD
     COMMAND cat ${PROJECT_NAME}_BANK_2.bin >> ${PROJECT_NAME}.bin
     COMMAND ${ZXSTLC} -b ${PROJECT_NAME}.bin 24576 24576 -l ${PROJECT_SOURCE_DIR}/title.scr -n CastleEsc -0 ${PROJECT_NAME}_BANK_0.bin -4 ${PROJECT_NAME}_BANK_4.bin -7 ${PROJECT_NAME}_BANK_7.bin -e
 )
+
+add_custom_target(run fuse ${PROJECT_NAME}.tap DEPENDS ${PROJECT_NAME}.tap)
+add_custom_target(rundsk fuse ${PROJECT_NAME}.dsk DEPENDS ${PROJECT_NAME}.dsk)
