@@ -68,7 +68,6 @@ set(SOURCES
     tilesheet.asm
     title.asm
     wyzproplay_zx.asm
-    defs.inc
     )
 
 set_property(SOURCE font.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/font_8x8_cpc_system.dat)
@@ -82,14 +81,31 @@ set_target_properties(${PROJECT_NAME}_BANK_2.bin
         ADDITIONAL_CLEAN_FILES "CastleEscape.map;${PROJECT_NAME}_BANK_0.bin;${PROJECT_NAME}_BANK_1.bin;${PROJECT_NAME}_BANK_2.bin;${PROJECT_NAME}_BANK_3.bin;${PROJECT_NAME}_BANK_4.bin;${PROJECT_NAME}_BANK_5.bin;${PROJECT_NAME}_BANK_6.bin;${PROJECT_NAME}_BANK_7.bin"
 )
 
-# Steps to generate the .tap and .dsk files
-add_custom_command(TARGET ${PROJECT_NAME}_BANK_2.bin POST_BUILD
-    BYPRODUCTS ${PROJECT_NAME}.tap ${PROJECT_NAME}.dsk ${PROJECT_NAME}.bin
+# Generate main binary consisting of banks 5, 2, and 0
+add_custom_command(OUTPUT ${PROJECT_NAME}.bin
     COMMAND cp ${PROJECT_NAME}_BANK_5.bin ${PROJECT_NAME}.bin
-    COMMAND dd if=/dev/null of=${PROJECT_NAME}.bin bs=1 count=1 seek=8192
+    COMMAND dd if=/dev/null of=${PROJECT_NAME}.bin bs=1 count=1 seek=8K
     COMMAND cat ${PROJECT_NAME}_BANK_2.bin >> ${PROJECT_NAME}.bin
-    COMMAND ${ZXSTLC} -b ${PROJECT_NAME}.bin 24576 24576 -l ${PROJECT_SOURCE_DIR}/title.scr -n CastleEsc -0 ${PROJECT_NAME}_BANK_0.bin -4 ${PROJECT_NAME}_BANK_4.bin -7 ${PROJECT_NAME}_BANK_7.bin -e
+    COMMAND dd if=/dev/null of=${PROJECT_NAME}.bin bs=1 count=1 seek=24K
+    COMMAND cat ${PROJECT_NAME}_BANK_0.bin >> ${PROJECT_NAME}.bin
+    DEPENDS ${PROJECT_NAME}_BANK_2.bin
 )
 
+# Steps to generate the .tap file
+add_custom_command(OUTPUT ${PROJECT_NAME}.tap
+    COMMAND ${ZXSTLC} -t ${PROJECT_NAME}.bin 24576 24576 -l ${PROJECT_SOURCE_DIR}/title.scr -n CastleEsc -4 ${PROJECT_NAME}_BANK_4.bin -7 ${PROJECT_NAME}_BANK_7.bin -e
+    DEPENDS ${PROJECT_NAME}.bin
+)
+
+# Steps to generate the .dsk file
+add_custom_command(OUTPUT ${PROJECT_NAME}.dsk
+    COMMAND ${ZXSTLC} -d ${PROJECT_NAME}.bin 24576 24576 -l ${PROJECT_SOURCE_DIR}/title.scr -4 ${PROJECT_NAME}_BANK_4.bin -7 ${PROJECT_NAME}_BANK_7.bin -e
+    DEPENDS ${PROJECT_NAME}.bin
+)
+
+# Disassemble the main binary
+add_custom_target(dis z88dk-dis -o 24576 -x ${PROJECT_NAME}.map ${PROJECT_NAME}.bin | less DEPENDS ${PROJECT_NAME}.bin)
+# Run the tape image with fuse
 add_custom_target(run fuse ${PROJECT_NAME}.tap DEPENDS ${PROJECT_NAME}.tap)
+# Run the disk image (+3) with fuse
 add_custom_target(rundsk fuse ${PROJECT_NAME}.dsk DEPENDS ${PROJECT_NAME}.dsk)
