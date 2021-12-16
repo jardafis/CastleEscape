@@ -53,6 +53,7 @@ endif
 	@$(CC) $(CFLAGS) -o $@ $<
 
 %.o: %.asm
+	@echo "Assembling $<"
 	@$(AS) $(ASFLAGS) $<
 
 $(PROJ_NAME)_BANK_2.bin: $(OBJECTS)

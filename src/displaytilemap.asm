@@ -4,7 +4,7 @@
 
         public  displayTileMap
 
-        include "defs.inc"
+        #include "defs.inc"
 
         section CODE_2
         ;

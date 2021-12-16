@@ -6,4 +6,4 @@
         ; Include the auto generated tile data
         ;
 _tile0:
-        include "sprite/tilesheet.inc"
+        #include "sprite/tilesheet.inc"

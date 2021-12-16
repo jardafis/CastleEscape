@@ -8,29 +8,23 @@ project(CastleEscape C ASM)
 
 set(ZXSTLC ${PROJECT_SOURCE_DIR}/tools/zxstlc_linux)
 
+set(Z88DK_TARGET +zx)
 set(CMAKE_C_FLAGS
-    "+zx \
-    -I${PROJECT_SOURCE_DIR} \
-    -O2 \
+    "-O2 \
     --codeseg=CODE_4 \
     --constseg=RODATA_4 \
     --dataseg=DATA_4 \
     --bssseg=BSS_4 \
     -clib=new"
 )
+set(CMAKE_ASM_FLAGS "-mz80")
+set(CMAKE_EXE_LINKER_FLAGS "-crt0 ${PROJECT_SOURCE_DIR}/crt/crt.asm -m")
 
-set(CMAKE_ASM_FLAGS
-    "-mz80\
-    -I${PROJECT_SOURCE_DIR}"
-)
+set(CMAKE_C_COMPILE_OBJECT "<CMAKE_C_COMPILER> ${Z88DK_TARGET} <FLAGS> -c <DEFINES> <INCLUDES> -o<OBJECT> <SOURCE>")
+set(CMAKE_ASM_COMPILE_OBJECT "<CMAKE_ASM_COMPILER> <FLAGS> <DEFINES> <INCLUDES> -o<OBJECT> <SOURCE>")
+set(CMAKE_C_LINK_EXECUTABLE "<CMAKE_C_COMPILER> ${Z88DK_TARGET} <LINK_FLAGS> <OBJECTS> -o${PROJECT_NAME}")
 
-set(LDFLAGS
-    "+zx \
-    -crt0 ${PROJECT_SOURCE_DIR}/crt/crt.asm \
-    -m"
-)
-
-set(CMAKE_C_LINK_EXECUTABLE "<CMAKE_C_COMPILER> ${LDFLAGS} <OBJECTS> -o ${PROJECT_NAME}")
+include_directories(${PROJECT_SOURCE_DIR})
 
 set(SOURCES
     attribedit.c

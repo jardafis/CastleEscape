@@ -1,6 +1,6 @@
         public  _lanternFlicker
         public  _lanternList
-        include "defs.inc"
+        #include "defs.inc"
 
         section CODE_2
         ;

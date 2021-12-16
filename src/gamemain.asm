@@ -75,7 +75,7 @@
 
         defc    NEW_JUMP=1
 
-        include "defs.inc"
+        #include "defs.inc"
 
         section CODE_5
 _main:

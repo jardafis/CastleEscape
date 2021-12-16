@@ -7,7 +7,7 @@
 
         section CODE_4
 
-        include "defs.inc"
+        #include "defs.inc"
 
         ;
         ; Display a char at the specified location.

@@ -10,7 +10,7 @@
         defc    WIDTH=0x10              ; Width, in columns, of message area
         defc    MESSAGE_ATTR=PAPER_BLACK|INK_WHITE|BRIGHT
                                         ; Attribute for the message
-        include "defs.inc"
+        #include "defs.inc"
 
         defc    MAX_MESSAGE=(messagesEnd-messages)/2
         ;
