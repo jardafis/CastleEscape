@@ -82,24 +82,24 @@ add_custom_command(OUTPUT ${PROJECT_NAME}.bin
     COMMAND cat ${PROJECT_NAME}_BANK_2.bin >> ${PROJECT_NAME}.bin
     COMMAND dd if=/dev/null of=${PROJECT_NAME}.bin bs=1 count=1 seek=24K
     COMMAND cat ${PROJECT_NAME}_BANK_0.bin >> ${PROJECT_NAME}.bin
-    DEPENDS ${PROJECT_NAME}_BANK_2.bin
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_BANK_2.bin
 )
 
 # Steps to generate the .tap file
 add_custom_command(OUTPUT ${PROJECT_NAME}.tap
     COMMAND ${ZXSTLC} -t ${PROJECT_NAME}.bin 24576 24576 -l ${PROJECT_SOURCE_DIR}/title.scr -n CastleEsc -4 ${PROJECT_NAME}_BANK_4.bin -7 ${PROJECT_NAME}_BANK_7.bin -e
-    DEPENDS ${PROJECT_NAME}.bin
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.bin
 )
 
 # Steps to generate the .dsk file
 add_custom_command(OUTPUT ${PROJECT_NAME}.dsk
     COMMAND ${ZXSTLC} -d ${PROJECT_NAME}.bin 24576 24576 -l ${PROJECT_SOURCE_DIR}/title.scr -4 ${PROJECT_NAME}_BANK_4.bin -7 ${PROJECT_NAME}_BANK_7.bin -e
-    DEPENDS ${PROJECT_NAME}.bin
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.bin
 )
 
 # Disassemble the main binary
-add_custom_target(dis z88dk-dis -o 24576 -x ${PROJECT_NAME}.map ${PROJECT_NAME}.bin | less DEPENDS ${PROJECT_NAME}.bin)
+add_custom_target(dis z88dk-dis -o 24576 -x ${PROJECT_NAME}.map ${PROJECT_NAME}.bin | less DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.bin)
 # Run the tape image with fuse
-add_custom_target(run fuse ${PROJECT_NAME}.tap DEPENDS ${PROJECT_NAME}.tap)
+add_custom_target(run fuse ${PROJECT_NAME}.tap DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.tap)
 # Run the disk image (+3) with fuse
-add_custom_target(rundsk fuse ${PROJECT_NAME}.dsk DEPENDS ${PROJECT_NAME}.dsk)
+add_custom_target(rundsk fuse ${PROJECT_NAME}.dsk DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.dsk)
