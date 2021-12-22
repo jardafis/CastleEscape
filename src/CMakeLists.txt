@@ -68,6 +68,14 @@ set_property(SOURCE font.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR
 set_property(SOURCE levels.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/attrib.dat)
 set_property(SOURCE menuscreen.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/mainmenu.scr)
 
+set_property(SOURCE wyzproplay_zx.asm
+    APPEND PROPERTY OBJECT_DEPENDS
+    ${PROJECT_SOURCE_DIR}/music/CastleEscape.mus.inc
+    ${PROJECT_SOURCE_DIR}/music/gothic.mus
+    ${PROJECT_SOURCE_DIR}/music/jinj_med.mus
+    ${PROJECT_SOURCE_DIR}/music/death.wyz.mus
+    )
+
 add_executable(${PROJECT_NAME}_BANK_2.bin ${SOURCES})
 
 set_target_properties(${PROJECT_NAME}_BANK_2.bin
@@ -88,13 +96,13 @@ add_custom_command(OUTPUT ${PROJECT_NAME}.bin
 # Steps to generate the .tap file
 add_custom_command(OUTPUT ${PROJECT_NAME}.tap
     COMMAND ${ZXSTLC} -t ${PROJECT_NAME}.bin 24576 24576 -l ${PROJECT_SOURCE_DIR}/title.scr -n CastleEsc -4 ${PROJECT_NAME}_BANK_4.bin -7 ${PROJECT_NAME}_BANK_7.bin -e
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.bin
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.bin ${PROJECT_SOURCE_DIR}/title.scr
 )
 
 # Steps to generate the .dsk file
 add_custom_command(OUTPUT ${PROJECT_NAME}.dsk
     COMMAND ${ZXSTLC} -d ${PROJECT_NAME}.bin 24576 24576 -l ${PROJECT_SOURCE_DIR}/title.scr -4 ${PROJECT_NAME}_BANK_4.bin -7 ${PROJECT_NAME}_BANK_7.bin -e
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.bin
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.bin ${PROJECT_SOURCE_DIR}/title.scr
 )
 
 # Disassemble the main binary
