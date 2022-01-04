@@ -1,4 +1,4 @@
-        #include "defs.inc"
+        #include    "defs.inc"
 
         extern  wyz_play_frame
         extern  __VECTORS_head

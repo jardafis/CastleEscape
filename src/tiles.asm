@@ -8,7 +8,7 @@
         public  displayTile
         public  setTileAttr
 
-        #include "defs.inc"
+        #include    "defs.inc"
 
         section CODE_2
 

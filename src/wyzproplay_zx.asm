@@ -7,7 +7,7 @@
         public  wyz_player_stop
 
         section CODE_5
-        #include "wyzproplay47c_common.inc"
+        #include    "wyzproplay47c_common.inc"
 
 ROUT:   LD      A, (PSG_REG+13)
         AND     A
@@ -40,10 +40,10 @@ LOUT:   OUT     (C), A
         ;
         ; Song table setup
         ;
-        #include "wyzsongtable.inc"
+        #include    "wyzsongtable.inc"
 
         section BSS_5
         ;
         ; RAM variables
         ;
-        #include "wyzproplay_ram.inc"
+        #include    "wyzproplay_ram.inc"

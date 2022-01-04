@@ -9,7 +9,7 @@
         public  titleScreen
 
         section CODE_5
-	#include "defs.inc"
+        #include    "defs.inc"
 
 titleScreen:
         ;

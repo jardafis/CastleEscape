@@ -14,7 +14,7 @@
         public  checkXCol
         public  checkYCol
 
-        #include "defs.inc"
+        #include    "defs.inc"
         section CODE_2
 
         defc    ID_SOLID_TILE=12*TILE_SHEET_WIDTH

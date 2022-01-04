@@ -6,11 +6,11 @@
         section RODATA_2
 
 _RightKnight0:
-        #include "sprite/RightKnight.inc"
+        #include    "sprite/RightKnight.inc"
 _LeftKnight0:
-        #include "sprite/LeftKnight.inc"
+        #include    "sprite/LeftKnight.inc"
 RightJumpKnight0:
-        #include "sprite/RightJumpKnight.inc"
+        #include    "sprite/RightJumpKnight.inc"
 LeftJumpKnight0:
-        #include "sprite/LeftJumpKnight.inc"
+        #include    "sprite/LeftJumpKnight.inc"
 

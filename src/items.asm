@@ -15,7 +15,7 @@
         public  removeItem
         public  setCurrentItemTable
 
-        #include "defs.inc"
+        #include    "defs.inc"
 
         defc    ITEM_WIDTH=0x08
         defc    ITEM_HEIGHT=0x08

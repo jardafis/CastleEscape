@@ -1,4 +1,4 @@
-        include "zcc_opt.def"
+;        include "zcc_opt.def"
 
         extern  _main
         extern  __STACK_tail

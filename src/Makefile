@@ -2,7 +2,7 @@ CC=zcc
 AS=z88dk-asmpp
 LD=zcc
 
-TARGET= +zx
+TARGET?= +zx
 PROJECT_NAME=CastleEscape
 ASMSRC=$(wildcard *.asm)
 CSRC=$(wildcard *.c)
@@ -15,9 +15,14 @@ CFLAGS=$(TARGET) -O2 -c \
 		--bssseg=BSS_4 \
 		-clib=new
 
-LDFLAGS=$(TARGET) -crt0 crt/crt.asm -m
+LDFLAGS=$(TARGET) --no-crt -m crt/crt.asm
 
-#ASFLAGS=-opt-speed
+ifeq ($(TARGET),+zxn)
+ASFLAGS=-mz80n
+else
+ASFLAGS=-mz80
+endif
+
 OBJECTS=$(CSRC:.c=.o) $(ASMSRC:.asm=.o)
 
 # Default to the CODE bank if no other is specified

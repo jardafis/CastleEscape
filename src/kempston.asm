@@ -2,7 +2,7 @@
         public  kjPresent
         public  readKempston
 
-        #include "defs.inc"
+        #include    "defs.inc"
 
         section CODE_2
         ;

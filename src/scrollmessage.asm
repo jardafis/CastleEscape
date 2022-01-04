@@ -5,12 +5,12 @@
         public  _scrollReset
         section CODE_2
 
-        defc    X=0x08                  ; Start column of message
+        defc    xPos=0x08               ; Start column of message
         defc    Y=0x01                  ; Start character row of message
         defc    WIDTH=0x10              ; Width, in columns, of message area
         defc    MESSAGE_ATTR=PAPER_BLACK|INK_WHITE|BRIGHT
                                         ; Attribute for the message
-        #include "defs.inc"
+        #include    "defs.inc"
 
         defc    MAX_MESSAGE=(messagesEnd-messages)/2
         ;
@@ -31,7 +31,7 @@ _scrollInit:
         rrca
         rrca
         and     %11100000               ; Bits 5-3 of pixel row
-        or      X+WIDTH-1               ; X character position
+        or      xPos+WIDTH-1            ; X character position
         ld      l, a
 
         ld      a, Y                    ; Y character position
@@ -107,7 +107,7 @@ _scrollReset:
         ld      hl, Y                   ; Get the Y position and multiply by 32
         hlx     32
         add     hl, de                  ; Add it to the attr start address
-        ld      a, X
+        ld      a, xPos
         add     l
         ld      l, a
         ld      de, hl

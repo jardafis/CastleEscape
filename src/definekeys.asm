@@ -15,7 +15,7 @@
         public  defineKeys
 
         section CODE_5
-        #include "defs.inc"
+        #include    "defs.inc"
 
 defineKeys:
         push    af

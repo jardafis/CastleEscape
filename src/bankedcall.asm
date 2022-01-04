@@ -2,7 +2,7 @@
         extern  __BANKING_STACK_tail
         public  banked_call
 
-        #include "defs.inc"
+        #include    "defs.inc"
 
         ; 0xffff +--------+--------+--------+--------+--------+--------+--------+--------+
         ;        | Bank 0 | Bank 1 | Bank 2 | Bank 3 | Bank 4 | Bank 5 | Bank 6 | Bank 7 |

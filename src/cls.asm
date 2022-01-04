@@ -3,7 +3,7 @@
         public  setAttr
         section CODE_2
 
-        #include "defs.inc"
+        #include    "defs.inc"
 
         ;
         ; Clear the screen bitmap and attr data.

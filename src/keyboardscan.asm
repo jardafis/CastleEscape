@@ -10,7 +10,7 @@
 
         section CODE_2
 
-        #include "defs.inc"
+        #include    "defs.inc"
 
         ;
         ; Scan the keyboard for input.

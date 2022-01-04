@@ -13,7 +13,7 @@
         public  eggTables
         public  updateEggImage
 
-        #include "defs.inc"
+        #include    "defs.inc"
 
         section CODE_2
 

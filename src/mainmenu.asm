@@ -21,7 +21,7 @@
 
         section CODE_5
 
-        #include "defs.inc"
+        #include    "defs.inc"
 
         defc    BORDER_COLOR=INK_YELLOW
         ;
