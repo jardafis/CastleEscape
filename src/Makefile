@@ -18,9 +18,12 @@ CFLAGS=$(TARGET) -O2 -c \
 LDFLAGS=$(TARGET) --no-crt -m crt/crt.asm
 
 ifeq ($(TARGET),+zxn)
-ASFLAGS=-mz80n
+ZXEMU=~/ZEsarUX-10.0/zesarux --tape
+ASFLAGS+=-mz80n -D_ZXN
+CFLAGS+=-D_ZXN
 else
-ASFLAGS=-mz80
+ZXEMU=fuse
+ASFLAGS+=-mz80
 endif
 
 OBJECTS=$(CSRC:.c=.o) $(ASMSRC:.asm=.o)
@@ -40,7 +43,7 @@ clean:
 	rm -f *.[oid] *.tap *.bin *.map *.dsk
 
 run: $(PROJECT_NAME).tap
-	fuse $<
+	$(ZXEMU) $<
 
 rundsk: $(PROJECT_NAME).dsk
 	fuse $<
