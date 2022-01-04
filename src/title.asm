@@ -8,7 +8,7 @@
         public  pressJumpMsg
         public  titleScreen
 
-        section CODE_5
+        section CODE_4
         #include    "defs.inc"
 
 titleScreen:
@@ -33,6 +33,10 @@ titleScreen:
         ;
         ld      hl, coinTable
         ld      (currentCoinTable), hl
+IF  _ZXN
+        extern  clearULACoin
+        call    clearULACoin
+ENDIF
 
 waitJump:
         ld      hl, lanternList
@@ -57,7 +61,7 @@ waitNoJump:
 
         ret
 
-        section RODATA_5
+        section RODATA_4
 pressJumpMsg:
         db      "Press Jump to Continue", 0x00
 
