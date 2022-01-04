@@ -21,9 +21,11 @@ ifeq ($(TARGET),+zxn)
 ZXEMU=~/ZEsarUX-10.0/zesarux --tape
 ASFLAGS+=-mz80n -D_ZXN
 CFLAGS+=-D_ZXN
+DISFLAGS+=-mz80n
 else
 ZXEMU=fuse
 ASFLAGS+=-mz80
+DISFLAGS+=-mz80
 endif
 
 OBJECTS=$(CSRC:.c=.o) $(ASMSRC:.asm=.o)
@@ -50,7 +52,7 @@ rundsk: $(PROJECT_NAME).dsk
 	fuse $<
 
 dis: $(PROJECT_NAME)_BANK_2.bin
-	z88dk-dis -o $(HEAD) -x $(PROJECT_NAME).map $(PROJECT_NAME)_$(BANK).bin | less
+	z88dk-dis $(DISFLAGS) -o $(HEAD) -x $(PROJECT_NAME).map $(PROJECT_NAME)_$(BANK).bin | less
 
 ifeq (,$(findstring $(MAKECMDGOALS),clean))
 %.d: %.asm
@@ -68,7 +70,7 @@ endif
 	@echo "Assembling $<"
 	@$(AS) $(ASFLAGS) $<
 
-$(PROJECT_NAME)_BANK_2.bin: $(OBJECTS)
+$(PROJECT_NAME)_BANK_2.bin: $(OBJECTS) crt/crt.asm
 	@echo "Linking $@"
 	@$(LD) $(LDFLAGS) $(OBJECTS) -o $(PROJECT_NAME)
 
