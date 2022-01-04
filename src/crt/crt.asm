@@ -1,5 +1,3 @@
-;        include "zcc_opt.def"
-
         extern  _main
         extern  __STACK_tail
 
@@ -69,6 +67,8 @@ IFDEF   CRT_ORG_BANK_2
         SECTION STACK
         ds      0x60, 0x55              ; 96 bytes of stack
         SECTION ISR                     ; Interrupt subroutine @ 0x8181
+        SECTION code_clib
+        SECTION code_l_sccz80
         SECTION CODE_2
         SECTION RODATA_2
         SECTION DATA_2
@@ -100,11 +100,6 @@ IFDEF   CRT_ORG_BANK_5
         SECTION BANK_5
         org     CRT_ORG_BANK_5
         SECTION CODE_5
-crt0:
-        ld      sp, __STACK_tail
-        jp      _main
-        SECTION code_clib
-        SECTION code_l_sccz80
         SECTION RODATA_5
         SECTION DATA_5
         SECTION BSS_5
