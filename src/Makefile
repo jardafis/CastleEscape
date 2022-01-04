@@ -32,6 +32,7 @@ OBJECTS=$(CSRC:.c=.o) $(ASMSRC:.asm=.o)
 BANK ?= BANK_2
 # Find the start addres of the BANK and replace $ with 0x
 HEAD=$(shell grep __$(BANK)_head *.map | awk '{gsub("^.", "0x", $$3); print $$3}')
+MAIN=$(shell grep _main *.map | sed -e 's/\$$/0x/g' | awk '{printf "%d", strtonum($$3)}')
 
 .PHONY: all clean run dis
 
@@ -81,10 +82,10 @@ $(PROJECT_NAME).bin: $(PROJECT_NAME)_BANK_2.bin
 
 $(PROJECT_NAME).tap: $(PROJECT_NAME).bin title.scr
 	@echo "Creating $@"
-	$(ZXSTLC) -t $(PROJECT_NAME).bin 24576 24576 -l title.scr -n CastleEsc -4 $(PROJECT_NAME)_BANK_4.bin -7 $(PROJECT_NAME)_BANK_7.bin -e
+	$(ZXSTLC) -t $(PROJECT_NAME).bin 24576 $(MAIN) -l title.scr -n CastleEsc -4 $(PROJECT_NAME)_BANK_4.bin -7 $(PROJECT_NAME)_BANK_7.bin -e
 
 $(PROJECT_NAME).dsk: $(PROJECT_NAME).bin title.scr
 	@echo "Creating $@"
-	$(ZXSTLC) -d $(PROJECT_NAME).bin 24576 24576 -l title.scr -4 $(PROJECT_NAME)_BANK_4.bin -7 $(PROJECT_NAME)_BANK_7.bin -e
+	$(ZXSTLC) -d $(PROJECT_NAME).bin 24576 $(MAIN) -l title.scr -4 $(PROJECT_NAME)_BANK_4.bin -7 $(PROJECT_NAME)_BANK_7.bin -e
 
 -include $(ASMSRC:.asm=.d) $(CSRC:.c=.d)
