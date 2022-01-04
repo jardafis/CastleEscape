@@ -1,6 +1,9 @@
         public  _cls
         public  clearAttr
         public  setAttr
+IF  _ZXN
+        extern  clearTilemap
+ENDIF
         section CODE_2
 
         #include    "defs.inc"
@@ -65,6 +68,10 @@ loop:
 clsTempSP:
         ld      sp, -1
         ei
+
+IF  _ZXN
+        call    clearTilemap
+ENDIF
 
         pop     hl
         pop     bc
