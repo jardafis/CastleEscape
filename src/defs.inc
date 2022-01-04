@@ -3,6 +3,28 @@
         extern  bankedCall
         extern  banked_call
 
+		;
+		; ZX Spectrum Next Definitions
+		;
+        defc    tilemapAddr=0x5b00
+        defc    tilemapSize=0x500
+        defc    tileDefAddr=tilemapAddr+tilemapSize
+
+        defc    IO_TileMapBaseAdrr=0x6E
+        defc    IO_TileMapDefBaseAddr=0x6F
+        defc    IO_TileMapContr=0x6B
+        defc    IO_TileMapAttr=0x6C
+        defc    IO_TileMapTransparency=0x4C
+        defc    IO_TileMapPaletteContr=0x43
+        defc    IO_PaletteIndex=0x40
+        defc    IO_PaletteValue=0x41
+        defc    IO_ULAControl=0x68
+        defc    IO_TileMapOffSetXMSB=0x2F
+        defc    IO_TileMapOffSetXLSB=0x30
+        defc    IO_TileMapOffsetY=0x31
+        defc    IO_TileMapClipWindow=0x1B
+        defc    IO_SpriteAndLayers=0x15
+
         ;
         ; Points
         ;
@@ -261,7 +283,7 @@ IF  times>=128
 ENDIF
         ENDM
 
-entry   MACRO
+entry   MACRO   
         push    af
         push    bc
         push    de
@@ -271,7 +293,7 @@ entry   MACRO
         add     ix, sp
         ENDM
 
-exit    MACRO
+exit    MACRO   
         pop     ix
         pop     hl
         pop     de
@@ -282,7 +304,7 @@ exit    MACRO
         ;
         ; Push af-hl onto the stack
         ;
-pushall MACRO
+pushall MACRO   
         push    af
         push    bc
         push    de
@@ -294,7 +316,7 @@ pushall MACRO
         ;
         ; Pop hl-af off the stack
         ;
-popall  MACRO
+popall  MACRO   
         pop     iy
         pop     ix
         pop     hl
@@ -306,7 +328,7 @@ popall  MACRO
         ;
         ; Add 'a' to 'hl'
         ;
-addhl   MACRO
+addhl   MACRO   
         add     l
         ld      l, a
         adc     h
@@ -317,7 +339,7 @@ addhl   MACRO
         ;
         ; Add 'a' to 'de'
         ;
-addde   MACRO
+addde   MACRO   
         add     e
         ld      e, a
         adc     d
@@ -328,7 +350,7 @@ addde   MACRO
         ;
         ; Add 'a' to 'bc'
         ;
-addbc   MACRO
+addbc   MACRO   
         add     c
         ld      c, a
         adc     b
@@ -372,7 +394,7 @@ delayLoop:
         pop     bc
         ENDM
 
-assert  MACRO
+assert  MACRO   
         di
         halt
         ENDM
