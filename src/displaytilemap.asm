@@ -55,7 +55,9 @@ xloop:
         call    z, addLantern
 
         call    displayTile
+IF  !_ZXN
         call    setTileAttr
+ENDIF
 
 nextTile:
         inc     hl                      ; next tile
