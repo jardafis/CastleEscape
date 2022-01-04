@@ -6,7 +6,11 @@
         public  wyz_player_init
         public  wyz_player_stop
 
+IF  !_ZXN
         section CODE_5
+ELSE
+        section CODE_2
+ENDIF
         #include    "wyzproplay47c_common.inc"
 
 ROUT:   LD      A, (PSG_REG+13)
@@ -42,7 +46,11 @@ LOUT:   OUT     (C), A
         ;
         #include    "wyzsongtable.inc"
 
+IF  !_ZXN
         section BSS_5
+ELSE
+        section BSS_2
+ENDIF
         ;
         ; RAM variables
         ;

@@ -7,7 +7,11 @@
         public  ticks
         public  isr
 
+IF  !_ZXN
         section CODE_5
+ELSE
+        section CODE_2
+ENDIF
 initISR:
         di
         ld      a, __VECTORS_head>>8    ; Write the high order byte of the

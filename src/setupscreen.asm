@@ -28,7 +28,11 @@
 
         #include    "defs.inc"
 
+IF  !_ZXN
         section CODE_5
+ELSE
+        section CODE_2
+ENDIF
 
         ;
         ; Display the current level and any uncollected items.
