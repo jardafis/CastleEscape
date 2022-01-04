@@ -2,8 +2,10 @@
         extern  _tileAttr
         extern  setAttr
 
+IF  !_ZXN
         public  _displayTile
         public  bank7Screen
+ENDIF
         public  displayPixelTile
         public  displayTile
         public  setTileAttr
@@ -12,6 +14,7 @@
 
         section CODE_2
 
+IF  !_ZXN
         ;
         ; Display the specified tile and attribute at the specified location.
         ;
@@ -128,7 +131,38 @@ TempSP2:
         pop     bc
         pop     af
         ret
+ELSE
+displayTile:
+        push    de
+        push    hl
+        push    af
 
+        ; Allow for 4 hidden rows at top of screen
+        ld      a, b
+        add     4
+
+        ; Multiply by 40
+        ld      d, a
+        ld      e, 40
+        mul     d, e
+
+        ; Add the tilemap address
+        ld      hl, tilemapAddr
+        add     hl, de
+
+        ; Add the X offset accounting for 4 hidden columns
+        ld      a, c
+        add     4
+        add     hl, a
+        pop     af
+
+        ; Update tilemap
+        ld      (hl), a
+
+        pop     hl
+        pop     de
+        ret
+ENDIF
         ;
         ; Display the specified tile at the specified pixel location.
         ;
@@ -263,6 +297,7 @@ clearTileSP:
         ;		a - Tile ID of item
         ;
 setTileAttr:
+IF	!_ZXN
         push    af
         push    hl
 
@@ -274,5 +309,6 @@ setTileAttr:
 
         pop     hl
         pop     af
+ENDIF
         ret
 

@@ -16,7 +16,6 @@
         extern  _scrollInit
         extern  _setupScreen
         extern  _updateDirection
-        extern  bank7Screen
         extern  checkItemCollision
         extern  checkXCol
         extern  checkYCol
@@ -51,6 +50,7 @@
         extern  __HEAP_2_head
         extern  __BANK_0_head
         extern  heapCheck
+        extern  __STACK_tail
 
         public  _currentTileMap
         public  _falling
@@ -77,11 +77,12 @@
 
         #include    "defs.inc"
 
-        section CODE_5
+        section CODE_2
 _main:
+        ld      sp, __STACK_tail
         call    init
 
-        call    titleScreen
+		bcall	titleScreen
 
         call    mainMenu
 
@@ -90,6 +91,10 @@ _main:
 init:
         border  INK_BLACK
 
+IF  _ZXN
+        extern  zxnInit
+        call    zxnInit
+ENDIF
         ;
         ; Initialize the WYZ Player
         ;
@@ -113,7 +118,6 @@ init:
 
         ret
 
-        section CODE_2
 newGame:
         ld      (gameOver+1), sp
 
@@ -124,13 +128,6 @@ newGame:
         ld      hl, readyMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT
         bcall   printAttr
-
-        ;
-        ; Patch the displayTile routine to access
-        ; the screen memory at 0x4000
-        ;
-        ld      a, SCREEN_START>>8
-        ld      (bank7Screen+1), a
 
         ;
         ; Point the ULA at screen 0

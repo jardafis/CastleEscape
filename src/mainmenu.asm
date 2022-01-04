@@ -3,7 +3,12 @@
         extern  _lanternFlicker
         extern  _tile0
         extern  _tileAttr
+IF  !_ZXN
         extern  bank7Screen
+ELSE
+        extern  clearTilemap
+        extern  clearULACoinHi
+ENDIF
         extern  currentCoinTable
         extern  defineKeys
         extern  keyboardScan
@@ -18,9 +23,11 @@
         public  rotateCount
         public  rotateCount
         public  waitReleaseKey
-
+IF  !_ZXN
         section CODE_5
-
+ELSE
+        section CODE_2
+ENDIF
         #include    "defs.inc"
 
         defc    BORDER_COLOR=INK_YELLOW
@@ -46,13 +53,6 @@ displayScreen:
         ld      (currentCoinTable), hl
 
         ;
-        ; Patch the displayTile routine to access
-        ; memory @ 0xc000
-        ;
-        ld      a, SCREEN1_START>>8
-        ld      (bank7Screen+1), a
-
-        ;
         ; Point the ULA at screen 1
         ;
         screen  1
@@ -62,6 +62,20 @@ displayScreen:
         ; to 0xc000
         ;
         bank    7
+
+IF  !_ZXN
+        ;
+        ; Patch the displayTile routine to access
+        ; memory @ 0xc000
+        ;
+        ld      a, SCREEN1_START>>8
+        ld      (bank7Screen+1), a
+
+ELSE
+        call    clearULACoinHi
+        call    clearTilemap
+ENDIF
+
 getKey:
         ld      hl, lanternList
         call    animateMenu
@@ -88,7 +102,7 @@ jumpPressed:
         cp      '0'
         jr      z, play
         cp      '1'
-        call    z, defineKeys
+        call    z, defineKeysWrapper
 IFDEF   ATTRIB_EDIT
         cp      '2'
         jr      z, attribEdit
@@ -146,12 +160,15 @@ attribEdit:
         ;
         bank    0
         screen  0
+
+  IF    !_ZXN
         ;
         ; Patch the displayTile routine to access
         ; memory @ 0x4000
         ;
         ld      a, SCREEN_START>>8
         ld      (bank7Screen+1), a
+  ENDIF
 
         ld      hl, _tile0
         push    hl
@@ -165,24 +182,46 @@ attribEdit:
 ENDIF
 
 play:
-        call    newGame
+IF  !_ZXN
+        ;
+        ; Patch the displayTile routine to access
+        ; memory @ 0x4000
+        ;
+        ld      a, SCREEN_START>>8
+        ld      (bank7Screen+1), a
+ENDIF
 
-        ld      a, MAIN_MENU_MUSIC
-        di
-        call    wyz_play_song
-        ei
+        call    newGame
 
         jp      mainMenu
 
-        section BSS_5
+defineKeysWrapper:
+IF  !_ZXN
+        ;
+        ; Patch the displayTile routine to access
+        ; memory @ 0x4000 (screen 0)
+        ;
+        ld      a, SCREEN_START>>8
+        ld      (bank7Screen+1), a
+ENDIF
+        jp      defineKeys
 
+IF  !_ZXN
+        section BSS_5
+ELSE
+        section BSS_2
+ENDIF
         ;
         ; Counter so coins are not rotated every frame
         ;
 rotateCount:
         ds      1
 
+IF  !_ZXN
         section RODATA_5
+ELSE
+        section RODATA_2
+ENDIF
         ;
         ; List of lanterns on the main menu
         ;

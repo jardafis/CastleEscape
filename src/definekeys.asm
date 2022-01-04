@@ -1,7 +1,6 @@
         extern  __BANK_7_head
         extern  _updateDirection
         extern  animateMenu
-        extern  bank7Screen
         extern  displayTile
         extern  keyboardScan
         extern  lookupScanCode
@@ -11,10 +10,17 @@
         extern  setAttr
         extern  setTileAttr
         extern  waitReleaseKey
+IF  _ZXN
+        extern  clearULATile
+ENDIF
 
         public  defineKeys
 
+IF  !_ZXN
         section CODE_5
+ELSE
+        section CODE_2
+ENDIF
         #include    "defs.inc"
 
 defineKeys:
@@ -24,21 +30,12 @@ defineKeys:
         ;
 
         ;
-        ; Patch the displayTile routine to access
-        ; memory @ 0x4000 (screen 0)
-        ;
-        ld      a, SCREEN_START>>8
-        ld      (bank7Screen+1), a
-
-        ;
         ; Copy screen 1 to screen 0
         ;
         ld      de, SCREEN_START        ; Destination address
         ld      hl, __BANK_7_head       ; Source address, bank 7 must be mapped
         ld      bc, SCREEN_LENGTH+SCREEN_ATTR_LENGTH
         ldir                            ; Copy
-
-        BANK    0                       ; Bank 0 contains the tile attributes
 
         ;
         ; Clear the text from the main menu
@@ -47,8 +44,12 @@ defineKeys:
 yLoop:
         ld      c, 0x06                 ; Starting X position
 xLoop:
+IF  !_ZXN
         ld      a, ID_BLANK             ; ID of tile to use
         call    displayTile             ; Display the tile
+ELSE
+        call    clearULATile
+ENDIF
 
         inc     c                       ; Increment the screen X position
         ld      a, c
@@ -198,11 +199,19 @@ printKey:
         pop     hl
         ret
 
+IF  !_ZXN
         section BSS_5
+ELSE
+        section BSS_2
+ENDIF
 key:
         ds      2
 
+IF  !_ZXN
         section RODATA_5
+ELSE
+        section RODATA_2
+ENDIF
         ;
         ; List of lanterns on the this menu
         ;

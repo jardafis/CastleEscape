@@ -5,6 +5,10 @@ IF  _ZXN
 
         public  zxnInit
         public  clearTilemap
+        public  clearULACoin
+        public  clearULACoinHi
+        public  clearULATile
+        public  clearULATilePixel
 
         #include    "defs.inc"
 
@@ -37,6 +41,88 @@ clearTilemap:
         ld      bc, tilemapSize-1
         ldir
         ret
+
+        ;
+        ; Input:
+        ;   c - X char coord.
+        ;   b - Y char coord.
+        ;
+clearULATile:
+        push    bc
+        push    de
+
+        ld      de, bc
+
+        ; Convert byte addresses to pixel addresses
+        sla     d
+        sla     d
+        sla     d
+        sla     e
+        sla     e
+        sla     e
+
+        call    clearULATilePixel
+
+        pop     de
+        pop     bc
+        ret
+
+        ;
+        ; Input:
+        ;   e - X pixel coord.
+        ;   d - Y pixel coord.
+        ;
+clearULATilePixel:
+        push    bc
+        push    hl
+
+        pixelad
+
+        ld      a, h
+bank7:
+        or      0x00
+        ld      h, a
+
+
+        ld      b, 8
+clrULATileLoop:
+        ld      (hl), 0
+        inc     h
+        djnz    clrULATileLoop
+
+        pop     hl
+        pop     bc
+        ret
+
+        ; Input:
+        ;   hl - Pointer to coin table
+        ;
+clearULACoinHi:
+        ld      a, 0x80
+        ld      (bank7+1), a
+        call    clearULACoin
+        xor     a
+        ld      (bank7+1), a
+        ret
+
+        ; Input:
+        ;   hl - Pointer to coin table
+        ;
+clearULACoin:
+        ld      a, (hl)
+        cp      0xff
+        ret     z
+
+        inc     hl
+        ld      e, (hl)
+        inc     hl
+        ld      d, (hl)
+
+        call    clearULATilePixel
+
+        add     hl, 2
+        jp      clearULACoin
+
 
 initTilemap:
         call    clearTilemap
@@ -134,15 +220,14 @@ initTilemap:
         ; Tilemap clipping. Match the ULA area
         ; X1 value internally doubled
         nextreg IO_TileMapClipWindow, 16
-                                        ; 32 pixels
         ; X2 value internally doubled
         nextreg IO_TileMapClipWindow, 159-16
-                                        ; 286 pixels
         ; Y1
         nextreg IO_TileMapClipWindow, 32
         ; Y2
         nextreg IO_TileMapClipWindow, 223
 
+		; Enable sprites
         nextreg IO_SpriteAndLayers, 0x01
 
         ret

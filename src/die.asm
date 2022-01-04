@@ -7,7 +7,11 @@
         extern  _ySpeed
         extern  decBCD
         extern  display2BCD
+IF  !_ZXN
         extern  displayPixelTile
+ELSE
+        extern  displayTile
+ENDIF
         extern  gameOver
         extern  heartCount
         extern  playerSprite
@@ -39,6 +43,7 @@ die:
 		;
 		; Display headstone where player died
 		;
+IF  !_ZXN
         ld      bc, (_xPos)
         ld      a, 12
         call    displayPixelTile
@@ -57,7 +62,30 @@ die:
         ld      c, a
         ld      a, 12+16
         call    displayPixelTile
+ELSE
+		; Eventually, switch the sprite pattern to
+		; the headstone, but for now display it as
+		; tiles.
+        ld      de, (_xPos)
+        ld      b, 3
+        bsrl    de, b
+        ld      a, e
+        and     %00011111
+        ld      b, d
+        ld      c, a
 
+        ld      a, 12
+        call    displayTile
+        inc     c
+        ld      a, 13
+        call    displayTile
+        inc     b
+        ld      a, 13+16
+        call    displayTile
+        dec     c
+        ld      a, 12+16
+        call    displayTile
+ENDIF
         ;
         ; Stop in-game music and
         ; start the death march
