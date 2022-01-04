@@ -29,10 +29,6 @@ void setCursor(char x, char y)
     cursorX = x;
     cursorY = y;
 }
-/*
- * Start of the screen attribute memory.
- */
-unsigned char *const attr = (unsigned char*) 0x5800;
 
 /*
  * Output a 16-bit hex value.
@@ -65,6 +61,7 @@ void putString(char *string)
     }
 }
 
+#ifndef _ZXN
 /*
  * Display the 12x12 tileset starting from the top left-hand side of the
  * screen.
@@ -102,6 +99,11 @@ void xorCursor(int x, int y)
 }
 
 /*
+ * Start of the screen attribute memory.
+ */
+unsigned char *const attr = (unsigned char*) 0x5800;
+
+/*
  * Set the ink color for the current cursor location.
  */
 void setInk(int x, int y, unsigned char key)
@@ -133,6 +135,7 @@ void saveAttrib(unsigned char *dest)
         }
     }
 }
+#endif
 
 /*
  * Entry point for tile attribute editing in realtime.
