@@ -38,6 +38,7 @@ die:
         push    de
         push    hl
 
+IF  !_ZXN
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _copyScreen
@@ -45,7 +46,6 @@ die:
 		;
 		; Display headstone where player died
 		;
-IF  !_ZXN
         ld      bc, (_xPos)
         ld      a, 12
         call    displayPixelTile

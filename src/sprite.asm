@@ -1,9 +1,9 @@
+IF  !_ZXN
         extern  _screenTab
 
         public  _copyScreen
         public  _displaySprite
         public  _pasteScreen
-        public  playerSprite
 
         #include    "defs.inc"
 
@@ -189,7 +189,8 @@ nextCharRow:
 nextThird:
         djnz    yLoop                   ; Loop for next row of sprite
         jr      displaySpriteSP
-
+ENDIF
+        public  playerSprite
         section BSS_2
 playerSprite:
         ds      2

@@ -18,6 +18,7 @@ IF  _ZXN
         public  setSpriteXY
         public  spriteList
         public  setSpritePattern
+        public  nextSpritePattern
 
         #include    "defs.inc"
 
@@ -461,6 +462,33 @@ setSpritePattern:
         pop     bc
         ret
 
+        ;
+        ; Input:
+        ;   ix - Pointer to sprite
+        ;
+        ; Output:
+        ;   a - corrupt.
+nextSpritePattern:
+        push    bc
+
+        ld      a, (ix+endPtn)
+        ld      b, (ix+currentPtn)
+        inc     b
+        cp      b
+        call    c, resetSpritePattern
+
+        ld      (ix+currentPtn), b
+
+        ld      a, b
+        call    setSpritePattern
+
+        pop     bc
+        ret
+
+resetSpritePattern:
+        ld      b, (ix+startPtn)
+        ret
+
         section DATA_2
 spriteList:
         db      0x00                    ; Sprite index
@@ -472,7 +500,7 @@ spriteList:
         db      0                       ; Animation frame count
         db      0                       ; Current frame count
         db      0                       ; Start pattern
-        db      4                       ; End pattern
+        db      3                       ; End pattern
         db      0                       ; Current pattern
 
         db      0x01                    ; Sprite index

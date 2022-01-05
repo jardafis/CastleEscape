@@ -463,8 +463,11 @@ IF  !_ZXN
         ld      bc, (_xPos)
         call    _displaySprite
 ELSE
-        ld      ix, spriteList
         ld      hl, (_xPos)
+        ld      a, l
+        and     0x03
+        ld      ix, spriteList
+        call    setSpritePattern
         call    setSpriteXY
 ENDIF
         call    updateSpiderPos
