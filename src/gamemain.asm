@@ -51,6 +51,12 @@
         extern  __BANK_0_head
         extern  heapCheck
         extern  __STACK_tail
+IF  _ZXN
+        extern  setSpriteXY
+        extern  enableSprite
+        extern  disableSprite
+        extern  spriteList
+ENDIF
 
         public  _currentTileMap
         public  _falling
@@ -82,7 +88,7 @@ _main:
         ld      sp, __STACK_tail
         call    init
 
-		bcall	titleScreen
+        bcall   titleScreen
 
         call    mainMenu
 
@@ -183,8 +189,14 @@ newGame:
         ; Starting X and Y player position
         ;
         ld      hl, START_Y<<8|START_X
+IF  !_ZXN
         ld      (_xPos), hl
-
+ELSE
+        ld      (_xPos), hl
+        ld      ix, spriteList
+        call    setSpriteXY
+        call    enableSprite
+ENDIF
         ;
         ; Initialize the X/Y speed variables
         ;
@@ -215,10 +227,11 @@ newGame:
 
         call    _setupScreen
 
+IF  !_ZXN
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _copyScreen
-
+ENDIF
 
         ;
         ; The game loop
@@ -240,14 +253,14 @@ gameLoop:
         ; Remove any moving items from the screen
         ;
         ; ######################################
-
+IF  !_ZXN
         ;
-        ; Re-draw the screen at the players current location
+        ; Re-draw the knight at the players current location
         ;
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _pasteScreen
-
+ENDIF
         ;
         ; Remove spiders
         ;
@@ -441,13 +454,18 @@ noAnimate:
         ; Redraw any moving items.
         ;
         ; ######################################
+IF  !_ZXN
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _copyScreen
 
         ld      bc, (_xPos)
         call    _displaySprite
-
+ELSE
+        ld      ix, spriteList
+        ld      hl, (_xPos)
+        call    setSpriteXY
+ENDIF
         call    updateSpiderPos
         call    displaySpiders
         ;
@@ -479,6 +497,9 @@ gameOver:
         bcall   printAttr
 
         delay   200
+
+        ld      ix, spriteList
+        call    disableSprite
 
         ret
 

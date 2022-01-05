@@ -137,22 +137,17 @@ displayTile:
         push    hl
         push    af
 
-        ; Allow for 4 hidden rows at top of screen
-        ld      a, b
-        add     4
-
-        ; Multiply by 40
-        ld      d, a
+        ; Multiply Y by 40
+        ld      d, b
         ld      e, 40
         mul     d, e
 
-        ; Add the tilemap address
+        ; Add the tilemap base address
         ld      hl, tilemapAddr
         add     hl, de
 
-        ; Add the X offset accounting for 4 hidden columns
+        ; Add the X offset
         ld      a, c
-        add     4
         add     hl, a
         pop     af
 
@@ -297,7 +292,7 @@ clearTileSP:
         ;		a - Tile ID of item
         ;
 setTileAttr:
-IF	!_ZXN
+IF  !_ZXN
         push    af
         push    hl
 

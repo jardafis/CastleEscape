@@ -24,6 +24,29 @@
         defc    IO_TileMapOffsetY=0x31
         defc    IO_TileMapClipWindow=0x1B
         defc    IO_SpriteAndLayers=0x15
+        defc    IO_SpritePattern=0x5b
+        defc    IO_SpriteNumber=0x34
+        defc    IO_SpriteAttrib0=0x35
+        defc    IO_SpriteAttrib1=0x36
+        defc    IO_SpriteAttrib2=0x37
+        defc    IO_SpriteAttrib3=0x38
+        defc    IO_SpriteAttrib4=0x39
+
+        defvars 0
+        {
+            spriteIndex ds.b 1
+            attrib0     ds.b 1
+            attrib1     ds.b 1
+            attrib2     ds.b 1
+            attrib3     ds.b 1
+            attrib4     ds.b 1
+            frameCount  ds.b 1
+            currentFrameCount   ds.b 1
+            startPtn    ds.b 1
+            endPtn      ds.b 1
+            currentPtn  ds.b 1
+            SIZEOF_sprite
+        }
 
         ;
         ; Points
@@ -50,7 +73,7 @@
         ;
         ; Game Configuration
         ;
-        defc    START_X=40
+        defc    START_X=48
         defc    START_Y=120
         defc    START_LIVES=0x03
         defc    ROTATE_COUNT=6
