@@ -11,6 +11,8 @@ IF  !_ZXN
         extern  displayPixelTile
 ELSE
         extern  displayTile
+        extern  setSpritePattern
+        extern  spriteList
 ENDIF
         extern  gameOver
         extern  heartCount
@@ -63,28 +65,9 @@ IF  !_ZXN
         ld      a, 12+16
         call    displayPixelTile
 ELSE
-		; Eventually, switch the sprite pattern to
-		; the headstone, but for now display it as
-		; tiles.
-        ld      de, (_xPos)
-        ld      b, 3
-        bsrl    de, b
-        ld      a, e
-        and     %00011111
-        ld      b, d
-        ld      c, a
-
-        ld      a, 12
-        call    displayTile
-        inc     c
-        ld      a, 13
-        call    displayTile
-        inc     b
-        ld      a, 13+16
-        call    displayTile
-        dec     c
-        ld      a, 12+16
-        call    displayTile
+        ld      ix, spriteList
+        ld      a, SPRITE_ID_TOMBSTONE
+        call    setSpritePattern
 ENDIF
         ;
         ; Stop in-game music and
@@ -135,12 +118,18 @@ delayLoop:
         call    wyz_play_song
         ei
 
+IF  !_ZXN
         ;
         ; Remove the headstone
         ;
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _pasteScreen
+ELSE
+        ld      ix, spriteList
+        xor     a
+        call    setSpritePattern
+ENDIF
 
         ; Set player X/Y position (and sprite direction) to where
         ; they entered the level.

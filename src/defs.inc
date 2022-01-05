@@ -32,6 +32,8 @@
         defc    IO_SpriteAttrib3=0x38
         defc    IO_SpriteAttrib4=0x39
 
+        defc    SPRITE_ID_TOMBSTONE=5
+
         defvars 0
         {
             spriteIndex ds.b 1

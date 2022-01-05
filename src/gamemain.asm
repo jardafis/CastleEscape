@@ -56,6 +56,7 @@ IF  _ZXN
         extern  enableSprite
         extern  disableSprite
         extern  spriteList
+        extern  setSpritePattern
 ENDIF
 
         public  _currentTileMap
@@ -498,9 +499,13 @@ gameOver:
 
         delay   200
 
+IF  _ZXN
+        ld      ix, spriteList
+        xor     a
+        call    setSpritePattern
         ld      ix, spriteList
         call    disableSprite
-
+ENDIF
         ret
 
 _setCurrentTileMap:

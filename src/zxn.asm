@@ -17,6 +17,7 @@ IF  _ZXN
         public  disableSprite
         public  setSpriteXY
         public  spriteList
+        public  setSpritePattern
 
         #include    "defs.inc"
 
@@ -434,6 +435,31 @@ updateXMSB:
 spriteXMSB:
         or      0x01
         jr      updateXMSB
+
+        ;
+        ; Input:
+        ;   ix - Pointer to sprite
+        ;	a  - Pattern ID
+        ;
+        ; Output:
+        ;   a - corrupt.
+setSpritePattern:
+        push    bc
+
+        ld      b, a
+
+        ld      a, (ix+0)
+        nextreg IO_SpriteNumber, a
+
+        ld      a, (ix+attrib3)
+        and     0xc0
+        or      b
+        ld      (ix+attrib3), a
+
+        nextreg IO_SpriteAttrib3, a
+
+        pop     bc
+        ret
 
         section DATA_2
 spriteList:
