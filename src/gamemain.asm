@@ -11,6 +11,7 @@ ELSE
         extern  setSpritePattern
         extern  setSpriteFlip
         extern  updateSpriteAttribs
+        extern  disableAllSprites
 ENDIF
         extern  _animateCoins
         extern  _cls
@@ -528,10 +529,7 @@ gameOver:
         delay   200
 
 IF  _ZXN
-        ld      ix, spriteList
-        call    disableSprite
-
-        call    updateSpriteAttribs
+        call    disableAllSprites
 ENDIF
         ret
 

@@ -24,6 +24,7 @@ IF  _ZXN
         public  getSpriteFlip
         public  spiderSprites
         public  setSpriteVFlip
+        public  disableAllSprites
 
         #include    "defs.inc"
 
@@ -63,8 +64,6 @@ zxnInit:
         call    setPalette
 
         bank    0
-
-        call    setupSprites
 
         ret
 
@@ -315,6 +314,7 @@ lastBlock:
 
         ret
 
+  IF    0
         ; Input:
         ;       None
         ;
@@ -375,7 +375,7 @@ nextSprite:
         ld      a, SIZEOF_sprite-5
         add     hl, a
         jp      nextSprite
-
+  ENDIF
         ;
         ; Input:
         ;   ix - Pointer to sprite
@@ -580,6 +580,23 @@ getSpriteFlip:
         and     0x01
         ret
 
+        ;
+        ; Input:
+        ;   None.
+        ;
+disableAllSprites:
+        ld      ix, spriteList
+        ld      b, (spriteListEnd-spriteList)/SIZEOF_sprite
+
+        xor     a
+disableLoop:
+        nextreg IO_SpriteNumber, a
+        nextreg IO_SpriteAttrib3, 0
+        inc     a
+        djnz    disableLoop
+
+        ret
+
         section DATA_2
 spriteList:
         db      0x00                    ; Sprite index
@@ -613,7 +630,5 @@ spiderSprites:
         ds      SIZEOF_sprite-1
         db      0x08
         ds      SIZEOF_sprite-1
-
-        db      0x80                    ; End of sprite list
 spriteListEnd:
 ENDIF
