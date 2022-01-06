@@ -10,9 +10,10 @@
 IF  !_ZXN
         extern  displayPixelTile
 ELSE
-        extern  displayTile
         extern  setSpritePattern
         extern  spriteList
+        extern  updateSpriteAttribs
+        extern  setSpriteFlip
 ENDIF
         extern  gameOver
         extern  heartCount
@@ -66,8 +67,14 @@ IF  !_ZXN
         call    displayPixelTile
 ELSE
         ld      ix, spriteList
+
+        xor     a
+        call    setSpriteFlip
+
         ld      a, SPRITE_ID_TOMBSTONE
         call    setSpritePattern
+
+        call    updateSpriteAttribs
 ENDIF
         ;
         ; Stop in-game music and
@@ -125,10 +132,6 @@ IF  !_ZXN
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _pasteScreen
-ELSE
-        ld      ix, spriteList
-        xor     a
-        call    setSpritePattern
 ENDIF
 
         ; Set player X/Y position (and sprite direction) to where

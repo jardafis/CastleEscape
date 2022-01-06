@@ -19,11 +19,16 @@ IF  _ZXN
         public  spriteList
         public  setSpritePattern
         public  nextSpritePattern
+        public  setSpriteFlip
+        public  updateSpriteAttribs
+        public  getSpriteFlip
 
         #include    "defs.inc"
 
         section CODE_2
 zxnInit:
+        nextreg IO_TurboMode, 0x00      ; CPU speed (0=3.5Mhz, 1=7Mhz, 2=14 Mhz )
+
         call    initTilemap
 
 		; Bank 4 contains sprite data
@@ -374,16 +379,11 @@ nextSprite:
         ;   ix - Pointer to sprite
         ;
         ; Output:
-        ;   a - corrupt.
+        ;   a - Sprite attribute 3
 enableSprite:
-        ld      a, (ix+0)
-        nextreg IO_SpriteNumber, a
-
         ld      a, (ix+attrib3)
         or      0x80
         ld      (ix+attrib3), a
-
-        nextreg IO_SpriteAttrib3, a
         ret
 
         ;
@@ -391,16 +391,11 @@ enableSprite:
         ;   ix - Pointer to sprite
         ;
         ; Output:
-        ;   a - corrupt.
+        ;   a - Sprite attribute 3
 disableSprite:
-        ld      a, (ix+0)
-        nextreg IO_SpriteNumber, a
-
         ld      a, (ix+attrib3)
         and     0x7f
         ld      (ix+attrib3), a
-
-        nextreg IO_SpriteAttrib3, a
         ret
 
         ;
@@ -408,29 +403,58 @@ disableSprite:
         ;   ix - Pointer to sprite
         ;
         ; Output:
-        ;   a - corrupt.
-setSpriteXY:
+        ;   a, bc, hl - corrupt.
+updateSpriteAttribs:
+  IF    1
+        ld      hl, ix
+        ld      a, (hl)
+        inc     hl
+        ld      bc, 0x303b
+        out     (c), a
+
+        ld      bc, 0x0457
+        otir
+  ELSE
         ld      a, (ix+0)
         nextreg IO_SpriteNumber, a
 
-        ; Set Y position
-        ld      a, h
-        ld      (ix+attrib1), a
-        add     32
+        ld      a, (ix+attrib0)
+        nextreg IO_SpriteAttrib0, a
+        ld      a, (ix+attrib1)
         nextreg IO_SpriteAttrib1, a
+        ld      a, (ix+attrib2)
+        nextreg IO_SpriteAttrib2, a
+        ld      a, (ix+attrib3)
+        nextreg IO_SpriteAttrib3, a
+        ld      a, (ix+attrib4)
+        nextreg IO_SpriteAttrib4, a
+  ENDIF
+        ret
+
+        ;
+        ; Input:
+        ;   ix - Pointer to sprite
+        ;   b - Sprite Y pixel position
+        ;   c - Sprite X pixel position
+        ;
+        ; Output:
+        ;   a - Sprite attribute 2
+setSpriteXY:
+        ; Set Y position
+        ld      a, b
+        add     32
+        ld      (ix+attrib1), a
 
         ; Set X position
-        ld      a, l
-        ld      (ix+attrib0), a
+        ld      a, c
         add     32
-        nextreg IO_SpriteAttrib0, a
+        ld      (ix+attrib0), a
 
         ld      a, (ix+attrib2)
         jr      c, spriteXMSB
         and     0xfe
 updateXMSB:
         ld      (ix+attrib2), a
-        nextreg IO_SpriteAttrib2, a
         ret
 
 spriteXMSB:
@@ -443,21 +467,15 @@ spriteXMSB:
         ;	a  - Pattern ID
         ;
         ; Output:
-        ;   a - corrupt.
+        ;   a - Sprite attribute 3
 setSpritePattern:
         push    bc
 
         ld      b, a
-
-        ld      a, (ix+0)
-        nextreg IO_SpriteNumber, a
-
         ld      a, (ix+attrib3)
         and     0xc0
         or      b
         ld      (ix+attrib3), a
-
-        nextreg IO_SpriteAttrib3, a
 
         pop     bc
         ret
@@ -467,7 +485,7 @@ setSpritePattern:
         ;   ix - Pointer to sprite
         ;
         ; Output:
-        ;   a - corrupt.
+        ;   a - Current pattern index
 nextSpritePattern:
         push    bc
 
@@ -487,6 +505,44 @@ nextSpritePattern:
 
 resetSpritePattern:
         ld      b, (ix+startPtn)
+        ret
+
+        ;
+        ; Input:
+        ;   ix - Pointer to sprite
+        ;   a - bit0 = 0, no flip; bit0 = 1, flip
+        ;
+        ; Output:
+        ;   a - Sprite attribute 2
+setSpriteFlip:
+        push    af
+
+        ld      a, (ix+attrib2)
+        and     0xf7
+        ld      b, a
+
+        pop     af
+        rlca
+        rlca
+        rlca
+        and     0x08
+        or      b
+        ld      (ix+attrib2), a
+
+        ret
+
+        ;
+        ; Input:
+        ;   ix - Pointer to sprite
+        ;
+        ; Output:
+        ;   a - bit0 = 0, no flip; bit0 = 1, flip
+getSpriteFlip:
+        ld      a, (ix+attrib2)
+        rrca
+        rrca
+        rrca
+        and     0x01
         ret
 
         section DATA_2

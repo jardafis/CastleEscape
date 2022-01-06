@@ -1,7 +1,17 @@
+IF  !_ZXN
         extern  _LeftKnight0
         extern  _RightKnight0
         extern  RightJumpKnight0
         extern  LeftJumpKnight0
+ELSE
+        extern  setSpriteXY
+        extern  enableSprite
+        extern  disableSprite
+        extern  spriteList
+        extern  setSpritePattern
+        extern  setSpriteFlip
+        extern  updateSpriteAttribs
+ENDIF
         extern  _animateCoins
         extern  _cls
         extern  _coinTables
@@ -51,13 +61,6 @@
         extern  __BANK_0_head
         extern  heapCheck
         extern  __STACK_tail
-IF  _ZXN
-        extern  setSpriteXY
-        extern  enableSprite
-        extern  disableSprite
-        extern  spriteList
-        extern  setSpritePattern
-ENDIF
 
         public  _currentTileMap
         public  _falling
@@ -183,21 +186,20 @@ newGame:
         ;
         ; Set the initial player sprite
         ;
+IF  !_ZXN
         ld      hl, _RightKnight0
         ld      (playerSprite), hl
-
+ELSE
+        ld      a, 0
+        ld      (playerSprite), a
+        ld      ix, spriteList
+        call    enableSprite
+ENDIF
         ;
         ; Starting X and Y player position
         ;
         ld      hl, START_Y<<8|START_X
-IF  !_ZXN
         ld      (_xPos), hl
-ELSE
-        ld      (_xPos), hl
-        ld      ix, spriteList
-        call    setSpriteXY
-        call    enableSprite
-ENDIF
         ;
         ; Initialize the X/Y speed variables
         ;
@@ -287,16 +289,30 @@ ENDIF
         ;
         bit     LEFT_BIT, e
         jr      z, checkRight
+IF  !_ZXN
         ld      a, LEFT_SPEED
         ld      hl, _LeftKnight0
         ld      (playerSprite), hl
+ELSE
+        ld      a, (playerSprite)
+        or      0x01
+        ld      (playerSprite), a
+        ld      a, LEFT_SPEED
+ENDIF
         jr      updateXSpeedDone
 checkRight:
         bit     RIGHT_BIT, e
         jr      z, noXMovement
+IF  !_ZXN
         ld      a, RIGHT_SPEED
         ld      hl, _RightKnight0
         ld      (playerSprite), hl
+ELSE
+        ld      a, (playerSprite)
+        and     0xfe
+        ld      (playerSprite), a
+        ld      a, RIGHT_SPEED
+ENDIF
         jr      updateXSpeedDone
 noXMovement:
         xor     a
@@ -317,14 +333,18 @@ IFDEF   NEW_JUMP
         ; Set right or left jump animation
         bit     RIGHT_BIT, e
         jr      z, checkLeftJump
+  IF    !_ZXN
         ld      hl, RightJumpKnight0
         ld      (playerSprite), hl
+  ENDIF
         jr      jumpRightDone
 checkLeftJump:
         bit     LEFT_BIT, e
         jr      z, jumpRightDone
+  IF    !_ZXN
         ld      hl, LeftJumpKnight0
         ld      (playerSprite), hl
+  ENDIF
 jumpRightDone:
 
         ld      hl, jumpCnt
@@ -463,12 +483,16 @@ IF  !_ZXN
         ld      bc, (_xPos)
         call    _displaySprite
 ELSE
-        ld      hl, (_xPos)
-        ld      a, l
+        ld      bc, (_xPos)
+        ld      a, c
         and     0x03
         ld      ix, spriteList
         call    setSpritePattern
         call    setSpriteXY
+        ld      a, (playerSprite)
+        call    setSpriteFlip
+
+        call    updateSpriteAttribs
 ENDIF
         call    updateSpiderPos
         call    displaySpiders
@@ -504,10 +528,9 @@ gameOver:
 
 IF  _ZXN
         ld      ix, spriteList
-        xor     a
-        call    setSpritePattern
-        ld      ix, spriteList
         call    disableSprite
+
+        call    updateSpriteAttribs
 ENDIF
         ret
 
