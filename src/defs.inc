@@ -31,6 +31,7 @@
         defc    IO_SpriteAttrib2=0x37
         defc    IO_SpriteAttrib3=0x38
         defc    IO_SpriteAttrib4=0x39
+        defc    IO_TurboMode=0x07
 
         defc    SPRITE_ID_TOMBSTONE=5
 
@@ -308,7 +309,7 @@ IF  times>=128
 ENDIF
         ENDM
 
-entry   MACRO   
+entry   MACRO
         push    af
         push    bc
         push    de
@@ -318,7 +319,7 @@ entry   MACRO
         add     ix, sp
         ENDM
 
-exit    MACRO   
+exit    MACRO
         pop     ix
         pop     hl
         pop     de
@@ -329,7 +330,7 @@ exit    MACRO
         ;
         ; Push af-hl onto the stack
         ;
-pushall MACRO   
+pushall MACRO
         push    af
         push    bc
         push    de
@@ -341,7 +342,7 @@ pushall MACRO
         ;
         ; Pop hl-af off the stack
         ;
-popall  MACRO   
+popall  MACRO
         pop     iy
         pop     ix
         pop     hl
@@ -353,7 +354,7 @@ popall  MACRO
         ;
         ; Add 'a' to 'hl'
         ;
-addhl   MACRO   
+addhl   MACRO
         add     l
         ld      l, a
         adc     h
@@ -364,7 +365,7 @@ addhl   MACRO
         ;
         ; Add 'a' to 'de'
         ;
-addde   MACRO   
+addde   MACRO
         add     e
         ld      e, a
         adc     d
@@ -375,7 +376,7 @@ addde   MACRO
         ;
         ; Add 'a' to 'bc'
         ;
-addbc   MACRO   
+addbc   MACRO
         add     c
         ld      c, a
         adc     b
@@ -419,7 +420,7 @@ delayLoop:
         pop     bc
         ENDM
 
-assert  MACRO   
+assert  MACRO
         di
         halt
         ENDM
