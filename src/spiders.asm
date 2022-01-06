@@ -9,6 +9,16 @@
         public  spiderCollision
         public  spiderTables
         public  updateSpiderPos
+IF  _ZXN
+        public  initSpiders
+        extern  spiderSprites
+        extern  setSpritePattern
+        extern  setSpriteXY
+        extern  enableSprite
+        extern  disableSprite
+        extern  updateSpriteAttribs
+        extern  setSpriteVFlip
+ENDIF
 
         ;
         ;	Flag bits:
@@ -135,6 +145,9 @@ collision:
         ;
 displaySpiders:
         ld      hl, (currentSpiderTable)
+IF  _ZXN
+        ld      ix, spiderSprites
+ENDIF
 nextItem:
         ld      a, (hl)                 ; Flags
         or      a
@@ -148,11 +161,34 @@ nextItem:
 
         inc     hl                      ; Skip animation frame
 
+IF  !_ZXN
         ld      a, b                    ; Determine the animation from the Y pixel position
         and     %00000001
         add     ID_SPIDER
 
         call    displayPixelTile        ; Display tile
+ELSE
+IF  0
+        and     0x18                    ; Up/Down bits
+        jr      z, noChange
+
+        ; Move the down bit to bit0
+        rrca
+        rrca
+        rrca
+        call    setSpriteVFlip
+noChange:
+ENDIF
+        call    setSpriteXY
+        ld      a, b
+        and     0x01
+        add     SPRITE_ID_SPIDER
+        call    setSpritePattern
+        call    updateSpriteAttribs
+        ; Point to next sprite
+        ld      de, SIZEOF_sprite
+        add     ix, de
+ENDIF
         jp      nextItem
 
         ;
@@ -198,6 +234,53 @@ noCollision:
 spiderCollision:
         call    die
         ret
+
+IF  _ZXN
+initSpiders:
+        ld      ix, spiderSprites
+        ld      b, MAX_SPIDERS
+disableAllSpiders:
+        call    disableSprite
+        call    updateSpriteAttribs
+
+        ; Point to next sprite
+        ld      de, SIZEOF_sprite
+        add     ix, de
+
+        djnz    disableAllSpiders
+
+        ld      ix, spiderSprites
+        ld      hl, (currentSpiderTable)
+nextSpiderSprite:
+        ld      a, (hl)
+        or      a
+        ret     m
+        inc     hl
+        call    enableSprite
+
+        ; Spider X
+        ld      c, (hl)
+        inc     hl
+        ; Spider Y
+        ld      b, (hl)
+        inc     hl
+        inc     hl
+
+        call    setSpriteXY
+
+        ld      a, b
+        and     0x01
+        add     SPRITE_ID_SPIDER
+        call    setSpritePattern
+
+        call    updateSpriteAttribs
+
+        ; Point to next sprite
+        ld      de, SIZEOF_sprite
+        add     ix, de
+
+        jr      nextSpiderSprite
+ENDIF
 
         section DATA_2
 

@@ -23,7 +23,9 @@
         extern  startSprite
         extern  xyPos
         extern  xyStartPos
-
+IF  _ZXN
+        extern  initSpiders
+ENDIF
         public  _setupScreen
 
         #include    "defs.inc"
@@ -66,6 +68,10 @@ _setupScreen:
 
         ld      hl, (_currentTileMap)
         call    displayTileMap
+
+IF  _ZXN
+        call    initSpiders
+ENDIF
 
         call    displayBanner
 

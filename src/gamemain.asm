@@ -263,13 +263,14 @@ IF  !_ZXN
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _pasteScreen
-ENDIF
+
         ;
         ; Remove spiders
         ;
         ld      a, ID_BLANK
         ld      hl, (currentSpiderTable)
         call    displayPixelItems
+ENDIF
 
         ; ######################################
         ;

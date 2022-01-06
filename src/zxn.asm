@@ -22,6 +22,8 @@ IF  _ZXN
         public  setSpriteFlip
         public  updateSpriteAttribs
         public  getSpriteFlip
+        public  spiderSprites
+        public  setSpriteVFlip
 
         #include    "defs.inc"
 
@@ -378,24 +380,24 @@ nextSprite:
         ; Input:
         ;   ix - Pointer to sprite
         ;
-        ; Output:
-        ;   a - Sprite attribute 3
 enableSprite:
+        push    af
         ld      a, (ix+attrib3)
         or      0x80
         ld      (ix+attrib3), a
+        pop     af
         ret
 
         ;
         ; Input:
         ;   ix - Pointer to sprite
         ;
-        ; Output:
-        ;   a - Sprite attribute 3
 disableSprite:
+        push    af
         ld      a, (ix+attrib3)
         and     0x7f
         ld      (ix+attrib3), a
+        pop     af
         ret
 
         ;
@@ -403,9 +405,12 @@ disableSprite:
         ;   ix - Pointer to sprite
         ;
         ; Output:
-        ;   a, bc, hl - corrupt.
+        ;   a, bc - corrupt.
 updateSpriteAttribs:
   IF    1
+        push    bc
+        push    hl
+
         ld      hl, ix
         ld      a, (hl)
         inc     hl
@@ -414,6 +419,9 @@ updateSpriteAttribs:
 
         ld      bc, 0x0457
         otir
+
+        pop     hl
+        pop     bc
   ELSE
         ld      a, (ix+0)
         nextreg IO_SpriteNumber, a
@@ -437,9 +445,8 @@ updateSpriteAttribs:
         ;   b - Sprite Y pixel position
         ;   c - Sprite X pixel position
         ;
-        ; Output:
-        ;   a - Sprite attribute 2
 setSpriteXY:
+        push    af
         ; Set Y position
         ld      a, b
         add     32
@@ -455,6 +462,7 @@ setSpriteXY:
         and     0xfe
 updateXMSB:
         ld      (ix+attrib2), a
+        pop     af
         ret
 
 spriteXMSB:
@@ -466,9 +474,8 @@ spriteXMSB:
         ;   ix - Pointer to sprite
         ;	a  - Pattern ID
         ;
-        ; Output:
-        ;   a - Sprite attribute 3
 setSpritePattern:
+        push    af
         push    bc
 
         ld      b, a
@@ -478,6 +485,7 @@ setSpritePattern:
         ld      (ix+attrib3), a
 
         pop     bc
+        pop     af
         ret
 
         ;
@@ -515,6 +523,7 @@ resetSpritePattern:
         ; Output:
         ;   a - Sprite attribute 2
 setSpriteFlip:
+        push    bc
         push    af
 
         ld      a, (ix+attrib2)
@@ -529,6 +538,32 @@ setSpriteFlip:
         or      b
         ld      (ix+attrib2), a
 
+        pop     bc
+        ret
+
+        ;
+        ; Input:
+        ;   ix - Pointer to sprite
+        ;   a - bit0 = 0, no flip; bit0 = 1, flip
+        ;
+        ; Output:
+        ;   a - Sprite attribute 2
+setSpriteVFlip:
+        push    bc
+        push    af
+
+        ld      a, (ix+attrib2)
+        and     0xfb
+        ld      b, a
+
+        pop     af
+        rlca
+        rlca
+        and     0x04
+        or      b
+        ld      (ix+attrib2), a
+
+        pop     bc
         ret
 
         ;
@@ -548,29 +583,37 @@ getSpriteFlip:
         section DATA_2
 spriteList:
         db      0x00                    ; Sprite index
-        db      50                      ; X (Attrib 0)
-        db      24*8                    ; Y (Attrib 1)
-        db      0x00                    ; Attribute 2
-        db      0x40                    ; Attribute 3
-        db      0x00                    ; Attribute 4
-        db      0                       ; Animation frame count
-        db      0                       ; Current frame count
-        db      0                       ; Start pattern
-        db      3                       ; End pattern
-        db      0                       ; Current pattern
+        ds      SIZEOF_sprite-1
+;        db      50                      ; X (Attrib 0)
+;        db      24*8                    ; Y (Attrib 1)
+;        db      0x00                    ; Attribute 2
+;        db      0x40                    ; Attribute 3
+;        db      0x00                    ; Attribute 4
+;        db      0                       ; Animation frame count
+;        db      0                       ; Current frame count
+;        db      0                       ; Start pattern
+;        db      3                       ; End pattern
+;        db      0                       ; Current pattern
 
-        db      0x01                    ; Sprite index
-        db      100                     ; X
-        db      24*8                    ; Y
-        db      0x00                    ; Attribute 2
-        db      0x40                    ; Attribute 3
-        db      0x00                    ; Attribute 4
-        db      25                      ; Animation frame count
-        db      25                      ; Current frame count
-        db      0                       ; Start pattern
-        db      4                       ; End pattern
-        db      0                       ; Current pattern
+        ; Spiders
+spiderSprites:
+        db      0x01
+        ds      SIZEOF_sprite-1
+        db      0x02
+        ds      SIZEOF_sprite-1
+        db      0x03
+        ds      SIZEOF_sprite-1
+        db      0x04
+        ds      SIZEOF_sprite-1
+        db      0x05
+        ds      SIZEOF_sprite-1
+        db      0x06
+        ds      SIZEOF_sprite-1
+        db      0x07
+        ds      SIZEOF_sprite-1
+        db      0x08
+        ds      SIZEOF_sprite-1
 
         db      0x80                    ; End of sprite list
-
+spriteListEnd:
 ENDIF
