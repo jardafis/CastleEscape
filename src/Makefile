@@ -18,7 +18,7 @@ CFLAGS=$(TARGET) -O2 -c \
 LDFLAGS=$(TARGET) --no-crt -m crt/crt.asm
 
 ifeq ($(TARGET),+zxn)
-ZXEMU=~/ZEsarUX-10.0/zesarux --tape
+ZXEMU=~/ZEsarUX-10.0/zesarux --machine TBBlue --configfile .zesaruxrc --tbblue-fast-boot-mode  --nosplash --nowelcomemessage --quickexit
 ASFLAGS+=-mz80n -D_ZXN
 CFLAGS+=-D_ZXN
 DISFLAGS+=-mz80n
