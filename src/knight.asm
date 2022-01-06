@@ -1,3 +1,4 @@
+IF  !_ZXN
         public  _LeftKnight0
         public  _RightKnight0
         public  RightJumpKnight0
@@ -13,7 +14,7 @@ RightJumpKnight0:
         #include    "sprite/RightJumpKnight.inc"
 LeftJumpKnight0:
         #include    "sprite/LeftJumpKnight.inc"
-IF  _ZXN
+ELSE
         section RODATA_4
 
         public  spriteStart
