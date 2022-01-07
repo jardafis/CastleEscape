@@ -10,7 +10,7 @@
         public  coinCollision
         public  currentCoinTable
 
-        include "defs.inc"
+        #include    "defs.inc"
 
         section CODE_2
 
@@ -45,8 +45,7 @@ nextCoin:
 
         jp      nextCoin
 notVisible:
-        ld      a, SIZEOF_item
-        addhl
+        addhl   SIZEOF_item
         jp      nextCoin
 
         ;

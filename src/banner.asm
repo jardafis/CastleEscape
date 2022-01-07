@@ -4,7 +4,7 @@
         public  bannerData
         public  displayBanner
 
-        include "defs.inc"
+        #include    "defs.inc"
 
         section CODE_2
 
@@ -48,4 +48,4 @@ xLoop:
 
         section RODATA_2
 bannerData:
-        include "banner.inc"
+        #include    "banner.inc"

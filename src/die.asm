@@ -7,7 +7,14 @@
         extern  _ySpeed
         extern  decBCD
         extern  display2BCD
+IF  !_ZXN
         extern  displayPixelTile
+ELSE
+        extern  setSpritePattern
+        extern  knightSprite
+        extern  updateSpriteAttribs
+        extern  setSpriteFlip
+ENDIF
         extern  gameOver
         extern  heartCount
         extern  playerSprite
@@ -19,7 +26,7 @@
 
         public  die
 
-        include "defs.inc"
+        #include    "defs.inc"
 
         section CODE_2
 
@@ -32,6 +39,7 @@ die:
         push    de
         push    hl
 
+IF  !_ZXN
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _copyScreen
@@ -57,7 +65,17 @@ die:
         ld      c, a
         ld      a, 12+16
         call    displayPixelTile
+ELSE
+        ld      ix, knightSprite
 
+        xor     a
+        call    setSpriteFlip
+
+        ld      a, SPRITE_ID_TOMBSTONE
+        call    setSpritePattern
+
+        call    updateSpriteAttribs
+ENDIF
         ;
         ; Stop in-game music and
         ; start the death march
@@ -107,12 +125,14 @@ delayLoop:
         call    wyz_play_song
         ei
 
+IF  !_ZXN
         ;
         ; Remove the headstone
         ;
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _pasteScreen
+ENDIF
 
         ; Set player X/Y position (and sprite direction) to where
         ; they entered the level.

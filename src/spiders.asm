@@ -9,6 +9,15 @@
         public  spiderCollision
         public  spiderTables
         public  updateSpiderPos
+IF  _ZXN
+        public  initSpiders
+        extern  spiderSprites
+        extern  setSpritePattern
+        extern  setSpriteXY
+        extern  enableSprite
+        extern  disableSprite
+        extern  updateSpriteAttribs
+ENDIF
 
         ;
         ;	Flag bits:
@@ -26,7 +35,7 @@
         ;	 +---------------- End of table
         ;
 
-        include "defs.inc"
+        #include    "defs.inc"
 
         section CODE_2
 
@@ -47,25 +56,22 @@ nextSpider:
         call    rand
         ld      a, l
 
-        cp      110
-        jr      nc, down
-        ; a >= val
+        cp      85
+        jr      nc, down                ; a >= val
         ld      b, UP<<1
         jr      done
 down:
-        cp      220
-        jr      nc, stop
-        ; a >= val
+        cp      170
+        jr      nc, stop                ; a >= val
         ld      b, DOWN<<1
         jr      done
 stop:
-        ; a < val
         ld      b, 0
 done:
         pop     hl
 
         ld      a, (hl)                 ; OR the direction bits
-        and     %00001111               ; into the item flags
+        and     ~(UP<<1|DOWN<<1)        ; into the item flags
         or      b                       ; and save the flags.
         ld      (hl), a
 
@@ -135,6 +141,9 @@ collision:
         ;
 displaySpiders:
         ld      hl, (currentSpiderTable)
+IF  _ZXN
+        ld      ix, spiderSprites
+ENDIF
 nextItem:
         ld      a, (hl)                 ; Flags
         or      a
@@ -148,11 +157,40 @@ nextItem:
 
         inc     hl                      ; Skip animation frame
 
+IF  !_ZXN
         ld      a, b                    ; Determine the animation from the Y pixel position
         and     %00000001
         add     ID_SPIDER
 
         call    displayPixelTile        ; Display tile
+ELSE
+        and     UP<<1|DOWN<<1           ; Up/Down bits
+        jr      z, noChange
+
+        ; Default to pattern ID for upward spider
+        ld      d, SPRITE_ID_SPIDER_UP
+
+        ; Check for spider moving down
+        and     DOWN<<1
+        jr      z, movingUp
+
+        ; Set pattern ID for downward spider
+        ld      d, SPRITE_ID_SPIDER_DOWN
+movingUp:
+        call    setSpriteXY
+
+        ld      a, b
+        and     0x01
+        add     d
+        call    setSpritePattern
+
+        call    updateSpriteAttribs
+
+noChange:
+        ; Point to next sprite
+        ld      de, SIZEOF_sprite
+        add     ix, de
+ENDIF
         jp      nextItem
 
         ;
@@ -198,6 +236,53 @@ noCollision:
 spiderCollision:
         call    die
         ret
+
+IF  _ZXN
+initSpiders:
+        ld      ix, spiderSprites
+        ld      b, MAX_SPIDERS
+disableAllSpiders:
+        call    disableSprite
+        call    updateSpriteAttribs
+
+        ; Point to next sprite
+        ld      de, SIZEOF_sprite
+        add     ix, de
+
+        djnz    disableAllSpiders
+
+        ld      ix, spiderSprites
+        ld      hl, (currentSpiderTable)
+nextSpiderSprite:
+        ld      a, (hl)
+        or      a
+        ret     m
+        inc     hl
+        call    enableSprite
+
+        ; Spider X
+        ld      c, (hl)
+        inc     hl
+        ; Spider Y
+        ld      b, (hl)
+        inc     hl
+        inc     hl
+
+        call    setSpriteXY
+
+        ld      a, b
+        and     0x01
+        add     SPRITE_ID_SPIDER_UP
+        call    setSpritePattern
+
+        call    updateSpriteAttribs
+
+        ; Point to next sprite
+        ld      de, SIZEOF_sprite
+        add     ix, de
+
+        jr      nextSpiderSprite
+ENDIF
 
         section DATA_2
 

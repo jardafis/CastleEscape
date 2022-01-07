@@ -1,9 +1,8 @@
         extern  currentBank
+        extern  __BANKING_STACK_tail
         public  banked_call
 
-        defc    CLIB_BANKING_STACK_SIZE=0x10
-
-        include "defs.inc"
+        #include    "defs.inc"
 
         ; 0xffff +--------+--------+--------+--------+--------+--------+--------+--------+
         ;        | Bank 0 | Bank 1 | Bank 2 | Bank 3 | Bank 4 | Bank 5 | Bank 6 | Bank 7 |
@@ -108,9 +107,4 @@ saveSP2:
 
         SECTION DATA_2
 tempsp:
-        dw      bankingStack
-
-        SECTION BSS_2
-
-        ds      CLIB_BANKING_STACK_SIZE
-bankingStack:
+        dw      __BANKING_STACK_tail

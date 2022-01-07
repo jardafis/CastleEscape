@@ -1,7 +1,6 @@
         extern  __BANK_7_head
         extern  _updateDirection
         extern  animateMenu
-        extern  bank7Screen
         extern  displayTile
         extern  keyboardScan
         extern  lookupScanCode
@@ -11,24 +10,24 @@
         extern  setAttr
         extern  setTileAttr
         extern  waitReleaseKey
+IF  _ZXN
+        extern  clearULATile
+ENDIF
 
         public  defineKeys
 
+IF  !_ZXN
         section CODE_5
-        include "defs.inc"
+ELSE
+        section CODE_2
+ENDIF
+        #include    "defs.inc"
 
 defineKeys:
         push    af
         ;
         ; Setup the screen
         ;
-
-        ;
-        ; Patch the displayTile routine to access
-        ; memory @ 0x4000 (screen 0)
-        ;
-        ld      a, SCREEN_START>>8
-        ld      (bank7Screen+1), a
 
         ;
         ; Copy screen 1 to screen 0
@@ -38,8 +37,6 @@ defineKeys:
         ld      bc, SCREEN_LENGTH+SCREEN_ATTR_LENGTH
         ldir                            ; Copy
 
-        BANK    0                       ; Bank 0 contains the tile attributes
-
         ;
         ; Clear the text from the main menu
         ;
@@ -47,8 +44,12 @@ defineKeys:
 yLoop:
         ld      c, 0x06                 ; Starting X position
 xLoop:
+IF  !_ZXN
         ld      a, ID_BLANK             ; ID of tile to use
         call    displayTile             ; Display the tile
+ELSE
+        call    clearULATile
+ENDIF
 
         inc     c                       ; Increment the screen X position
         ld      a, c
@@ -177,6 +178,16 @@ notSpace:
         ld      hl, enterMsg
         jr      printKey
 notEnter:
+        cp      SYM
+        jr      nz, notSYM
+        ld      hl, symMsg
+        jr      printKey
+notSYM:
+        cp      SHIFT
+        jr      nz, notShift
+        ld      hl, shiftMsg
+        jr      printKey
+notShift:
         ld      hl, key
 
 printKey:
@@ -188,11 +199,19 @@ printKey:
         pop     hl
         ret
 
+IF  !_ZXN
         section BSS_5
+ELSE
+        section BSS_2
+ENDIF
 key:
         ds      2
 
+IF  !_ZXN
         section RODATA_5
+ELSE
+        section RODATA_2
+ENDIF
         ;
         ; List of lanterns on the this menu
         ;
@@ -215,3 +234,7 @@ spaceMsg:
         db      "SPACE", 0x00
 enterMsg:
         db      "ENTER", 0x00
+shiftMsg:
+        db      "SHIFT", 0x00
+symMsg:
+        db      "SYM", 0x00

@@ -7,7 +7,7 @@
 
         section CODE_4
 
-        include "defs.inc"
+        #include    "defs.inc"
 
         ;
         ; Display a char at the specified location.
@@ -110,6 +110,15 @@ printChar:
         push    af
         push    bc
         push    hl
+
+IF  _ZXN
+        extern  displayTile
+        ; Clear the tile over the character
+        ld      l, a
+        ld      a, ID_BLANK
+        call    displayTile
+        ld      a, l
+ENDIF
 
         di
         ld      (TempSP+1), sp

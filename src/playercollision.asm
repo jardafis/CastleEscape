@@ -14,7 +14,7 @@
         public  checkXCol
         public  checkYCol
 
-        include "defs.inc"
+        #include    "defs.inc"
         section CODE_2
 
         defc    ID_SOLID_TILE=12*TILE_SHEET_WIDTH
@@ -44,8 +44,7 @@ checkXCol:
         dec     de                      ; else negative, moving left. Subtract 1 from xPos.
         jr      endif
 movingRight:
-        ld      a, PLAYER_WIDTH         ; else add player width
-        addde
+        addde   PLAYER_WIDTH            ; else add player width
 endif:
         ld      a, (_yPos)              ; Get the yPos
         ld      l, a
@@ -143,13 +142,13 @@ checkYCol:
         ld      l, a
         ld      h, 0
         ld      a, (_ySpeed)            ; Check if ySpeed is negative
+        add     1                       ; Add gravity
         ld      b, a
         or      a
         jp      p, movingDown           ; Moving down or stopped
         ld      de, -25                 ; Pixel position above the player
         jr      endif2
 movingDown:
-        ld      b, 1                    ; Force gravity as ySpeed could by 0
         ld      de, PLAYER_HEIGHT-24    ; Pixel position below the player
 endif2:
         add     hl, de
@@ -177,7 +176,7 @@ endif2:
         rrca                            ; Faster to do rrca followed by AND rather than srl
         rrca
         and     %00011111
-        addhl                           ; Add X byte offset to tile map Y index
+        addhl   a                       ; Add X byte offset to tile map Y index
 
         ld      de, (_currentTileMap)
         add     hl, de
@@ -216,12 +215,9 @@ noYCollision:
         ;
         ; Transition to falling.
         ;  Clear X movement.
-        ;  set ySpeed to 1 (down).
-        ;  increment the falling counter.
+        ;  Increment the falling counter.
         xor     a
         ld      (_xSpeed), a
-        inc     a
-        ld      (_ySpeed), a
         ld      hl, _falling
         inc     (hl)
         ld      a, FALL_DISTANCE        ; Distance before falling starts

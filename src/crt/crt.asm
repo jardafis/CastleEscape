@@ -1,6 +1,4 @@
-        include "zcc_opt.def"
-
-        EXTERN  _main
+        extern  _main
 
 IFNDEF  CRT_ORG_BANK_5
         defc    CRT_ORG_BANK_5=0x06000
@@ -63,13 +61,14 @@ IFDEF   CRT_ORG_BANK_2
         org     CRT_ORG_BANK_2
         SECTION VECTORS
         ds      0x101, 0x81             ; 257 byte vector table
+        SECTION BANKING_STACK
+        ds      0x20, 0xaa              ; 32 bytes of banked call stack
         SECTION STACK
-        ds      0x80, 0x55              ; 128 bytes of stack
-stack:
-        SECTION ISR                     ; Interrupt subroutine
-        SECTION CODE_2
+        ds      0x60, 0x55              ; 96 bytes of stack
+        SECTION ISR                     ; Interrupt subroutine @ 0x8181
         SECTION code_clib
         SECTION code_l_sccz80
+        SECTION CODE_2
         SECTION RODATA_2
         SECTION DATA_2
         SECTION BSS_2
@@ -100,9 +99,6 @@ IFDEF   CRT_ORG_BANK_5
         SECTION BANK_5
         org     CRT_ORG_BANK_5
         SECTION CODE_5
-crt0:
-        ld      sp, stack
-        jp      _main
         SECTION RODATA_5
         SECTION DATA_5
         SECTION BSS_5

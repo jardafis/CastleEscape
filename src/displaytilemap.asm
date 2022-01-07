@@ -4,7 +4,7 @@
 
         public  displayTileMap
 
-        include "defs.inc"
+        #include    "defs.inc"
 
         section CODE_2
         ;
@@ -89,12 +89,14 @@ nextTile:
         ;
 addLantern:
         push    af
+        push    de
         push    hl
 
         ; Increment the lantern count
         ld      hl, _lanternList
         inc     (hl)
 
+IF  !_ZXN
         ; Calculate the screen attribute address
         ld      a, b
         rrca
@@ -109,6 +111,20 @@ addLantern:
         and     %00000011
         or      SCREEN_ATTR_START>>8
         ld      h, a
+ELSE
+        ; Multiply Y by 40
+        ld      d, b
+        ld      e, ZXN_TILEMAP_WIDTH
+        mul     d, e
+
+        ; Add the tilemap base address
+        ld      hl, TILEMAP_START
+        add     hl, de
+
+        ; Add the X offset
+        ld      a, c
+        add     hl, a
+ENDIF
 lanternPtr:
         ld      (-1), hl                ; Self modifying code. Store screen address in table
 
@@ -117,5 +133,6 @@ lanternPtr:
         inc     (hl)
 
         pop     hl
+        pop     de
         pop     af
         ret

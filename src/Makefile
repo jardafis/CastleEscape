@@ -2,8 +2,8 @@ CC=zcc
 AS=z88dk-asmpp
 LD=zcc
 
-TARGET= +zx
-PROJ_NAME=CastleEscape
+TARGET?= +zx
+PROJECT_NAME=CastleEscape
 ASMSRC=$(wildcard *.asm)
 CSRC=$(wildcard *.c)
 ZXSTLC=./tools/zxstlc_linux
@@ -15,30 +15,44 @@ CFLAGS=$(TARGET) -O2 -c \
 		--bssseg=BSS_4 \
 		-clib=new
 
-LDFLAGS=$(TARGET) -crt0 crt/crt.asm -m
+LDFLAGS=$(TARGET) --no-crt -m crt/crt.asm
 
-#ASFLAGS=-opt-speed
+ifeq ($(TARGET),+zxn)
+ZXEMU=~/ZEsarUX-10.0/zesarux --machine TBBlue --configfile .zesaruxrc --tbblue-fast-boot-mode  --nosplash --nowelcomemessage --quickexit
+ASFLAGS+=-mz80n -D_ZXN
+CFLAGS+=-D_ZXN
+DISFLAGS+=-mz80n
+else
+ZXEMU=fuse
+ASFLAGS+=-mz80
+DISFLAGS+=-mz80
+endif
+
 OBJECTS=$(CSRC:.c=.o) $(ASMSRC:.asm=.o)
 
 # Default to the CODE bank if no other is specified
 BANK ?= BANK_2
 # Find the start addres of the BANK and replace $ with 0x
 HEAD=$(shell grep __$(BANK)_head *.map | awk '{gsub("^.", "0x", $$3); print $$3}')
+MAIN=$(shell grep _main *.map | sed -e 's/\$$/0x/g' | awk '{printf "%d", strtonum($$3)}')
 
 .PHONY: all clean run dis
 
-all: $(PROJ_NAME).tap
-	@grep -E "__(CODE|RODATA|DATA|BSS|HEAP)_(head|tail|size).*" $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
-	@grep -E "__(CODE|RODATA|DATA|BSS|HEAP|code)_([0-7]|user|crt.*)_(sccz80|head|tail|size).*" $(PROJ_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
+all: $(PROJECT_NAME).tap
+	@grep -E "__(CODE|RODATA|DATA|BSS|HEAP)_(head|tail|size).*" $(PROJECT_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
+	@grep -E "__(CODE|RODATA|DATA|BSS|HEAP|code)_([0-7]|user|crt.*)_(sccz80|head|tail|size).*" $(PROJECT_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
 
 clean:
 	rm -f *.[oid] *.tap *.bin *.map *.dsk
 
-run: $(PROJ_NAME).tap
+run: $(PROJECT_NAME).tap
+	$(ZXEMU) $<
+
+rundsk: $(PROJECT_NAME).dsk
 	fuse $<
 
-dis: $(PROJ_NAME)_BANK_2.bin
-	z88dk-dis -o $(HEAD) -x $(PROJ_NAME).map $(PROJ_NAME)_$(BANK).bin | less
+dis: $(PROJECT_NAME)_BANK_2.bin
+	z88dk-dis $(DISFLAGS) -o $(HEAD) -x $(PROJECT_NAME).map $(PROJECT_NAME)_$(BANK).bin | less
 
 ifeq (,$(findstring $(MAKECMDGOALS),clean))
 %.d: %.asm
@@ -53,17 +67,27 @@ endif
 	@$(CC) $(CFLAGS) -o $@ $<
 
 %.o: %.asm
+	@echo "Assembling $<"
 	@$(AS) $(ASFLAGS) $<
 
-$(PROJ_NAME)_BANK_2.bin: $(OBJECTS)
+$(PROJECT_NAME)_BANK_2.bin: $(OBJECTS) crt/crt.asm
 	@echo "Linking $@"
-	@$(LD) $(LDFLAGS) $(OBJECTS) -o $(PROJ_NAME)
+	@$(LD) $(LDFLAGS) $(OBJECTS) -o $(PROJECT_NAME)
 
-$(PROJ_NAME).tap: $(PROJ_NAME)_BANK_2.bin
+$(PROJECT_NAME).bin: $(PROJECT_NAME)_BANK_2.bin
 	@echo "Creating $@"
-	@cp $(PROJ_NAME)_BANK_5.bin $(PROJ_NAME).bin
-	@dd if=/dev/null of=$(PROJ_NAME).bin bs=1 count=1 seek=8192
-	@cat $(PROJ_NAME)_BANK_2.bin >> $(PROJ_NAME).bin
-	$(ZXSTLC) -b $(PROJ_NAME).bin 24576 24576 -l title.scr -n CastleEsc -0 $(PROJ_NAME)_BANK_0.bin -4 $(PROJ_NAME)_BANK_4.bin -7 $(PROJ_NAME)_BANK_7.bin -e
+	@cp ${PROJECT_NAME}_BANK_5.bin ${PROJECT_NAME}.bin
+	@dd if=/dev/null of=${PROJECT_NAME}.bin bs=1 count=1 seek=8K
+	@cat ${PROJECT_NAME}_BANK_2.bin >> ${PROJECT_NAME}.bin
+	@dd if=/dev/null of=${PROJECT_NAME}.bin bs=1 count=1 seek=24K
+	@cat ${PROJECT_NAME}_BANK_0.bin >> ${PROJECT_NAME}.bin
+
+$(PROJECT_NAME).tap: $(PROJECT_NAME).bin title.scr
+	@echo "Creating $@"
+	$(ZXSTLC) -t $(PROJECT_NAME).bin 24576 $(MAIN) -l title.scr -n CastleEsc -4 $(PROJECT_NAME)_BANK_4.bin -7 $(PROJECT_NAME)_BANK_7.bin -e
+
+$(PROJECT_NAME).dsk: $(PROJECT_NAME).bin title.scr
+	@echo "Creating $@"
+	$(ZXSTLC) -d $(PROJECT_NAME).bin 24576 $(MAIN) -l title.scr -4 $(PROJECT_NAME)_BANK_4.bin -7 $(PROJECT_NAME)_BANK_7.bin -e
 
 -include $(ASMSRC:.asm=.d) $(CSRC:.c=.d)

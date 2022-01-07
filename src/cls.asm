@@ -1,9 +1,12 @@
         public  _cls
         public  clearAttr
         public  setAttr
+IF  _ZXN
+        extern  clearTilemap
+ENDIF
         section CODE_2
 
-        include "defs.inc"
+        #include    "defs.inc"
 
         ;
         ; Clear the screen bitmap and attr data.
@@ -65,6 +68,10 @@ loop:
 clsTempSP:
         ld      sp, -1
         ei
+
+IF  _ZXN
+        call    clearTilemap
+ENDIF
 
         pop     hl
         pop     bc

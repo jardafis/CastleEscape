@@ -1,7 +1,13 @@
+IF  !_ZXN
         extern  _LeftKnight0
         extern  _RightKnight0
         extern  RightJumpKnight0
         extern  LeftJumpKnight0
+ELSE
+        extern  enableSprite
+        extern  knightSprite
+        extern  disableAllSprites
+ENDIF
         extern  _animateCoins
         extern  _cls
         extern  _coinTables
@@ -16,7 +22,6 @@
         extern  _scrollInit
         extern  _setupScreen
         extern  _updateDirection
-        extern  bank7Screen
         extern  checkItemCollision
         extern  checkXCol
         extern  checkYCol
@@ -50,6 +55,8 @@
         extern  wyz_player_init
         extern  __HEAP_2_head
         extern  __BANK_0_head
+        extern  heapCheck
+        extern  __STACK_tail
 
         public  _currentTileMap
         public  _falling
@@ -72,13 +79,16 @@
         public  xyStartPos
         public  _bank2HeapEnd
 
-        include "defs.inc"
+        defc    NEW_JUMP=1
 
-        section CODE_5
+        #include    "defs.inc"
+
+        section CODE_2
 _main:
+        ld      sp, __STACK_tail
         call    init
 
-        call    titleScreen
+        bcall   titleScreen
 
         call    mainMenu
 
@@ -87,6 +97,10 @@ _main:
 init:
         border  INK_BLACK
 
+IF  _ZXN
+        extern  zxnInit
+        call    zxnInit
+ENDIF
         ;
         ; Initialize the WYZ Player
         ;
@@ -110,7 +124,6 @@ init:
 
         ret
 
-        section CODE_2
 newGame:
         ld      (gameOver+1), sp
 
@@ -121,13 +134,6 @@ newGame:
         ld      hl, readyMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT
         bcall   printAttr
-
-        ;
-        ; Patch the displayTile routine to access
-        ; the screen memory at 0x4000
-        ;
-        ld      a, SCREEN_START>>8
-        ld      (bank7Screen+1), a
 
         ;
         ; Point the ULA at screen 0
@@ -170,27 +176,21 @@ newGame:
 
         ; Save the new end of heap pointer
         ld      (_bank2HeapEnd), de
-
-        ; Check for heap overflow
-        xor     a                       ; Clear carry flag
         ld      hl, __BANK_0_head
-        sbc     hl, de
-        jr      nc, heapGood
-
-        ld      b, a
-        ld      c, b
-        ld      a, INK_RED|PAPER_WHITE|BRIGHT|FLASH
-        ld      hl, heapMsg
-        bcall   printAttr
-        assert
-heapGood:
+        call    heapCheck
 
         ;
         ; Set the initial player sprite
         ;
+IF  !_ZXN
         ld      hl, _RightKnight0
         ld      (playerSprite), hl
-
+ELSE
+        ld      a, 0
+        ld      (playerSprite), a
+        ld      ix, knightSprite
+        call    enableSprite
+ENDIF
         ;
         ; Starting X and Y player position
         ;
@@ -227,10 +227,11 @@ heapGood:
 
         call    _setupScreen
 
+IF  !_ZXN
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _copyScreen
-
+ENDIF
 
         ;
         ; The game loop
@@ -252,7 +253,7 @@ gameLoop:
         ; Remove any moving items from the screen
         ;
         ; ######################################
-
+IF  !_ZXN
         ;
         ; Re-draw the screen at the players current location
         ;
@@ -266,6 +267,7 @@ gameLoop:
         ld      a, ID_BLANK
         ld      hl, (currentSpiderTable)
         call    displayPixelItems
+ENDIF
 
         ; ######################################
         ;
@@ -285,22 +287,77 @@ gameLoop:
         ;
         bit     LEFT_BIT, e
         jr      z, checkRight
+IF  !_ZXN
         ld      a, LEFT_SPEED
         ld      hl, _LeftKnight0
         ld      (playerSprite), hl
+ELSE
+        ld      a, (playerSprite)
+        or      0x01
+        ld      (playerSprite), a
+        ld      a, LEFT_SPEED
+ENDIF
         jr      updateXSpeedDone
 checkRight:
         bit     RIGHT_BIT, e
         jr      z, noXMovement
+IF  !_ZXN
         ld      a, RIGHT_SPEED
         ld      hl, _RightKnight0
         ld      (playerSprite), hl
+ELSE
+        ld      a, (playerSprite)
+        and     0xfe
+        ld      (playerSprite), a
+        ld      a, RIGHT_SPEED
+ENDIF
         jr      updateXSpeedDone
 noXMovement:
         xor     a
 updateXSpeedDone:
         ld      (_xSpeed), a
 
+IFDEF   NEW_JUMP
+        ; Check if the jump key is pressed
+        ; and try to start a jump
+        bit     JUMP_BIT, e
+        call    nz, startJump
+
+        ; Skip the code that follows if not jumping
+        ld      a, (_jumping)
+        or      a
+        jr      z, continueJumping
+
+        ; Set right or left jump animation
+        bit     RIGHT_BIT, e
+        jr      z, checkLeftJump
+  IF    !_ZXN
+        ld      hl, RightJumpKnight0
+        ld      (playerSprite), hl
+  ENDIF
+        jr      jumpRightDone
+checkLeftJump:
+        bit     LEFT_BIT, e
+        jr      z, jumpRightDone
+  IF    !_ZXN
+        ld      hl, LeftJumpKnight0
+        ld      (playerSprite), hl
+  ENDIF
+jumpRightDone:
+
+        ld      hl, jumpCnt
+        dec     (hl)
+        jp      p, continueJumping
+
+        call    getJumpSequence
+        jr      c, stillJumping
+stopJumping:
+        ; Stop jumping, zero y speed
+        ld      (_jumping), a
+stillJumping:
+        ld      (_ySpeed), a
+continueJumping:
+ELSE
         ;
         ; Update the jump status
         ;
@@ -311,7 +368,6 @@ updateXSpeedDone:
 
         bit     JUMP_BIT, e
         jr      z, cantJump
-
 
         ld      a, JUMP_SPEED
         ld      (_ySpeed), a
@@ -355,14 +411,14 @@ jumpMidpoint:
         cp      -1                      ; Compare value will be different if player has collected eggs
         jr      nz, notMidpoint
         ex      af, af'                 ; Save the jump counter
-        ld      a, -JUMP_SPEED          ; Change jump direction, now going down.
+        xor     a                       ; Change jump direction, now going down.
         ld      (_ySpeed), a
         ex      af, af'                 ; Restore jump counter
 notMidpoint:
         dec     a
         ld      (_jumping), a
 notJumping:
-
+ENDIF
         ; ######################################
         ;
         ; Check if player is colliding with platforms
@@ -417,9 +473,11 @@ noAnimate:
         ; Redraw any moving items.
         ;
         ; ######################################
+IF  !_ZXN
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _copyScreen
+ENDIF
 
         ld      bc, (_xPos)
         call    _displaySprite
@@ -456,6 +514,9 @@ gameOver:
 
         delay   200
 
+IF  _ZXN
+        call    disableAllSprites
+ENDIF
         ret
 
 _setCurrentTileMap:
@@ -510,7 +571,73 @@ mulDone:
         pop     bc
         ret
 
+IFDEF   NEW_JUMP
+startJump:
+        ; Only start a jump if not currently jumping or falling
+        ld      hl, (jumpFall)
+        ld      a, h
+        or      l
+        ret     nz
+
+        ; Set the jumping flag
+        inc     l
+        ld      (jumpFall), hl
+
+        ; Big or short jump?
+        ld      a, (eggCount)           ; Get egg count
+        or      a
+
+        ; Setup for small jump
+        ld      hl, smallJump
+        ld      c, AYFX_JUMP
+        jr      z, small
+
+        ; Big jump instead
+        inc     c
+        ld      hl, bigJump
+small:
+        call    getJumpSequence1
+        ld      (_ySpeed), a
+
+
+        ld      a, c
+        ld      b, 2
+        push    de
+        di
+        call    wyz_play_sound
+        ei
+        pop     de
+        ret
+
+		;
+		; Get the next jump sequence from the jump table
+		;
+		; Exit:
+		;	a = jump speed
+		;	cf = 1 next jump sequence
+		;	cf = 0 end of jump sequence
+		;
+getJumpSequence:
+        ; Get count & y speed from jump table
+        ld      hl, (jumpPos)
+getJumpSequence1:
+        ld      a, (hl)                 ; Count
+        or      a
+        ret     z                       ; cf = 0
+        inc     hl
+        ld      (jumpCnt), a
+        ld      a, (hl)                 ; Jump speed
+        inc     hl
+        ld      (jumpPos), hl
+        scf                             ; cf = 1
+        ret
+ENDIF
+
         section BSS_2
+jumpCnt:
+        ds      1
+jumpPos:
+        ds      2
 score:                                  ; Score in BCD
         ds      2
 coinRotate:
@@ -549,9 +676,19 @@ currentBank:
         db      MEM_BANK_ROM
 
         section RODATA_2
-heapMsg:
-        db      "Fatal: Heap overflow!", 0x00
 readyMsg:
         db      "Ready?", 0x00
 gameOverMsg:
         db      " Game Over! ", 0x80, " ", 0x00
+IFDEF   NEW_JUMP
+smallJump:
+        db      0x0c, 0xfe              ; 12 frames up
+        db      0x04, 0xff              ; 4 frames hover
+        db      0x0c, 0x00              ; 12 frames down
+        db      0x00                    ; End of jump
+bigJump:
+        db      0x18, 0xfe              ; 24 frames up
+        db      0x08, 0xff              ; 8 frames hover
+        db      0x18, 0x00              ; 24 frames down
+        db      0x00                    ; End of jump
+ENDIF

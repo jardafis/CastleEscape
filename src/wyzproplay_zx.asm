@@ -6,8 +6,12 @@
         public  wyz_player_init
         public  wyz_player_stop
 
+IF  !_ZXN
         section CODE_5
-        include "wyzproplay47c_common.inc"
+ELSE
+        section CODE_2
+ENDIF
+        #include    "wyzproplay47c_common.inc"
 
 ROUT:   LD      A, (PSG_REG+13)
         AND     A
@@ -40,10 +44,14 @@ LOUT:   OUT     (C), A
         ;
         ; Song table setup
         ;
-        include "wyzsongtable.inc"
+        #include    "wyzsongtable.inc"
 
+IF  !_ZXN
         section BSS_5
+ELSE
+        section BSS_2
+ENDIF
         ;
         ; RAM variables
         ;
-        include "wyzproplay_ram.inc"
+        #include    "wyzproplay_ram.inc"

@@ -3,6 +3,59 @@
         extern  bankedCall
         extern  banked_call
 
+		;
+		; ZX Spectrum Next Definitions
+		;
+        defc    TILEMAP_START=0x5b00
+        defc    TILEMAP_SIZE=0x500
+        defc    TILEMAP_DEF_START=TILEMAP_START+TILEMAP_SIZE
+        defc    ZXN_TILEMAP_WIDTH=40
+
+        defc    IO_TileMapBaseAdrr=0x6E
+        defc    IO_TileMapDefBaseAddr=0x6F
+        defc    IO_TileMapContr=0x6B
+        defc    IO_TileMapAttr=0x6C
+        defc    IO_TileMapTransparency=0x4C
+        defc    IO_TileMapPaletteContr=0x43
+        defc    IO_PaletteIndex=0x40
+        defc    IO_PaletteValue=0x41
+        defc    IO_ULAControl=0x68
+        defc    IO_TileMapOffSetXMSB=0x2F
+        defc    IO_TileMapOffSetXLSB=0x30
+        defc    IO_TileMapOffsetY=0x31
+        defc    IO_TileMapClipWindow=0x1B
+        defc    IO_SpriteAndLayers=0x15
+        defc    IO_SpritePattern=0x5b
+        defc    IO_SpriteNumber=0x34
+        defc    IO_SpriteAttrib0=0x35
+        defc    IO_SpriteAttrib1=0x36
+        defc    IO_SpriteAttrib2=0x37
+        defc    IO_SpriteAttrib3=0x38
+        defc    IO_SpriteAttrib4=0x39
+        defc    IO_TurboMode=0x07
+
+        defc    SPRITE_ID_TOMBSTONE=5
+        defc    SPRITE_ID_JUMP=4
+        defc    SPRITE_ID_SPIDER_UP=6
+        defc    SPRITE_ID_SPIDER_DOWN=10
+        defc    SPRITE_ID_LANTERN=12
+
+        defvars 0
+        {
+            spriteIndex ds.b 1
+            attrib0     ds.b 1
+            attrib1     ds.b 1
+            attrib2     ds.b 1
+            attrib3     ds.b 1
+            attrib4     ds.b 1
+            frameCount  ds.b 1
+            currentFrameCount   ds.b 1
+            startPtn    ds.b 1
+            endPtn      ds.b 1
+            currentPtn  ds.b 1
+            SIZEOF_sprite
+        }
+
         ;
         ; Points
         ;
@@ -28,7 +81,7 @@
         ;
         ; Game Configuration
         ;
-        defc    START_X=40
+        defc    START_X=48
         defc    START_Y=120
         defc    START_LIVES=0x03
         defc    ROTATE_COUNT=6
@@ -70,6 +123,12 @@
         defc    LEVEL_HEIGHT=21
 
         ;
+        ; Non-printable keys
+        ;
+        defc    SHIFT=0x01
+        defc    SYM=0x02
+
+        ;
         ; Values numbers for control keys
         ;
         defc    JUMP=0x10
@@ -86,7 +145,7 @@
         defc    JUMP_HEIGHT=24
         defc    LEFT_SPEED=-1
         defc    RIGHT_SPEED=1
-        defc    JUMP_SPEED=-1
+        defc    JUMP_SPEED=-2
         defc    DOWN_SPEED=1
         defc    UP_SPEED=-1
 
@@ -300,34 +359,49 @@ popall  MACRO
         ;
         ; Add 'a' to 'hl'
         ;
-addhl   MACRO
+addhl   MACRO val
+IF  _ZXN
+        add     hl, val
+ELSE
+        ld      a, val
         add     l
         ld      l, a
         adc     h
         sub     l
         ld      h, a
+endif
         ENDM
 
         ;
         ; Add 'a' to 'de'
         ;
-addde   MACRO
+addde   MACRO val
+IF  _ZXN
+        add     de, val
+ELSE
+        ld      a, val
         add     e
         ld      e, a
         adc     d
         sub     e
         ld      d, a
+ENDIF
         ENDM
 
         ;
         ; Add 'a' to 'bc'
         ;
-addbc   MACRO
+addbc   MACRO val
+IF  _ZXN
+        add     bc, val
+ELSE
+        ld      a, val
         add     c
         ld      c, a
         adc     b
         sub     c
         ld      b, a
+ENDIF
         ENDM
 
 mod     MACRO   val

@@ -1,47 +1,41 @@
 RightJump0:
-        defb    192
-        defb    0
-        defb    7
-        defb    0
-        defb    255
-        defb    0
         defb    128
         defb    21
         defb    3
         defb    240
         defb    255
         defb    0
-        defb    128
+        defb    0
         defb    59
         defb    1
         defb    248
         defb    255
         defb    0
-        defb    128
-        defb    55
+        defb    0
+        defb    103
         defb    0
         defb    196
         defb    255
         defb    0
-        defb    128
-        defb    55
+        defb    0
+        defb    199
         defb    0
         defb    62
         defb    255
         defb    0
-        defb    128
-        defb    38
+        defb    16
+        defb    134
         defb    0
         defb    234
         defb    255
         defb    0
-        defb    128
-        defb    37
+        defb    48
+        defb    5
         defb    0
         defb    170
         defb    255
         defb    0
-        defb    128
+        defb    224
         defb    2
         defb    0
         defb    170
@@ -50,95 +44,95 @@ RightJump0:
         defb    192
         defb    9
         defb    0
-        defb    108
+        defb    96
         defb    255
         defb    0
         defb    128
         defb    22
         defb    1
-        defb    152
+        defb    140
         defb    255
         defb    0
-        defb    128
+        defb    0
         defb    55
-        defb    3
-        defb    0
+        defb    1
+        defb    24
         defb    255
         defb    0
-        defb    128
-        defb    51
-        defb    15
+        defb    0
+        defb    99
+        defb    3
         defb    160
         defb    255
         defb    0
-        defb    128
-        defb    52
+        defb    8
+        defb    193
         defb    15
         defb    0
         defb    255
         defb    0
-        defb    128
-        defb    50
-        defb    31
-        defb    128
+        defb    16
+        defb    194
+        defb    127
+        defb    0
         defb    255
         defb    0
-        defb    128
-        defb    36
-        defb    7
-        defb    64
+        defb    16
+        defb    133
+        defb    127
+        defb    0
         defb    255
         defb    0
-        defb    128
-        defb    14
-        defb    7
-        defb    112
+        defb    48
+        defb    2
+        defb    127
+        defb    0
+        defb    255
+        defb    0
+        defb    248
+        defb    0
+        defb    255
+        defb    0
         defb    255
         defb    0
 RightJump1:
-        defb    224
-        defb    0
-        defb    3
-        defb    0
-        defb    255
-        defb    0
         defb    192
         defb    10
         defb    1
         defb    248
         defb    255
         defb    0
-        defb    192
+        defb    128
         defb    29
         defb    0
         defb    252
         defb    255
         defb    0
-        defb    192
-        defb    27
+        defb    0
+        defb    51
         defb    0
         defb    226
         defb    127
         defb    0
-        defb    192
-        defb    27
+        defb    0
+        defb    99
         defb    0
         defb    159
         defb    127
         defb    0
-        defb    192
-        defb    19
+        defb    8
+        defb    67
         defb    0
         defb    117
         defb    127
         defb    0
-        defb    192
-        defb    18
+        defb    24
+        defb    2
         defb    0
         defb    213
         defb    127
         defb    0
-        defb    192
+        defb    240
         defb    1
         defb    0
         defb    85
@@ -147,95 +141,95 @@ RightJump1:
         defb    224
         defb    4
         defb    0
-        defb    182
+        defb    176
         defb    127
         defb    0
         defb    192
         defb    11
         defb    0
-        defb    76
+        defb    70
         defb    255
         defb    0
-        defb    192
-        defb    27
-        defb    1
         defb    128
+        defb    27
+        defb    0
+        defb    140
         defb    255
         defb    0
-        defb    192
-        defb    25
-        defb    7
+        defb    0
+        defb    49
+        defb    1
         defb    208
         defb    255
         defb    0
-        defb    192
-        defb    26
+        defb    4
+        defb    96
         defb    7
+        defb    128
+        defb    255
+        defb    0
+        defb    8
+        defb    97
+        defb    63
         defb    0
         defb    255
         defb    0
-        defb    192
-        defb    25
-        defb    15
-        defb    64
+        defb    8
+        defb    66
+        defb    63
+        defb    128
         defb    255
         defb    0
-        defb    192
-        defb    18
-        defb    3
-        defb    32
+        defb    24
+        defb    1
+        defb    63
+        defb    0
         defb    255
         defb    0
-        defb    192
-        defb    7
-        defb    3
-        defb    56
+        defb    252
+        defb    0
+        defb    127
+        defb    0
         defb    255
         defb    0
 RightJump2:
-        defb    240
-        defb    0
-        defb    1
-        defb    0
-        defb    255
-        defb    0
         defb    224
         defb    5
         defb    0
         defb    124
         defb    255
         defb    0
-        defb    224
+        defb    192
         defb    14
         defb    0
         defb    254
         defb    127
         defb    0
-        defb    224
-        defb    13
+        defb    128
+        defb    25
         defb    0
         defb    241
         defb    63
         defb    0
-        defb    224
-        defb    13
+        defb    128
+        defb    49
         defb    0
         defb    207
         defb    63
         defb    128
-        defb    224
-        defb    9
+        defb    132
+        defb    33
         defb    0
         defb    186
         defb    63
         defb    128
-        defb    224
-        defb    9
+        defb    140
+        defb    1
         defb    0
         defb    106
         defb    63
         defb    128
-        defb    224
+        defb    248
         defb    0
         defb    0
         defb    170
@@ -244,95 +238,95 @@ RightJump2:
         defb    240
         defb    2
         defb    0
-        defb    91
+        defb    88
         defb    63
         defb    0
         defb    224
         defb    5
         defb    0
-        defb    166
+        defb    163
         defb    127
         defb    0
-        defb    224
+        defb    192
         defb    13
         defb    0
-        defb    192
-        defb    255
+        defb    198
+        defb    127
         defb    0
-        defb    224
-        defb    12
-        defb    3
+        defb    128
+        defb    24
+        defb    0
         defb    232
         defb    255
         defb    0
-        defb    224
-        defb    13
+        defb    130
+        defb    48
         defb    3
-        defb    0
+        defb    64
         defb    255
         defb    0
-        defb    224
-        defb    12
-        defb    7
-        defb    160
+        defb    132
+        defb    48
+        defb    31
+        defb    128
         defb    255
         defb    0
-        defb    224
-        defb    9
-        defb    1
-        defb    16
+        defb    132
+        defb    33
+        defb    31
+        defb    64
         defb    255
         defb    0
-        defb    224
-        defb    3
-        defb    1
-        defb    156
+        defb    140
+        defb    0
+        defb    31
+        defb    128
+        defb    255
+        defb    0
+        defb    254
+        defb    0
+        defb    63
+        defb    0
         defb    255
         defb    0
 RightJump3:
-        defb    248
-        defb    0
-        defb    0
-        defb    0
-        defb    255
-        defb    0
         defb    240
         defb    2
         defb    0
         defb    190
         defb    127
         defb    0
-        defb    240
+        defb    224
         defb    7
         defb    0
         defb    127
         defb    63
         defb    0
-        defb    240
-        defb    6
+        defb    192
+        defb    12
         defb    0
         defb    248
         defb    31
         defb    128
-        defb    240
-        defb    6
+        defb    192
+        defb    24
         defb    0
         defb    231
         defb    31
         defb    192
-        defb    240
-        defb    4
+        defb    194
+        defb    16
         defb    0
         defb    221
         defb    31
         defb    64
-        defb    240
-        defb    4
+        defb    198
+        defb    0
         defb    0
         defb    181
         defb    31
         defb    64
-        defb    240
+        defb    252
         defb    0
         defb    0
         defb    85
@@ -341,95 +335,95 @@ RightJump3:
         defb    248
         defb    1
         defb    0
-        defb    45
+        defb    44
         defb    31
-        defb    128
+        defb    0
         defb    240
         defb    2
         defb    0
-        defb    211
+        defb    209
+        defb    63
+        defb    128
+        defb    224
+        defb    6
+        defb    0
+        defb    227
         defb    63
         defb    0
-        defb    240
-        defb    6
+        defb    192
+        defb    12
         defb    0
-        defb    224
+        defb    116
         defb    127
         defb    0
-        defb    240
-        defb    6
+        defb    193
+        defb    24
         defb    1
-        defb    116
+        defb    32
         defb    255
         defb    0
-        defb    240
-        defb    6
-        defb    1
-        defb    128
+        defb    194
+        defb    24
+        defb    15
+        defb    64
         defb    255
         defb    0
-        defb    240
-        defb    6
-        defb    3
-        defb    80
+        defb    194
+        defb    16
+        defb    15
+        defb    160
         defb    255
         defb    0
-        defb    240
-        defb    4
+        defb    198
         defb    0
-        defb    136
+        defb    15
+        defb    64
         defb    255
         defb    0
-        defb    240
-        defb    1
+        defb    255
         defb    0
-        defb    206
+        defb    31
+        defb    0
         defb    255
         defb    0
 RightJump4:
-        defb    252
-        defb    0
-        defb    0
-        defb    0
-        defb    127
-        defb    0
         defb    248
         defb    1
         defb    0
         defb    95
         defb    63
         defb    0
-        defb    248
+        defb    240
         defb    3
         defb    0
         defb    191
         defb    31
         defb    128
-        defb    248
-        defb    3
+        defb    224
+        defb    6
         defb    0
         defb    124
         defb    15
         defb    64
-        defb    248
-        defb    3
+        defb    224
+        defb    12
         defb    0
         defb    115
         defb    15
         defb    224
-        defb    248
-        defb    2
+        defb    225
+        defb    8
         defb    0
         defb    110
         defb    15
         defb    160
-        defb    248
-        defb    2
+        defb    227
+        defb    0
         defb    0
         defb    90
         defb    15
         defb    160
-        defb    248
+        defb    254
         defb    0
         defb    0
         defb    42
@@ -440,93 +434,93 @@ RightJump4:
         defb    0
         defb    150
         defb    15
-        defb    192
+        defb    0
         defb    248
         defb    1
         defb    0
-        defb    105
+        defb    104
+        defb    31
+        defb    192
+        defb    240
+        defb    3
+        defb    0
+        defb    113
         defb    31
         defb    128
-        defb    248
-        defb    3
-        defb    0
-        defb    112
-        defb    63
-        defb    0
-        defb    248
-        defb    3
+        defb    224
+        defb    6
         defb    0
         defb    58
-        defb    255
-        defb    0
-        defb    248
-        defb    3
-        defb    0
-        defb    64
-        defb    255
-        defb    0
-        defb    248
-        defb    3
-        defb    1
-        defb    40
-        defb    255
-        defb    0
-        defb    248
-        defb    2
-        defb    0
-        defb    68
-        defb    127
-        defb    0
-        defb    248
-        defb    0
-        defb    0
-        defb    231
-        defb    127
-        defb    0
-RightJump5:
-        defb    254
-        defb    0
-        defb    0
-        defb    0
         defb    63
         defb    0
+        defb    224
+        defb    12
+        defb    128
+        defb    16
+        defb    255
+        defb    0
+        defb    225
+        defb    12
+        defb    7
+        defb    32
+        defb    255
+        defb    0
+        defb    225
+        defb    8
+        defb    7
+        defb    80
+        defb    255
+        defb    0
+        defb    227
+        defb    0
+        defb    7
+        defb    32
+        defb    255
+        defb    0
+        defb    255
+        defb    0
+        defb    143
+        defb    0
+        defb    255
+        defb    0
+RightJump5:
         defb    252
         defb    0
         defb    0
         defb    175
         defb    31
         defb    128
-        defb    252
+        defb    248
         defb    1
         defb    0
         defb    223
         defb    15
         defb    192
-        defb    252
-        defb    1
+        defb    240
+        defb    3
         defb    0
-        defb    190
+        defb    62
         defb    7
         defb    32
-        defb    252
-        defb    1
+        defb    240
+        defb    6
         defb    0
-        defb    185
+        defb    57
         defb    7
         defb    240
-        defb    252
-        defb    1
-        defb    0
+        defb    240
+        defb    4
+        defb    128
         defb    55
         defb    7
         defb    80
-        defb    252
-        defb    1
+        defb    241
         defb    0
+        defb    128
         defb    45
         defb    7
         defb    80
-        defb    252
+        defb    255
         defb    0
         defb    0
         defb    21
@@ -537,95 +531,95 @@ RightJump5:
         defb    0
         defb    75
         defb    7
-        defb    96
+        defb    0
         defb    252
         defb    0
         defb    0
         defb    180
         defb    15
-        defb    192
-        defb    252
+        defb    96
+        defb    248
         defb    1
         defb    0
         defb    184
+        defb    15
+        defb    192
+        defb    240
+        defb    3
+        defb    0
+        defb    29
         defb    31
         defb    0
-        defb    252
-        defb    1
-        defb    0
-        defb    157
+        defb    240
+        defb    6
+        defb    64
+        defb    8
         defb    127
         defb    0
-        defb    252
-        defb    1
-        defb    0
-        defb    160
-        defb    127
-        defb    0
-        defb    252
-        defb    1
-        defb    0
-        defb    148
+        defb    240
+        defb    6
+        defb    131
+        defb    16
         defb    255
         defb    0
-        defb    252
-        defb    1
+        defb    240
+        defb    4
+        defb    131
+        defb    40
+        defb    255
         defb    0
-        defb    34
-        defb    63
+        defb    241
         defb    0
-        defb    252
+        defb    131
+        defb    16
+        defb    255
         defb    0
+        defb    255
         defb    0
-        defb    115
-        defb    63
-        defb    128
+        defb    199
+        defb    0
+        defb    255
+        defb    0
 RightJump6:
-        defb    255
-        defb    0
-        defb    0
-        defb    0
-        defb    31
-        defb    0
         defb    254
         defb    0
         defb    0
         defb    87
         defb    15
         defb    192
-        defb    254
+        defb    252
         defb    0
         defb    0
         defb    239
         defb    7
         defb    224
-        defb    254
+        defb    248
+        defb    1
         defb    0
-        defb    0
-        defb    223
+        defb    159
         defb    3
         defb    16
-        defb    254
+        defb    248
+        defb    3
         defb    0
-        defb    0
-        defb    220
+        defb    28
         defb    3
         defb    248
-        defb    254
-        defb    0
-        defb    0
-        defb    155
+        defb    248
+        defb    2
+        defb    64
+        defb    27
         defb    3
         defb    168
-        defb    254
+        defb    248
         defb    0
-        defb    0
-        defb    150
+        defb    192
+        defb    22
         defb    3
         defb    168
-        defb    254
+        defb    255
         defb    0
-        defb    0
+        defb    128
         defb    10
         defb    3
         defb    168
@@ -634,95 +628,95 @@ RightJump6:
         defb    0
         defb    37
         defb    3
-        defb    176
+        defb    128
         defb    254
         defb    0
         defb    0
         defb    90
         defb    7
-        defb    96
-        defb    254
+        defb    48
+        defb    252
         defb    0
         defb    0
         defb    220
+        defb    7
+        defb    96
+        defb    248
+        defb    1
+        defb    0
+        defb    142
         defb    15
-        defb    0
-        defb    254
-        defb    0
-        defb    0
-        defb    206
-        defb    63
         defb    128
-        defb    254
-        defb    0
-        defb    0
-        defb    208
+        defb    248
+        defb    3
+        defb    32
+        defb    4
         defb    63
         defb    0
-        defb    254
-        defb    0
-        defb    0
-        defb    202
-        defb    127
-        defb    0
-        defb    254
-        defb    0
-        defb    0
-        defb    145
-        defb    31
-        defb    0
-        defb    254
-        defb    0
-        defb    0
-        defb    57
-        defb    31
-        defb    192
-RightJump7:
+        defb    248
+        defb    3
+        defb    65
+        defb    8
         defb    255
         defb    0
-        defb    128
+        defb    248
+        defb    2
+        defb    65
+        defb    20
+        defb    255
         defb    0
-        defb    15
+        defb    248
         defb    0
+        defb    193
+        defb    8
+        defb    255
+        defb    0
+        defb    255
+        defb    0
+        defb    227
+        defb    0
+        defb    255
+        defb    0
+RightJump7:
         defb    255
         defb    0
         defb    0
         defb    43
         defb    7
         defb    224
-        defb    255
+        defb    254
         defb    0
         defb    0
         defb    119
         defb    3
         defb    240
-        defb    255
+        defb    252
         defb    0
         defb    0
-        defb    111
+        defb    207
         defb    1
         defb    136
-        defb    255
+        defb    252
+        defb    1
         defb    0
-        defb    0
-        defb    110
+        defb    142
         defb    1
         defb    124
-        defb    255
-        defb    0
-        defb    0
-        defb    77
+        defb    252
+        defb    1
+        defb    32
+        defb    13
         defb    1
         defb    212
-        defb    255
+        defb    252
         defb    0
-        defb    0
-        defb    75
+        defb    96
+        defb    11
         defb    1
         defb    84
         defb    255
         defb    0
-        defb    0
+        defb    192
         defb    5
         defb    1
         defb    84
@@ -731,46 +725,52 @@ RightJump7:
         defb    128
         defb    18
         defb    1
-        defb    216
+        defb    192
         defb    255
         defb    0
         defb    0
         defb    45
         defb    3
-        defb    48
-        defb    255
+        defb    24
+        defb    254
         defb    0
         defb    0
         defb    110
+        defb    3
+        defb    48
+        defb    252
+        defb    0
+        defb    0
+        defb    199
         defb    7
-        defb    0
-        defb    255
-        defb    0
-        defb    0
-        defb    103
-        defb    31
         defb    64
-        defb    255
-        defb    0
-        defb    0
-        defb    104
+        defb    252
+        defb    1
+        defb    16
+        defb    130
         defb    31
         defb    0
+        defb    252
+        defb    1
+        defb    32
+        defb    132
         defb    255
         defb    0
+        defb    252
+        defb    1
+        defb    32
+        defb    10
+        defb    255
         defb    0
-        defb    101
-        defb    63
+        defb    252
+        defb    0
+        defb    96
+        defb    4
+        defb    255
         defb    0
         defb    255
         defb    0
+        defb    241
         defb    0
-        defb    72
-        defb    15
-        defb    128
         defb    255
         defb    0
-        defb    0
-        defb    28
-        defb    15
-        defb    224

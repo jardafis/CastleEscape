@@ -1,10 +1,4 @@
 LeftKnight0:
-        defb    240
-        defb    0
-        defb    1
-        defb    0
-        defb    255
-        defb    0
         defb    224
         defb    7
         defb    0
@@ -65,43 +59,43 @@ LeftKnight0:
         defb    118
         defb    255
         defb    0
-        defb    248
-        defb    2
+        defb    224
+        defb    14
         defb    0
         defb    230
         defb    255
         defb    0
-        defb    248
-        defb    0
-        defb    0
-        defb    22
-        defb    255
-        defb    0
-        defb    254
-        defb    0
+        defb    224
+        defb    12
         defb    0
         defb    70
         defb    255
         defb    0
-        defb    248
+        defb    224
         defb    0
+        defb    0
+        defb    166
+        defb    255
+        defb    0
+        defb    248
+        defb    3
         defb    0
         defb    162
         defb    255
         defb    0
         defb    248
-        defb    3
-        defb    8
-        defb    224
+        defb    0
+        defb    0
+        defb    32
+        defb    255
+        defb    0
+        defb    255
+        defb    0
+        defb    7
+        defb    112
         defb    255
         defb    0
 LeftKnight1:
-        defb    248
-        defb    0
-        defb    0
-        defb    0
-        defb    255
-        defb    0
         defb    240
         defb    3
         defb    0
@@ -162,43 +156,43 @@ LeftKnight1:
         defb    59
         defb    127
         defb    0
-        defb    252
-        defb    1
+        defb    240
+        defb    7
         defb    0
         defb    115
         defb    127
         defb    0
-        defb    252
+        defb    240
+        defb    6
         defb    0
-        defb    0
-        defb    11
+        defb    35
         defb    127
         defb    0
-        defb    255
+        defb    240
         defb    0
         defb    0
         defb    35
         defb    127
         defb    0
-        defb    252
+        defb    255
         defb    0
         defb    0
-        defb    81
+        defb    113
         defb    127
         defb    0
-        defb    252
-        defb    1
+        defb    254
+        defb    0
         defb    4
-        defb    240
+        defb    32
         defb    127
+        defb    0
+        defb    254
+        defb    0
+        defb    15
+        defb    224
+        defb    255
         defb    0
 LeftKnight2:
-        defb    252
-        defb    0
-        defb    0
-        defb    0
-        defb    127
-        defb    0
         defb    248
         defb    1
         defb    0
@@ -259,35 +253,41 @@ LeftKnight2:
         defb    29
         defb    63
         defb    128
-        defb    254
-        defb    0
+        defb    248
+        defb    3
         defb    0
         defb    185
         defb    63
         defb    128
-        defb    254
+        defb    248
+        defb    3
         defb    0
-        defb    0
-        defb    5
+        defb    17
         defb    63
         defb    128
-        defb    255
+        defb    248
         defb    0
         defb    0
         defb    41
         defb    63
         defb    128
-        defb    252
+        defb    255
         defb    0
-        defb    0
-        defb    68
+        defb    128
+        defb    60
         defb    63
         defb    128
-        defb    252
-        defb    1
+        defb    254
         defb    0
-        defb    206
+        defb    0
+        defb    32
         defb    63
+        defb    0
+        defb    254
+        defb    0
+        defb    15
+        defb    224
+        defb    255
         defb    0
 LeftKnight3:
         defb    254
@@ -356,43 +356,37 @@ LeftKnight3:
         defb    14
         defb    31
         defb    192
-        defb    255
+        defb    252
+        defb    1
         defb    0
-        defb    0
-        defb    92
+        defb    220
         defb    31
         defb    192
-        defb    255
+        defb    252
+        defb    1
         defb    0
-        defb    0
-        defb    2
+        defb    136
         defb    31
         defb    192
-        defb    255
+        defb    252
         defb    0
-        defb    128
+        defb    0
         defb    20
         defb    31
         defb    192
         defb    254
         defb    0
-        defb    2
+        defb    0
         defb    34
         defb    31
         defb    64
         defb    254
         defb    0
-        defb    66
+        defb    0
         defb    231
         defb    31
         defb    0
 LeftKnight4:
-        defb    255
-        defb    0
-        defb    0
-        defb    0
-        defb    31
-        defb    0
         defb    254
         defb    0
         defb    0
@@ -453,43 +447,43 @@ LeftKnight4:
         defb    7
         defb    15
         defb    96
-        defb    255
+        defb    254
         defb    0
-        defb    128
-        defb    46
+        defb    0
+        defb    238
         defb    15
         defb    96
-        defb    255
+        defb    254
         defb    0
-        defb    128
-        defb    1
+        defb    0
+        defb    196
         defb    15
         defb    96
-        defb    255
+        defb    254
         defb    0
-        defb    224
-        defb    4
-        defb    15
-        defb    96
-        defb    255
         defb    0
-        defb    128
         defb    10
+        defb    15
+        defb    96
+        defb    255
+        defb    0
+        defb    128
+        defb    58
         defb    15
         defb    32
         defb    255
         defb    0
         defb    128
-        defb    62
-        defb    143
-        defb    0
-LeftKnight5:
-        defb    255
-        defb    0
-        defb    128
-        defb    0
+        defb    2
         defb    15
         defb    0
+        defb    255
+        defb    0
+        defb    240
+        defb    7
+        defb    127
+        defb    0
+LeftKnight5:
         defb    255
         defb    0
         defb    0
@@ -552,41 +546,41 @@ LeftKnight5:
         defb    176
         defb    255
         defb    0
-        defb    192
-        defb    23
+        defb    0
+        defb    119
         defb    7
         defb    48
         defb    255
         defb    0
-        defb    192
         defb    0
+        defb    98
         defb    7
-        defb    176
+        defb    48
         defb    255
         defb    0
-        defb    240
+        defb    0
         defb    2
         defb    7
         defb    48
         defb    255
         defb    0
-        defb    192
-        defb    5
+        defb    240
+        defb    7
         defb    7
         defb    16
         defb    255
         defb    0
-        defb    192
-        defb    31
+        defb    224
+        defb    2
         defb    71
         defb    0
-LeftKnight6:
         defb    255
         defb    0
-        defb    192
+        defb    224
+        defb    14
+        defb    255
         defb    0
-        defb    7
-        defb    0
+LeftKnight6:
         defb    255
         defb    0
         defb    128
@@ -649,33 +643,39 @@ LeftKnight6:
         defb    216
         defb    255
         defb    0
-        defb    224
-        defb    11
+        defb    128
+        defb    59
         defb    3
         defb    152
         defb    255
         defb    0
-        defb    224
-        defb    0
-        defb    3
-        defb    88
-        defb    255
-        defb    0
-        defb    252
-        defb    1
+        defb    128
+        defb    49
         defb    3
         defb    24
         defb    255
         defb    0
-        defb    240
-        defb    1
-        defb    67
-        defb    8
+        defb    128
+        defb    2
+        defb    3
+        defb    152
         defb    255
         defb    0
-        defb    240
-        defb    7
-        defb    99
+        defb    248
+        defb    3
+        defb    3
+        defb    200
+        defb    255
+        defb    0
+        defb    224
+        defb    2
+        defb    3
+        defb    0
+        defb    255
+        defb    0
+        defb    224
+        defb    14
+        defb    255
         defb    0
 LeftKnight7:
         defb    255
@@ -746,31 +746,31 @@ LeftKnight7:
         defb    236
         defb    255
         defb    0
-        defb    240
-        defb    5
+        defb    192
+        defb    29
         defb    1
         defb    204
         defb    255
         defb    0
-        defb    240
-        defb    0
-        defb    1
-        defb    44
-        defb    255
-        defb    0
-        defb    254
-        defb    0
+        defb    192
+        defb    24
         defb    1
         defb    140
         defb    255
         defb    0
-        defb    248
-        defb    0
-        defb    33
-        defb    132
+        defb    192
+        defb    1
+        defb    1
+        defb    76
         defb    255
         defb    0
-        defb    248
-        defb    3
-        defb    49
-        defb    128
+        defb    224
+        defb    2
+        defb    1
+        defb    36
+        defb    255
+        defb    0
+        defb    224
+        defb    14
+        defb    1
+        defb    112

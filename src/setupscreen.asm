@@ -23,12 +23,18 @@
         extern  startSprite
         extern  xyPos
         extern  xyStartPos
-
+IF  _ZXN
+        extern  initSpiders
+ENDIF
         public  _setupScreen
 
-        include "defs.inc"
+        #include    "defs.inc"
 
+IF  !_ZXN
         section CODE_5
+ELSE
+        section CODE_2
+ENDIF
 
         ;
         ; Display the current level and any uncollected items.
@@ -62,6 +68,10 @@ _setupScreen:
 
         ld      hl, (_currentTileMap)
         call    displayTileMap
+
+IF  _ZXN
+        call    initSpiders
+ENDIF
 
         call    displayBanner
 

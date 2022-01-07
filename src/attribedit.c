@@ -29,10 +29,6 @@ void setCursor(char x, char y)
     cursorX = x;
     cursorY = y;
 }
-/*
- * Start of the screen attribute memory.
- */
-unsigned char *const attr = (unsigned char*) 0x5800;
 
 /*
  * Output a 16-bit hex value.
@@ -65,6 +61,7 @@ void putString(char *string)
     }
 }
 
+#ifndef _ZXN
 /*
  * Display the 12x12 tileset starting from the top left-hand side of the
  * screen.
@@ -102,6 +99,11 @@ void xorCursor(int x, int y)
 }
 
 /*
+ * Start of the screen attribute memory.
+ */
+unsigned char *const attr = (unsigned char*) 0x5800;
+
+/*
  * Set the ink color for the current cursor location.
  */
 void setInk(int x, int y, unsigned char key)
@@ -133,6 +135,7 @@ void saveAttrib(unsigned char *dest)
         }
     }
 }
+#endif
 
 /*
  * Entry point for tile attribute editing in realtime.
@@ -144,7 +147,7 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
     unsigned char key;
 
     cls(INK_WHITE | PAPER_BLACK);
-
+#ifndef _ZXN
     displayTileset(tileset);
 
     setCursor(16, 0);
@@ -163,6 +166,7 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
     putString("Reset     - 'r'");
     setCursor(16, 7);
     putString("Ink color - 0-7");
+#endif
     setCursor(16, 8);
     putString("Exit   - <SPACE>");
     setCursor(16, 10);
@@ -177,6 +181,11 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
     putString("Heapend = 0x");
     putHex(bank2HeapEnd);
 
+#ifdef _ZXN
+    do {
+        key = waitKey();
+    } while(key != ' ');
+#else
     xorCursor(x, y);
 
     do
@@ -238,4 +247,5 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
      * they can be reflected in the game.
      */
     saveAttrib(attrib);
+#endif
 }

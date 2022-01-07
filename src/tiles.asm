@@ -2,16 +2,19 @@
         extern  _tileAttr
         extern  setAttr
 
+IF  !_ZXN
         public  _displayTile
         public  bank7Screen
+ENDIF
         public  displayPixelTile
         public  displayTile
         public  setTileAttr
 
-        include "defs.inc"
+        #include    "defs.inc"
 
         section CODE_2
 
+IF  !_ZXN
         ;
         ; Display the specified tile and attribute at the specified location.
         ;
@@ -128,7 +131,33 @@ TempSP2:
         pop     bc
         pop     af
         ret
+ELSE
+displayTile:
+        push    de
+        push    hl
+        push    af
 
+        ; Multiply Y by 40
+        ld      d, b
+        ld      e, ZXN_TILEMAP_WIDTH
+        mul     d, e
+
+        ; Add the tilemap base address
+        ld      hl, TILEMAP_START
+        add     hl, de
+
+        ; Add the X offset
+        ld      a, c
+        add     hl, a
+        pop     af
+
+        ; Update tilemap
+        ld      (hl), a
+
+        pop     hl
+        pop     de
+        ret
+ENDIF
         ;
         ; Display the specified tile at the specified pixel location.
         ;
@@ -263,16 +292,18 @@ clearTileSP:
         ;		a - Tile ID of item
         ;
 setTileAttr:
+IF  !_ZXN
         push    af
         push    hl
 
         ld      hl, _tileAttr
-        addhl
+        addhl   a
         ld      a, (hl)
 
         call    setAttr
 
         pop     hl
         pop     af
+ENDIF
         ret
 
