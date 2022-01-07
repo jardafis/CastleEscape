@@ -57,19 +57,16 @@ nextSpider:
         call    rand
         ld      a, l
 
-        cp      110
-        jr      nc, down
-        ; a >= val
+        cp      85
+        jr      nc, down                ; a >= val
         ld      b, UP<<1
         jr      done
 down:
-        cp      220
-        jr      nc, stop
-        ; a >= val
+        cp      170
+        jr      nc, stop                ; a >= val
         ld      b, DOWN<<1
         jr      done
 stop:
-        ; a < val
         ld      b, 0
 done:
         pop     hl
