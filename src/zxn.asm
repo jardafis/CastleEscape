@@ -103,10 +103,10 @@ nextColor:
         ;
 clearTilemap:
         ; Clear the tilemap area
-        ld      hl, tilemapAddr
+        ld      hl, TILEMAP_START
         ld      (hl), ID_BLANK          ; Tile ID
-        ld      de, tilemapAddr+1
-        ld      bc, tilemapSize-1
+        ld      de, TILEMAP_START+1
+        ld      bc, TILEMAP_SIZE-1
         ldir
         ret
 
@@ -215,10 +215,10 @@ initTilemap:
         call    clearTilemap
 
         ; Set the tilemap base address
-        nextreg IO_TileMapBaseAdrr, tilemapAddr>>8
+        nextreg IO_TileMapBaseAdrr, TILEMAP_START>>8
 
         ; Set the tile definition base address
-        nextreg IO_TileMapDefBaseAddr, tileDefAddr>>8
+        nextreg IO_TileMapDefBaseAddr, TILEMAP_DEF_START>>8
 
 ;*___________________________________________________________________________________________________________________________________
 

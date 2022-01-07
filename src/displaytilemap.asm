@@ -114,11 +114,11 @@ IF  !_ZXN
 ELSE
         ; Multiply Y by 40
         ld      d, b
-        ld      e, 40
+        ld      e, ZXN_TILEMAP_WIDTH
         mul     d, e
 
         ; Add the tilemap base address
-        ld      hl, tilemapAddr
+        ld      hl, TILEMAP_START
         add     hl, de
 
         ; Add the X offset

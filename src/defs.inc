@@ -6,10 +6,10 @@
 		;
 		; ZX Spectrum Next Definitions
 		;
-        defc    tilemapAddr=0x5b00
-        defc    tilemapSize=0x500
-        defc    tileDefAddr=tilemapAddr+tilemapSize
-        defc    tileMapWidth=40
+        defc    TILEMAP_START=0x5b00
+        defc    TILEMAP_SIZE=0x500
+        defc    TILEMAP_DEF_START=TILEMAP_START+TILEMAP_SIZE
+        defc    ZXN_TILEMAP_WIDTH=40
 
         defc    IO_TileMapBaseAdrr=0x6E
         defc    IO_TileMapDefBaseAddr=0x6F
