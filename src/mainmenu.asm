@@ -227,11 +227,17 @@ ENDIF
         ;
 lanternList:
         db      4
+IF  !_ZXN
         dw      0x8000+SCREEN_ATTR_START+(7*32)+12
         dw      0x8000+SCREEN_ATTR_START+(7*32)+13
         dw      0x8000+SCREEN_ATTR_START+(7*32)+18
         dw      0x8000+SCREEN_ATTR_START+(7*32)+19
-
+ELSE
+        dw      tilemapAddr+(7*tileMapWidth)+12
+        dw      tilemapAddr+(7*tileMapWidth)+13
+        dw      tilemapAddr+(7*tileMapWidth)+18
+        dw      tilemapAddr+(7*tileMapWidth)+19
+ENDIF
         ;
         ; List of coins on the main menu
         ; Specified by y/x pixel addresses

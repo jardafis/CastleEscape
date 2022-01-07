@@ -9,6 +9,7 @@
         defc    tilemapAddr=0x5b00
         defc    tilemapSize=0x500
         defc    tileDefAddr=tilemapAddr+tilemapSize
+        defc    tileMapWidth=40
 
         defc    IO_TileMapBaseAdrr=0x6E
         defc    IO_TileMapDefBaseAddr=0x6F
@@ -37,6 +38,7 @@
         defc    SPRITE_ID_JUMP=4
         defc    SPRITE_ID_SPIDER_UP=6
         defc    SPRITE_ID_SPIDER_DOWN=10
+        defc    SPRITE_ID_LANTERN=12
 
         defvars 0
         {

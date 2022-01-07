@@ -70,11 +70,17 @@ pressJumpMsg:
         ;
 lanternList:
         db      4
+IF  !_ZXN
         dw      SCREEN_ATTR_START+(12*32)+9
         dw      SCREEN_ATTR_START+(12*32)+10
         dw      SCREEN_ATTR_START+(12*32)+22
         dw      SCREEN_ATTR_START+(12*32)+23
-
+ELSE
+        dw      tilemapAddr+(12*tileMapWidth)+9
+        dw      tilemapAddr+(12*tileMapWidth)+10
+        dw      tilemapAddr+(12*tileMapWidth)+22
+        dw      tilemapAddr+(12*tileMapWidth)+23
+ENDIF
         ;
         ; List of coins on the title screen
         ; Specified by x/y pixel addresses
