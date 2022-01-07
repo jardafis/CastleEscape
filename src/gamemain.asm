@@ -79,8 +79,6 @@ ENDIF
         public  xyStartPos
         public  _bank2HeapEnd
 
-        defc    NEW_JUMP=1
-
         #include    "defs.inc"
 
         section CODE_2
@@ -317,7 +315,6 @@ noXMovement:
 updateXSpeedDone:
         ld      (_xSpeed), a
 
-IFDEF   NEW_JUMP
         ; Check if the jump key is pressed
         ; and try to start a jump
         bit     JUMP_BIT, e
@@ -357,68 +354,6 @@ stopJumping:
 stillJumping:
         ld      (_ySpeed), a
 continueJumping:
-ELSE
-        ;
-        ; Update the jump status
-        ;
-        ld      hl, (jumpFall)          ; Falling and jumping flags
-        ld      a, l                    ; must be zero before
-        or      h                       ; a jump can be started
-        jr      nz, cantJump            ; If nz, falling or jumping are non-zero
-
-        bit     JUMP_BIT, e
-        jr      z, cantJump
-
-        ld      a, JUMP_SPEED
-        ld      (_ySpeed), a
-
-        ld      a, (eggCount)           ; Get egg count
-        and     a                       ; Update the flags
-        ld      a, JUMP_HEIGHT          ; Single jump height
-        ld      b, AYFX_JUMP
-        jr      z, smallJump            ; eggCount is zero
-
-        add     a                       ; Double jump height
-        inc     b                       ; Next jump sound index
-smallJump:
-        ld      (_jumping), a           ; Save jump distance
-        rrca                            ; Divide by 2 for direction change. Only works if bit 0 is 0
-        ld      (jumpMidpoint+1), a     ; Save for compare below
-        ld      a, b
-        push    de                      ; Save direction bits in 'e'
-        ld      b, 2                    ; Use channel #2
-        di
-        call    wyz_play_sound
-        ei
-        pop     de                      ; Restore direction bits in 'e'
-cantJump:
-
-        ld      a, (_jumping)
-        or      a
-        jr      z, notJumping
-
-        bit     RIGHT_BIT, e
-        jr      z, checkLeftJump
-        ld      hl, RightJumpKnight0
-        ld      (playerSprite), hl
-        jr      jumpMidpoint
-checkLeftJump:
-        bit     LEFT_BIT, e
-        jr      z, jumpMidpoint
-        ld      hl, LeftJumpKnight0
-        ld      (playerSprite), hl
-jumpMidpoint:
-        cp      -1                      ; Compare value will be different if player has collected eggs
-        jr      nz, notMidpoint
-        ex      af, af'                 ; Save the jump counter
-        xor     a                       ; Change jump direction, now going down.
-        ld      (_ySpeed), a
-        ex      af, af'                 ; Restore jump counter
-notMidpoint:
-        dec     a
-        ld      (_jumping), a
-notJumping:
-ENDIF
         ; ######################################
         ;
         ; Check if player is colliding with platforms
@@ -571,7 +506,6 @@ mulDone:
         pop     bc
         ret
 
-IFDEF   NEW_JUMP
 startJump:
         ; Only start a jump if not currently jumping or falling
         ld      hl, (jumpFall)
@@ -631,7 +565,6 @@ getJumpSequence1:
         ld      (jumpPos), hl
         scf                             ; cf = 1
         ret
-ENDIF
 
         section BSS_2
 jumpCnt:
@@ -680,7 +613,6 @@ readyMsg:
         db      "Ready?", 0x00
 gameOverMsg:
         db      " Game Over! ", 0x80, " ", 0x00
-IFDEF   NEW_JUMP
 smallJump:
         db      0x0c, 0xfe              ; 12 frames up
         db      0x04, 0xff              ; 4 frames hover
@@ -691,4 +623,3 @@ bigJump:
         db      0x08, 0xff              ; 8 frames hover
         db      0x18, 0x00              ; 24 frames down
         db      0x00                    ; End of jump
-ENDIF
