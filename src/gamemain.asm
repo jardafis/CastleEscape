@@ -4,13 +4,8 @@ IF  !_ZXN
         extern  RightJumpKnight0
         extern  LeftJumpKnight0
 ELSE
-        extern  setSpriteXY
         extern  enableSprite
-        extern  disableSprite
-        extern  spriteList
-        extern  setSpritePattern
-        extern  setSpriteFlip
-        extern  updateSpriteAttribs
+        extern  knightSprite
         extern  disableAllSprites
 ENDIF
         extern  _animateCoins
@@ -193,7 +188,7 @@ IF  !_ZXN
 ELSE
         ld      a, 0
         ld      (playerSprite), a
-        ld      ix, spriteList
+        ld      ix, knightSprite
         call    enableSprite
 ENDIF
         ;
@@ -201,6 +196,7 @@ ENDIF
         ;
         ld      hl, START_Y<<8|START_X
         ld      (_xPos), hl
+
         ;
         ; Initialize the X/Y speed variables
         ;
@@ -259,7 +255,7 @@ gameLoop:
         ; ######################################
 IF  !_ZXN
         ;
-        ; Re-draw the knight at the players current location
+        ; Re-draw the screen at the players current location
         ;
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
@@ -481,21 +477,11 @@ IF  !_ZXN
         ld      de, _spriteBuffer
         ld      bc, (_xPos)
         call    _copyScreen
+ENDIF
 
         ld      bc, (_xPos)
         call    _displaySprite
-ELSE
-        ld      bc, (_xPos)
-        ld      a, c
-        and     0x03
-        ld      ix, spriteList
-        call    setSpritePattern
-        call    setSpriteXY
-        ld      a, (playerSprite)
-        call    setSpriteFlip
 
-        call    updateSpriteAttribs
-ENDIF
         call    updateSpiderPos
         call    displaySpiders
         ;

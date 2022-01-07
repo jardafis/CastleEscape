@@ -34,7 +34,9 @@
         defc    IO_TurboMode=0x07
 
         defc    SPRITE_ID_TOMBSTONE=5
-        defc    SPRITE_ID_SPIDER=6
+        defc    SPRITE_ID_JUMP=4
+        defc    SPRITE_ID_SPIDER_UP=6
+        defc    SPRITE_ID_SPIDER_DOWN=10
 
         defvars 0
         {

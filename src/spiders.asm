@@ -75,7 +75,7 @@ done:
         pop     hl
 
         ld      a, (hl)                 ; OR the direction bits
-        and     %00001111               ; into the item flags
+        and     ~(UP<<1|DOWN<<1)        ; into the item flags
         or      b                       ; and save the flags.
         ld      (hl), a
 
@@ -168,23 +168,29 @@ IF  !_ZXN
 
         call    displayPixelTile        ; Display tile
 ELSE
-IF  0
-        and     0x18                    ; Up/Down bits
+        and     UP<<1|DOWN<<1           ; Up/Down bits
         jr      z, noChange
 
-        ; Move the down bit to bit0
-        rrca
-        rrca
-        rrca
-        call    setSpriteVFlip
-noChange:
-ENDIF
+        ; Default to pattern ID for upward spider
+        ld      d, SPRITE_ID_SPIDER_UP
+
+        ; Check for spider moving down
+        and     DOWN<<1
+        jr      z, movingUp
+
+        ; Set pattern ID for downward spider
+        ld      d, SPRITE_ID_SPIDER_DOWN
+movingUp:
         call    setSpriteXY
+
         ld      a, b
         and     0x01
-        add     SPRITE_ID_SPIDER
+        add     d
         call    setSpritePattern
+
         call    updateSpriteAttribs
+
+noChange:
         ; Point to next sprite
         ld      de, SIZEOF_sprite
         add     ix, de
@@ -270,7 +276,7 @@ nextSpiderSprite:
 
         ld      a, b
         and     0x01
-        add     SPRITE_ID_SPIDER
+        add     SPRITE_ID_SPIDER_UP
         call    setSpritePattern
 
         call    updateSpriteAttribs

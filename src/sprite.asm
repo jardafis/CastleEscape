@@ -2,13 +2,23 @@ IF  !_ZXN
         extern  _screenTab
 
         public  _copyScreen
-        public  _displaySprite
         public  _pasteScreen
+ELSE
+        extern  knightSprite
+        extern  setSpritePattern
+        extern  setSpriteXY
+        extern  setSpriteFlip
+        extern  updateSpriteAttribs
+        extern  _jumping
+ENDIF
+        public  _displaySprite
+        public  playerSprite
 
         #include    "defs.inc"
 
         section CODE_2
 
+IF  !_ZXN
         ;
         ; Entry:
         ;		de - Pointer to buffer
@@ -84,13 +94,37 @@ pasteTempSP:
         ld      sp, -1
         ei
         ret
-
+ENDIF
         ;
         ; Entry:
         ;		b  - Screen y location
         ;		c  - Screen x location
         ;
 _displaySprite:
+IF  _ZXN
+        ld      a, (_jumping)
+        or      a
+        jr      nz, setJumpSprite
+
+        ld      a, c
+        and     0x03
+
+setSprite:
+        ld      ix, knightSprite
+        call    setSpritePattern
+
+        call    setSpriteXY
+
+        ld      a, (playerSprite)
+        call    setSpriteFlip
+
+        call    updateSpriteAttribs
+        ret
+setJumpSprite:
+        ld      a, SPRITE_ID_JUMP
+        jr      setSprite
+
+ELSE
         di
         ld      (displaySpriteSP+1), sp
 
@@ -190,7 +224,6 @@ nextThird:
         djnz    yLoop                   ; Loop for next row of sprite
         jr      displaySpriteSP
 ENDIF
-        public  playerSprite
         section BSS_2
 playerSprite:
         ds      2

@@ -11,7 +11,7 @@ IF  !_ZXN
         extern  displayPixelTile
 ELSE
         extern  setSpritePattern
-        extern  spriteList
+        extern  knightSprite
         extern  updateSpriteAttribs
         extern  setSpriteFlip
 ENDIF
@@ -66,7 +66,7 @@ IF  !_ZXN
         ld      a, 12+16
         call    displayPixelTile
 ELSE
-        ld      ix, spriteList
+        ld      ix, knightSprite
 
         xor     a
         call    setSpriteFlip

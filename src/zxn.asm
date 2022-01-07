@@ -16,7 +16,6 @@ IF  _ZXN
         public  enableSprite
         public  disableSprite
         public  setSpriteXY
-        public  spriteList
         public  setSpritePattern
         public  nextSpritePattern
         public  setSpriteFlip
@@ -25,10 +24,17 @@ IF  _ZXN
         public  spiderSprites
         public  setSpriteVFlip
         public  disableAllSprites
+        public  knightSprite
 
         #include    "defs.inc"
 
         section CODE_2
+        ;
+        ; Initialize the ZX Spectrum Next hardware
+        ;
+        ; Input:
+        ;   None.
+        ;
 zxnInit:
         nextreg IO_TurboMode, 0x00      ; CPU speed (0=3.5Mhz, 1=7Mhz, 2=14 Mhz )
 
@@ -67,6 +73,9 @@ zxnInit:
 
         ret
 
+        ;
+        ; Program color data to the currently selected palette.
+        ;
         ; Input:
         ;       hl - Pointer to palette data
         ;       b  - # of palette entries
@@ -83,6 +92,15 @@ nextColor:
         djnz    nextColor               ; next color
         ret
 
+        ;
+        ; Fill the tilemap memory with a blank tile.
+        ;
+        ; Input:
+        ;   None.
+        ;
+        ; Output:
+        ;   bc, de, hl - Corrupt.
+        ;
 clearTilemap:
         ; Clear the tilemap area
         ld      hl, tilemapAddr
@@ -92,6 +110,8 @@ clearTilemap:
         ldir
         ret
 
+        ;
+        ; Clear a character location in ULA memory.
         ;
         ; Input:
         ;   c - X char coord.
@@ -117,6 +137,9 @@ clearULATile:
         pop     bc
         ret
 
+        ;
+        ; Clear a character location in ULA memory specified by
+        ; pixel location.
         ;
         ; Input:
         ;   e - X pixel coord.
@@ -144,6 +167,10 @@ clrULATileLoop:
         pop     bc
         ret
 
+        ;
+        ; Given a coin table, clear the coins from screen 1 ULA memory
+        ; in bank 7.
+        ;
         ; Input:
         ;   hl - Pointer to coin table
         ;
@@ -155,6 +182,10 @@ clearULACoinHi:
         ld      (bank7+1), a
         ret
 
+        ;
+        ; Given a coin table, clear the coins from screen 0 ULA memory
+        ; in bank 5.
+        ;
         ; Input:
         ;   hl - Pointer to coin table
         ;
@@ -174,6 +205,12 @@ clearULACoin:
         jp      clearULACoin
 
 
+        ;
+        ; Initialize and clear the tilemap hardware and memory.
+        ;
+        ; Input:
+        ;   None.
+        ;
 initTilemap:
         call    clearTilemap
 
@@ -193,9 +230,8 @@ initTilemap:
         ; bits 3-2 = Reserved set to 0
         ; bit 1    = 1 to activate 512 tile mode
         ; bit 0    = 1 to force tilemap on top of ULA
-
+        ; tile map with  attribute byte eliminated is selected, (bit 5 is 1)
         nextreg IO_TileMapContr, %10100000
-                                        ; tile map with  attribute byte eliminated is selected, (bit 5 is 1)
 
 ;*___________________________________________________________________________________________________________________________________
 
@@ -207,7 +243,6 @@ initTilemap:
         ; bit 1    = Rotate
         ; bit 0    = ULA over tilemap
         ; bit 8 of the tile number if 512 tile mode is enabled)
-
         nextreg IO_TileMapAttr, %00000000
 
 ;*___________________________________________________________________________________________________________________________________
@@ -241,8 +276,8 @@ initTilemap:
         ; Tilemap first palette
         nextreg IO_TileMapPaletteContr, %00110000
         xor     a                       ; Palette start index
+        ; Number of colors
         ld      b, tile_palette_end-tile_palette
-                                        ; Number of colors
         ld      hl, tile_palette        ; Pointer to palette
         call    setPalette              ; Do it!
 
@@ -286,14 +321,19 @@ initTilemap:
         ret
 
         ;
+        ; Write sprite pattern data to the hardware.
+        ;
         ; Input:
         ;   hl - Pointer to sprite pattern data
         ;   bc - Length, in bytes, of sprite pattern data
         ;
+        ; Output:
+        ;   af, bc - Corrupt.
+        ;
 initSpritePatterns:
         ld      a, b
         or      a
-        jr      z, lastBlock
+        jr      z, lastBlock            ; > 256 bytes
 
 nextPatternBlock:
         push    bc
@@ -306,7 +346,7 @@ nextPatternBlock:
 lastBlock:
         ld      a, c
         or      a
-        ret     z
+        ret     z                       ; No more bytes
 
         ld      c, IO_SpritePattern     ; copy sprite data to through register 0x5B
         ld      b, a
@@ -315,11 +355,13 @@ lastBlock:
         ret
 
   IF    0
+        ;
         ; Input:
         ;       None
         ;
         ; Output:
         ;       a, hl - Corrupt
+        ;
 setupSprites:
         ld      hl, spriteList
 nextSprite:
@@ -377,6 +419,8 @@ nextSprite:
         jp      nextSprite
   ENDIF
         ;
+        ; Make a sprite visible.
+        ;
         ; Input:
         ;   ix - Pointer to sprite
         ;
@@ -388,6 +432,8 @@ enableSprite:
         pop     af
         ret
 
+        ;
+        ; Make a sprite non-visible.
         ;
         ; Input:
         ;   ix - Pointer to sprite
@@ -401,44 +447,31 @@ disableSprite:
         ret
 
         ;
-        ; Input:
-        ;   ix - Pointer to sprite
+        ; Send a sprites attributes to the hardware.
         ;
-        ; Output:
-        ;   a, bc - corrupt.
+        ; Input:
+        ;   xi - Pointer to sprite
+        ;
 updateSpriteAttribs:
-  IF    1
         push    bc
         push    hl
 
         ld      hl, ix
-        ld      a, (hl)
-        inc     hl
-        ld      bc, 0x303b
-        out     (c), a
 
-        ld      bc, 0x0457
-        otir
+        ld      bc, 0x303b
+        outinb
+        ld      bc, 0x0057
+        outinb
+        outinb
+        outinb
+        outinb
 
         pop     hl
         pop     bc
-  ELSE
-        ld      a, (ix+0)
-        nextreg IO_SpriteNumber, a
-
-        ld      a, (ix+attrib0)
-        nextreg IO_SpriteAttrib0, a
-        ld      a, (ix+attrib1)
-        nextreg IO_SpriteAttrib1, a
-        ld      a, (ix+attrib2)
-        nextreg IO_SpriteAttrib2, a
-        ld      a, (ix+attrib3)
-        nextreg IO_SpriteAttrib3, a
-        ld      a, (ix+attrib4)
-        nextreg IO_SpriteAttrib4, a
-  ENDIF
         ret
 
+        ;
+        ; Update a sprites X & Y pixel position.
         ;
         ; Input:
         ;   ix - Pointer to sprite
@@ -447,6 +480,8 @@ updateSpriteAttribs:
         ;
 setSpriteXY:
         push    af
+        push    bc
+
         ; Set Y position
         ld      a, b
         add     32
@@ -462,6 +497,8 @@ setSpriteXY:
         and     0xfe
 updateXMSB:
         ld      (ix+attrib2), a
+
+        pop     bc
         pop     af
         ret
 
@@ -470,9 +507,11 @@ spriteXMSB:
         jr      updateXMSB
 
         ;
+        ; Set a sprites pattern.
+        ;
         ; Input:
         ;   ix - Pointer to sprite
-        ;	a  - Pattern ID
+        ;	a  - Pattern index
         ;
 setSpritePattern:
         push    af
@@ -489,11 +528,14 @@ setSpritePattern:
         ret
 
         ;
+        ; Update to the sprites next animation pattern.
+        ;
         ; Input:
         ;   ix - Pointer to sprite
         ;
         ; Output:
         ;   a - Current pattern index
+        ;
 nextSpritePattern:
         push    bc
 
@@ -516,12 +558,15 @@ resetSpritePattern:
         ret
 
         ;
+        ; Set the state of a sprites horizontal flip bit.
+        ;
         ; Input:
         ;   ix - Pointer to sprite
         ;   a - bit0 = 0, no flip; bit0 = 1, flip
         ;
         ; Output:
         ;   a - Sprite attribute 2
+        ;
 setSpriteFlip:
         push    bc
         push    af
@@ -542,12 +587,15 @@ setSpriteFlip:
         ret
 
         ;
+        ; Set the state of a sprites vertical flip bit.
+        ;
         ; Input:
         ;   ix - Pointer to sprite
         ;   a - bit0 = 0, no flip; bit0 = 1, flip
         ;
         ; Output:
         ;   a - Sprite attribute 2
+        ;
 setSpriteVFlip:
         push    bc
         push    af
@@ -567,6 +615,8 @@ setSpriteVFlip:
         ret
 
         ;
+        ; Return the state of a sprites horizontal flip bit.
+        ;
         ; Input:
         ;   ix - Pointer to sprite
         ;
@@ -581,36 +631,41 @@ getSpriteFlip:
         ret
 
         ;
+        ; Make all sprites in the sprite list non-visible.
+        ;
         ; Input:
-        ;   None.
+        ;   None
         ;
 disableAllSprites:
-        ld      ix, spriteList
-        ld      b, (spriteListEnd-spriteList)/SIZEOF_sprite
+        push    af
+        push    bc
+        push    de
+        push    hl
 
-        xor     a
+        ld      hl, spriteList
+        ld      de, SIZEOF_sprite
+        ld      b, +(spriteListEnd-spriteList)/SIZEOF_sprite
 disableLoop:
+        ld      a, (hl)
+
         nextreg IO_SpriteNumber, a
         nextreg IO_SpriteAttrib3, 0
-        inc     a
+
+        add     hl, de
         djnz    disableLoop
 
+        pop     hl
+        pop     de
+        pop     bc
+        pop     af
         ret
 
         section DATA_2
 spriteList:
-        db      0x00                    ; Sprite index
+		; Wee Knight
+knightSprite:
+        db      0x7f
         ds      SIZEOF_sprite-1
-;        db      50                      ; X (Attrib 0)
-;        db      24*8                    ; Y (Attrib 1)
-;        db      0x00                    ; Attribute 2
-;        db      0x40                    ; Attribute 3
-;        db      0x00                    ; Attribute 4
-;        db      0                       ; Animation frame count
-;        db      0                       ; Current frame count
-;        db      0                       ; Start pattern
-;        db      3                       ; End pattern
-;        db      0                       ; Current pattern
 
         ; Spiders
 spiderSprites:
