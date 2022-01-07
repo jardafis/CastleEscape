@@ -1,6 +1,4 @@
         extern  _updateDirection
-        extern  animateMenu
-        extern  currentCoinTable
         extern  printAttr
         extern  wyz_play_song
         extern  wyz_player_stop
@@ -12,78 +10,35 @@
         #include    "defs.inc"
 
 titleScreen:
+        border  1
         ;
         ; Start the title song
         ;
-        ld      a, TITLE_MUSIC
         di
+        ld      a, TITLE_MUSIC
         call    wyz_play_song
         ei
 
         ;
         ; Display the continue message
         ;
-        ld      bc, 0x1505
+        ld      bc, 0x1305
         ld      hl, pressJumpMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT|FLASH
         bcall   printAttr
-
-        ;
-        ; Setup the coin table for the main menu
-        ;
-        ld      hl, coinTable
-        ld      (currentCoinTable), hl
-IF  _ZXN
-        extern  clearULACoin
-        call    clearULACoin
-ENDIF
-
 waitJump:
-        ld      hl, lanternList
-        call    animateMenu
         call    _updateDirection
         ld      a, e
         and     JUMP
         jr      z, waitJump
 
-waitNoJump:
-        ld      hl, lanternList
-        call    animateMenu
-
-        call    _updateDirection
-        ld      a, e
-        and     JUMP
-        jr      nz, waitNoJump
-
         di
         call    wyz_player_stop
         ei
 
+        border  0
         ret
 
         section RODATA_4
 pressJumpMsg:
         db      "Press Jump to Continue", 0x00
-
-        ;
-        ; List of lanterns on the title screen
-        ;
-lanternList:
-        db      (lanternListEnd-lanternList)/SIZEOF_ptr
-IF  !_ZXN
-        dw      SCREEN_ATTR_START+(12*32)+9
-        dw      SCREEN_ATTR_START+(12*32)+22
-ELSE
-        dw      TILEMAP_START+(12*ZXN_TILEMAP_WIDTH)+9
-        dw      TILEMAP_START+(12*ZXN_TILEMAP_WIDTH)+22
-ENDIF
-lanternListEnd:
-        ;
-        ; List of coins on the title screen
-        ; Specified by x/y pixel addresses
-        ;
-coinTable:
-        db      0x01, 0x16*8, 0x0f*8, 0x00
-        db      0x01, 0x17*8, 0x0f*8, 0x01
-        db      0x01, 0x18*8, 0x11*8, 0x02
-        db      0xff

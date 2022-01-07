@@ -1,5 +1,4 @@
         extern  _main
-        extern  __STACK_tail
 
 IFNDEF  CRT_ORG_BANK_5
         defc    CRT_ORG_BANK_5=0x06000

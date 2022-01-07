@@ -17,7 +17,6 @@ IF  _ZXN
         extern  enableSprite
         extern  disableSprite
         extern  updateSpriteAttribs
-        extern  setSpriteVFlip
 ENDIF
 
         ;

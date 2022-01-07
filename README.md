@@ -1,10 +1,11 @@
 # Castle Escape - An IrataHack Production
 
-A ZX Spectrum game written using [Z88DK](https://github.com/z88dk/z88dk) for [FUSE](http://fuse-emulator.sourceforge.net) (but should work on a real ZX Spectrum 128K, +2, +3).
+A ZX Spectrum game written using [Z88DK](https://github.com/z88dk/z88dk) and [FUSE](http://fuse-emulator.sourceforge.net) (but should work on a real ZX Spectrum 128K, +2, +3 or ZX Spectrum Next). You can find a ZX Spectrum Next emulator [here](https://github.com/chernandezba/zesarux).
 
 ## Credits
 
 * Coding - [IrataHack](mailto:iratahack@digitalxfer.com)
+* Loading screen - [crayon](https://github.com/jardafis)
 * Graphics - Supported by [Carnivac](https://zxart.ee/eng/authors/c/carnivac/)
 * Music - Borrowed from [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
 * Sound Effects - Created using [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
@@ -70,6 +71,8 @@ The result of the build should be a *CastleEscape.tap* (tape image) file in the 
 
 ### Make Targets
 
+The *Makefile* supports building for both the **ZX Spectrum 128K** and the **ZX Spectrum Next**. To select the *Next* build, add `TARGET=+zxn` to the make command line when using any of the *src* directory make targets below.
+
 * *assets* Directory
   * clean - remove all derived files
   * all - build the asset files
@@ -79,4 +82,5 @@ The result of the build should be a *CastleEscape.tap* (tape image) file in the 
   * all - build *CastleEscape.tap* file
   * dis - build and disassemble
     * Add 'BANK=&lt;bankname&gt;' to disassemble a specific bank, the default is BANK_2
-  * run - build and run with FUSE which must be on the path
+  * run - build a .tap image and run it
+  * rundsk - build a .dsk image (+3 disk image) and run it (not supported on ZX Spectrum Next)
