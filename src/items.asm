@@ -266,8 +266,7 @@ nextItem2:
         jr      nextItem2
 
 notVisible2:
-        ld      a, SIZEOF_item
-        addhl
+        addhl   SIZEOF_item
         jr      nextItem2
 
         ;
@@ -298,8 +297,7 @@ nextItem5:
         jr      nextItem5
 
 notVisible5:
-        ld      a, SIZEOF_item
-        addhl
+        addhl   SIZEOF_item
         jr      nextItem5
 
         ;
@@ -376,8 +374,7 @@ itemCollision:
 noCollision:
         pop     hl
 notVisible3:
-        ld      a, SIZEOF_item
-        addhl
+        addhl   SIZEOF_item
         jp      nextItem
 
         ;

@@ -357,34 +357,49 @@ popall  MACRO
         ;
         ; Add 'a' to 'hl'
         ;
-addhl   MACRO
+addhl   MACRO val
+IF  _ZXN
+        add     hl, val
+ELSE
+        ld      a, val
         add     l
         ld      l, a
         adc     h
         sub     l
         ld      h, a
+endif
         ENDM
 
         ;
         ; Add 'a' to 'de'
         ;
-addde   MACRO
+addde   MACRO val
+IF  _ZXN
+        add     de, val
+ELSE
+        ld      a, val
         add     e
         ld      e, a
         adc     d
         sub     e
         ld      d, a
+ENDIF
         ENDM
 
         ;
         ; Add 'a' to 'bc'
         ;
-addbc   MACRO
+addbc   MACRO val
+IF  _ZXN
+        add     bc, val
+ELSE
+        ld      a, val
         add     c
         ld      c, a
         adc     b
         sub     c
         ld      b, a
+ENDIF
         ENDM
 
 mod     MACRO   val

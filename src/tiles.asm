@@ -297,7 +297,7 @@ IF  !_ZXN
         push    hl
 
         ld      hl, _tileAttr
-        addhl
+        addhl   a
         ld      a, (hl)
 
         call    setAttr

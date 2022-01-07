@@ -22,7 +22,7 @@ _lanternFlicker:
         ld      hl, colors              ; Pointer to color table
         ld      a, r                    ; Use 'r' as the color table index
         and     0x03                    ; Bottom 2 bits only
-        addhl
+        addhl   a
         ld      a, (hl)                 ; Read attribute
 
 loop:

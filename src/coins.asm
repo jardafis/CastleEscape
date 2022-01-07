@@ -45,8 +45,7 @@ nextCoin:
 
         jp      nextCoin
 notVisible:
-        ld      a, SIZEOF_item
-        addhl
+        addhl   SIZEOF_item
         jp      nextCoin
 
         ;

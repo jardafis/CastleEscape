@@ -82,7 +82,7 @@ _scrollReset:
 
         ax      SIZEOF_ptr
         ld      hl, messages
-        addhl
+        addhl   a
 
         ld      c, (hl)
         inc     hl

@@ -44,8 +44,7 @@ checkXCol:
         dec     de                      ; else negative, moving left. Subtract 1 from xPos.
         jr      endif
 movingRight:
-        ld      a, PLAYER_WIDTH         ; else add player width
-        addde
+        addde   PLAYER_WIDTH            ; else add player width
 endif:
         ld      a, (_yPos)              ; Get the yPos
         ld      l, a
@@ -177,7 +176,7 @@ endif2:
         rrca                            ; Faster to do rrca followed by AND rather than srl
         rrca
         and     %00011111
-        addhl                           ; Add X byte offset to tile map Y index
+        addhl   a                       ; Add X byte offset to tile map Y index
 
         ld      de, (_currentTileMap)
         add     hl, de
