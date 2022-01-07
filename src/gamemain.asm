@@ -328,18 +328,18 @@ updateXSpeedDone:
         ; Set right or left jump animation
         bit     RIGHT_BIT, e
         jr      z, checkLeftJump
-  IF    !_ZXN
+IF  !_ZXN
         ld      hl, RightJumpKnight0
         ld      (playerSprite), hl
-  ENDIF
+ENDIF
         jr      jumpRightDone
 checkLeftJump:
         bit     LEFT_BIT, e
         jr      z, jumpRightDone
-  IF    !_ZXN
+IF  !_ZXN
         ld      hl, LeftJumpKnight0
         ld      (playerSprite), hl
-  ENDIF
+ENDIF
 jumpRightDone:
 
         ld      hl, jumpCnt

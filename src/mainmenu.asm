@@ -8,6 +8,7 @@ IF  !_ZXN
 ELSE
         extern  clearTilemap
         extern  clearULACoinHi
+        extern  clearULATileHi
 ENDIF
         extern  currentCoinTable
         extern  defineKeys
@@ -72,6 +73,12 @@ IF  !_ZXN
         ld      (bank7Screen+1), a
 
 ELSE
+        ; Clear the flames from the lanterns in ULA memory
+        ld      bc, 0x070c
+        call    clearULATileHi
+        ld      bc, 0x0713
+        call    clearULATileHi
+
         call    clearULACoinHi
         call    clearTilemap
 ENDIF

@@ -12,6 +12,7 @@ IF  _ZXN
         public  clearULACoin
         public  clearULACoinHi
         public  clearULATile
+        public  clearULATileHi
         public  clearULATilePixel
         public  enableSprite
         public  disableSprite
@@ -108,6 +109,22 @@ clearTilemap:
         ld      de, TILEMAP_START+1
         ld      bc, TILEMAP_SIZE-1
         ldir
+        ret
+
+        ;
+        ; Clear a character location in screen 1 ULA memory
+        ; in bank 7.
+        ;
+        ; Input:
+        ;   c - X char coord.
+        ;   b - Y char coord.
+        ;
+clearULATileHi:
+        ld      a, 0x80
+        ld      (bank7+1), a
+        call    clearULATile
+        xor     a
+        ld      (bank7+1), a
         ret
 
         ;
