@@ -216,11 +216,15 @@ ENDIF
         ; List of lanterns on the this menu
         ;
 lanternList:
-        db      4
+        db      (lanternListEnd-lanternList)/SIZEOF_ptr
+IF  !_ZXN
         dw      SCREEN_ATTR_START+(7*32)+12
-        dw      SCREEN_ATTR_START+(7*32)+13
-        dw      SCREEN_ATTR_START+(7*32)+18
         dw      SCREEN_ATTR_START+(7*32)+19
+ELSE
+        dw      TILEMAP_START+(7*ZXN_TILEMAP_WIDTH)+12
+        dw      TILEMAP_START+(7*ZXN_TILEMAP_WIDTH)+19
+ENDIF
+lanternListEnd:
 
 defineKeyMsg:
         db      "Define Keys", 0x00

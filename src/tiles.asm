@@ -3,9 +3,9 @@
         extern  setAttr
 
 IF  !_ZXN
-        public  _displayTile
         public  bank7Screen
 ENDIF
+        public  _displayTile
         public  displayPixelTile
         public  displayTile
         public  setTileAttr
@@ -14,7 +14,6 @@ ENDIF
 
         section CODE_2
 
-IF  !_ZXN
         ;
         ; Display the specified tile and attribute at the specified location.
         ;
@@ -39,6 +38,7 @@ _displayTile:
         exit
         ret
 
+IF  !_ZXN
         ;
         ; Display the specified tile at the specified location.
         ;

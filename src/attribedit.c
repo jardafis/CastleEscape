@@ -61,7 +61,6 @@ void putString(char *string)
     }
 }
 
-#ifndef _ZXN
 /*
  * Display the 12x12 tileset starting from the top left-hand side of the
  * screen.
@@ -78,6 +77,7 @@ void displayTileset(const unsigned char *tiles)
     }
 }
 
+#ifndef _ZXN
 /*
  * Bitmap for the box cursor.
  */
@@ -147,9 +147,9 @@ void attribEdit(unsigned char *tileset, unsigned char *attrib)
     unsigned char key;
 
     cls(INK_WHITE | PAPER_BLACK);
-#ifndef _ZXN
     displayTileset(tileset);
 
+#ifndef _ZXN
     setCursor(16, 0);
     putString("Up        - 'q'");
     setCursor(16, 1);

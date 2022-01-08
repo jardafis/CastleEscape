@@ -1,17 +1,17 @@
 # Castle Escape - An IrataHack Production
 
-A ZX Spectrum game written using [Z88DK](https://github.com/z88dk/z88dk) and [FUSE](http://fuse-emulator.sourceforge.net) (but should work on a real ZX Spectrum 128K, +2, +3 or ZX Spectrum Next). You can find a ZX Spectrum Next emulator [here](https://github.com/chernandezba/zesarux).
+A ZX Spectrum game written using [Z88DK](https://github.com/z88dk/z88dk) and [FUSE](http://fuse-emulator.sourceforge.net) (but should work on a real ZX Spectrum 128K, +2, +3 or ZX Spectrum Next. You can find a ZX Spectrum Next emulator [here](https://github.com/chernandezba/zesarux)).
 
 ## Credits
 
 * Coding - [IrataHack](mailto:iratahack@digitalxfer.com)
-* Loading screen - [crayon](https://github.com/jardafis)
-* Graphics - Supported by [Carnivac](https://zxart.ee/eng/authors/c/carnivac/)
+* screen$ - Created by [crayon](https://github.com/jardafis)
+  * Converted to .scr with [PNG-to-SCR](https://github.com/MatejJan/PNG-to-SCR)
+* Sprites & Tiles - Supported by [Carnivac](https://zxart.ee/eng/authors/c/carnivac/)
 * Music - Borrowed from [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
 * Sound Effects - Created using [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
-* Levels - Designed with [Tiled](https://www.mapeditor.org/)
-* screen$ - Converted with [PNG-to-SCR](https://github.com/MatejJan/PNG-to-SCR)
-* Boot Loader - Courtesy of [ZXSTLC](https://tomdalby.com/other/zxstlc.html)
+* Levels - Designed with [Tiled](https://www.mapeditor.org/) by [IrataHack](mailto:iratahack@digitalxfer.com)
+* Tape & Disk Loaders - Courtesy of [Tom Dalby](https://tomdalby.com/) ([ZXSTLC](https://tomdalby.com/other/zxstlc.html))
 
 ## Synopsis
 
@@ -49,7 +49,7 @@ The game consists 24 levels arranged in a 4x6 grid, shown below.
 ## Building Sources
 
 The latest version of Z88DK must be in the path. Install Z88DK from the Snap Store with the commands
-below or by following the instructions [here](https://github.com/z88dk/z88dk/wiki/installation).
+below or by following the instructions [here](https://github.com/z88dk/z88dk).
 
 ```sh
 sudo snap install --edge z88dk
@@ -61,10 +61,11 @@ sudo snap alias z88dk.z88dk-appmake z88dk-appmake
 sudo snap alias z88dk.z88dk-dis z88dk-dis
 ```
 
-From the cloned repo use the command below to build and run the game.
+From the cloned repo use the commands below to build and run the game.
 
 ```sh
-make -C ./src/ run
+cd src
+make run
 ```
 
 The result of the build should be a *CastleEscape.tap* (tape image) file in the *src* directory which can be loaded and executed with a ZX Spectrum emulator.

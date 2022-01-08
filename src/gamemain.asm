@@ -4,6 +4,7 @@ IF  !_ZXN
         extern  RightJumpKnight0
         extern  LeftJumpKnight0
 ELSE
+        extern  zxnInit
         extern  enableSprite
         extern  knightSprite
         extern  disableAllSprites
@@ -96,7 +97,6 @@ init:
         border  INK_BLACK
 
 IF  _ZXN
-        extern  zxnInit
         call    zxnInit
 ENDIF
         ;
