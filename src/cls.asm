@@ -48,22 +48,9 @@ loop2:
 loop:
         ; Push 32 bytes of 0 into the screen memory
         ; Each push is 2 bytes
+        REPT    16
         push    hl
-        push    hl
-        push    hl
-        push    hl
-        push    hl
-        push    hl
-        push    hl
-        push    hl
-        push    hl
-        push    hl
-        push    hl
-        push    hl
-        push    hl
-        push    hl
-        push    hl
-        push    hl
+        ENDR
         djnz    loop
 clsTempSP:
         ld      sp, -1

@@ -149,34 +149,13 @@ ENDIF
 
         ; Pop 2 bytes of font data and store it
         ; to the screen.
+        REPT    4
         pop     bc
         ld      (hl), c
         inc     h                       ; Add 256 to screen address
         ld      (hl), b
         inc     h                       ; Add 256 to screen address
-
-        ; Pop 2 bytes of font data and store it
-        ; to the screen.
-        pop     bc
-        ld      (hl), c
-        inc     h
-        ld      (hl), b
-        inc     h
-
-        ; Pop 2 bytes of font data and store it
-        ; to the screen.
-        pop     bc
-        ld      (hl), c
-        inc     h
-        ld      (hl), b
-        inc     h
-
-        ; Pop 2 bytes of font data and store it
-        ; to the screen.
-        pop     bc
-        ld      (hl), c
-        inc     h
-        ld      (hl), b
+        ENDR
 
         ; Restore the stack pointer.
 TempSP:

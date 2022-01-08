@@ -2,11 +2,28 @@ cmake_minimum_required(VERSION 3.16)
 
 # Toolchain configuration
 set(CMAKE_C_COMPILER zcc)
-set(CMAKE_ASM_COMPILER z88dk-asmpp)
+set(CMAKE_ASM_COMPILER z88dk-z80asm)
 
 project(CastleEscape C ASM)
 
 set(ZXSTLC ${PROJECT_SOURCE_DIR}/tools/zxstlc_linux)
+
+if(NOT DEFINED TARGET)
+    set(Z88DK_TARGET +zx)
+else()
+    set(Z88DK_TARGET ${TARGET})
+endif()
+
+if(${Z88DK_TARGET} STREQUAL +zx)
+    set(CMAKE_ASM_FLAGS "-mz80")
+    set(EMU "fuse")
+    message(STATUS "Building for ZX Spectrum 128K")
+elseif(${Z88DK_TARGET} STREQUAL +zxn)
+    set(CMAKE_ASM_FLAGS "-mz80n -D_ZXN=1")
+    set(EMU $ENV{HOME}/ZEsarUX-10.0/zesarux --machine TBBlue --configfile .zesaruxrc --tbblue-fast-boot-mode  --nosplash --nowelcomemessage --quickexit)
+    message(STATUS "Building for ZX Spectrum Next")
+endif()
+
 
 set(Z88DK_TARGET +zx)
 set(CMAKE_C_FLAGS
@@ -17,7 +34,6 @@ set(CMAKE_C_FLAGS
     --bssseg=BSS_4 \
     -clib=new"
 )
-set(CMAKE_ASM_FLAGS "-mz80")
 set(CMAKE_EXE_LINKER_FLAGS "-crt0 ${PROJECT_SOURCE_DIR}/crt/crt.asm -m")
 
 set(CMAKE_C_COMPILE_OBJECT "<CMAKE_C_COMPILER> ${Z88DK_TARGET} <FLAGS> -c <DEFINES> <INCLUDES> -o<OBJECT> <SOURCE>")
@@ -62,6 +78,7 @@ set(SOURCES
     tilesheet.asm
     title.asm
     wyzproplay_zx.asm
+    zxn.asm
     )
 
 set_property(SOURCE font.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/font_8x8_cpc_system.dat)
@@ -70,7 +87,6 @@ set_property(SOURCE menuscreen.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOUR
 
 set_property(SOURCE wyzproplay_zx.asm
     APPEND PROPERTY OBJECT_DEPENDS
-    ${PROJECT_SOURCE_DIR}/music/CastleEscape.mus.inc
     ${PROJECT_SOURCE_DIR}/music/gothic.mus
     ${PROJECT_SOURCE_DIR}/music/jinj_med.mus
     ${PROJECT_SOURCE_DIR}/music/death.wyz.mus
@@ -108,6 +124,6 @@ add_custom_command(OUTPUT ${PROJECT_NAME}.dsk
 # Disassemble the main binary
 add_custom_target(dis z88dk-dis -o 24576 -x ${PROJECT_NAME}.map ${PROJECT_NAME}.bin | less DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.bin)
 # Run the tape image with fuse
-add_custom_target(run fuse ${PROJECT_NAME}.tap DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.tap)
+add_custom_target(run ${EMU} ${PROJECT_NAME}.tap DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.tap)
 # Run the disk image (+3) with fuse
-add_custom_target(rundsk fuse ${PROJECT_NAME}.dsk DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.dsk)
+add_custom_target(rundsk ${EMU} ${PROJECT_NAME}.dsk DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.dsk)

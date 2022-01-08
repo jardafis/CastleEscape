@@ -145,29 +145,10 @@ rowLoop:
         ld      a, l                    ; save l which includes the screen X starting offset
         ld      b, WIDTH/8              ; Width of scrolling window
 colLoop:
+        REPT    8
         rl      (hl)                    ; Rotate left the contents of hl through the carry flag
         dec     l                       ; Next character to the left
-
-        rl      (hl)                    ; Rotate left the contents of hl through the carry flag
-        dec     l                       ; Next character to the left
-
-        rl      (hl)                    ; Rotate left the contents of hl through the carry flag
-        dec     l                       ; Next character to the left
-
-        rl      (hl)                    ; Rotate left the contents of hl through the carry flag
-        dec     l                       ; Next character to the left
-
-        rl      (hl)                    ; Rotate left the contents of hl through the carry flag
-        dec     l                       ; Next character to the left
-
-        rl      (hl)                    ; Rotate left the contents of hl through the carry flag
-        dec     l                       ; Next character to the left
-
-        rl      (hl)                    ; Rotate left the contents of hl through the carry flag
-        dec     l                       ; Next character to the left
-
-        rl      (hl)                    ; Rotate left the contents of hl through the carry flag
-        dec     l                       ; Next character to the left
+        ENDR
         djnz    colLoop                 ; Loop for the width of the message
 
         ld      l, a                    ; Restore low order byte of screen address
@@ -202,14 +183,9 @@ getNextChar:
         ld      de, FONT                ; Pointer to the font
         add     hl, de                  ; hl points to the font data address
         ld      de, charBuffer          ; Point to our character buffer address
+        REPT    8
         ldi
-        ldi
-        ldi
-        ldi
-        ldi
-        ldi
-        ldi
-        ldi
+        ENDR
         jp      shift
 
 doPadding:

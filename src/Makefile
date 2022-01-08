@@ -1,5 +1,5 @@
 CC=zcc
-AS=z88dk-asmpp
+AS=z88dk-z80asm
 LD=zcc
 
 TARGET?= +zx

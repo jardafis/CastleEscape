@@ -93,34 +93,13 @@ bank7Screen:
 
         ; Pop 2 bytes of tile data and store it
         ; to the screen.
+        REPT    4
         pop     bc
         ld      (hl), c
         inc     h                       ; Add 256 to screen address
         ld      (hl), b
         inc     h                       ; Add 256 to screen address
-
-        ; Pop 2 bytes of tile data and store it
-        ; to the screen.
-        pop     bc
-        ld      (hl), c
-        inc     h
-        ld      (hl), b
-        inc     h
-
-        ; Pop 2 bytes of tile data and store it
-        ; to the screen.
-        pop     bc
-        ld      (hl), c
-        inc     h
-        ld      (hl), b
-        inc     h
-
-        ; Pop 2 bytes of tile data and store it
-        ; to the screen.
-        pop     bc
-        ld      (hl), c
-        inc     h
-        ld      (hl), b
+        ENDR
 
         ; Restore the stack pointer.
 TempSP2:
@@ -206,71 +185,15 @@ displayPixelTile:
         ; hl - Pointer to tile data
         ; c  - Tile X character offset
 
+        REPT    8
         pop     de                      ; Pop screen address
-
         ld      a, e                    ; Add X offset
         add     c
         ld      e, a
-
         ld      a, (hl)                 ; Move tile data to the screen
         ld      (de), a
         inc     hl
-
-        pop     de
-        ld      a, e
-        add     c
-        ld      e, a
-        ld      a, (hl)
-        ld      (de), a
-        inc     hl
-
-        pop     de
-        ld      a, e
-        add     c
-        ld      e, a
-        ld      a, (hl)
-        ld      (de), a
-        inc     hl
-
-        pop     de
-        ld      a, e
-        add     c
-        ld      e, a
-        ld      a, (hl)
-        ld      (de), a
-        inc     hl
-
-        pop     de
-        ld      a, e
-        add     c
-        ld      e, a
-        ld      a, (hl)
-        ld      (de), a
-        inc     hl
-
-        pop     de
-        ld      a, e
-        add     c
-        ld      e, a
-        ld      a, (hl)
-        ld      (de), a
-        inc     hl
-
-        pop     de
-        ld      a, e
-        add     c
-        ld      e, a
-        ld      a, (hl)
-        ld      (de), a
-        inc     hl
-
-        pop     de
-        ld      a, e
-        add     c
-        ld      e, a
-        ld      a, (hl)
-        ld      (de), a
-;        inc     hl
+        ENDR
 
 clearTileSP:
         ld      sp, -1
