@@ -33,10 +33,24 @@ jobs:
           sudo snap alias z88dk.z88dk-asmstyle z88dk-asmstyle
           sudo snap alias z88dk.z88dk-appmake z88dk-appmake
 
-      - name: Build all
+      - name: Build assets
         run: |
+          make -C assets clean
           make -C assets install
-          make -C src all
+
+      - name: Build ZX Spectrum .tap & .dsk images
+        run: |
+          make -C src clean
+          make -C src CastleEscape.tap
+          make -C src CastleEscape.dsk
+          cp src/CastleEscape.tap .
+          cp src/CastleEscape.dsk .
+
+      - name: Build ZX Spectrum Next .tap image
+        run: |
+          make -C src clean
+          make -C src CastleEscape.tap TARGET=+zxn
+          cp src/CastleEscape.tap ./CastleEscape_zxn.tap
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -45,5 +59,6 @@ jobs:
           prerelease: true
           title: "Development Build"
           files: |
-            src/CastleEscape.tap
-            src/CastleEscape.dsk
+            ./CastleEscape.tap
+            ./CastleEscape.dsk
+            ./CastleEscape_zxn.tap
