@@ -184,7 +184,7 @@ IF  !_ZXN
         ld      hl, _RightKnight0
         ld      (playerSprite), hl
 ELSE
-        ld      a, 0
+        xor     a
         ld      (playerSprite), a
         ld      ix, knightSprite
         call    enableSprite
@@ -276,39 +276,33 @@ ENDIF
 
         ;
         ; Handle the keyboard input from the user
-        ; 'e' should contain the direction bits from
+        ; 'e' contains the direction bits from
         ; the call to _updateDirection above.
         ;
-
+        ld      a, e
+        and     LEFT|RIGHT
+        jr      z, dontSave
+        ld      (lastDirection), a
+dontSave:
         ;
         ; Update the X speed based on the user input
         ;
         bit     LEFT_BIT, e
         jr      z, checkRight
-IF  !_ZXN
-        ld      a, LEFT_SPEED
-        ld      hl, _LeftKnight0
-        ld      (playerSprite), hl
-ELSE
-        ld      a, (playerSprite)
-        or      0x01
+IF  _ZXN
+        ld      a, 1
         ld      (playerSprite), a
-        ld      a, LEFT_SPEED
 ENDIF
+        ld      a, LEFT_SPEED
         jr      updateXSpeedDone
 checkRight:
         bit     RIGHT_BIT, e
         jr      z, noXMovement
-IF  !_ZXN
-        ld      a, RIGHT_SPEED
-        ld      hl, _RightKnight0
-        ld      (playerSprite), hl
-ELSE
-        ld      a, (playerSprite)
-        and     0xfe
+IF  _ZXN
+        xor     a
         ld      (playerSprite), a
-        ld      a, RIGHT_SPEED
 ENDIF
+        ld      a, RIGHT_SPEED
         jr      updateXSpeedDone
 noXMovement:
         xor     a
@@ -325,23 +319,6 @@ updateXSpeedDone:
         or      a
         jr      z, continueJumping
 
-        ; Set right or left jump animation
-        bit     RIGHT_BIT, e
-        jr      z, checkLeftJump
-IF  !_ZXN
-        ld      hl, RightJumpKnight0
-        ld      (playerSprite), hl
-ENDIF
-        jr      jumpRightDone
-checkLeftJump:
-        bit     LEFT_BIT, e
-        jr      z, jumpRightDone
-IF  !_ZXN
-        ld      hl, LeftJumpKnight0
-        ld      (playerSprite), hl
-ENDIF
-jumpRightDone:
-
         ld      hl, jumpCnt
         dec     (hl)
         jp      p, continueJumping
@@ -354,6 +331,10 @@ stopJumping:
 stillJumping:
         ld      (_ySpeed), a
 continueJumping:
+
+IF  !_ZXN
+        call    setPlayerSprite
+ENDIF
         ; ######################################
         ;
         ; Check if player is colliding with platforms
@@ -566,7 +547,47 @@ getJumpSequence1:
         scf                             ; cf = 1
         ret
 
+IF  !_ZXN
+		;
+		; Set the sprite animation.
+		;
+		; Input:
+		;	None.
+		;
+setPlayerSprite:
+        push    af
+
+        ld      a, (_jumping)
+        or      a
+        ld      a, (lastDirection)
+        jr      nz, jumpingSprite
+
+        ld      hl, _LeftKnight0
+        rrca
+        call    c, rightSprite
+        ld      (playerSprite), hl
+
+        pop     af
+        ret
+rightSprite:
+        ld      hl, _RightKnight0
+        ret
+
+jumpingSprite:
+        ld      hl, LeftJumpKnight0
+        rrca
+        call    c, rightJumpSprite
+        ld      (playerSprite), hl
+        pop     af
+        ret
+rightJumpSprite:
+        ld      hl, RightJumpKnight0
+        ret
+ENDIF
+
         section BSS_2
+lastDirection:
+        ds      1
 jumpCnt:
         ds      1
 jumpPos:
@@ -616,10 +637,10 @@ gameOverMsg:
 smallJump:
         db      0x0c, 0xfe              ; 12 frames up
         db      0x04, 0xff              ; 4 frames hover
-        db      0x0c, 0x00              ; 12 frames down
+        db      0x0b, 0x00              ; 12 frames down
         db      0x00                    ; End of jump
 bigJump:
         db      0x18, 0xfe              ; 24 frames up
         db      0x08, 0xff              ; 8 frames hover
-        db      0x18, 0x00              ; 24 frames down
+        db      0x17, 0x00              ; 24 frames down
         db      0x00                    ; End of jump
