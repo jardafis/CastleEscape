@@ -55,7 +55,7 @@ below or by following the instructions [here](https://github.com/z88dk/z88dk).
 sudo snap install --edge z88dk
 
 sudo snap alias z88dk.zcc zcc
-sudo snap alias z88dk.z88dk-asmpp z88dk-asmpp
+sudo snap alias z88dk.z88dk-z80asm z88dk-z80asm
 sudo snap alias z88dk.z88dk-asmstyle z88dk-asmstyle
 sudo snap alias z88dk.z88dk-appmake z88dk-appmake
 sudo snap alias z88dk.z88dk-dis z88dk-dis
