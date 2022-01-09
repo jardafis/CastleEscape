@@ -47,8 +47,9 @@ mainMenu:
         ei
 
 displayScreen:
+IF  _ZXN
         call    clearTilemap
-
+ENDIF
         ;
         ; Point the ULA at screen 1
         ;
