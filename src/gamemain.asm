@@ -123,6 +123,7 @@ ENDIF
         ret
 
 newGame:
+        border  0
         ld      (gameOver+1), sp
 
         ld      l, INK_WHITE|PAPER_BLACK

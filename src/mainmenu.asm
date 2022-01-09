@@ -19,7 +19,6 @@ ENDIF
         extern  wyz_play_song
         extern  wyz_player_stop
 
-        public  animateMenu
         public  mainMenu
         public  rotateCount
         public  rotateCount
@@ -37,6 +36,7 @@ ENDIF
         ; the game are on this screen.
         ;
 mainMenu:
+        border  1
         ;
         ; Start main menu song
         ;
@@ -47,11 +47,7 @@ mainMenu:
         ei
 
 displayScreen:
-        ;
-        ; Setup the coin table for the main menu
-        ;
-        ld      hl, coinTable
-        ld      (currentCoinTable), hl
+        call    clearTilemap
 
         ;
         ; Point the ULA at screen 1
@@ -63,30 +59,7 @@ displayScreen:
         ; to 0xc000
         ;
         bank    7
-
-IF  !_ZXN
-        ;
-        ; Patch the displayTile routine to access
-        ; memory @ 0xc000
-        ;
-        ld      a, SCREEN1_START>>8
-        ld      (bank7Screen+1), a
-
-ELSE
-        ; Clear the flames from the lanterns in ULA memory
-        ld      bc, 0x070c
-        call    clearULATileHi
-        ld      bc, 0x0713
-        call    clearULATileHi
-
-        call    clearULACoinHi
-        call    clearTilemap
-ENDIF
-
 getKey:
-        ld      hl, lanternList
-        call    animateMenu
-
         call    keyboardScan            ; Read the keyboard
         jr      nz, keyPressed          ; Process key press
 
@@ -103,7 +76,6 @@ getKey:
         ld      a, '0'                  ; Force '0'
         jr      jumpPressed
 keyPressed:
-        ld      hl, lanternList
         call    waitReleaseKey
 jumpPressed:
         cp      '0'
@@ -117,30 +89,6 @@ ENDIF
         jp      displayScreen
 
         ;
-        ; Animate the menu items.
-        ;
-        ;   Input:
-        ;       hl - Pointer to lantern list
-        ;
-        ;   Notes:
-        ;       'hl' is preserved.
-        ;
-animateMenu:
-        push    hl
-        halt
-
-        call    _lanternFlicker
-
-        ld      hl, rotateCount
-        dec     (hl)
-        jp      p, noRotate
-        ld      (hl), ROTATE_COUNT
-        call    _animateCoins
-noRotate:
-        pop     hl
-        ret
-
-        ;
         ; Wait for a key to be released and animate the menu items.
         ;
         ;   Input:
@@ -151,7 +99,6 @@ noRotate:
 waitReleaseKey:
         push    af
 releaseKey:
-        call    animateMenu
         call    keyboardScan            ; Read the keyboard
         jr      nz, releaseKey          ; Key is being pressed
         pop     af
@@ -168,15 +115,6 @@ attribEdit:
         bank    0
         screen  0
 
-  IF    !_ZXN
-        ;
-        ; Patch the displayTile routine to access
-        ; memory @ 0x4000
-        ;
-        ld      a, SCREEN_START>>8
-        ld      (bank7Screen+1), a
-  ENDIF
-
         ld      hl, _tile0
         push    hl
         ld      hl, _tileAttr
@@ -189,28 +127,10 @@ attribEdit:
 ENDIF
 
 play:
-IF  !_ZXN
-        ;
-        ; Patch the displayTile routine to access
-        ; memory @ 0x4000
-        ;
-        ld      a, SCREEN_START>>8
-        ld      (bank7Screen+1), a
-ENDIF
-
         call    newGame
-
         jp      mainMenu
 
 defineKeysWrapper:
-IF  !_ZXN
-        ;
-        ; Patch the displayTile routine to access
-        ; memory @ 0x4000 (screen 0)
-        ;
-        ld      a, SCREEN_START>>8
-        ld      (bank7Screen+1), a
-ENDIF
         jp      defineKeys
 
 IF  !_ZXN
@@ -223,31 +143,3 @@ ENDIF
         ;
 rotateCount:
         ds      1
-
-IF  !_ZXN
-        section RODATA_5
-ELSE
-        section RODATA_2
-ENDIF
-        ;
-        ; List of lanterns on the main menu
-        ;
-lanternList:
-        db      (lanternListEnd-lanternList)/SIZEOF_ptr
-IF  !_ZXN
-        dw      0x8000+SCREEN_ATTR_START+(7*32)+12
-        dw      0x8000+SCREEN_ATTR_START+(7*32)+19
-ELSE
-        dw      TILEMAP_START+(7*ZXN_TILEMAP_WIDTH)+12
-        dw      TILEMAP_START+(7*ZXN_TILEMAP_WIDTH)+19
-ENDIF
-lanternListEnd:
-        ;
-        ; List of coins on the main menu
-        ; Specified by y/x pixel addresses
-        ;
-coinTable:
-        db      0x01, 0x16*8, 0x06*8, 0x00
-        db      0x01, 0x17*8, 0x06*8, 0x01
-        db      0x01, 0x18*8, 0x08*8, 0x02
-        db      0xff

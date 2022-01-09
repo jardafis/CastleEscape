@@ -40,9 +40,9 @@ defineKeys:
         ;
         ; Clear the text from the main menu
         ;
-        ld      b, 0x0d                 ; Start Y position
+        ld      b, 0x11                 ; Start Y position
 yLoop:
-        ld      c, 0x06                 ; Starting X position
+        ld      c, 0x08                 ; Starting X position
 xLoop:
 IF  !_ZXN
         ld      a, ID_BLANK             ; ID of tile to use
@@ -53,18 +53,18 @@ ENDIF
 
         inc     c                       ; Increment the screen X position
         ld      a, c
-        cp      0x06+0x13
+        cp      0x08+0x12
         jr      nz, xLoop               ; and loop if not zero
 
         inc     b                       ; Increment the screen Y position
         ld      a, b
-        cp      0x0d+0x08
+        cp      0x11+0x06
         jr      nz, yLoop               ; and loop if not zero
 
         ;
         ; Display screen title
         ;
-        ld      bc, 0x0d0a
+        ld      bc, 0x0f0a
         ld      hl, defineKeyMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT
         bcall   printAttr
@@ -73,7 +73,7 @@ ENDIF
         ; Underline the title
         ;
         ld      a, ID_PLATFORM
-        ld      bc, 0x0e0a              ; Starting screen Y/X location
+        ld      bc, 0x100a              ; Starting screen Y/X location
         ld      e, 11
 underline:
         call    displayTile
@@ -87,7 +87,7 @@ underline:
         ;
         ; Get key for left
         ;
-        ld      bc, 0x0f0a
+        ld      bc, 0x110a
         ld      hl, leftMsg
         call    getInput
         ld      (scanCodes), de
@@ -95,38 +95,32 @@ underline:
         ;
         ; Get key for right
         ;
-        ld      bc, 0x110a
+        ld      bc, 0x130a
         call    getInput
         ld      (scanCodes+3), de
 
         ;
         ; Get key for jump
         ;
-        ld      bc, 0x130a
+        ld      bc, 0x150a
         call    getInput
         ld      (scanCodes+6), de
 
         ;
         ; Display the continue message
         ;
-        ld      bc, 0x1505
+        ld      bc, 0x1705
         ld      hl, pressJumpMsg
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT|FLASH
         bcall   printAttr
 
 waitJump:
-        ld      hl, lanternList
-        call    animateMenu
-
         call    _updateDirection
         ld      a, e
         and     JUMP
         jr      z, waitJump
 
 waitJumpRelease:
-        ld      hl, lanternList
-        call    animateMenu
-
         call    _updateDirection
         ld      a, e
         and     JUMP
@@ -156,9 +150,6 @@ getInput:
 
         push    bc
 getKey:
-        ld      hl, lanternList
-        call    animateMenu
-
         call    keyboardScan            ; Read the keyboard
         jr      z, getKey               ; Process key press
         ld      (key), a

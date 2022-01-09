@@ -5,7 +5,7 @@ A ZX Spectrum game written using [Z88DK](https://github.com/z88dk/z88dk) and [FU
 ## Credits
 
 * Coding - [IrataHack](mailto:iratahack@digitalxfer.com)
-* screen$ - Created by [crayon](https://github.com/jardafis)
+* screen$ and menu art - Created by [crayon](https://github.com/jardafis)
   * Converted to .scr with [PNG-to-SCR](https://github.com/MatejJan/PNG-to-SCR)
 * Sprites & Tiles - Supported by [Carnivac](https://zxart.ee/eng/authors/c/carnivac/)
 * Music - Borrowed from [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
@@ -31,8 +31,6 @@ Wee Knight must escape the haunted castle collecting gold coins and dodging the 
 The latest release can be downloaded from [here](https://github.com/iratahack/CastleEscape/releases/tag/latest) as a *.tap* file. Remember to switch FUSE into 128K mode as this is a 128K game.
 
 ## Game Images
-
-The larger images include the ZX Spectrum border, smaller images do not.
 
 ![Title](assets/title.png "SCREEN$") ![Main Menu](assets/mainmenu.png "Main Menu")
 
