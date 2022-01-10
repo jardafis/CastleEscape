@@ -145,21 +145,27 @@ defineKeysWrapper:
         jp      defineKeys
 
 flickerLight:
-        push    af
-
         ld      a, (flickerCount)
         dec     a
         jr      nz, noFlicker
-
+randAgain:
         call    rand
         ld      a, l
-        cp      0x80
-        ld      l, 0
+        and     0x0f
+        jr      z, randAgain
+noFlicker:
+        ld      (flickerCount), a
+        cp      3
         jr      c, lightOff
-        ld      l, INK_YELLOW|BRIGHT
-lightOff:
-        ld      a, l
 
+        ld      a, INK_YELLOW|BRIGHT
+        call    setLight
+
+        ret
+
+lightOff:
+        xor     a
+setLight:
         ld      b, 15
         ld      c, 29
 
@@ -170,16 +176,7 @@ lightOff:
         push    af
         call    z, setAttr
         pop     af
-        push    af
         call    nz, setAttrHi
-        pop     af
-
-        call    rand
-        ld      a, l
-        and     0x07
-noFlicker:
-        ld      (flickerCount), a
-        pop     af
         ret
 
 doLightning:
