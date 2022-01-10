@@ -17,10 +17,7 @@ ENDIF
 
         public  mainMenu
         public  waitReleaseKey
-        public  flickerLight
-        public  doLightning
-        public  lightningAttribs
-        public  lightningAttribs2
+        public  flickerMenu
 IF  !_ZXN
         section CODE_5
 ELSE
@@ -58,18 +55,13 @@ ENDIF
         ;
         bank    7
         ld      a, PAPER_BLUE|INK_BLUE
-        ld      hl, lightningAttribs+1
-        call    setLightning
-        ld      hl, lightningAttribs2+1
-        call    setLightning
-        xor     a
+        ld      hl, lightningAttribs+3
+        call    setFlicker
+        ld      hl, lightningAttribs2+3
+        call    setFlicker
 getKey:
         halt
-        call    flickerLight
-        ld      hl, lightningAttribs
-        call    doLightning
-        ld      hl, lightningAttribs2
-        call    doLightning
+        call    flickerMenu
 
         call    keyboardScan            ; Read the keyboard
         jr      nz, keyPressed          ; Process key press
@@ -92,7 +84,7 @@ jumpPressed:
         cp      '0'
         jr      z, play
         cp      '1'
-        call    z, defineKeysWrapper
+        call    z, defineKeys
 IFDEF   ATTRIB_EDIT
         cp      '2'
         jr      z, attribEdit
@@ -141,76 +133,68 @@ play:
         call    newGame
         jp      mainMenu
 
-defineKeysWrapper:
-        jp      defineKeys
-
-flickerLight:
-        ld      a, (flickerCount)
-        dec     a
-        jr      nz, noFlicker
-randAgain:
-        call    rand
-        ld      a, l
-        and     0x0f
-        jr      z, randAgain
-noFlicker:
-        ld      (flickerCount), a
-        cp      3
-        jr      c, lightOff
-
-        ld      a, INK_YELLOW|BRIGHT
-        call    setLight
-
+flickerMenu:
+        ld      hl, lightAttribs
+        call    doFlicker
+        ld      hl, lightAttribs2
+        call    doFlicker
+        ld      hl, lightningAttribs
+        call    doFlicker
+        ld      hl, lightningAttribs2
+        call    doFlicker
         ret
 
-lightOff:
-        xor     a
-setLight:
-        ld      b, 15
-        ld      c, 29
-
-        ld      d, a
-        ld      a, (currentBank)
-        and     %0001000
-        ld      a, d
-        push    af
-        call    z, setAttr
-        pop     af
-        call    nz, setAttrHi
-        ret
-
-doLightning:
+		;
+		; Flicker attributes
+		;
+		; Used to flicker lightning and lights on the main menu
+		;
+		; Input:
+		;	hl - Pointer to the flicker table.
+		;
+		; Output:
+		;	None.
+		;
+doFlicker:
         ld      a, (hl)
         dec     a
-        jr      nz, noLightning
+        jr      nz, skipRand
         push    hl
+nextRand:
         call    rand
         ld      a, l
+        and     0x1f
+        jr      z, nextRand
         pop     hl
-        and     0x0f
-noLightning:
-        ld      (hl), a
+skipRand:
+        ld      (hl), a                 ; Count
         inc     hl
         cp      2
-        jr      c, lightning
+        jr      c, flicker
 
-        ld      a, PAPER_BLUE|INK_BLUE
-        call    setLightning
+        ld      a, (hl)                 ; Off color
+        inc     hl
+        inc     hl
+        call    setFlicker
 
         ret
 
-lightning:
-        ld      a, PAPER_BLUE|INK_WHITE
-setLightning:
-        ld      b, (hl)
+flicker:
         inc     hl
-lll:
+        ld      a, (hl)                 ; On color
+        inc     hl
+setFlicker:
+        ld      b, (hl)                 ; Table size
+        inc     hl
+nextAttrib:
         push    bc
+
         ld      b, (hl)
         inc     hl
         ld      c, (hl)
         inc     hl
 
+		; Check which screen bank is being used
         ld      d, a
         ld      a, (currentBank)
         and     %0001000
@@ -222,15 +206,16 @@ lll:
         call    nz, setAttrHi
         pop     af
 
-lightningUpdated:
         pop     bc
-        djnz    lll
+        djnz    nextAttrib
         ret
 
         section RODATA_2
 lightningAttribs:
         db      0
-        db      (lightningAttribsEnd-lightningAttribs-2)/2
+        db      PAPER_BLUE|INK_BLUE     ; Off
+        db      PAPER_BLUE|INK_WHITE    ; On
+        db      (lightningAttribsEnd-lightningAttribs-4)/2
         db      0, 18, 0, 19
         db      1, 18, 1, 19, 1, 20
         db      2, 18, 2, 19, 2, 20, 2, 21
@@ -246,7 +231,9 @@ lightningAttribsEnd:
 
 lightningAttribs2:
         db      0
-        db      (lightningAttribsEnd2-lightningAttribs2-2)/2
+        db      PAPER_BLUE|INK_BLUE     ; Off
+        db      PAPER_BLUE|INK_WHITE    ; On
+        db      (lightningAttribsEnd2-lightningAttribs2-4)/2
         db      6, 0
         db      7, 0
         db      8, 0, 8, 1, 8, 2, 8, 3, 8, 4, 8, 5, 8, 6, 8, 7, 8, 8, 8, 9
@@ -258,13 +245,19 @@ lightningAttribs2:
         db      14, 3
 lightningAttribsEnd2:
 
-IF  !_ZXN
-        section BSS_5
-ELSE
-        section BSS_2
-ENDIF
-        ;
-        ; Counter so coins are not rotated every frame
-        ;
-flickerCount:
-        ds      1
+lightAttribs:
+        db      0
+        db      PAPER_BLACK|INK_YELLOW|BRIGHT
+        db      PAPER_BLACK|INK_BLACK
+        db      (lightAttribsEnd-lightAttribs-4)/2
+        db      15, 29
+lightAttribsEnd:
+
+lightAttribs2:
+        db      0
+        db      PAPER_BLACK|INK_YELLOW|BRIGHT
+        db      PAPER_BLACK|INK_BLACK
+        db      (lightAttribsEnd2-lightAttribs2-4)/2
+        db      12, 12
+        db      12, 13
+lightAttribsEnd2:

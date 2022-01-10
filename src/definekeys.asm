@@ -9,10 +9,7 @@
         extern  setAttr
         extern  setTileAttr
         extern  waitReleaseKey
-        extern  flickerLight
-        extern  doLightning
-        extern  lightningAttribs
-        extern  lightningAttribs2
+        extern  flickerMenu
 IF  _ZXN
         extern  clearULATile
 ENDIF
@@ -119,11 +116,7 @@ underline:
 
 waitJump:
         halt
-        call    flickerLight
-        ld      hl, lightningAttribs
-        call    doLightning
-        ld      hl, lightningAttribs2
-        call    doLightning
+        call    flickerMenu
 
         call    _updateDirection
         ld      a, e
@@ -161,11 +154,7 @@ getInput:
         push    bc
 getKey:
         halt
-        call    flickerLight
-        ld      hl, lightningAttribs
-        call    doLightning
-        ld      hl, lightningAttribs2
-        call    doLightning
+        call    flickerMenu
 
         call    keyboardScan            ; Read the keyboard
         jr      z, getKey               ; Process key press
