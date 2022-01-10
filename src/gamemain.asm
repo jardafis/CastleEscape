@@ -65,7 +65,9 @@ ENDIF
         public  _main
         public  _mul_hla
         public  _setCurrentTileMap
+IF  !_ZXN
         public  _spriteBuffer
+ENDIF
         public  _tileMapX
         public  _tileMapY
         public  _xPos
@@ -576,14 +578,15 @@ leftSprite:
         ret
 
 jumpingSprite:
-        ld      hl, LeftJumpKnight0
+        ld      hl, RightJumpKnight0
         rrca
-        call    c, rightJumpSprite
+        rrca
+        call    c, leftJumpSprite
         ld      (playerSprite), hl
         pop     af
         ret
-rightJumpSprite:
-        ld      hl, RightJumpKnight0
+leftJumpSprite:
+        ld      hl, LeftJumpKnight0
         ret
 ENDIF
 
@@ -622,8 +625,10 @@ startSprite:
         ds      2
 xyStartPos:                             ; Position where player entered the level
         ds      2
+IF  !_ZXN
 _spriteBuffer:
         ds      48
+ENDIF
 
         section DATA_2
 _bank2HeapEnd:

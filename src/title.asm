@@ -1,7 +1,6 @@
         extern  _updateDirection
         extern  printAttr
         extern  wyz_play_song
-        extern  wyz_player_stop
 
         public  pressJumpMsg
         public  titleScreen
@@ -27,16 +26,17 @@ titleScreen:
         ld      a, PAPER_BLACK|INK_WHITE|BRIGHT|FLASH
         bcall   printAttr
 waitJump:
+        halt
         call    _updateDirection
         ld      a, e
         and     JUMP
         jr      z, waitJump
+waitJumpRelease:
+        call    _updateDirection
+        ld      a, e
+        and     JUMP
+        jr      nz, waitJumpRelease
 
-        di
-        call    wyz_player_stop
-        ei
-
-        border  0
         ret
 
         section RODATA_4
