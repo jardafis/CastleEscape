@@ -165,7 +165,7 @@ nextRand:
 skipRand:
         ld      (hl), a                 ; Count
         inc     hl
-        cp      2
+        cp      4
         jr      c, flicker
 
         ld      a, (hl)                 ; Off color
