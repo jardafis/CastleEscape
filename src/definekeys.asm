@@ -208,20 +208,6 @@ IF  !_ZXN
 ELSE
         section RODATA_2
 ENDIF
-        ;
-        ; List of lanterns on the this menu
-        ;
-lanternList:
-        db      (lanternListEnd-lanternList)/SIZEOF_ptr
-IF  !_ZXN
-        dw      SCREEN_ATTR_START+(7*32)+12
-        dw      SCREEN_ATTR_START+(7*32)+19
-ELSE
-        dw      TILEMAP_START+(7*ZXN_TILEMAP_WIDTH)+12
-        dw      TILEMAP_START+(7*ZXN_TILEMAP_WIDTH)+19
-ENDIF
-lanternListEnd:
-
 defineKeyMsg:
         db      "Define Keys", 0x00
 leftMsg:

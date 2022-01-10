@@ -563,15 +563,16 @@ setPlayerSprite:
         ld      a, (lastDirection)
         jr      nz, jumpingSprite
 
-        ld      hl, _LeftKnight0
+        ld      hl, _RightKnight0
         rrca
-        call    c, rightSprite
+        rrca
+        call    c, leftSprite
         ld      (playerSprite), hl
 
         pop     af
         ret
-rightSprite:
-        ld      hl, _RightKnight0
+leftSprite:
+        ld      hl, _LeftKnight0
         ret
 
 jumpingSprite:

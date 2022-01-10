@@ -112,10 +112,6 @@ IFDEF   ATTRIB_EDIT
         ; Wrapper to call attribute edit function in 'C'
         ;
 attribEdit:
-        ;
-        ; Page bank 0 to 0xc000 since it has the attributes
-        ;
-        bank    0
         screen  0
 
         ld      hl, _tile0
@@ -210,7 +206,11 @@ nextAttrib:
         djnz    nextAttrib
         ret
 
+IF  !_ZXN
+        section RODATA_5
+ELSE
         section RODATA_2
+ENDIF
 lightningAttribs:
         db      0
         db      PAPER_BLUE|INK_BLUE     ; Off
