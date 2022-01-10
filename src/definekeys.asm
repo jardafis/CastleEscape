@@ -1,6 +1,5 @@
         extern  __BANK_7_head
         extern  _updateDirection
-        extern  animateMenu
         extern  displayTile
         extern  keyboardScan
         extern  lookupScanCode
@@ -10,6 +9,10 @@
         extern  setAttr
         extern  setTileAttr
         extern  waitReleaseKey
+        extern  flickerLight
+        extern  doLightning
+        extern  lightningAttribs
+        extern  lightningAttribs2
 IF  _ZXN
         extern  clearULATile
 ENDIF
@@ -115,6 +118,13 @@ underline:
         bcall   printAttr
 
 waitJump:
+        halt
+        call    flickerLight
+        ld      hl, lightningAttribs
+        call    doLightning
+        ld      hl, lightningAttribs2
+        call    doLightning
+
         call    _updateDirection
         ld      a, e
         and     JUMP
@@ -150,11 +160,17 @@ getInput:
 
         push    bc
 getKey:
+        halt
+        call    flickerLight
+        ld      hl, lightningAttribs
+        call    doLightning
+        ld      hl, lightningAttribs2
+        call    doLightning
+
         call    keyboardScan            ; Read the keyboard
         jr      z, getKey               ; Process key press
         ld      (key), a
 
-        ld      hl, lanternList
         call    waitReleaseKey
 
         pop     bc

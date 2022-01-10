@@ -1,6 +1,7 @@
         public  _cls
         public  clearAttr
         public  setAttr
+        public  setAttrHi
 IF  _ZXN
         extern  clearTilemap
 ENDIF
@@ -80,6 +81,19 @@ clearAttr:
         pop     af
         ret
 
+setAttrHi:
+        push    af
+        ld      a, SCREEN1_ATTR_START>>8
+        ld      (hiBank+1), a
+
+        pop     af
+        call    setAttr
+
+        ld      a, SCREEN_ATTR_START>>8
+        ld      (hiBank+1), a
+
+        ret
+
         ;
         ; Set the screen attribute specified by 'bc' to
         ; the attribute passed in 'a'.
@@ -108,6 +122,7 @@ setAttr:
 
         ld      a, h
         and     %00000011
+hiBank:
         or      SCREEN_ATTR_START>>8
         ld      h, a
 
