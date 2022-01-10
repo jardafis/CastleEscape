@@ -20,6 +20,7 @@ if(${Z88DK_TARGET} STREQUAL +zx)
     message(STATUS "Building for ZX Spectrum 128K")
 elseif(${Z88DK_TARGET} STREQUAL +zxn)
     set(CMAKE_ASM_FLAGS "-mz80n -D_ZXN=1")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_ZXN=1")
     set(EMU $ENV{HOME}/ZEsarUX-10.0/zesarux --machine TBBlue --configfile .zesaruxrc --tbblue-fast-boot-mode  --nosplash --nowelcomemessage --quickexit)
     message(STATUS "Building for ZX Spectrum Next")
 endif()
@@ -27,7 +28,7 @@ endif()
 
 set(Z88DK_TARGET +zx)
 set(CMAKE_C_FLAGS
-    "-O2 \
+    "${CMAKE_C_FLAGS} -O2 \
     --codeseg=CODE_4 \
     --constseg=RODATA_4 \
     --dataseg=DATA_4 \
