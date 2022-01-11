@@ -50,10 +50,11 @@ ENDIF
         screen  1
 
         ;
-        ; Page in the memory bank with the main menu screen
-        ; to 0xc000
+        ; Bank7 holds the main menu screen
         ;
         bank    7
+
+		; Clear the lightning by setting paper and ink colors the same
         ld      a, PAPER_BLUE|INK_BLUE
         ld      hl, lightningAttribs+3
         call    setFlicker
@@ -159,7 +160,7 @@ doFlicker:
 nextRand:
         call    rand
         ld      a, l
-        and     0x1f
+        and     0x7f
         jr      z, nextRand
         pop     hl
 skipRand:
@@ -207,12 +208,12 @@ nextAttrib:
         ret
 
 IF  !_ZXN
-        section RODATA_5
+        section DATA_5
 ELSE
-        section RODATA_2
+        section DATA_2
 ENDIF
 lightningAttribs:
-        db      0
+        db      0x00
         db      PAPER_BLUE|INK_BLUE     ; Off
         db      PAPER_BLUE|INK_WHITE    ; On
         db      (lightningAttribsEnd-lightningAttribs-4)/2
@@ -230,7 +231,7 @@ lightningAttribs:
 lightningAttribsEnd:
 
 lightningAttribs2:
-        db      0
+        db      0x10
         db      PAPER_BLUE|INK_BLUE     ; Off
         db      PAPER_BLUE|INK_WHITE    ; On
         db      (lightningAttribsEnd2-lightningAttribs2-4)/2
@@ -246,7 +247,7 @@ lightningAttribs2:
 lightningAttribsEnd2:
 
 lightAttribs:
-        db      0
+        db      0x20
         db      PAPER_BLACK|INK_YELLOW|BRIGHT
         db      PAPER_BLACK|INK_BLACK
         db      (lightAttribsEnd-lightAttribs-4)/2
@@ -254,7 +255,7 @@ lightAttribs:
 lightAttribsEnd:
 
 lightAttribs2:
-        db      0
+        db      0x30
         db      PAPER_BLACK|INK_YELLOW|BRIGHT
         db      PAPER_BLACK|INK_BLACK
         db      (lightAttribsEnd2-lightAttribs2-4)/2

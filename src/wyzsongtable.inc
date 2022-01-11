@@ -7,7 +7,7 @@ TABLA_SONG:
         ;
         ; ASM file exported from WYZTracker
         ;
-        #include     "music/CastleEscape.mus.inc"
+        #include    "music/CastleEscape.mus.inc"
 
         ;
         ; Songs exported from WYZTracker
