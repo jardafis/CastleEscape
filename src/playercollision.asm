@@ -35,28 +35,52 @@
         ;		c - yPos
         ;
 checkXCol:
-        ld      b, a                    ; Save xSpeed
-        ld      a, (_xPos)              ; Get the X pixel offset
+        ; Save the xSpeed, this will be added to xPos
+        ; if there is no collision before this routine
+        ; exits.
+        ld      b, a
+        ; Get the X pixel offset and put it in DE.
+        ; It needs to be 16 bits so when we
+        ; add the PLAYER_WIDTH it doesn't overflow.
+        ld      a, (_xPos)
         ld      e, a
         ld      d, 0
-;        or      a                       ; Flags were updated based on this value before we were called
-        jp      p, movingRight          ; If positive moving right
-        dec     de                      ; else negative, moving left. Subtract 1 from xPos.
-        jr      endif
+
+        ; Flags were updated based on xSpeed before
+        ; this routine was called. Positive = right,
+        ; negative = left.
+        jp      p, movingRight
+        ; We are checking the new position, which is 1 pixel
+        ; to the left.
+        dec     de
+        jr      movingLeft
 movingRight:
-        addde   PLAYER_WIDTH            ; else add player width
-endif:
-        ld      a, (_yPos)              ; Get the yPos
+        ; Player is moving right, check the new position,
+        ; which is 1 pixel to the right of the player.
+        addde   PLAYER_WIDTH
+movingLeft:
+        ; Get the yPos into HL. It needs to be 16
+        ; bits as we will convert it to a Y offset
+        ; within the tilemap.
+        ld      a, (_yPos)
         ld      l, a
         ld      h, 0
-        ld      a, -24                  ; Subtract the delta between the screen offset and the level offset
-        add     l                       ; Add the current y position
-        ld      c, a                    ; save it in 'c'
-        and     %11111000               ; Remove the pixel offset within the byte (lower 3 bits)
+        ; Subtract the delta between the screen offset and the level offset.
+        ; Since the first 3 character rows of the screen is status info we
+        ; should remove them.
+        ld      a, -24
+        add     l
+        ; Save the result in C
+        ld      c, a
+        ; Remove the pixel offset within the byte (lower 3 bits)
+        and     %11111000
         ld      l, a
-        hlx     TILEMAP_WIDTH/8         ; Divide by 8 to get byte offset and multiply by width of tilemap
+        ; Divide by 8 to get byte offset and multiply by width of tilemap
+        hlx     TILEMAP_WIDTH/8
 
         ; Divide xPos by 8 to get byte offset
+        ; This code is 44 cycles vs. using
+        ; srl d, rr, e which is 48 cycles
         ld      a, e
         sra     d
         rra
@@ -65,23 +89,36 @@ endif:
         sra     d
         rra
         ld      e, a
-        add     hl, de                  ; Add X byte offset to tile map Y index
+        ; Add X byte offset to tile map Y index
+        add     hl, de
 
+        ; Add the base address of the currently
+        ; displayed tilemap.
         ld      de, (_currentTileMap)
         add     hl, de
 
+        ; Get the tile to the left or right of the
+        ; top half of the player sprite.
         ld      a, (hl)
         cp      ID_SOLID_TILE
-        ret     nc                      ; 'nc' if a >= value
+        ; If the tile is solid, cannot continue in this
+        ; direction, exit now.
+        ret     nc                      ; 'nc' if a >= ID_SOLID_TILE
 
-        ; Check the bottom half of the sprite
+        ; Check the bottom half of the sprite.
+        ; Add the tilemap width to get the next row
+        ; down.
         ld      de, TILEMAP_WIDTH
         add     hl, de
 
         ld      a, (hl)
         cp      ID_SOLID_TILE
-        ret     nc                      ; 'nc' if a >= value
+        ret     nc                      ; 'nc' if a >= ID_SOLID_TILE
 
+        ; If the player is in the middle of a jump,
+        ; it may span 3 characters rather than 2.
+        ; If the yPos is not character aligned check
+        ; the next row down in the tilemap.
         ld      a, c                    ; Restore yPos
         and     %00000111               ; If the lower 3 bits are zero player has not shifted into
         jr      z, checkXDone           ; the next row down, we are done.
@@ -89,12 +126,12 @@ endif:
 
         ld      a, (hl)
         cp      ID_SOLID_TILE
-        ret     nc                      ; 'nc' if a >= value
+        ret     nc                      ; 'nc' if a >= ID_SOLID_TILE
 
 checkXDone:
         ld      a, (_xPos)              ; Get the X pixel offset
         add     b                       ; Add speed
-        cp      0xff                    ; If new xPos is -1
+        cp      -1                      ; If new xPos is -1
         jr      z, previousXLevel       ; display previous level.
         cp      MAX_X_POS-PLAYER_WIDTH+1
         jr      nc, nextXLevel          ; 'nc' if a >= value
@@ -105,21 +142,22 @@ previousXLevel:
         ld      a, (_tileMapX)
         or      a
         ret     z
-
         dec     a
-        ld      b, MAX_X_POS-PLAYER_WIDTH
-                                        ; New x position
+        ld      (_tileMapX), a
+
+        ; New x position
+        ld      a, MAX_X_POS-PLAYER_WIDTH
         jr      changeXLevel
 nextXLevel:
         ld      a, (_tileMapX)
         cp      MAX_LEVEL_X-1
         ret     z
-
         inc     a
-        ld      b, 0                    ; New x position
-changeXLevel:
         ld      (_tileMapX), a
-        ld      a, b                    ; New x position
+
+        ; New x position
+        xor     a
+changeXLevel:
         ld      (_xPos), a
         call    _setupScreen
         ret
@@ -147,10 +185,10 @@ checkYCol:
         or      a
         jp      p, movingDown           ; Moving down or stopped
         ld      de, -25                 ; Pixel position above the player
-        jr      endif2
+        jr      movingUp
 movingDown:
         ld      de, PLAYER_HEIGHT-24    ; Pixel position below the player
-endif2:
+movingUp:
         add     hl, de
 
         ;
@@ -184,10 +222,10 @@ endif2:
         ld      d, ID_SOLID_TILE        ; Default to ID_SOLID_TILE
         ld      a, b
         or      a
-        jp      m, test                 ; Player is moving upward, only check solid tiles
+        jp      m, checkSolids          ; Player is moving upward, only check solid tiles
         								; Player is moving downward, include solid tiles also.
         ld      d, ID_SOFT_TILE         ; Switch to ID_SOFT_TILE
-test:
+checkSolids:
 
         ld      a, (hl)                 ; Get tile ID
         cp      d
@@ -248,17 +286,17 @@ previousYLevel:
         or      a
         ret     z
         dec     a
-        ld      b, MAX_Y_POS-PLAYER_HEIGHT
+        ld      (_tileMapY), a
+        ld      a, MAX_Y_POS-PLAYER_HEIGHT
         jr      changeYLevel
 nextYLevel:
         ld      a, (_tileMapY)
         cp      MAX_LEVEL_Y-1
         ret     z
         inc     a
-        ld      b, 24
-changeYLevel:
         ld      (_tileMapY), a
-        ld      a, b
+        ld      a, 24
+changeYLevel:
         ld      (_yPos), a
         call    _setupScreen
         ret

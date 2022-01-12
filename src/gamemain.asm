@@ -349,7 +349,7 @@ ENDIF
         ; ######################################
         ;
         ; Check if player is colliding with platforms
-        ; in the Y direction.
+        ; in the X direction.
         ;
         ; ######################################
         ld      a, (_xSpeed)            ; If xSpeed != 0 player is moving
