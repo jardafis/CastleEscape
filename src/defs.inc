@@ -163,7 +163,7 @@
         defc    ID_LANTERN=3
         defc    ID_BLANK=11
         defc    ID_COIN=6*TILE_SHEET_WIDTH
-        defc    ID_EGG=2*TILE_SHEET_WIDTH+7
+        defc    ID_EGG=5*TILE_SHEET_WIDTH+4
         defc    ID_EGG0=5*TILE_SHEET_WIDTH
         defc    ID_HEART=2*TILE_SHEET_WIDTH+10
         defc    ID_SPIDER=4*TILE_SHEET_WIDTH+3
