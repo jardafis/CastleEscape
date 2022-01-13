@@ -8,5 +8,6 @@
 *.i
 *.bak
 *.d
+*.zx0
 zcc_opt.inc
 build/

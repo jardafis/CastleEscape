@@ -55,8 +55,8 @@ sudo snap install --edge z88dk
 sudo snap alias z88dk.zcc zcc
 sudo snap alias z88dk.z88dk-z80asm z88dk-z80asm
 sudo snap alias z88dk.z88dk-asmstyle z88dk-asmstyle
-sudo snap alias z88dk.z88dk-appmake z88dk-appmake
 sudo snap alias z88dk.z88dk-dis z88dk-dis
+sudo snap alias z88dk.z88dk-zx0 z88dk-zx0
 ```
 
 From the cloned repo use the commands below to build and run the game.

@@ -14,6 +14,8 @@ ENDIF
         extern  rand
         extern  setAttrHi
         extern  setAttr
+        extern  mainmenuScreen
+        extern  dzx0_standard
 
         public  mainMenu
         public  waitReleaseKey
@@ -40,19 +42,28 @@ mainMenu:
         call    wyz_play_song
         ei
 
-displayScreen:
-IF  _ZXN
-        call    clearTilemap
-ENDIF
-        ;
-        ; Point the ULA at screen 1
-        ;
-        screen  1
-
         ;
         ; Bank7 holds the main menu screen
         ;
         bank    7
+
+IF  _ZXN
+        call    clearTilemap
+ENDIF
+
+        halt
+        ; Fill the screen with paper and innk the same color
+        ld      hl, SCREEN_ATTR_START
+        ld      de, SCREEN_ATTR_START+1
+        ld      (hl), PAPER_BLUE|INK_BLUE
+        ld      bc, SCREEN_ATTR_LENGTH-1
+        ldir
+
+displayScreen:
+        ; Uncompress the menu screen
+        ld      hl, mainmenuScreen
+        ld      de, SCREEN_START
+        call    dzx0_standard
 
 		; Clear the lightning by setting paper and ink colors the same
         ld      a, PAPER_BLUE|INK_BLUE
@@ -113,8 +124,6 @@ IFDEF   ATTRIB_EDIT
         ; Wrapper to call attribute edit function in 'C'
         ;
 attribEdit:
-        screen  0
-
         ld      hl, _tile0
         push    hl
         ld      hl, _tileAttr
@@ -123,7 +132,7 @@ attribEdit:
         pop     hl
         pop     hl
 
-        jp      displayScreen
+        jp      mainMenu
 ENDIF
 
 play:

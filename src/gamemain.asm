@@ -67,6 +67,7 @@ ENDIF
         public  _setCurrentTileMap
 IF  !_ZXN
         public  _spriteBuffer
+        public  lastDirection
 ENDIF
         public  _tileMapX
         public  _tileMapY
@@ -137,11 +138,6 @@ newGame:
         bcall   printAttr
 
         ;
-        ; Point the ULA at screen 0
-        ;
-        screen  0
-
-        ;
         ; Select bank 0 @ 0xc000
         ;
         bank    0
@@ -186,8 +182,9 @@ newGame:
 IF  !_ZXN
         ld      hl, _RightKnight0
         ld      (playerSprite), hl
-ELSE
         xor     a
+        ld      (lastDirection), a
+ELSE
         ld      (playerSprite), a
         ld      ix, knightSprite
         call    enableSprite
@@ -282,11 +279,13 @@ ENDIF
         ; 'e' contains the direction bits from
         ; the call to _updateDirection above.
         ;
+IF  !_ZXN
         ld      a, e
         and     LEFT|RIGHT
         jr      z, dontSave
         ld      (lastDirection), a
 dontSave:
+ENDIF
         ;
         ; Update the X speed based on the user input
         ;
@@ -591,8 +590,6 @@ leftJumpSprite:
 ENDIF
 
         section BSS_2
-lastDirection:
-        ds      1
 jumpCnt:
         ds      1
 jumpPos:
@@ -628,6 +625,8 @@ xyStartPos:                             ; Position where player entered the leve
 IF  !_ZXN
 _spriteBuffer:
         ds      48
+lastDirection:
+        ds      1
 ENDIF
 
         section DATA_2

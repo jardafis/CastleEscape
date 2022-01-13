@@ -1,3 +1,6 @@
-        section BANK_7
+        public  mainmenuScreen
 
-        binary  "mainmenu.scr"
+        section RODATA_7
+
+mainmenuScreen:
+        binary  "mainmenu.scr.zx0"

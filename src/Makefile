@@ -34,7 +34,7 @@ OBJECTS=$(CSRC:.c=.o) $(ASMSRC:.asm=.o)
 BANK ?= BANK_2
 # Find the start addres of the BANK and replace $ with 0x
 HEAD=$(shell grep __$(BANK)_head *.map | awk '{gsub("^.", "0x", $$3); print $$3}')
-MAIN=$(shell grep _main *.map | sed -e 's/\$$/0x/g' | awk '{printf "%d", strtonum($$3)}')
+MAIN=$(shell ./getMain.sh)
 
 .PHONY: all clean run dis
 
@@ -43,7 +43,7 @@ all: $(PROJECT_NAME).tap
 	@grep -E "__(CODE|RODATA|DATA|BSS|HEAP|code)_([0-7]|user|crt.*)_(sccz80|head|tail|size).*" $(PROJECT_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
 
 clean:
-	rm -f *.[oid] *.tap *.bin *.map *.dsk
+	rm -f *.[oid] *.tap *.bin *.map *.dsk *.zx0
 
 run: $(PROJECT_NAME).tap
 	$(ZXEMU) $<
@@ -61,6 +61,9 @@ ifeq (,$(findstring $(MAKECMDGOALS),clean))
 %.d: %.c
 	@./mkdep.sh $< > $@
 endif
+
+mainmenu.scr.zx0: mainmenu.scr
+	z88dk-zx0 -f -q $<
 
 %.o: %.c
 	@echo "Compiling $<"

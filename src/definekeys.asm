@@ -1,4 +1,3 @@
-        extern  __BANK_7_head
         extern  _updateDirection
         extern  displayTile
         extern  keyboardScan
@@ -25,18 +24,6 @@ ENDIF
 
 defineKeys:
         push    af
-        ;
-        ; Setup the screen
-        ;
-
-        ;
-        ; Copy screen 1 to screen 0
-        ;
-        ld      de, SCREEN_START        ; Destination address
-        ld      hl, __BANK_7_head       ; Source address, bank 7 must be mapped
-        ld      bc, SCREEN_LENGTH+SCREEN_ATTR_LENGTH
-        ldir                            ; Copy
-
         ;
         ; Clear the text from the main menu
         ;
@@ -81,8 +68,6 @@ underline:
         inc     c                       ; Increment the X screen location
         dec     e                       ; Decrement loop count
         jr      nz, underline           ; and loop if not zero
-
-        screen  0                       ; Display screen 0
 
         ;
         ; Get key for left

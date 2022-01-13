@@ -9,6 +9,7 @@
         extern  display2BCD
 IF  !_ZXN
         extern  displayPixelTile
+        extern  lastDirection
 ELSE
         extern  setSpritePattern
         extern  knightSprite
@@ -144,7 +145,9 @@ ENDIF
         ld      (_jumping), a
         ld      (_ySpeed), a
         ld      (_falling), a
-
+IF  !_ZXN
+        ld      (lastDirection), a
+ENDIF
         pop     hl
         pop     de
         pop     bc

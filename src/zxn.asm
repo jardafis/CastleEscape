@@ -9,11 +9,7 @@ IF  _ZXN
 
         public  zxnInit
         public  clearTilemap
-        public  clearULACoin
-        public  clearULACoinHi
         public  clearULATile
-        public  clearULATileHi
-        public  clearULATilePixel
         public  enableSprite
         public  disableSprite
         public  setSpriteXY
@@ -112,22 +108,6 @@ clearTilemap:
         ret
 
         ;
-        ; Clear a character location in screen 1 ULA memory
-        ; in bank 7.
-        ;
-        ; Input:
-        ;   c - X char coord.
-        ;   b - Y char coord.
-        ;
-clearULATileHi:
-        ld      a, 0x80
-        ld      (bank7+1), a
-        call    clearULATile
-        xor     a
-        ld      (bank7+1), a
-        ret
-
-        ;
         ; Clear a character location in ULA memory.
         ;
         ; Input:
@@ -168,12 +148,6 @@ clearULATilePixel:
 
         pixelad
 
-        ld      a, h
-bank7:
-        or      0x00
-        ld      h, a
-
-
         ld      b, 8
 clrULATileLoop:
         ld      (hl), 0
@@ -183,44 +157,6 @@ clrULATileLoop:
         pop     hl
         pop     bc
         ret
-
-        ;
-        ; Given a coin table, clear the coins from screen 1 ULA memory
-        ; in bank 7.
-        ;
-        ; Input:
-        ;   hl - Pointer to coin table
-        ;
-clearULACoinHi:
-        ld      a, 0x80
-        ld      (bank7+1), a
-        call    clearULACoin
-        xor     a
-        ld      (bank7+1), a
-        ret
-
-        ;
-        ; Given a coin table, clear the coins from screen 0 ULA memory
-        ; in bank 5.
-        ;
-        ; Input:
-        ;   hl - Pointer to coin table
-        ;
-clearULACoin:
-        ld      a, (hl)
-        cp      0xff
-        ret     z
-
-        inc     hl
-        ld      e, (hl)
-        inc     hl
-        ld      d, (hl)
-
-        call    clearULATilePixel
-
-        add     hl, 2
-        jp      clearULACoin
-
 
         ;
         ; Initialize and clear the tilemap hardware and memory.

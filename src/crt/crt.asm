@@ -68,6 +68,7 @@ IFDEF   CRT_ORG_BANK_2
         SECTION ISR                     ; Interrupt subroutine @ 0x8181
         SECTION code_clib
         SECTION code_l_sccz80
+        SECTION dzx0_decompress
         SECTION CODE_2
         SECTION RODATA_2
         SECTION DATA_2
