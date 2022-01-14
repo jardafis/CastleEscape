@@ -53,6 +53,7 @@ set(SOURCES
     die.asm
     displaybcd.asm
     displaytilemap.asm
+    dzx0_standard.asm
     eggs.asm
     font.asm
     gamemain.asm
@@ -84,7 +85,7 @@ set(SOURCES
 
 set_property(SOURCE font.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/font_8x8_cpc_system.dat)
 set_property(SOURCE levels.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/attrib.dat)
-set_property(SOURCE menuscreen.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/mainmenu.scr)
+set_property(SOURCE menuscreen.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/mainmenu.scr.zx0)
 
 set_property(SOURCE wyzproplay_zx.asm
     APPEND PROPERTY OBJECT_DEPENDS
@@ -109,6 +110,10 @@ add_custom_command(OUTPUT ${PROJECT_NAME}.bin
     COMMAND cat ${PROJECT_NAME}_BANK_0.bin >> ${PROJECT_NAME}.bin
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_BANK_2.bin
 )
+
+add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/mainmenu.scr.zx0
+    COMMAND z88dk-zx0 -f -q ${PROJECT_SOURCE_DIR}/mainmenu.scr
+    DEPENDS ${PROJECT_SOURCE_DIR}/mainmenu.scr)
 
 # Steps to generate the .tap file
 add_custom_command(OUTPUT ${PROJECT_NAME}.tap
