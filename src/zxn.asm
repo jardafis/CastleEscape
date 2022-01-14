@@ -37,8 +37,8 @@ zxnInit:
 
         call    initTilemap
 
-		; Bank 4 contains sprite data
-        bank    4
+		; Page in the sprite data
+        bank    spriteStart>>16
         ld      hl, spriteStart
         ld      bc, spriteEnd-spriteStart
         nextreg IO_SpriteNumber, 0x00   ; Select sprite index 0
@@ -65,8 +65,6 @@ zxnInit:
         ld      b, spritePaletteEnd-spritePalette
         xor     a
         call    setPalette
-
-        bank    0
 
         ret
 

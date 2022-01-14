@@ -138,9 +138,9 @@ newGame:
         bcall   printAttr
 
         ;
-        ; Select bank 0 @ 0xc000
+        ; Ensure the tilemap data is paged in
         ;
-        bank    0
+        bank    _levels>>16
 
         ;
         ; Initialize the coin tables

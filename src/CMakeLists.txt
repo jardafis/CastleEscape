@@ -117,13 +117,13 @@ add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/mainmenu.scr.zx0
 
 # Steps to generate the .tap file
 add_custom_command(OUTPUT ${PROJECT_NAME}.tap
-    COMMAND ${ZXSTLC} -t ${PROJECT_NAME}.bin 24576 `${PROJECT_SOURCE_DIR}/getMain.sh` -l ${PROJECT_SOURCE_DIR}/title.scr -n CastleEsc -4 ${PROJECT_NAME}_BANK_4.bin -7 ${PROJECT_NAME}_BANK_7.bin -e
+    COMMAND ${ZXSTLC} -t ${PROJECT_NAME}.bin 24576 `${PROJECT_SOURCE_DIR}/getMain.sh` -l ${PROJECT_SOURCE_DIR}/title.scr -n CastleEsc -4 ${PROJECT_NAME}_BANK_4.bin -e
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.bin ${PROJECT_SOURCE_DIR}/title.scr
 )
 
 # Steps to generate the .dsk file
 add_custom_command(OUTPUT ${PROJECT_NAME}.dsk
-    COMMAND ${ZXSTLC} -d ${PROJECT_NAME}.bin 24576 `${PROJECT_SOURCE_DIR}/getMain.sh` -l ${PROJECT_SOURCE_DIR}/title.scr -4 ${PROJECT_NAME}_BANK_4.bin -7 ${PROJECT_NAME}_BANK_7.bin -e
+    COMMAND ${ZXSTLC} -d ${PROJECT_NAME}.bin 24576 `${PROJECT_SOURCE_DIR}/getMain.sh` -l ${PROJECT_SOURCE_DIR}/title.scr -4 ${PROJECT_NAME}_BANK_4.bin -e
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.bin ${PROJECT_SOURCE_DIR}/title.scr
 )
 

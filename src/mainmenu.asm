@@ -43,9 +43,9 @@ mainMenu:
         ei
 
         ;
-        ; Bank7 holds the main menu screen
+        ; Page in the main menu screen
         ;
-        bank    7
+        bank    mainmenuScreen>>16
 
 IF  _ZXN
         call    clearTilemap

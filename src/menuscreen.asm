@@ -1,6 +1,6 @@
         public  mainmenuScreen
 
-        section RODATA_7
+        section RODATA_4
 
 mainmenuScreen:
         binary  "mainmenu.scr.zx0"
