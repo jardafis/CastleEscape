@@ -18,20 +18,19 @@ _lanternFlicker:
         ld      sp, hl                  ; Point stack at attribute address table
 
         ld      b, a                    ; Set loop count
-IF  !_ZXN
+loop:
+IF  _ZXN
+        ld      a, r
+        and     0x03
+        add     SPRITE_ID_LANTERN
+ELSE
         ld      hl, colors              ; Pointer to color table
         ld      a, r                    ; Use 'r' as the color table index
         and     0x03                    ; Bottom 2 bits only
         addhl   a
         ld      a, (hl)                 ; Read attribute
 ENDIF
-loop:
         pop     hl                      ; Pop the attribute address
-IF  _ZXN
-        ld      a, r
-        and     0x03
-        add     SPRITE_ID_LANTERN
-ENDIF
         ld      (hl), a                 ; and update the attribute value
         djnz    loop                    ; Loop for all lanterns
 

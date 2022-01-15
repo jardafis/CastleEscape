@@ -517,10 +517,10 @@ small:
         ld      (_ySpeed), a
 
 
-        ld      a, c
-        ld      b, 2
         push    de
         di
+        ld      a, c
+        ld      b, AYFX_CHANNEL
         call    wyz_play_sound
         ei
         pop     de

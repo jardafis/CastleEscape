@@ -77,6 +77,7 @@
         defc    AYFX_COLLECT_HEART=4
         defc    AYFX_FALLING=5
         defc    AYFX_DIE=6
+        defc    AYFX_CHANNEL=0
 
         ;
         ; Game Configuration

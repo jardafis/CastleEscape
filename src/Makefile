@@ -18,7 +18,8 @@ CFLAGS=$(TARGET) -O2 -c \
 LDFLAGS=$(TARGET) --no-crt -m crt/crt.asm
 
 ifeq ($(TARGET),+zxn)
-ZXEMU=~/ZEsarUX-10.0/zesarux --machine TBBlue --configfile .zesaruxrc --tbblue-fast-boot-mode  --nosplash --nowelcomemessage --quickexit
+ZXEMU=~/ZEsarUX-10.0/zesarux
+EMUFLAGS= --machine TBBlue --configfile .zesaruxrc --tbblue-fast-boot-mode  --nosplash --nowelcomemessage --quickexit
 ASFLAGS+=-mz80n -D_ZXN
 CFLAGS+=-D_ZXN
 DISFLAGS+=-mz80n
@@ -43,13 +44,13 @@ all: $(PROJECT_NAME).tap
 	@grep -E "__(CODE|RODATA|DATA|BSS|HEAP|code)_([0-7]|user|crt.*)_(sccz80|head|tail|size).*" $(PROJECT_NAME).map | awk '{printf "%-24s = %s\n", $$1, $$3}'
 
 clean:
-	rm -f *.[oid] *.tap *.bin *.map *.dsk *.zx0
+	rm -f *.[od] *.tap *.bin *.map *.dsk *.zx0
 
 run: $(PROJECT_NAME).tap
-	$(ZXEMU) $<
+	$(ZXEMU) $(EMUFLAGS) $<
 
 rundsk: $(PROJECT_NAME).dsk
-	fuse $<
+	$(ZXEMU) $(EMUFLAGS) $<
 
 dis: $(PROJECT_NAME)_BANK_2.bin
 	z88dk-dis $(DISFLAGS) -o $(HEAD) -x $(PROJECT_NAME).map $(PROJECT_NAME)_$(BANK).bin | less

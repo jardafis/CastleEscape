@@ -29,9 +29,9 @@ heartCollision:
         ex      de, hl
         call    display2BCD
 
-        ld      a, AYFX_COLLECT_HEART   ; Play a sound
-        ld      b, 2                    ; Use channel #2
         di
+        ld      a, AYFX_COLLECT_HEART   ; Play a sound
+        ld      b, AYFX_CHANNEL
         call    wyz_play_sound
         ei
         ret

@@ -67,9 +67,9 @@ coinCollision:
         ld      bc, 0x0103              ; Y/X screen location
         call    display4BCD
 
-        ld      a, AYFX_COLLECT_COIN    ; Play a sound
-        ld      b, 2                    ; Use channel #2
         di
+        ld      a, AYFX_COLLECT_COIN    ; Play a sound
+        ld      b, AYFX_CHANNEL
         call    wyz_play_sound
         ei
         ret
