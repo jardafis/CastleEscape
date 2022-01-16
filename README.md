@@ -8,7 +8,7 @@ A ZX Spectrum game written using [Z88DK](https://github.com/z88dk/z88dk) and [FU
 * screen$ and menu art - Created by [crayon](https://github.com/jardafis)
   * Converted to .scr with [PNG-to-SCR](https://github.com/MatejJan/PNG-to-SCR)
 * Sprites & Tiles - Supported by [Carnivac](https://zxart.ee/eng/authors/c/carnivac/)
-* Font - by [DamienG](https://damieng.com/typography/zx-origins/)
+* Torment font - by [DamienG](https://damieng.com/typography/zx-origins/)
 * Music - Borrowed from [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
 * Sound Effects - Created using [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
 * Levels - Designed with [Tiled](https://www.mapeditor.org/) by [IrataHack](mailto:iratahack@digitalxfer.com)
