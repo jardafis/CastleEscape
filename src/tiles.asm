@@ -3,10 +3,9 @@
         extern  setAttr
 
 IF  !_ZXN
-        public  bank7Screen
+        public  displayPixelTile
 ENDIF
         public  _displayTile
-        public  displayPixelTile
         public  displayTile
         public  setTileAttr
 
@@ -87,8 +86,7 @@ displayTile:
 
         ld      a, b                    ; y character position
         and     %00011000               ; Bits 7-6 of pixel row
-bank7Screen:
-        or      SCREEN_START>>8         ; 0x40 or 0xc0
+        or      SCREEN_START>>8         ; 0x40
         ld      h, a
 
         ; Pop 2 bytes of tile data and store it
@@ -110,42 +108,16 @@ TempSP2:
         pop     bc
         pop     af
         ret
-ELSE
-displayTile:
-        push    de
-        push    hl
-        push    af
 
-        ; Multiply Y by 40
-        ld      d, b
-        ld      e, ZXN_TILEMAP_WIDTH
-        mul     d, e
-
-        ; Add the tilemap base address
-        ld      hl, TILEMAP_START
-        add     hl, de
-
-        ; Add the X offset
-        ld      a, c
-        add     hl, a
-        pop     af
-
-        ; Update tilemap
-        ld      (hl), a
-
-        pop     hl
-        pop     de
-        ret
-ENDIF
         ;
         ; Display the specified tile at the specified pixel location.
         ;
         ; All used registers are preserved by this function.
         ;
         ; Entry:
-        ;		b - Y pixel location
-        ;		c - X pixel location
-        ;		a - Tile ID of item
+        ;       b - Y pixel location
+        ;       c - X pixel location
+        ;       a - Tile ID of item
         ;
 displayPixelTile:
         push    af
@@ -206,6 +178,33 @@ clearTileSP:
         pop     af
         ret
 
+ELSE
+displayTile:
+        push    de
+        push    hl
+        push    af
+
+        ; Multiply Y by 40
+        ld      d, b
+        ld      e, ZXN_TILEMAP_WIDTH
+        mul     d, e
+
+        ; Add the tilemap base address
+        ld      hl, TILEMAP_START
+        add     hl, de
+
+        ; Add the X offset
+        ld      a, c
+        add     hl, a
+        pop     af
+
+        ; Update tilemap
+        ld      (hl), a
+
+        pop     hl
+        pop     de
+        ret
+ENDIF
         ;
         ; Set the attribute for the tile at the specified location
         ;

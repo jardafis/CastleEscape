@@ -1,3 +1,4 @@
+IF  !_ZXN
         public  _screenTab
         section RODATA_2
 
@@ -213,3 +214,5 @@ _screenTab:
         dw      0x55e0                  ; Row 189
         dw      0x56e0                  ; Row 190
         dw      0x57e0                  ; Row 191
+ENDIF
+

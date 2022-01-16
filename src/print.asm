@@ -4,6 +4,7 @@
         public  print
         public  printAttr
         public  printChar
+        public  font
 
         section CODE_4
 
@@ -127,7 +128,7 @@ ENDIF
         ld      l, a                    ; Get char to display
         ld      h, 0
         hlx     8
-        ld      sp, FONT
+        ld      sp, font
         add     hl, sp
 
         ; Point the stack at the font data
@@ -166,3 +167,16 @@ TempSP:
         pop     bc
         pop     af
         ret
+
+        section RODATA_4
+font:
+        binary  "Torment.ch8"
+        ; Sad face ASCII 0x80 (128)
+        defb    60
+        defb    66
+        defb    165
+        defb    129
+        defb    153
+        defb    165
+        defb    66
+        defb    60

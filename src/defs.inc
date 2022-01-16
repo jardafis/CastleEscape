@@ -1,4 +1,3 @@
-        extern  _font_8x8_cpc_system
         extern  currentBank
         extern  bankedCall
         extern  banked_call
@@ -208,12 +207,6 @@
 
         defc    BRIGHT=0x40
         defc    FLASH=0x80
-
-        ;
-        ; Address of the font. If 0x3d00 is used this constant points
-        ; to the font in the Spectrum ROM.
-        ;
-        defc    FONT=_font_8x8_cpc_system
 
         ;
         ; I/O Ports

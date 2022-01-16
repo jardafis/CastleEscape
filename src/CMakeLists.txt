@@ -55,7 +55,6 @@ set(SOURCES
     displaytilemap.asm
     dzx0_standard.asm
     eggs.asm
-    font.asm
     gamemain.asm
     heapcheck.asm
     hearts.asm
@@ -83,7 +82,7 @@ set(SOURCES
     zxn.asm
     )
 
-set_property(SOURCE font.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/font_8x8_cpc_system.dat)
+set_property(SOURCE print.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/Torment.ch8)
 set_property(SOURCE levels.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/attrib.dat)
 set_property(SOURCE menuscreen.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/mainmenu.scr.zx0)
 

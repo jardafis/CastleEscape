@@ -47,10 +47,6 @@ mainMenu:
         ;
         bank    mainmenuScreen>>16
 
-IF  _ZXN
-        call    clearTilemap
-ENDIF
-
         halt
         ; Fill the screen with paper and innk the same color
         ld      hl, SCREEN_ATTR_START
@@ -60,6 +56,10 @@ ENDIF
         ldir
 
 displayScreen:
+IF  _ZXN
+        call    clearTilemap
+ENDIF
+
         ; Uncompress the menu screen
         ld      hl, mainmenuScreen
         ld      de, SCREEN_START

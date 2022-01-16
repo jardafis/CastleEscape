@@ -23,7 +23,7 @@ titleScreen:
         ;
         ld      bc, 0x1305
         ld      hl, pressJumpMsg
-        ld      a, PAPER_BLACK|INK_WHITE|BRIGHT|FLASH
+        ld      a, PAPER_BLACK|INK_RED|BRIGHT|FLASH
         bcall   printAttr
 waitJump:
         halt

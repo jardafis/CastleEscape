@@ -1,4 +1,5 @@
         extern  rand
+        extern  font
 
         public  _scroll
         public  _scrollInit
@@ -180,12 +181,23 @@ getNextChar:
         ld      l, a                    ; Get the font character index
         ld      h, 0                    ; and multiply it by 8
         hlx     8
-        ld      de, FONT                ; Pointer to the font
+        ld      de, font                ; Pointer to the font
         add     hl, de                  ; hl points to the font data address
         ld      de, charBuffer          ; Point to our character buffer address
+
+        ; Page-in the font bank
+        ld      a, font>>16
+        ld      bc, IO_BANK
+        out     (c), a
+
         REPT    8
         ldi
         ENDR
+
+        ; Page-in bank 0
+        ld      bc, IO_BANK
+        out     (c), 0
+
         jp      shift
 
 doPadding:

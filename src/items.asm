@@ -11,7 +11,9 @@
         public  _initItems
         public  checkItemCollision
         public  displayItems
+IF  !_ZXN
         public  displayPixelItems
+ENDIF
         public  removeItem
         public  setCurrentItemTable
 
@@ -269,6 +271,7 @@ notVisible2:
         addhl   SIZEOF_item
         jr      nextItem2
 
+IF  !_ZXN
         ;
         ; Display the visible pixel aligned items pointed to by hl.
         ;
@@ -299,7 +302,7 @@ nextItem5:
 notVisible5:
         addhl   SIZEOF_item
         jr      nextItem5
-
+ENDIF
         ;
         ; Check if the player has collided with an item. And if so,
         ; remove the item and attrinute from the level and call
