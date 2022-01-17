@@ -4,15 +4,15 @@ A ZX Spectrum game written using [Z88DK](https://github.com/z88dk/z88dk) and [FU
 
 ## Credits
 
-* Coding - [IrataHack](mailto:iratahack@digitalxfer.com)
+* Sprites & Tiles - Supported by [Carnivac](https://zxart.ee/eng/authors/c/carnivac/)
+* Tape & Disk Loaders - Courtesy of [Tom Dalby](https://tomdalby.com/) ([ZXSTLC](https://tomdalby.com/other/zxstlc.html))
 * screen$ and menu art - Created by [crayon](https://github.com/jardafis)
   * Converted to .scr with [PNG-to-SCR](https://github.com/MatejJan/PNG-to-SCR)
-* Sprites & Tiles - Supported by [Carnivac](https://zxart.ee/eng/authors/c/carnivac/)
 * Torment font - by [DamienG](https://damieng.com/typography/zx-origins/)
+* Coding - [IrataHack](mailto:iratahack@digitalxfer.com)
+* Levels - Designed with [Tiled](https://www.mapeditor.org/) by [IrataHack](mailto:iratahack@digitalxfer.com)
 * Music - Borrowed from [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
 * Sound Effects - Created using [WYZTracker](https://github.com/AugustoRuiz/WYZTracker)
-* Levels - Designed with [Tiled](https://www.mapeditor.org/) by [IrataHack](mailto:iratahack@digitalxfer.com)
-* Tape & Disk Loaders - Courtesy of [Tom Dalby](https://tomdalby.com/) ([ZXSTLC](https://tomdalby.com/other/zxstlc.html))
 
 ## Synopsis
 
