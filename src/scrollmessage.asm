@@ -6,9 +6,9 @@
         public  _scrollReset
         section CODE_2
 
-        defc    xPos=0x08               ; Start column of message
+        defc    xPos=0x07               ; Start column of message
         defc    Y=0x01                  ; Start character row of message
-        defc    WIDTH=0x10              ; Width, in columns, of message area
+        defc    WIDTH=0x12              ; Width, in columns, of message area
         defc    MESSAGE_ATTR=PAPER_BLACK|INK_WHITE|BRIGHT
                                         ; Attribute for the message
         #include    "defs.inc"
@@ -134,7 +134,8 @@ shift:
         ld      hl, (screenAddr)        ; Screen address of right hand side of message calculated by scrollInit
         ld      de, charBuffer
 
-        ld      c, 8                    ; Height of character
+        ld      c, l                    ; save l which is the screen X starting offset
+        ld      b, 8                    ; Height of character
 rowLoop:
         ld      a, (de)                 ; Get buffer data
         rla                             ; Rotate it left through the carry flag
@@ -143,19 +144,15 @@ rowLoop:
         ; The carry flag contains the data we will shift
         ; into the next character on the screen
 
-        ld      a, l                    ; save l which includes the screen X starting offset
-        ld      b, WIDTH/8              ; Width of scrolling window
 colLoop:
-        REPT    8
+        REPT    WIDTH
         rl      (hl)                    ; Rotate left the contents of hl through the carry flag
         dec     l                       ; Next character to the left
         ENDR
-        djnz    colLoop                 ; Loop for the width of the message
 
-        ld      l, a                    ; Restore low order byte of screen address
+        ld      l, c                    ; Restore low order byte of screen address
         inc     h                       ; +0x100 To increment to next row
-        dec     c
-        jp      nz, rowLoop
+        djnz    rowLoop
 
         ret
 

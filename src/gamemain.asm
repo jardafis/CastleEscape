@@ -63,7 +63,6 @@ ENDIF
         public  _falling
         public  _jumping
         public  _main
-        public  _mul_hla
         public  _setCurrentTileMap
 IF  !_ZXN
         public  _spriteBuffer
@@ -88,17 +87,6 @@ ENDIF
         section CODE_2
 _main:
         ld      sp, __STACK_tail
-IF  0
-        ld      de, _spriteBuffer
-        ld      bc, 0x0000
-        call    _copyScreen
-
-        ld      bc, 0x0000
-        call    _displaySprite
-
-        di
-        halt
-ENDIF
         call    init
 
         bcall   titleScreen
@@ -250,7 +238,12 @@ ENDIF
         ; * Update user inputs
         ; * Update the position of any moving items
         ; * Re-draw any moving items at their new position
+        ; * Non-critical stuff:
+        ;   * Decrement egg count
+        ;   * Scrolling message
         ;
+        ; Note: Playing music in the ISR takes time away from
+        ;       critical drawing functions.
 gameLoop:
         ;
         ; Wait for refresh interrupt
@@ -450,13 +443,13 @@ ENDIF
 _setCurrentTileMap:
         ld      a, (_tileMapY)
         ld      hl, TILEMAP_WIDTH*LEVEL_HEIGHT
-        call    _mul_hla
+        mul_hla
 
         ex      de, hl
 
         ld      a, (_tileMapX)
         ld      hl, SCREEN_WIDTH
-        call    _mul_hla
+        mul_hla
 
         add     hl, de
 
@@ -465,38 +458,6 @@ _setCurrentTileMap:
 
         ld      (_currentTileMap), hl
 
-        ret
-
-        ;
-        ; On input:
-        ;		hl - value
-        ;		a  - Multiplier
-        ;
-        ; Output:
-        ;		hl	- Product of hl and a
-        ;		All other registers unchanged
-        ;
-_mul_hla:
-        push    bc
-        push    de
-
-        ex      de, hl                  ; Save hl in de
-        ld      hl, 0
-        or      a                       ; If multiplying by 0, result is zero
-        jr      z, mulDone
-
-        ld      b, 8
-nextMul:
-        add     hl, hl
-        rlca
-        jr      nc, noAdd
-        add     hl, de
-noAdd:
-        djnz    nextMul
-
-mulDone:
-        pop     de
-        pop     bc
         ret
 
 startJump:

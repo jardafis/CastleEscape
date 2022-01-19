@@ -1,10 +1,9 @@
+IF  !_ZXN
         extern  _tile0
         extern  _tileAttr
         extern  setAttr
 
-IF  !_ZXN
         public  displayPixelTile
-ENDIF
         public  _displayTile
         public  displayTile
         public  setTileAttr
@@ -37,7 +36,6 @@ _displayTile:
         exit
         ret
 
-IF  !_ZXN
         ;
         ; Display the specified tile at the specified location.
         ;
@@ -141,32 +139,6 @@ clearTileSP:
         pop     af
         ret
 
-ELSE
-displayTile:
-        push    de
-        push    hl
-
-        ; Multiply Y by 40
-        ld      d, b
-        ld      e, ZXN_TILEMAP_WIDTH
-        mul     d, e
-
-        ; Add the tilemap base address
-        ld      hl, TILEMAP_START
-        add     hl, de
-
-        ld      e, a
-        ; Add the X offset
-        ld      a, c
-        add     hl, a
-
-        ; Update tilemap
-        ld      (hl), e
-
-        pop     hl
-        pop     de
-        ret
-ENDIF
         ;
         ; Set the attribute for the tile at the specified location
         ;
@@ -176,7 +148,6 @@ ENDIF
         ;		a - Tile ID of item
         ;
 setTileAttr:
-IF  !_ZXN
         push    af
         push    hl
 
@@ -188,6 +159,5 @@ IF  !_ZXN
 
         pop     hl
         pop     af
-ENDIF
         ret
-
+ENDIF
