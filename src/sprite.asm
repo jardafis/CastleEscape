@@ -34,22 +34,30 @@ _copyScreen:
         srl     c                       ; Divide the screen x pixel
         srl     c                       ; position by 8 to get the
         srl     c                       ; byte address.
-        ld      b, PLAYER_HEIGHT
-copyloop:
+
+        ld      b, c                    ; Move x char offset to B
+        ld      c, -1                   ; Ensure C doesn't wraparound when using ldi
+
+        DEFL    var=0
+        DEFL    tabAddr=addressTab
+
+        REPT    16
+
         pop     hl                      ; get screen row source adress
         ld      a, l
-        add     c                       ; add x offset
+        add     b                       ; add x offset
         ld      l, a
 
-        ldi                             ; Optimization to save 4 cycles
-        inc     bc                      ; The ldi will decrement bc so increment it here
-        ldi                             ; Optimization to save 4 cycles
-        inc     bc                      ; The ldi will decrement bc so increment it here
+        ; Save the screen address in the address table
+        ld      (tabAddr), hl
+        DEFL    tabAddr=tabAddr+2
 
-        ld      a, (hl)
-        ld      (de), a
-        inc     de
-        djnz    copyloop
+
+        ldi
+        ldi
+        ldi
+
+        ENDR
 
 copyTempSP:
         ld      sp, -1
@@ -58,50 +66,32 @@ copyTempSP:
 
         ;
         ; Entry:
-        ;		de - Pointer to buffer
-        ;		b  - Start screen y location
-        ;		c  - Start screen x location
+        ;		hl - Pointer to buffer
         ;
 _pasteScreen:
         di
         ld      (pasteTempSP+1), sp     ; Optimization, self modifying code
+        ld      sp, addressTab
 
-        calculateRow    b
-
-        ex      de, hl                  ; Buffer address into hl
-
-        srl     c                       ; Divide the screen x pixel
-        srl     c                       ; position by 8 to get the
-        srl     c                       ; byte address.
-        ld      b, PLAYER_HEIGHT
-pasteloop:
-        pop     de                      ; get screen row destination adress
-        ld      a, e
-        add     c                       ; add x offset
-        ld      e, a
-
-        ldi                             ; Optimization to save 4 cycles
-        inc     bc                      ; The ldi will decrement bc so increment it here
-        ldi                             ; Optimization to save 4 cycles
-        inc     bc                      ; The ldi will decrement bc so increment it here
-
-        ld      a, (hl)
-        ld      (de), a
-        inc     hl
-        djnz    pasteloop
+        REPT    16
+        pop     de
+        ldi
+        ldi
+        ldi
+        ENDR
 
 pasteTempSP:
         ld      sp, -1
         ei
         ret
 ENDIF
+IF  _ZXN
         ;
         ; Entry:
         ;		b  - Screen y location
         ;		c  - Screen x location
         ;
 _displaySprite:
-IF  _ZXN
         ld      a, (_jumping)
         or      a
         jr      nz, setJumpSprite
@@ -125,105 +115,74 @@ setJumpSprite:
         jr      setSprite
 
 ELSE
+        ;
+        ; Entry:
+        ;       c  - Screen x location
+        ;
+_displaySprite:
         di
         ld      (displaySpriteSP+1), sp
 
-        ld      a, c
+        ld      a, c                    ; Get X pixel position
         and     0x07                    ; Get the sprite shift index
 
-        rrca                            ; Multiply by 32
-        rrca
-        rrca
-        ld      h, a
-        and     %11100000
-        ld      l, a
-        ld      a, h
-        and     %00011111
-        ld      h, a
-
-        ld      de, hl                  ; Save 32x in de
-        hlx     2                       ; 64x
-        add     hl, de                  ; 32x + 64x
-        ld      de, (playerSprite)
-        add     hl, de
-        ld      sp, hl                  ; Sprite pointer
-
-        ; Calculate the screen address
-        ld      l, b
+        add     a                       ; x2
+        ld      l, a                    ; Put result in HL
         ld      h, 0
-        add     hl, hl                  ; multiply by 2
-        ld      de, _screenTab
-        add     hl, de
-        ld      e, (hl)
-        inc     hl
-        ld      d, (hl)
-        ex      de, hl
+        ld      sp, x96                 ; Pointer to x96 table
+        add     hl, sp                  ; x96 table offset
+        ld      sp, hl
+        pop     de                      ; Sprite offset
+        ld      hl, (playerSprite)
+        add     hl, de                  ; Sprite address in HL
 
-        ld      a, c                    ; X pixel position
+        ld      sp, hl                  ; Sprite data
 
-        rrca                            ; Divide by 8
-        rrca
-        rrca
+        DEFL    val=0
 
-        and     %00011111               ; Mask off garbage bits
+        REPT    16
+        ld      de, (addressTab+val)    ; Screen address
+        DEFL    val=val+2
 
-        add     l                       ; Add to screen address
-        ld      l, a
+        pop     hl                      ; Get sprite data/mask
+        ld      a, (de)                 ; Load from screen
+        and     l                       ; AND sprite mask
+        or      h                       ; OR sprite data
+        ld      (de), a                 ; Store to screen
+        inc     de                      ; Next screen location to the right
 
-        ld      c, 0x07
-        ld      b, PLAYER_HEIGHT
-yLoop:
-        pop     de                      ; Pop sprite data
-        ld      a, (hl)                 ; Read the screen contents
-        and     e                       ; and with mask
-        or      d                       ; or with sprite data
-        ld      (hl), a                 ; save it back to the screen
-        inc     l                       ; Next screen position to the right
+        pop     hl
+        ld      a, (de)
+        and     l
+        or      h
+        ld      (de), a
+        inc     de
 
-        pop     de                      ; Pop sprite data
-        ld      a, (hl)                 ; Read the screen contents
-        and     e                       ; and with mask
-        or      d                       ; or with sprite data
-        ld      (hl), a                 ; save it back to the screen
-        inc     l                       ; Next screen position to the right
-
-        pop     de                      ; Pop sprite data
-        ld      a, (hl)                 ; Read the screen contents
-        and     e                       ; and with mask
-        or      d                       ; or with sprite data
-        ld      (hl), a                 ; save it back to the screen
-
-        dec     l
-        dec     l
-
-        inc     h                       ; Next pixel line
-        ld      a, h                    ; Check for char boundary crossing
-        and     c                       ; and 0x07
-        jr      z, nextCharRow
-
-        djnz    yLoop                   ; Loop for next row of sprite
+        pop     hl
+        ld      a, (de)
+        and     l
+        or      h
+        ld      (de), a
+        ENDR
 
 displaySpriteSP:
         ld      sp, -1
         ei
         ret
-
-nextCharRow:
-        ; Increment char row
-        ld      a, l
-        add     0x20
-        ld      l, a
-        jr      c, nextThird
-
-        ; Same third
-        ld      a, h
-        sub     0x08
-        ld      h, a
-
-nextThird:
-        djnz    yLoop                   ; Loop for next row of sprite
-        jr      displaySpriteSP
 ENDIF
         section BSS_2
 playerSprite:
         ds      2
+addressTab:
+        ds      16*SIZEOF_ptr
+
+        section RODATA_2
+x96:
+        dw      96*0
+        dw      96*1
+        dw      96*2
+        dw      96*3
+        dw      96*4
+        dw      96*5
+        dw      96*6
+        dw      96*7

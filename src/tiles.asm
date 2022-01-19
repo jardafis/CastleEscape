@@ -65,44 +65,7 @@ displayTile:
         and     %00000111
         ld      h, a
 
-        di
-        ; Save the current stack pointer
-        ld      (TempSP2+1), sp
-
-        ld      sp, _tile0
-        add     hl, sp
-
-        ; Point the stack at the tile data
-        ld      sp, hl
-
-        ; Calculate the screen address
-        ld      a, b                    ; Y character position
-        rrca
-        rrca
-        rrca
-        and     %11100000               ; Bits 5-3 of pixel row
-        or      c                       ; X character position
-        ld      l, a
-
-        ld      a, b                    ; y character position
-        and     %00011000               ; Bits 7-6 of pixel row
-        or      SCREEN_START>>8         ; 0x40
-        ld      h, a
-
-        ; Pop 2 bytes of tile data and store it
-        ; to the screen.
-        REPT    4
-        pop     bc
-        ld      (hl), c
-        inc     h                       ; Add 256 to screen address
-        ld      (hl), b
-        inc     h                       ; Add 256 to screen address
-        ENDR
-
-        ; Restore the stack pointer.
-TempSP2:
-        ld      sp, -1
-        ei
+        outChar _tile0
 
         pop     hl
         pop     bc
@@ -182,7 +145,6 @@ ELSE
 displayTile:
         push    de
         push    hl
-        push    af
 
         ; Multiply Y by 40
         ld      d, b
@@ -193,13 +155,13 @@ displayTile:
         ld      hl, TILEMAP_START
         add     hl, de
 
+        ld      e, a
         ; Add the X offset
         ld      a, c
         add     hl, a
-        pop     af
 
         ; Update tilemap
-        ld      (hl), a
+        ld      (hl), e
 
         pop     hl
         pop     de

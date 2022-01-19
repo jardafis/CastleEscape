@@ -121,47 +121,12 @@ IF  _ZXN
         ld      a, l
 ENDIF
 
-        di
-        ld      (TempSP+1), sp
-
         sub     ' '                     ; Font data starts at <SPACE>
         ld      l, a                    ; Get char to display
         ld      h, 0
         hlx     8
-        ld      sp, font
-        add     hl, sp
 
-        ; Point the stack at the font data
-        ld      sp, hl
-
-        ; Calculate the screen address
-        ld      a, b                    ; Y character position
-        rrca                            ; Move lower 3 bits to the upper 3 bits
-        rrca
-        rrca
-        and     %11100000               ; Bits 5-3 of pixel row
-        or      c                       ; X character position
-        ld      l, a
-
-        ld      a, b                    ; Y character position
-        and     %00011000               ; Bits 7-6 of pixel row
-        or      0x40                    ; 0x40 or 0xc0
-        ld      h, a
-
-        ; Pop 2 bytes of font data and store it
-        ; to the screen.
-        REPT    4
-        pop     bc
-        ld      (hl), c
-        inc     h                       ; Add 256 to screen address
-        ld      (hl), b
-        inc     h                       ; Add 256 to screen address
-        ENDR
-
-        ; Restore the stack pointer.
-TempSP:
-        ld      sp, 0x0000
-        ei
+        outChar font
 
         pop     hl
         pop     bc

@@ -44,9 +44,9 @@ IF  !_ZXN
         section RODATA_2
 colors:
         db      INK_YELLOW
-        db      INK_RED
         db      (INK_YELLOW|BRIGHT)
         db      (INK_RED|BRIGHT)
+        db      INK_RED
 ENDIF
         section BSS_2
 _lanternList:                           ; Max of 8 lanterns on any screen

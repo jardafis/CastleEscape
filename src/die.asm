@@ -130,8 +130,7 @@ IF  !_ZXN
         ;
         ; Remove the headstone
         ;
-        ld      de, _spriteBuffer
-        ld      bc, (_xPos)
+        ld      hl, _spriteBuffer
         call    _pasteScreen
 ENDIF
 

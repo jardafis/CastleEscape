@@ -484,3 +484,63 @@ pixelToChar MACRO   Y, X
         and     %00011111               ; Remove garbage
         ld      X, a
         ENDM
+
+        ;
+        ; Convert Y/X character coords to screen address.
+        ;
+        ; Entry:
+        ;   Y - Y character location
+        ;   X - X character location
+        ;
+        ; Exit:
+        ;   hl - screen address
+        ;
+        ; Notes:
+        ;   A - Corrupt
+        ;
+screenAddr  MACRO   Y, X
+        ld      a, Y                    ; Y character position
+        rrca                            ; Move lower 3 bits to the upper 3 bits
+        rrca
+        rrca
+        and     %11100000               ; Bits 5-3 of pixel row
+        or      X                       ; X character position
+        ld      l, a
+
+        ld      a, Y                    ; Y character position
+        and     %00011000               ; Bits 7-6 of pixel row
+        or      SCREEN_START>>8         ; Screen base
+        ld      h, a
+        ENDM
+
+outChar MACRO   tilePointer
+        local   tempSP
+        di
+        ; Save the current stack pointer
+        ld      (tempSP+1), sp
+
+        ld      sp, tilePointer
+        add     hl, sp
+
+        ; Point the stack at the tile data
+        ld      sp, hl
+
+        screenAddr  b, c
+
+        ; Pop 2 bytes of tile data and store it
+        ; to the screen.
+        REPT    4
+        pop     bc
+        ld      (hl), c
+        inc     h                       ; Add 256 to screen address
+        ld      (hl), b
+        inc     h                       ; Add 256 to screen address
+        ENDR
+
+        ; Restore the stack pointer.
+tempSP:
+        ld      sp, -1
+        ei
+
+
+        ENDM

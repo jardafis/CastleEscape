@@ -88,6 +88,17 @@ ENDIF
         section CODE_2
 _main:
         ld      sp, __STACK_tail
+IF  0
+        ld      de, _spriteBuffer
+        ld      bc, 0x0000
+        call    _copyScreen
+
+        ld      bc, 0x0000
+        call    _displaySprite
+
+        di
+        halt
+ENDIF
         call    init
 
         bcall   titleScreen
@@ -255,8 +266,7 @@ IF  !_ZXN
         ;
         ; Re-draw the screen at the players current location
         ;
-        ld      de, _spriteBuffer
-        ld      bc, (_xPos)
+        ld      hl, _spriteBuffer
         call    _pasteScreen
 
         ;
@@ -520,7 +530,7 @@ small:
         push    de
         di
         ld      a, c
-        ld      b, AYFX_CHANNEL
+        ld      b, AYFX_CHANNEL+1
         call    wyz_play_sound
         ei
         pop     de
