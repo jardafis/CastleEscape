@@ -1,16 +1,7 @@
 IF  !_ZXN
-        extern  _screenTab
 
         public  _copyScreen
         public  _pasteScreen
-ELSE
-        extern  knightSprite
-        extern  setSpritePattern
-        extern  setSpriteXY
-        extern  setSpriteFlip
-        extern  updateSpriteAttribs
-        extern  _jumping
-ENDIF
         public  _displaySprite
         public  playerSprite
 
@@ -18,12 +9,15 @@ ENDIF
 
         section CODE_2
 
-IF  !_ZXN
+        ;
+        ; Copy a portion of screen memory to the buffer pointed to by DE.
+        ; The amount of screen copied is 3 x 16 bytes. The screen row addresses
+        ; are calculated and stored in addressTab.
         ;
         ; Entry:
         ;		de - Pointer to buffer
-        ;		b  - Start screen y location
-        ;		c  - Start screen x location
+        ;		b  - Start pixel y location
+        ;		c  - Start pixel x location
         ;
 _copyScreen:
         di
@@ -33,17 +27,15 @@ _copyScreen:
 
         srl     c                       ; Divide the screen x pixel
         srl     c                       ; position by 8 to get the
-        srl     c                       ; byte address.
+        srl     c                       ; char offset.
 
         ld      b, c                    ; Move x char offset to B
         ld      c, -1                   ; Ensure C doesn't wraparound when using ldi
 
-        DEFL    var=0
         DEFL    tabAddr=addressTab
 
         REPT    16
-
-        pop     hl                      ; get screen row source adress
+        pop     hl                      ; get screen row address
         ld      a, l
         add     b                       ; add x offset
         ld      l, a
@@ -52,18 +44,19 @@ _copyScreen:
         ld      (tabAddr), hl
         DEFL    tabAddr=tabAddr+2
 
-
         ldi
         ldi
         ldi
-
         ENDR
-
 copyTempSP:
         ld      sp, -1
         ei
         ret
 
+        ;
+        ; Copy the contents of the buffer pointed to by HL to the screen.
+        ; The amount of buffer copied is 3 x 16 bytes. The screen row
+        ; addresses are stored in addressTab, which is populated by _copyScreen.
         ;
         ; Entry:
         ;		hl - Pointer to buffer
@@ -84,40 +77,12 @@ pasteTempSP:
         ld      sp, -1
         ei
         ret
-ENDIF
-IF  _ZXN
+
+        ;
+        ; Display the knight sprite at the specified screen location.
         ;
         ; Entry:
-        ;		b  - Screen y location
-        ;		c  - Screen x location
-        ;
-_displaySprite:
-        ld      a, (_jumping)
-        or      a
-        jr      nz, setJumpSprite
-
-        ld      a, c
-        and     0x03
-
-setSprite:
-        ld      ix, knightSprite
-        call    setSpritePattern
-
-        call    setSpriteXY
-
-        ld      a, (playerSprite)
-        call    setSpriteFlip
-
-        call    updateSpriteAttribs
-        ret
-setJumpSprite:
-        ld      a, SPRITE_ID_JUMP
-        jr      setSprite
-
-ELSE
-        ;
-        ; Entry:
-        ;       c  - Screen x location
+        ;       c  - Screen x pixel location
         ;
 _displaySprite:
         di
@@ -169,7 +134,7 @@ displaySpriteSP:
         ld      sp, -1
         ei
         ret
-ENDIF
+
         section BSS_2
 playerSprite:
         ds      2
@@ -186,3 +151,4 @@ x96:
         dw      96*5
         dw      96*6
         dw      96*7
+ENDIF

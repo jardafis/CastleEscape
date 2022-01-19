@@ -75,7 +75,9 @@ set(SOURCES
     setupscreen.asm
     spiders.asm
     sprite.asm
+    sprite_zxn.asm
     tiles.asm
+    tiles_zxn.asm
     tilesheet.asm
     title.asm
     wyzproplay_zx.asm

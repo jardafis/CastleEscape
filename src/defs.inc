@@ -86,7 +86,6 @@
         defc    START_LIVES=0x03
         defc    ROTATE_COUNT=6
         DEFINE  ATTRIB_EDIT
-;		DEFINE	TIMING_BORDER
         DEFINE  SOUND
 ;        DEFINE  CHEAT
 
@@ -541,6 +540,39 @@ outChar MACRO   tilePointer
 tempSP:
         ld      sp, -1
         ei
+        ENDM
 
+        ;
+        ; Multiple HL by A and return the result in HL.
+        ;
+        ; Entry:
+        ;       hl - value
+        ;       a  - Multiplier
+        ;
+        ; Exit:
+        ;       hl  - Product of hl and a
+        ;       All other registers unchanged
+        ;
+mul_hla MACRO
+        LOCAL   nextMul, noAdd, mulDone
+        push    bc
+        push    de
 
+        ex      de, hl                  ; Save hl in de
+        ld      hl, 0
+        or      a                       ; If multiplying by 0, result is zero
+        jr      z, mulDone
+
+        ld      b, 8
+nextMul:
+        add     hl, hl
+        rlca
+        jr      nc, noAdd
+        add     hl, de
+noAdd:
+        djnz    nextMul
+
+mulDone:
+        pop     de
+        pop     bc
         ENDM
