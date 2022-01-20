@@ -250,7 +250,7 @@ initTilemap:
         nextreg IO_TileMapPaletteContr, %00110000
         xor     a                       ; Palette start index
         ; Number of colors
-        ld      b, tile_palette_end-tile_palette
+        ld      b, +(tile_palette_end-tile_palette)/2
         ld      hl, tile_palette        ; Pointer to palette
         call    setTilePalette          ; Do it!
 

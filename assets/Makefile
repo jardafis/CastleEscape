@@ -22,7 +22,7 @@ install: all
 
 zxn: Gfx2Next/bin/gfx2next
 	mkdir -p build
-	./Gfx2Next/bin/gfx2next -map-none -colors-4bit -tile-size=8x8 gimp/tilesheet.png build/tilesheet
+	./Gfx2Next/bin/gfx2next -pal-min -preview -map-none -colors-4bit -tile-size=8x8 gimp/tilesheet.png build/tilesheet
 
 Gfx2Next:
 	git clone --depth=1 https://github.com/headkaze/Gfx2Next.git
