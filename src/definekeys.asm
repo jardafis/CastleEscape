@@ -180,19 +180,11 @@ printKey:
         pop     hl
         ret
 
-IF  !_ZXN
-        section BSS_5
-ELSE
         section BSS_2
-ENDIF
 key:
         ds      2
 
-IF  !_ZXN
-        section RODATA_5
-ELSE
-        section RODATA_2
-ENDIF
+        section RODATA_4
 defineKeyMsg:
         db      "Define Keys", 0x00
 leftMsg:

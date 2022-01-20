@@ -107,40 +107,40 @@ tile11:
         defb    0
         defb    0
 tile12:
-        defb    27
-        defb    55
-        defb    111
-        defb    111
-        defb    105
-        defb    106
-        defb    105
-        defb    106
+        defb    0
+        defb    0
+        defb    130
+        defb    66
+        defb    103
+        defb    231
+        defb    66
+        defb    0
 tile13:
-        defb    248
-        defb    252
-        defb    254
-        defb    254
-        defb    166
-        defb    170
-        defb    166
-        defb    174
+        defb    0
+        defb    0
+        defb    66
+        defb    71
+        defb    103
+        defb    231
+        defb    66
+        defb    0
 tile14:
         defb    0
         defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
+        defb    36
+        defb    66
+        defb    199
+        defb    231
+        defb    66
         defb    0
 tile15:
         defb    0
         defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
+        defb    65
+        defb    99
+        defb    231
+        defb    231
+        defb    66
         defb    0
 tile16:
         defb    62
@@ -251,23 +251,23 @@ tile27:
         defb    0
         defb    0
 tile28:
-        defb    111
-        defb    111
-        defb    111
-        defb    111
-        defb    111
-        defb    111
-        defb    128
-        defb    111
+        defb    0
+        defb    0
+        defb    0
+        defb    0
+        defb    0
+        defb    0
+        defb    0
+        defb    0
 tile29:
-        defb    254
-        defb    254
-        defb    254
-        defb    254
-        defb    254
-        defb    254
-        defb    1
-        defb    254
+        defb    0
+        defb    0
+        defb    0
+        defb    0
+        defb    0
+        defb    0
+        defb    0
+        defb    0
 tile30:
         defb    0
         defb    0
@@ -332,23 +332,23 @@ tile36:
         defb    168
         defb    0
 tile37:
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
+        defb    27
+        defb    55
+        defb    111
+        defb    111
+        defb    105
+        defb    106
+        defb    105
+        defb    106
 tile38:
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
+        defb    248
+        defb    252
+        defb    254
+        defb    254
+        defb    166
+        defb    170
+        defb    166
+        defb    174
 tile39:
         defb    0
         defb    0
@@ -476,23 +476,23 @@ tile52:
         defb    208
         defb    0
 tile53:
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
+        defb    111
+        defb    111
+        defb    111
+        defb    111
+        defb    111
+        defb    111
+        defb    128
+        defb    111
 tile54:
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
-        defb    0
+        defb    254
+        defb    254
+        defb    254
+        defb    254
+        defb    254
+        defb    254
+        defb    1
+        defb    254
 tile55:
         defb    0
         defb    31
@@ -1007,6 +1007,7 @@ tile111:
         defb    0
         defb    0
 tile112:
+        defb    0
         defb    191
         defb    0
         defb    86
@@ -1014,8 +1015,8 @@ tile112:
         defb    0
         defb    44
         defb    88
-        defb    80
 tile113:
+        defb    0
         defb    255
         defb    0
         defb    125
@@ -1023,8 +1024,8 @@ tile113:
         defb    125
         defb    0
         defb    0
-        defb    0
 tile114:
+        defb    0
         defb    255
         defb    0
         defb    190
@@ -1032,8 +1033,8 @@ tile114:
         defb    190
         defb    0
         defb    0
-        defb    0
 tile115:
+        defb    0
         defb    253
         defb    0
         defb    106
@@ -1041,7 +1042,6 @@ tile115:
         defb    0
         defb    52
         defb    26
-        defb    10
 tile116:
         defb    47
         defb    19
@@ -1151,6 +1151,7 @@ tile127:
         defb    0
         defb    0
 tile128:
+        defb    80
         defb    48
         defb    48
         defb    8
@@ -1158,7 +1159,6 @@ tile128:
         defb    8
         defb    16
         defb    48
-        defb    0
 tile129:
         defb    0
         defb    0
@@ -1178,6 +1178,7 @@ tile130:
         defb    0
         defb    0
 tile131:
+        defb    10
         defb    12
         defb    12
         defb    16
@@ -1185,7 +1186,6 @@ tile131:
         defb    16
         defb    8
         defb    12
-        defb    0
 tile132:
         defb    47
         defb    19
@@ -1439,14 +1439,14 @@ tile159:
         defb    0
         defb    0
 tile160:
-        defb    198
-        defb    198
-        defb    190
-        defb    246
-        defb    108
-        defb    96
-        defb    108
-        defb    108
+        defb    28
+        defb    44
+        defb    52
+        defb    56
+        defb    28
+        defb    44
+        defb    52
+        defb    56
 tile161:
         defb    0
         defb    0
@@ -1502,6 +1502,7 @@ tile166:
         defb    0
         defb    0
 tile167:
+        defb    0
         defb    127
         defb    192
         defb    138
@@ -1509,8 +1510,8 @@ tile167:
         defb    175
         defb    149
         defb    90
-        defb    0
 tile168:
+        defb    0
         defb    252
         defb    2
         defb    162
@@ -1518,7 +1519,6 @@ tile168:
         defb    82
         defb    162
         defb    84
-        defb    0
 tile169:
         defb    0
         defb    0
@@ -1529,22 +1529,22 @@ tile169:
         defb    0
         defb    0
 tile170:
-        defb    255
-        defb    255
-        defb    255
-        defb    223
-        defb    254
-        defb    109
-        defb    128
         defb    0
+        defb    127
+        defb    127
+        defb    127
+        defb    111
+        defb    127
+        defb    54
+        defb    64
 tile171:
-        defb    252
-        defb    248
-        defb    124
-        defb    216
-        defb    244
-        defb    160
         defb    0
+        defb    254
+        defb    252
+        defb    190
+        defb    236
+        defb    122
+        defb    208
         defb    0
 tile172:
         defb    0
@@ -1583,24 +1583,25 @@ tile175:
         defb    0
         defb    0
 tile176:
-        defb    108
-        defb    96
-        defb    108
-        defb    118
-        defb    182
-        defb    198
-        defb    198
-        defb    198
+        defb    28
+        defb    44
+        defb    52
+        defb    56
+        defb    28
+        defb    44
+        defb    52
+        defb    56
 tile177:
-        defb    198
-        defb    198
-        defb    198
-        defb    190
-        defb    124
+        defb    28
+        defb    44
         defb    0
+        defb    122
+        defb    94
+        defb    126
         defb    0
-        defb    0
+        defb    60
 tile178:
+        defb    0
         defb    124
         defb    194
         defb    146
@@ -1608,7 +1609,6 @@ tile178:
         defb    182
         defb    162
         defb    84
-        defb    0
 tile179:
         defb    0
         defb    127
@@ -1628,6 +1628,7 @@ tile180:
         defb    128
         defb    196
 tile181:
+        defb    0
         defb    127
         defb    192
         defb    138
@@ -1635,8 +1636,8 @@ tile181:
         defb    175
         defb    149
         defb    90
-        defb    0
 tile182:
+        defb    0
         defb    252
         defb    2
         defb    162
@@ -1644,8 +1645,8 @@ tile182:
         defb    82
         defb    162
         defb    84
-        defb    0
 tile183:
+        defb    0
         defb    127
         defb    192
         defb    138
@@ -1653,8 +1654,8 @@ tile183:
         defb    175
         defb    149
         defb    90
-        defb    0
 tile184:
+        defb    0
         defb    252
         defb    2
         defb    162
@@ -1662,7 +1663,6 @@ tile184:
         defb    82
         defb    162
         defb    84
-        defb    0
 tile185:
         defb    205
         defb    187
@@ -1673,22 +1673,22 @@ tile185:
         defb    0
         defb    0
 tile186:
-        defb    255
-        defb    255
-        defb    255
-        defb    223
-        defb    254
-        defb    109
-        defb    128
         defb    0
+        defb    127
+        defb    127
+        defb    127
+        defb    111
+        defb    127
+        defb    54
+        defb    64
 tile187:
-        defb    252
-        defb    248
-        defb    124
-        defb    216
-        defb    244
-        defb    160
         defb    0
+        defb    254
+        defb    252
+        defb    190
+        defb    236
+        defb    122
+        defb    208
         defb    0
 tile188:
         defb    0
@@ -1727,24 +1727,25 @@ tile191:
         defb    0
         defb    0
 tile192:
-        defb    255
-        defb    255
-        defb    255
-        defb    223
-        defb    254
-        defb    109
-        defb    128
         defb    0
+        defb    127
+        defb    127
+        defb    127
+        defb    111
+        defb    127
+        defb    54
+        defb    64
 tile193:
-        defb    252
-        defb    248
-        defb    124
-        defb    216
-        defb    244
-        defb    160
         defb    0
+        defb    254
+        defb    252
+        defb    190
+        defb    236
+        defb    122
+        defb    208
         defb    0
 tile194:
+        defb    0
         defb    127
         defb    192
         defb    138
@@ -1752,8 +1753,8 @@ tile194:
         defb    175
         defb    149
         defb    90
-        defb    0
 tile195:
+        defb    0
         defb    252
         defb    2
         defb    162
@@ -1761,8 +1762,8 @@ tile195:
         defb    82
         defb    162
         defb    84
-        defb    0
 tile196:
+        defb    0
         defb    124
         defb    194
         defb    146
@@ -1770,8 +1771,8 @@ tile196:
         defb    182
         defb    162
         defb    84
-        defb    0
 tile197:
+        defb    0
         defb    127
         defb    192
         defb    138
@@ -1779,8 +1780,8 @@ tile197:
         defb    175
         defb    215
         defb    159
-        defb    191
 tile198:
+        defb    0
         defb    252
         defb    2
         defb    162
@@ -1788,7 +1789,6 @@ tile198:
         defb    234
         defb    182
         defb    250
-        defb    242
 tile199:
         defb    205
         defb    187
@@ -1871,24 +1871,25 @@ tile207:
         defb    0
         defb    0
 tile208:
-        defb    255
-        defb    255
-        defb    255
-        defb    223
-        defb    254
-        defb    109
-        defb    128
         defb    0
+        defb    127
+        defb    127
+        defb    127
+        defb    111
+        defb    127
+        defb    54
+        defb    64
 tile209:
-        defb    252
-        defb    248
-        defb    124
-        defb    216
-        defb    244
-        defb    160
         defb    0
+        defb    254
+        defb    252
+        defb    190
+        defb    236
+        defb    122
+        defb    208
         defb    0
 tile210:
+        defb    0
         defb    127
         defb    192
         defb    138
@@ -1896,8 +1897,8 @@ tile210:
         defb    175
         defb    149
         defb    90
-        defb    0
 tile211:
+        defb    0
         defb    252
         defb    2
         defb    162
@@ -1905,8 +1906,8 @@ tile211:
         defb    82
         defb    162
         defb    84
-        defb    0
 tile212:
+        defb    0
         defb    124
         defb    194
         defb    146
@@ -1914,8 +1915,8 @@ tile212:
         defb    182
         defb    162
         defb    84
-        defb    0
 tile213:
+        defb    191
         defb    222
         defb    191
         defb    223
@@ -1923,8 +1924,8 @@ tile213:
         defb    175
         defb    149
         defb    90
-        defb    0
 tile214:
+        defb    242
         defb    250
         defb    218
         defb    246
@@ -1932,7 +1933,6 @@ tile214:
         defb    114
         defb    162
         defb    84
-        defb    0
 tile215:
         defb    0
         defb    0

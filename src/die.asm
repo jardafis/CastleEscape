@@ -49,22 +49,22 @@ IF  !_ZXN
 		; Display headstone where player died
 		;
         ld      bc, (_xPos)
-        ld      a, 12
+        ld      a, ID_HEADSTONE0
         call    displayPixelTile
         ld      a, c
         add     8
         ld      c, a
-        ld      a, 13
+        ld      a, ID_HEADSTONE1
         call    displayPixelTile
         ld      a, b
         add     8
         ld      b, a
-        ld      a, 13+16
+        ld      a, ID_HEADSTONE3
         call    displayPixelTile
         ld      a, c
         sub     8
         ld      c, a
-        ld      a, 12+16
+        ld      a, ID_HEADSTONE2
         call    displayPixelTile
 ELSE
         ld      ix, knightSprite

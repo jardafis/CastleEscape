@@ -167,7 +167,10 @@
         defc    ID_HEART=2*TILE_SHEET_WIDTH+10
         defc    ID_SPIDER=4*TILE_SHEET_WIDTH+3
         defc    ID_PLATFORM=11*TILE_SHEET_WIDTH+9
-
+        defc    ID_HEADSTONE0=2*TILE_SHEET_WIDTH+5
+        defc    ID_HEADSTONE1=2*TILE_SHEET_WIDTH+6
+        defc    ID_HEADSTONE2=3*TILE_SHEET_WIDTH+5
+        defc    ID_HEADSTONE3=3*TILE_SHEET_WIDTH+6
 
         ;
         ; Screen addresses

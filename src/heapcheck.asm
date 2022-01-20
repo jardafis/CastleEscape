@@ -28,6 +28,6 @@ heapCheck:
         bcall   printAttr
         assert
 
-        section RODATA_2
+        section RODATA_4
 heapMsg:
         db      "Fatal: Heap overflow!", 0x00

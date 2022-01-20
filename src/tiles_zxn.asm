@@ -40,6 +40,11 @@ _displayTile:
         ;       c - X character location
         ;       a - Tile ID of item
         ;
+        ; Exit:
+        ;       b - Y character location
+        ;       c - X character location
+        ;       a - Tile ID of item
+        ;
 displayTile:
         push    de
         push    hl
@@ -59,7 +64,8 @@ displayTile:
         add     hl, a
 
         ; Update tilemap
-        ld      (hl), e
+        ld      a, e                    ; Restore A (must be preserved for exit)
+        ld      (hl), a
 
         pop     hl
         pop     de
@@ -74,5 +80,7 @@ displayTile:
         ;       a - Tile ID of item
         ;
 setTileAttr:
+        ; Does nothing for ZXN as tile attributes (colors) are embedded into
+        ; the bitmaps. This routine is here for compatability.
         ret
 ENDIF

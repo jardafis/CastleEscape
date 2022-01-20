@@ -81,7 +81,8 @@ do
 		convert -set comment "" $temp/tile${tile}.png -negate -alpha off $temp/tile${tile}.h
 		
 		sed -i s/MagickImage/tile${tile}/ $temp/tile${tile}.h
-		sed -i "s/0x50, 0x34, 0x0A,.*0x0A,.*0x0A, //g" $temp/tile${tile}.h
+		sed -i "s/^\s*0x50, 0x34, 0x0A, 0x23, 0x0A, 0x38, 0x20, 0x38, 0x0A, //g" $temp/tile${tile}.h
+#		sed -i "s/0x50, 0x34, 0x0A,.*0x0A,.*0x0A, //g" $temp/tile${tile}.h
 		sed -i "s/static //" $temp/tile${tile}.h
 		echo "#include \"tile${tile}.h\"" >> $temp/$tileSet
 

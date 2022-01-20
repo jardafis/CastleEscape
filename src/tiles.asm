@@ -46,6 +46,11 @@ _displayTile:
         ;		c - X character location
         ;		a - Tile ID of item
         ;
+        ; Exit:
+        ;       b - Y character location
+        ;       c - X character location
+        ;       a - Tile ID of item
+        ;
 displayTile:
         push    af
         push    bc
@@ -111,21 +116,20 @@ displayPixelTile:
         rrca
         rrca
         and     %00011111
-        ld      c, a
+        ld      b, a
+        ld      c, -1                   ; Ensure C doesn't wraparound when using ldi
 
         ; Write the tile data to the screen
         ; de - Pointer to screen
         ; hl - Pointer to tile data
-        ; c  - Tile X character offset
+        ; b  - Tile X character offset
 
         REPT    8
         pop     de                      ; Pop screen address
         ld      a, e                    ; Add X offset
-        add     c
+        add     b
         ld      e, a
-        ld      a, (hl)                 ; Move tile data to the screen
-        ld      (de), a
-        inc     hl
+        ldi
         ENDR
 
 clearTileSP:

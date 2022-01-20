@@ -157,6 +157,11 @@ colLoop:
         ret
 
 getNextChar:
+        ; Page-in the font bank
+        ld      a, font>>16
+        ld      bc, IO_BANK
+        out     (c), a
+
         ; Need to get the next character from the message
         ld      hl, (messagePointer)    ; Get the message pointer
         ld      a, (hl)                 ; Read the character
@@ -181,11 +186,6 @@ getNextChar:
         ld      de, font                ; Pointer to the font
         add     hl, de                  ; hl points to the font data address
         ld      de, charBuffer          ; Point to our character buffer address
-
-        ; Page-in the font bank
-        ld      a, font>>16
-        ld      bc, IO_BANK
-        out     (c), a
 
         REPT    8
         ldi
@@ -212,6 +212,7 @@ messages:
         dw      message0, message1, message2, message3, message4, message5, message6
 messagesEnd:
 
+        section RODATA_4
 message0:
         db      "Escape the castle...", 0xff
 message1:

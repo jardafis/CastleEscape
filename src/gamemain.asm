@@ -128,7 +128,7 @@ newGame:
         border  0
         ld      (gameOver+1), sp
 
-        ld      l, INK_WHITE|PAPER_BLACK
+        ld      l, INK_BLACK|PAPER_BLACK
         call    _cls
 
         ld      bc, 0x0b0c
@@ -595,7 +595,7 @@ xyStartPos:                             ; Position where player entered the leve
         ds      2
 IF  !_ZXN
 _spriteBuffer:
-        ds      48
+        ds      3*PLAYER_HEIGHT
 lastDirection:
         ds      1
 ENDIF
@@ -606,11 +606,13 @@ _bank2HeapEnd:
 currentBank:
         db      MEM_BANK_ROM
 
-        section RODATA_2
+        section RODATA_4
 readyMsg:
         db      "Ready?", 0x00
 gameOverMsg:
         db      " Game Over! ", 0x80, " ", 0x00
+
+        section RODATA_2
 smallJump:
         db      0x0c, 0xfe              ; 12 frames up
         db      0x04, 0xff              ; 4 frames hover
