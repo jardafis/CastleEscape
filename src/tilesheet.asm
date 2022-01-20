@@ -9,15 +9,15 @@ _tile0:
 IF  !_ZXN
         #include    "sprite/tilesheet.inc"
 ELSE
-        #include    "sprite/tilesheet_zxn.inc"
+        binary  "sprite/tilesheet.nxt"
 tiles_end:
         section RODATA_2
         public  tile_palette
         public  tile_palette_end
+
+		; Palette format is  (B1 << 8) | RGB332
+		; Therfore, the odd bytes are not used when setting up the palette.
 tile_palette:
-        db      0xe3, 0x02, 0x03, 0x14
-        db      0x16, 0x1f, 0xa0, 0xb4
-        db      0xb6, 0xe0, 0xe7, 0xfc
-        db      0xff, 0x00, 0x00, 0x00
+        binary  "sprite/tilesheet.nxp"
 tile_palette_end:
 ENDIF
