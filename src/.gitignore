@@ -11,3 +11,4 @@
 *.zx0
 zcc_opt.inc
 build/
+/48.rom
