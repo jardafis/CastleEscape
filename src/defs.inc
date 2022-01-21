@@ -18,6 +18,7 @@
         defc    IO_TileMapPaletteContr=0x43
         defc    IO_PaletteIndex=0x40
         defc    IO_PaletteValue=0x41
+        defc    IO_9BitPaletteValue=0x44
         defc    IO_ULAControl=0x68
         defc    IO_TileMapOffSetXMSB=0x2F
         defc    IO_TileMapOffSetXLSB=0x30

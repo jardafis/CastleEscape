@@ -83,30 +83,8 @@ setPalette:
 nextColor:
         ld      a, (hl)                 ; get the colour from the palette array
         inc     hl                      ; next element in the array
-        nextreg IO_PaletteValue, a      ; write color to palette
+        nextreg IO_9BitPaletteValue, a  ; write color to palette
         djnz    nextColor               ; next color
-        ret
-
-        ;
-        ; Program color data to the currently selected palette.
-        ; Color data is 9 bit data, which means 2 bytes per color.
-        ; Only the LSB of each color is used.
-        ;
-        ; Input:
-        ;       hl - Pointer to palette data
-        ;       b  - # of palette entries
-        ;       a  - Palette start index
-        ;
-        ; Output:
-        ;       hl, b, a - Corrupt
-setTilePalette:
-        nextreg IO_PaletteIndex, a      ; Palette index
-nextTileColor:
-        ld      a, (hl)                 ; get the colour from the palette array
-        inc     hl                      ; next element in the array
-        inc     hl
-        nextreg IO_PaletteValue, a      ; write color to palette
-        djnz    nextTileColor           ; next color
         ret
 
         ;
@@ -250,9 +228,9 @@ initTilemap:
         nextreg IO_TileMapPaletteContr, %00110000
         xor     a                       ; Palette start index
         ; Number of colors
-        ld      b, +(tile_palette_end-tile_palette)/2
+        ld      b, tile_palette_end-tile_palette
         ld      hl, tile_palette        ; Pointer to palette
-        call    setTilePalette          ; Do it!
+        call    setPalette              ; Do it!
 
 ;*___________________________________________________________________________________________________________________________________
 

@@ -22,9 +22,9 @@ ELSE
         public  spritePalette
         public  spritePaletteEnd
 spriteStart:
-        #include    "sprite/sprites.inc"
+        binary  "sprite/sprites.spr"
 spriteEnd:
 spritePalette:
-        db      0x00, 0x02, 0xa0, 0xa2, 0x14, 0x16, 0xb4, 0xb6, 0x00, 0x03, 0xe0, 0xe7, 0x1c, 0x1f, 0xfc, 0xff
+        binary  "sprite/sprites.pal"
 spritePaletteEnd:
 ENDIF
