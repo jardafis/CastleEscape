@@ -5,6 +5,8 @@ IF  _ZXN
         extern  setSpriteFlip
         extern  updateSpriteAttribs
         extern  _jumping
+        extern  _ySpeed
+        extern  _falling
 
         public  _displaySprite
         public  playerSprite
@@ -24,6 +26,9 @@ _displaySprite:
         ld      a, (_jumping)
         or      a
         jr      nz, setJumpSprite
+        ld      a, (_falling)
+        or      a
+        jr      nz, setFallSprite
 
         call    patternIndex
         add     SPRITE_ID_KNIGHT        ; Sprite pattern offset
@@ -40,6 +45,10 @@ setSprite:
         call    updateSpriteAttribs
         ret
 setJumpSprite:
+        ld      a, (_ySpeed)
+        add     SPRITE_ID_JUMP
+        jr      setSprite
+setFallSprite:
         ld      a, SPRITE_ID_JUMP
         jr      setSprite
 
