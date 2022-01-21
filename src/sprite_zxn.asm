@@ -25,8 +25,8 @@ _displaySprite:
         or      a
         jr      nz, setJumpSprite
 
-        ld      a, c
-        and     0x03
+        call    patternIndex
+        add     SPRITE_ID_KNIGHT        ; Sprite pattern offset
 
 setSprite:
         ld      ix, knightSprite
@@ -42,6 +42,23 @@ setSprite:
 setJumpSprite:
         ld      a, SPRITE_ID_JUMP
         jr      setSprite
+
+patternIndex:
+        ld      a, c
+        mod     5
+
+        push    af
+        ld      a, (playerSprite)
+        rrca
+        jr      c, leftPattern
+        pop     af
+        ret
+
+leftPattern:
+        pop     af
+        sub     4
+        neg
+        ret
 
         section BSS_2
 playerSprite:

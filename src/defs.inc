@@ -40,6 +40,7 @@
         defc    SPRITE_ID_SPIDER_UP=6
         defc    SPRITE_ID_SPIDER_DOWN=8
         defc    SPRITE_ID_LANTERN=12
+        defc    SPRITE_ID_KNIGHT=0x10
 
         defvars 0
         {
@@ -403,6 +404,8 @@ ELSE
 ENDIF
         ENDM
 
+IF 0
+        ; A must be < 128 for this routine to work
 mod     MACRO   val
         LOCAL   modLoop
 modLoop:
@@ -410,6 +413,29 @@ modLoop:
         jp      p, modLoop
         add     a, val
         ENDM
+ELSE
+
+mod     MACRO   val
+        LOCAL   loop, noSub
+        push    bc
+        push    de
+        ld      d, a
+        xor     a
+
+        ld      b, 8
+loop:
+        sla     d
+        rla
+        cp      val
+        jr      c, noSub
+        sub     val
+        inc     d
+noSub:
+        djnz    loop
+        pop     de
+        pop     bc
+        ENDM
+ENDIF
 
         ;
         ; Calculate screen row address

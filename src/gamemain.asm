@@ -248,8 +248,9 @@ gameLoop:
         ;
         ; Wait for refresh interrupt
         ;
+        REPT    1
         halt
-
+        ENDR
         ; ######################################
         ;
         ; Remove any moving items from the screen
