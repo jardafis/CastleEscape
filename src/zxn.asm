@@ -25,6 +25,8 @@ IF  _ZXN
 
         #include    "defs.inc"
 
+        DEFINE  SPRITES_4BIT
+
         section CODE_2
         ;
         ; Initialize the ZX Spectrum Next hardware
@@ -66,6 +68,8 @@ zxnInit:
         xor     a
         call    setPalette
 
+        ; Set sprite transparent color index
+        nextreg IO_SpriteTransp, 0x00
         ret
 
         ;
@@ -378,8 +382,18 @@ nextSprite:
 enableSprite:
         push    af
         ld      a, (ix+attrib3)
+  IFDEF SPRITES_4BIT
+        or      0xc0
+  ELSE
         or      0x80
+  ENDIF
         ld      (ix+attrib3), a
+
+  IFDEF SPRITES_4BIT
+        ld      a, 0x80
+        or      (ix+attrib4)
+        ld      (ix+attrib4), a
+  ENDIF
         pop     af
         ret
 
@@ -412,11 +426,13 @@ updateSpriteAttribs:
         ld      bc, 0x303b
         outinb
         ld      bc, 0x0057
-        outinb
-        outinb
-        outinb
-        outinb
-
+        outinb                          ; Attrib. 0
+        outinb                          ; Attrib. 1
+        outinb                          ; Attrib. 2
+        outinb                          ; Attrib. 3
+  IFDEF SPRITES_4BIT
+        outinb                          ; Attrib. 4
+  ENDIF
         pop     hl
         pop     bc
         ret
@@ -468,11 +484,39 @@ setSpritePattern:
         push    af
         push    bc
 
-        ld      b, a
+        ld      b, a                    ; Save original value
+
+  IFDEF SPRITES_4BIT
+        ; For 4-bit srpites, bit 0 of the pattern index
+        ; is stored in bit-6 of attrib 4 and bits 6-1 of
+        ; the pattern index are stored in attrib 3.
+
+        ld      a, (ix+attrib4)         ; Get attrib 4,
+        and     0xbf                    ; clear bit 6
+        ld      c, a                    ; and save this value
+
+        ld      a, b                    ; Get original pattern index
+        rrca                            ; and move bit 0 to bit 6
+        rrca
+        and     0x40                    ; clear all other bits
+        or      c                       ; OR with saved attrib 4 value
+        ld      (ix+attrib4), a         ; and write it back
+
+
+        ld      a, (ix+attrib3)         ; Get attrib 3,
+        and     0xc0                    ; clear the pattern bits
+        ld      c, a                    ; and save it
+
+        ld      a, b                    ; Get original pattern index
+        rrca                            ; Shift bit-0 out of the way
+        or      c                       ; OR with saved attrib 3 value
+        ld      (ix+attrib3), a         ; and write it back
+  ELSE
         ld      a, (ix+attrib3)
         and     0xc0
         or      b
         ld      (ix+attrib3), a
+  ENDIF
 
         pop     bc
         pop     af

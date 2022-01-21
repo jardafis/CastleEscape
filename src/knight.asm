@@ -22,9 +22,9 @@ ELSE
         public  spritePalette
         public  spritePaletteEnd
 spriteStart:
-        binary  "sprite/sprites.spr"
+        binary  "sprite/ZXN_Sprites.spr"
 spriteEnd:
 spritePalette:
-        binary  "sprite/sprites.pal"
+        binary  "sprite/ZXN_Sprites.nxp"
 spritePaletteEnd:
 ENDIF

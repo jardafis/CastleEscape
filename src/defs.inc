@@ -32,12 +32,13 @@
         defc    IO_SpriteAttrib2=0x37
         defc    IO_SpriteAttrib3=0x38
         defc    IO_SpriteAttrib4=0x39
+        defc    IO_SpriteTransp=0x4b
         defc    IO_TurboMode=0x07
 
         defc    SPRITE_ID_TOMBSTONE=5
         defc    SPRITE_ID_JUMP=4
         defc    SPRITE_ID_SPIDER_UP=6
-        defc    SPRITE_ID_SPIDER_DOWN=10
+        defc    SPRITE_ID_SPIDER_DOWN=8
         defc    SPRITE_ID_LANTERN=12
 
         defvars 0
