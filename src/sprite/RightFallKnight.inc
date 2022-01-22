@@ -79,20 +79,20 @@ RightFall0:
         defb    0
         defb    16
         defb    194
-        defb    127
-        defb    0
+        defb    63
+        defb    128
         defb    255
         defb    0
         defb    16
-        defb    133
-        defb    127
-        defb    0
+        defb    135
+        defb    15
+        defb    128
         defb    255
         defb    0
         defb    48
-        defb    2
-        defb    127
         defb    0
+        defb    15
+        defb    224
         defb    255
         defb    0
 RightFall1:
@@ -176,20 +176,20 @@ RightFall1:
         defb    0
         defb    8
         defb    97
-        defb    63
-        defb    0
+        defb    31
+        defb    64
         defb    255
         defb    0
         defb    8
-        defb    66
-        defb    63
-        defb    128
+        defb    67
+        defb    7
+        defb    192
         defb    255
         defb    0
         defb    24
-        defb    1
-        defb    63
         defb    0
+        defb    7
+        defb    112
         defb    255
         defb    0
 RightFall2:
@@ -273,20 +273,20 @@ RightFall2:
         defb    0
         defb    132
         defb    48
-        defb    31
-        defb    128
+        defb    15
+        defb    160
         defb    255
         defb    0
         defb    132
         defb    33
-        defb    31
-        defb    64
+        defb    3
+        defb    224
         defb    255
         defb    0
         defb    140
         defb    0
-        defb    31
-        defb    128
+        defb    3
+        defb    56
         defb    255
         defb    0
 RightFall3:
@@ -370,20 +370,20 @@ RightFall3:
         defb    0
         defb    194
         defb    24
-        defb    15
-        defb    64
+        defb    7
+        defb    80
         defb    255
         defb    0
         defb    194
         defb    16
-        defb    15
-        defb    160
+        defb    1
+        defb    240
         defb    255
         defb    0
         defb    198
         defb    0
-        defb    15
-        defb    64
+        defb    1
+        defb    28
         defb    255
         defb    0
 RightFall4:
@@ -467,20 +467,20 @@ RightFall4:
         defb    0
         defb    225
         defb    12
-        defb    7
-        defb    32
+        defb    3
+        defb    40
         defb    255
         defb    0
         defb    225
         defb    8
-        defb    7
-        defb    80
+        defb    0
+        defb    120
         defb    255
         defb    0
         defb    227
         defb    0
-        defb    7
-        defb    32
+        defb    0
+        defb    14
         defb    255
         defb    0
 RightFall5:
@@ -564,21 +564,21 @@ RightFall5:
         defb    0
         defb    240
         defb    6
-        defb    131
-        defb    16
+        defb    129
+        defb    20
         defb    255
         defb    0
         defb    240
         defb    4
-        defb    131
-        defb    40
-        defb    255
+        defb    128
+        defb    60
+        defb    127
         defb    0
         defb    241
         defb    0
-        defb    131
-        defb    16
-        defb    255
+        defb    128
+        defb    7
+        defb    127
         defb    0
 RightFall6:
         defb    255
@@ -661,22 +661,22 @@ RightFall6:
         defb    0
         defb    248
         defb    3
-        defb    65
-        defb    8
+        defb    64
+        defb    10
         defb    255
         defb    0
         defb    248
         defb    2
-        defb    65
-        defb    20
-        defb    255
+        defb    64
+        defb    30
+        defb    63
         defb    0
         defb    248
         defb    0
-        defb    193
-        defb    8
-        defb    255
-        defb    0
+        defb    192
+        defb    3
+        defb    63
+        defb    128
 RightFall7:
         defb    255
         defb    0
@@ -759,18 +759,18 @@ RightFall7:
         defb    252
         defb    1
         defb    32
-        defb    132
-        defb    255
+        defb    133
+        defb    127
         defb    0
         defb    252
         defb    1
         defb    32
-        defb    10
-        defb    255
+        defb    15
+        defb    31
         defb    0
         defb    252
         defb    0
         defb    96
-        defb    4
-        defb    255
-        defb    0
+        defb    1
+        defb    31
+        defb    192

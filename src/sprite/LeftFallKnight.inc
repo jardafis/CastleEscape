@@ -77,22 +77,22 @@ LeftFall0:
         defb    65
         defb    63
         defb    128
-        defb    255
+        defb    254
         defb    0
         defb    4
-        defb    33
+        defb    161
         defb    63
         defb    128
-        defb    255
+        defb    248
         defb    0
         defb    4
-        defb    80
+        defb    240
         defb    63
         defb    128
-        defb    255
-        defb    0
+        defb    248
+        defb    3
         defb    6
-        defb    32
+        defb    128
         defb    63
         defb    0
 LeftFall1:
@@ -176,20 +176,20 @@ LeftFall1:
         defb    192
         defb    255
         defb    0
-        defb    130
-        defb    16
+        defb    2
+        defb    80
         defb    31
         defb    192
-        defb    255
+        defb    252
         defb    0
-        defb    130
-        defb    40
+        defb    2
+        defb    120
         defb    31
         defb    64
-        defb    255
-        defb    0
-        defb    131
-        defb    16
+        defb    252
+        defb    1
+        defb    3
+        defb    192
         defb    31
         defb    0
 LeftFall2:
@@ -273,20 +273,20 @@ LeftFall2:
         defb    96
         defb    255
         defb    0
-        defb    193
-        defb    8
+        defb    129
+        defb    40
         defb    15
         defb    96
-        defb    255
+        defb    254
         defb    0
-        defb    193
-        defb    20
+        defb    1
+        defb    60
         defb    15
         defb    32
-        defb    255
+        defb    254
         defb    0
-        defb    193
-        defb    8
+        defb    1
+        defb    224
         defb    143
         defb    0
 LeftFall3:
@@ -370,20 +370,20 @@ LeftFall3:
         defb    48
         defb    255
         defb    0
-        defb    224
-        defb    4
+        defb    192
+        defb    20
         defb    135
         defb    48
         defb    255
         defb    0
-        defb    224
-        defb    10
+        defb    0
+        defb    30
         defb    135
         defb    16
         defb    255
         defb    0
-        defb    224
-        defb    4
+        defb    0
+        defb    112
         defb    199
         defb    0
 LeftFall4:
@@ -467,20 +467,20 @@ LeftFall4:
         defb    24
         defb    255
         defb    0
-        defb    240
-        defb    2
+        defb    224
+        defb    10
         defb    67
         defb    24
         defb    255
         defb    0
-        defb    240
-        defb    5
+        defb    128
+        defb    15
         defb    67
         defb    8
         defb    255
         defb    0
-        defb    240
-        defb    2
+        defb    128
+        defb    56
         defb    99
         defb    0
 LeftFall5:
@@ -564,20 +564,20 @@ LeftFall5:
         defb    12
         defb    255
         defb    0
-        defb    248
-        defb    1
+        defb    240
+        defb    5
         defb    33
         defb    12
         defb    255
         defb    0
-        defb    248
-        defb    2
+        defb    192
+        defb    7
         defb    33
         defb    132
         defb    255
         defb    0
-        defb    248
-        defb    1
+        defb    192
+        defb    28
         defb    49
         defb    0
 LeftFall6:
@@ -661,22 +661,22 @@ LeftFall6:
         defb    6
         defb    255
         defb    0
-        defb    252
-        defb    0
+        defb    248
+        defb    2
         defb    16
         defb    134
         defb    255
         defb    0
-        defb    252
-        defb    1
+        defb    224
+        defb    3
         defb    16
-        defb    66
+        defb    194
         defb    255
         defb    0
-        defb    252
-        defb    0
+        defb    224
+        defb    14
         defb    24
-        defb    128
+        defb    0
 LeftFall7:
         defb    255
         defb    0
@@ -758,19 +758,19 @@ LeftFall7:
         defb    131
         defb    255
         defb    0
-        defb    254
-        defb    0
+        defb    252
+        defb    1
         defb    8
         defb    67
         defb    255
         defb    0
-        defb    254
-        defb    0
+        defb    240
+        defb    1
         defb    8
-        defb    161
+        defb    225
         defb    255
         defb    0
-        defb    254
-        defb    0
+        defb    240
+        defb    7
         defb    12
-        defb    64
+        defb    0

@@ -531,55 +531,44 @@ IF  !_ZXN
 		;	None.
 		;
 setPlayerSprite:
-        push    af
+        ; Default to walking
+        ld      hl, walkingTab
 
-        ld      a, (_jumping)
-        or      a
-        jr      nz, jumpingSprite
+        ; Check for falling or jumping
+        ; these states override walking
+        ld      bc, (jumpFall)
+        ld      a, b
+        or      c
+        call    nz, jumpingSprite
 
+playerSpriteDone:
         ld      a, (lastDirection)
-        ld      hl, _RightKnight0
-        rrca
-        rrca
-        call    c, leftSprite
-        ld      (playerSprite), hl
+        and     0x02
+        addhl   a
 
-        pop     af
-        ret
-leftSprite:
-        ld      hl, _LeftKnight0
+        ld      e, (hl)
+        inc     hl
+        ld      d, (hl)
+
+        ld      (playerSprite), de
         ret
 
 jumpingSprite:
+        ld      hl, fallingTab
         ld      a, (_ySpeed)
-        cp      -2
-        jr      z, jumpUp
+        and     0x80
+        ret     z
 
-        ld      a, (lastDirection)
-        ld      hl, RightFallKnight0
-        rrca
-        rrca
-        call    c, leftFallSprite
-        ld      (playerSprite), hl
-
-        pop     af
-        ret
-jumpUp:
-        ld      a, (lastDirection)
-        ld      hl, RightJumpKnight0
-        rrca
-        rrca
-        call    c, leftJumpSprite
-        ld      (playerSprite), hl
-        pop     af
-        ret
-leftJumpSprite:
-        ld      hl, LeftJumpKnight0
+        ld      hl, jumpingTab
         ret
 
-leftFallSprite:
-        ld      hl, LeftFallKnight0
-        ret
+        section RODATA_2
+walkingTab:
+        dw      _RightKnight0, _LeftKnight0
+jumpingTab:
+        dw      RightJumpKnight0, LeftJumpKnight0
+fallingTab:
+        dw      RightFallKnight0, LeftFallKnight0
 ENDIF
 
         section BSS_2
