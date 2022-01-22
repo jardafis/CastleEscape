@@ -29,7 +29,7 @@ build/tilesheet.nxt: build/tilesheet.png Gfx2Next/bin/gfx2next
 	./Gfx2Next/bin/gfx2next -pal-min -preview -map-none -colors-4bit -tile-size=8x8 $<
 
 build/ZXN_Sprites.spr: build/ZXN_Sprites.png Gfx2Next/bin/gfx2next
-	./Gfx2Next/bin/gfx2next -preview -colors-4bit -sprites  $<
+	./Gfx2Next/bin/gfx2next -pal-min -preview -colors-4bit -sprites  $<
 
 build/tilesheet.png: gimp/tilesheet.png
 	convert $< PNG8:$@

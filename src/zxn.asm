@@ -6,6 +6,8 @@ IF  _ZXN
         extern  spriteEnd
         extern  spritePalette
         extern  spritePaletteEnd
+        extern  spriteStart
+        extern  _tile0
 
         public  zxnInit
         public  clearTilemap
@@ -69,7 +71,14 @@ zxnInit:
         call    setPalette
 
         ; Set sprite transparent color index
-        nextreg IO_SpriteTransp, 0x00
+        ; to the index of the top-left pixel
+        ; in the sprite sheet.
+        ld      a, (spriteStart)
+  IFDEF SPRITES_4BIT
+        SWAPNIB
+        and     0x0f
+  ENDIF
+        nextreg IO_SpriteTransp, a
         ret
 
         ;
@@ -207,8 +216,13 @@ initTilemap:
         ; bits 7-4 = Reserved, must be 0
         ; bits 3-0 = Set the index value (0xF after reset)
 
-        ; bits 0-3 (0-15)
-        nextreg IO_TileMapTransparency, %0000000
+        ; Set tilesheet transparent color index
+        ; to the index of the top-left pixel
+        ; in the tilesheet.
+        ld      a, (_tile0)
+        swapnib
+        and     0x0f
+        nextreg IO_TileMapTransparency, a
 
 ;*___________________________________________________________________________________________________________________________________
 
