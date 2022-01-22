@@ -6,7 +6,9 @@ all: build/levels.inc \
 	build/RightKnight.inc \
 	build/LeftKnight.inc \
 	build/RightJumpKnight.inc \
+	build/RightFallKnight.inc \
 	build/LeftJumpKnight.inc \
+	build/LeftFallKnight.inc \
 	build/ZXN_Sprites.spr \
 	build/tilesheet.nxt
 
@@ -57,6 +59,11 @@ build/LeftKnight.inc: gimp/LeftKnight.png gimp/LeftMasks.png
 build/RightJumpKnight.inc: gimp/RightJump.png gimp/RightJumpMask.png
 	./scripts/genSprites.sh $^ -o $@
 
+build/RightFallKnight.inc: gimp/RightFall.png gimp/RightFallMask.png
+	./scripts/genSprites.sh $^ -o $@
+
 build/LeftJumpKnight.inc: gimp/LeftJump.png gimp/LeftJumpMask.png
 	./scripts/genSprites.sh $^ -o $@
 	
+build/LeftFallKnight.inc: gimp/LeftFall.png gimp/LeftFallMask.png
+	./scripts/genSprites.sh $^ -o $@

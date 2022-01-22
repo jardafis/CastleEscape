@@ -3,6 +3,8 @@ IF  !_ZXN
         extern  _RightKnight0
         extern  RightJumpKnight0
         extern  LeftJumpKnight0
+        extern  RightFallKnight0
+        extern  LeftFallKnight0
 ELSE
         extern  zxnInit
         extern  enableSprite
@@ -533,9 +535,9 @@ setPlayerSprite:
 
         ld      a, (_jumping)
         or      a
-        ld      a, (lastDirection)
         jr      nz, jumpingSprite
 
+        ld      a, (lastDirection)
         ld      hl, _RightKnight0
         rrca
         rrca
@@ -549,6 +551,21 @@ leftSprite:
         ret
 
 jumpingSprite:
+        ld      a, (_ySpeed)
+        cp      -2
+        jr      z, jumpUp
+
+        ld      a, (lastDirection)
+        ld      hl, RightFallKnight0
+        rrca
+        rrca
+        call    c, leftFallSprite
+        ld      (playerSprite), hl
+
+        pop     af
+        ret
+jumpUp:
+        ld      a, (lastDirection)
         ld      hl, RightJumpKnight0
         rrca
         rrca
@@ -558,6 +575,10 @@ jumpingSprite:
         ret
 leftJumpSprite:
         ld      hl, LeftJumpKnight0
+        ret
+
+leftFallSprite:
+        ld      hl, LeftFallKnight0
         ret
 ENDIF
 
