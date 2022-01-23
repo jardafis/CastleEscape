@@ -41,7 +41,6 @@ Gfx2Next:
 	git clone --depth=1 https://github.com/headkaze/Gfx2Next.git
 
 Gfx2Next/bin/gfx2next: Gfx2Next
-	sed -i 's/\(^\s*gcc.*$$\)/\1 -lm/g' Gfx2Next/Makefile
 	make -C Gfx2Next
 
 build/%.inc: tiled/%.tmx
