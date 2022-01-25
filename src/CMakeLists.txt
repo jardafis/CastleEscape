@@ -6,7 +6,7 @@ set(CMAKE_ASM_COMPILER z88dk-z80asm)
 
 project(CastleEscape C ASM)
 
-set(ZXSTLC ${PROJECT_SOURCE_DIR}/tools/zxstlc_linux)
+set(ZXSTLC ${PROJECT_SOURCE_DIR}/tools/zxstlc)
 
 if(NOT DEFINED TARGET)
     set(Z88DK_TARGET +zx)

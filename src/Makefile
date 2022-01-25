@@ -6,7 +6,7 @@ TARGET?= +zx
 PROJECT_NAME=CastleEscape
 ASMSRC=$(wildcard *.asm)
 CSRC=$(wildcard *.c)
-ZXSTLC=./tools/zxstlc_linux
+ZXSTLC=./tools/zxstlc
 
 CFLAGS=$(TARGET) -O2 -c \
 		--codeseg=CODE_4 \
@@ -18,7 +18,7 @@ CFLAGS=$(TARGET) -O2 -c \
 LDFLAGS=$(TARGET) --no-crt -m crt/crt.asm
 
 ifeq ($(TARGET),+zxn)
-ZXEMU=~/ZEsarUX-10.0/zesarux
+ZXEMU=zesarux
 EMUFLAGS= --machine TBBlue --configfile .zesaruxrc --tbblue-fast-boot-mode  --nosplash --nowelcomemessage --quickexit
 ASFLAGS+=-mz80n -D_ZXN
 CFLAGS+=-D_ZXN
