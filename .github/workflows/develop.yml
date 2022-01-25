@@ -32,10 +32,12 @@ jobs:
 
       - name: Build ZX Spectrum
         run: |
-          make -C src clean
-          make -C src all
+          cmake ./src -B build -DTARGET=+zx -G Ninja
+          ninja -C build clean
+          ninja -C build CastleEscape.tap
 
       - name: Build ZX Spectrum Next
         run: |
-          make -C src clean TARGET=+zxn
-          make -C src all TARGET=+zxn
+          cmake ./src -B build -DTARGET=+zxn -G Ninja
+          ninja -C build clean
+          ninja -C build CastleEscape.tap
