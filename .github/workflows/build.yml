@@ -25,6 +25,10 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - name: Install Ninja
+        run: |
+          sudo apt install ninja-build
+
       - name: Install z88dk
         run: |
           sudo snap install --edge z88dk
@@ -40,17 +44,19 @@ jobs:
 
       - name: Build ZX Spectrum .tap & .dsk images
         run: |
-          make -C src clean
-          make -C src CastleEscape.tap
-          make -C src CastleEscape.dsk
-          cp src/CastleEscape.tap .
-          cp src/CastleEscape.dsk .
+          cmake ./src -B build -DTARGET=+zx -G Ninja
+          ninja -C build clean
+          ninja -C build CastleEscape.tap
+          ninja -C build CastleEscape.dsk
+          cp build/CastleEscape.tap .
+          cp build/CastleEscape.dsk .
 
       - name: Build ZX Spectrum Next .tap image
         run: |
-          make -C src clean
-          make -C src CastleEscape.tap TARGET=+zxn
-          cp src/CastleEscape.tap ./CastleEscape_zxn.tap
+          cmake ./src -B build -DTARGET=+zxn -G Ninja
+          ninja -C build clean
+          ninja -C build CastleEscape.tap
+          cp build/CastleEscape.tap ./CastleEscape_zxn.tap
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
