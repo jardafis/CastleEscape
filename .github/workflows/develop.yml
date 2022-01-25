@@ -17,6 +17,10 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - name: Install Ninja
+        run: |
+          sudo apt install ninja-build
+
       - name: Install z88dk
         run: |
           sudo snap install --edge z88dk
