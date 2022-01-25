@@ -95,6 +95,18 @@ set_property(SOURCE wyzproplay_zx.asm
     ${PROJECT_SOURCE_DIR}/music/death.wyz.mus
     )
 
+set_property(SOURCE knight.asm
+    APPEND PROPERTY OBJECT_DEPENDS
+    ${PROJECT_SOURCE_DIR}/sprite/ZXN_Sprites.spr
+    ${PROJECT_SOURCE_DIR}/sprite/ZXN_Sprites.nxp
+    )
+
+set_property(SOURCE tilesheet.asm
+    APPEND PROPERTY OBJECT_DEPENDS
+    ${PROJECT_SOURCE_DIR}/sprite/tilesheet.nxt
+    ${PROJECT_SOURCE_DIR}/sprite/tilesheet.nxp
+    )
+
 add_executable(${PROJECT_NAME}_BANK_2.bin ${SOURCES})
 
 set_target_properties(${PROJECT_NAME}_BANK_2.bin
