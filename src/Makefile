@@ -1,3 +1,9 @@
+ifeq ($(OS),Windows_NT)
+SUFFIX=.exe
+else
+SUFFIX=
+endif
+
 CC=zcc
 AS=z88dk-z80asm
 LD=zcc
@@ -6,7 +12,7 @@ TARGET?= +zx
 PROJECT_NAME=CastleEscape
 ASMSRC=$(wildcard *.asm)
 CSRC=$(wildcard *.c)
-ZXSTLC=./tools/zxstlc
+ZXSTLC=./tools/zxstlc$(SUFFIX)
 
 CFLAGS=$(TARGET) -O2 -c \
 		--codeseg=CODE_4 \
