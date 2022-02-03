@@ -5,7 +5,7 @@ SUFFIX=
 endif
 
 CC=zcc
-AS=z88dk-z80asm
+AS=zcc
 LD=zcc
 
 TARGET?= +zx
@@ -14,7 +14,7 @@ ASMSRC=$(wildcard *.asm)
 CSRC=$(wildcard *.c)
 ZXSTLC=./tools/zxstlc$(SUFFIX)
 
-CFLAGS=$(TARGET) -O2 -c \
+CFLAGS=-O2 \
 		--codeseg=CODE_4 \
 		--constseg=RODATA_4 \
 		--dataseg=DATA_4 \
@@ -26,12 +26,12 @@ LDFLAGS=$(TARGET) --no-crt -m crt/crt.asm
 ifeq ($(TARGET),+zxn)
 ZXEMU=zesarux
 EMUFLAGS= --machine TBBlue --configfile .zesaruxrc --tbblue-fast-boot-mode  --nosplash --nowelcomemessage --quickexit
-ASFLAGS+=-mz80n -D_ZXN
+ASFLAGS+=-Ca-mz80n -Ca-D_ZXN
 CFLAGS+=-D_ZXN
 DISFLAGS+=-mz80n
 else
 ZXEMU=fuse
-ASFLAGS+=-mz80
+ASFLAGS+=-Ca-mz80
 DISFLAGS+=-mz80
 endif
 
@@ -74,11 +74,11 @@ mainmenu.scr.zx0: mainmenu.scr
 
 %.o: %.c
 	@echo "Compiling $<"
-	@$(CC) $(CFLAGS) -o $@ $<
+	@$(CC) $(TARGET) $(CFLAGS) -c $<
 
 %.o: %.asm
 	@echo "Assembling $<"
-	@$(AS) $(ASFLAGS) $<
+	@$(AS) $(TARGET) $(ASFLAGS) -c $<
 
 $(PROJECT_NAME)_BANK_2.bin: $(OBJECTS) crt/crt.asm
 	@echo "Linking $@"
