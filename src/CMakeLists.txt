@@ -52,6 +52,7 @@ set(SOURCES
     definekeys.asm
     die.asm
     displaybcd.asm
+    displayhex.asm
     displaytilemap.asm
     dzx0_standard.asm
     eggs.asm
