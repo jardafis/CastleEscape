@@ -4,9 +4,9 @@ IF  _ZXN
         extern  setSpriteXY
         extern  setSpriteFlip
         extern  updateSpriteAttribs
-        extern  _jumping
         extern  _ySpeed
-        extern  _falling
+        extern  _xSpeed
+        extern  jumpFall
 
         public  _displaySprite
         public  playerSprite
@@ -23,14 +23,14 @@ IF  _ZXN
         ;       c  - Screen x pixel location
         ;
 _displaySprite:
-        ld      a, (_jumping)
-        or      a
+        ld      hl, (jumpFall)          ; 16
+        xor     a                       ; 4
+        cp      l                       ; 4
         jr      nz, setJumpSprite
-        ld      a, (_falling)
-        or      a
+        cp      h                       ; 4
         jr      nz, setFallSprite
 
-        call    patternIndex
+        call    getPatternIndex
         add     SPRITE_ID_KNIGHT        ; Sprite pattern offset
 
 setSprite:
@@ -52,24 +52,23 @@ setFallSprite:
         ld      a, SPRITE_ID_JUMP
         jr      setSprite
 
-patternIndex:
-        ld      a, c
+getPatternIndex:
+		; Check if the player is moving left/right
+        ld      a, (_xSpeed)
+        or      a
+        ret     z
+
+        ; Increment the frame count
+        ld      hl, frame               ; 10
+        inc     (hl)                    ; 11
+        ld      a, (hl)                 ; 7
         mod     5
 
-        push    af
-        ld      a, (playerSprite)
-        rrca
-        jr      c, leftPattern
-        pop     af
-        ret
-
-leftPattern:
-        pop     af
-        sub     4
-        neg
         ret
 
         section BSS_2
 playerSprite:
         ds      2
+frame:
+        ds      1
 ENDIF

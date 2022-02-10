@@ -1,10 +1,7 @@
-        extern  _falling
-        extern  _jumping
         extern  _pasteScreen
         extern  _copyScreen
         extern  _spriteBuffer
         extern  _xPos
-        extern  _ySpeed
         extern  decBCD
         extern  display2BCD
 IF  !_ZXN
@@ -22,8 +19,8 @@ ENDIF
         extern  startSprite
         extern  wyz_play_song
         extern  wyz_player_stop
-        extern  xyPos
         extern  xyStartPos
+        extern  resetPlayer
 
         public  die
 
@@ -136,14 +133,12 @@ ENDIF
 
         ; Set player X/Y position (and sprite direction) to where
         ; they entered the level.
-        ld      hl, (xyStartPos)
-        ld      (xyPos), hl
         ld      hl, (startSprite)
         ld      (playerSprite), hl
-        xor     a
-        ld      (_jumping), a
-        ld      (_ySpeed), a
-        ld      (_falling), a
+
+        ld      hl, (xyStartPos)
+        call    resetPlayer
+
 IF  !_ZXN
         ld      (lastDirection), a
 ENDIF

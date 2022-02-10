@@ -83,6 +83,8 @@ ENDIF
         public  xyPos
         public  xyStartPos
         public  _bank2HeapEnd
+        public  resetPlayer
+        public  jumpFall
 
         #include    "defs.inc"
 
@@ -186,27 +188,22 @@ IF  !_ZXN
         xor     a
         ld      (lastDirection), a
 ELSE
+        xor     a
         ld      (playerSprite), a
         ld      ix, knightSprite
         call    enableSprite
 ENDIF
+
         ;
         ; Starting X and Y player position
         ;
         ld      hl, START_Y<<8|START_X
-        ld      (_xPos), hl
+        call    resetPlayer
 
-        ;
-        ; Initialize the X/Y speed variables
-        ;
-        xor     a
-        ld      (_xSpeed), a
-        ld      (_ySpeed), a
-        ld      (_jumping), a
-        ld      (_falling), a
         ;
         ; Set the current tilemap
         ;
+        xor     a
         ld      (_tileMapX), a
         ld      (_tileMapY), a
 
@@ -521,6 +518,25 @@ getJumpSequence1:
         inc     hl
         ld      (jumpPos), hl
         scf                             ; cf = 1
+        ret
+
+        ;
+        ; Initialize the X/Y speed variables
+        ;
+        ; Input:
+        ;   h - Player Y pixel location
+        ;   l - Player X pixel location
+        ;
+        ; Output:
+        ;	a - Corrupted
+        ;
+resetPlayer:
+        ld      (xyPos), hl
+        xor     a
+        ld      (_xSpeed), a
+        ld      (_ySpeed), a
+        ld      (_jumping), a
+        ld      (_falling), a
         ret
 
 IF  !_ZXN

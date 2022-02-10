@@ -119,7 +119,7 @@ movingLeft:
         cp      ID_SOLID_TILE
         ; If the tile is solid, cannot continue in this
         ; direction, exit now.
-        ret     nc                      ; 'nc' if a >= ID_SOLID_TILE
+        jr      nc, stopX               ; 'nc' if a >= ID_SOLID_TILE
 
         ; Check the bottom half of the sprite.
         ; Add the tilemap width to get the next row
@@ -129,7 +129,7 @@ movingLeft:
 
         ld      a, (hl)
         cp      ID_SOLID_TILE
-        ret     nc                      ; 'nc' if a >= ID_SOLID_TILE
+        jr      nc, stopX               ; 'nc' if a >= ID_SOLID_TILE
 
         ; If the player is in the middle of a jump,
         ; it may span 3 characters rather than 2.
@@ -142,7 +142,7 @@ movingLeft:
 
         ld      a, (hl)
         cp      ID_SOLID_TILE
-        ret     nc                      ; 'nc' if a >= ID_SOLID_TILE
+        jr      nc, stopX               ; 'nc' if a >= ID_SOLID_TILE
 
 checkXDone:
         ld      a, (_xPos)              ; Get the X pixel offset
@@ -176,6 +176,10 @@ nextXLevel:
 changeXLevel:
         ld      (_xPos), a
         call    _setupScreen
+        ret
+stopX:
+        xor     a
+        ld      (_xSpeed), a
         ret
 
         ;
