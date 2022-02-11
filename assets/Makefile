@@ -2,34 +2,34 @@
 
 all: build/levels.inc \
 	build/banner.inc \
-	build/tilesheet.inc \
 	build/RightKnight.inc \
 	build/LeftKnight.inc \
 	build/RightJumpKnight.inc \
 	build/RightFallKnight.inc \
 	build/LeftJumpKnight.inc \
 	build/LeftFallKnight.inc \
+	build/ZXS_tilesheet.nxt \
 	build/ZXN_Sprites.spr \
-	build/tilesheet.nxt
+	build/ZXN_tilesheet.nxt
 
 clean:
 	rm -rf build
 
 install: all
 	cp build/*Knight.inc ../src/sprite
-	cp build/tilesheet.inc ../src/sprite
 	cp build/levels.inc ../src
 	cp build/banner.inc ../src
-	cp build/tilesheet.nxp ../src/sprite
-	cp build/tilesheet.nxt ../src/sprite
+	cp build/ZXS_tilesheet.nxt ../src/sprite
+	cp build/ZXN_tilesheet.nxp ../src/sprite
+	cp build/ZXN_tilesheet.nxt ../src/sprite
 	cp build/ZXN_Sprites.spr ../src/sprite
 	cp build/ZXN_Sprites.nxp ../src/sprite
 
-build/tilesheet.nxt: build/tilesheet.png Gfx2Next/bin/gfx2next 
-	./Gfx2Next/bin/gfx2next -pal-min -preview -map-none -colors-4bit -tile-size=8x8 $<
+build/ZXN_tilesheet.nxt: build/tilesheet.png Gfx2Next/bin/gfx2next
+	./Gfx2Next/bin/gfx2next -pal-min -map-none -colors-4bit -tile-size=8x8 $< $@
 
 build/ZXN_Sprites.spr: build/ZXN_Sprites.png Gfx2Next/bin/gfx2next
-	./Gfx2Next/bin/gfx2next -pal-min -preview -colors-4bit -sprites  $<
+	./Gfx2Next/bin/gfx2next -pal-min -colors-4bit -sprites $< $@
 
 build/tilesheet.png: gimp/tilesheet.png
 	convert $< PNG8:$@
@@ -45,6 +45,9 @@ Gfx2Next/bin/gfx2next: Gfx2Next
 
 build/%.inc: tiled/%.tmx
 	./scripts/tmx2asm.sh $< $@
+
+build/ZXS_tilesheet.nxt: gimp/tilesheet.png Gfx2Next/bin/gfx2next
+	./Gfx2Next/bin/gfx2next -map-none -colors-1bit -tile-size=8x8 $< $@
 
 build/tilesheet.inc: gimp/tilesheet.png
 	./scripts/tilesheet.sh $< $@

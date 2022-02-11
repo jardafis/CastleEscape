@@ -104,8 +104,9 @@ set_property(SOURCE knight.asm
 
 set_property(SOURCE tilesheet.asm
     APPEND PROPERTY OBJECT_DEPENDS
-    ${PROJECT_SOURCE_DIR}/sprite/tilesheet.nxt
-    ${PROJECT_SOURCE_DIR}/sprite/tilesheet.nxp
+    ${PROJECT_SOURCE_DIR}/sprite/ZXS_tilesheet.nxt
+    ${PROJECT_SOURCE_DIR}/sprite/ZXN_tilesheet.nxt
+    ${PROJECT_SOURCE_DIR}/sprite/ZXN_tilesheet.nxp
     )
 
 add_executable(${PROJECT_NAME}_BANK_2.bin ${SOURCES})
