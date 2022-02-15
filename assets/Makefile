@@ -1,6 +1,6 @@
 .PHONY: clean all install zxn
 
-all: build \
+all: build Gfx2Next/bin/gfx2next \
 	build/levels.nxm \
 	build/banner.nxm \
 	build/RightKnight.raw \
@@ -29,10 +29,10 @@ install: all
 build:
 	mkdir -p $@
 
-build/ZXN_tilesheet.nxt: build/tilesheet.png Gfx2Next/bin/gfx2next
+build/ZXN_tilesheet.nxt: build/tilesheet.png
 	./Gfx2Next/bin/gfx2next -pal-min -map-none -colors-4bit -tile-size=8x8 $< $@
 
-build/ZXN_Sprites.spr: build/ZXN_Sprites.png Gfx2Next/bin/gfx2next
+build/ZXN_Sprites.spr: build/ZXN_Sprites.png
 	./Gfx2Next/bin/gfx2next -pal-min -colors-4bit -sprites $< $@
 
 build/tilesheet.png: gimp/tilesheet.png
@@ -50,7 +50,7 @@ Gfx2Next/bin/gfx2next: Gfx2Next
 build/%.nxm: tiled/%.tmx
 	cd tiled && ../Gfx2Next/bin/gfx2next -tiled -pal-none -tile-none -tiled-blank=11 $(<F) ../$@
 
-build/ZXS_tilesheet.nxt: gimp/tilesheet.png Gfx2Next/bin/gfx2next
+build/ZXS_tilesheet.nxt: gimp/tilesheet.png
 	./Gfx2Next/bin/gfx2next -pal-none -map-none -colors-1bit -tile-size=8x8 $< $@
 
 build/RightKnight.raw: gimp/RightKnight.png gimp/RightMasks.png
