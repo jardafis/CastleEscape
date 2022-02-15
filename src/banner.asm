@@ -48,4 +48,4 @@ xLoop:
 
         section RODATA_2
 bannerData:
-        #include    "banner.inc"
+        binary  "banner.nxm"

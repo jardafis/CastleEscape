@@ -85,9 +85,20 @@ set(SOURCES
     zxn.asm
     )
 
+set_property(SOURCE banner.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/banner.nxm)
+set_property(SOURCE levels.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/levels.nxm)
 set_property(SOURCE print.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/Torment.ch8)
 set_property(SOURCE levels.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/attrib.dat)
 set_property(SOURCE menuscreen.asm APPEND PROPERTY OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/mainmenu.scr.zx0)
+set_property(SOURCE knight.asm
+    APPEND PROPERTY OBJECT_DEPENDS
+    ${PROJECT_SOURCE_DIR}/sprite/LeftFallKnight.raw
+    ${PROJECT_SOURCE_DIR}/sprite/LeftJumpKnight.raw
+    ${PROJECT_SOURCE_DIR}/sprite/LeftKnight.raw
+    ${PROJECT_SOURCE_DIR}/sprite/RightFallKnight.raw
+    ${PROJECT_SOURCE_DIR}/sprite/RightJumpKnight.raw
+    ${PROJECT_SOURCE_DIR}/sprite/RightKnight.raw
+    )
 
 set_property(SOURCE wyzproplay_zx.asm
     APPEND PROPERTY OBJECT_DEPENDS

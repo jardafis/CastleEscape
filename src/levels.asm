@@ -3,7 +3,7 @@
 
         section RODATA_0
 _levels:
-        #include    "levels.inc"
+        binary  "levels.nxm"
 IF  !_ZXN
         section RODATA_5
 ELSE

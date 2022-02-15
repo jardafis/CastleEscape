@@ -1,13 +1,14 @@
 .PHONY: clean all install zxn
 
-all: build/levels.inc \
-	build/banner.inc \
-	build/RightKnight.inc \
-	build/LeftKnight.inc \
-	build/RightJumpKnight.inc \
-	build/RightFallKnight.inc \
-	build/LeftJumpKnight.inc \
-	build/LeftFallKnight.inc \
+all: build \
+	build/levels.nxm \
+	build/banner.nxm \
+	build/RightKnight.raw \
+	build/LeftKnight.raw \
+	build/RightJumpKnight.raw \
+	build/RightFallKnight.raw \
+	build/LeftJumpKnight.raw \
+	build/LeftFallKnight.raw \
 	build/ZXS_tilesheet.nxt \
 	build/ZXN_Sprites.spr \
 	build/ZXN_tilesheet.nxt
@@ -16,14 +17,17 @@ clean:
 	rm -rf build
 
 install: all
-	cp build/*Knight.inc ../src/sprite
-	cp build/levels.inc ../src
-	cp build/banner.inc ../src
+	cp build/*Knight.raw ../src/sprite
+	cp build/levels.nxm ../src
+	cp build/banner.nxm ../src
 	cp build/ZXS_tilesheet.nxt ../src/sprite
 	cp build/ZXN_tilesheet.nxp ../src/sprite
 	cp build/ZXN_tilesheet.nxt ../src/sprite
 	cp build/ZXN_Sprites.spr ../src/sprite
 	cp build/ZXN_Sprites.nxp ../src/sprite
+
+build:
+	mkdir -p $@
 
 build/ZXN_tilesheet.nxt: build/tilesheet.png Gfx2Next/bin/gfx2next
 	./Gfx2Next/bin/gfx2next -pal-min -map-none -colors-4bit -tile-size=8x8 $< $@
@@ -43,29 +47,26 @@ Gfx2Next:
 Gfx2Next/bin/gfx2next: Gfx2Next
 	make -C Gfx2Next
 
-build/%.inc: tiled/%.tmx
-	./scripts/tmx2asm.sh $< $@
+build/%.nxm: tiled/%.tmx
+	cd tiled && ../Gfx2Next/bin/gfx2next -tiled -pal-none -tile-none -tiled-blank=11 $(<F) ../$@
 
 build/ZXS_tilesheet.nxt: gimp/tilesheet.png Gfx2Next/bin/gfx2next
-	./Gfx2Next/bin/gfx2next -map-none -colors-1bit -tile-size=8x8 $< $@
+	./Gfx2Next/bin/gfx2next -pal-none -map-none -colors-1bit -tile-size=8x8 $< $@
 
-build/tilesheet.inc: gimp/tilesheet.png
-	./scripts/tilesheet.sh $< $@
-
-build/RightKnight.inc: gimp/RightKnight.png gimp/RightMasks.png
+build/RightKnight.raw: gimp/RightKnight.png gimp/RightMasks.png
 	./scripts/genSprites.sh $^ -o $@
 
-build/LeftKnight.inc: gimp/LeftKnight.png gimp/LeftMasks.png
+build/LeftKnight.raw: gimp/LeftKnight.png gimp/LeftMasks.png
 	./scripts/genSprites.sh $^ -o $@
 
-build/RightJumpKnight.inc: gimp/RightJump.png gimp/RightJumpMask.png
+build/RightJumpKnight.raw: gimp/RightJump.png gimp/RightJumpMask.png
 	./scripts/genSprites.sh $^ -o $@
 
-build/RightFallKnight.inc: gimp/RightFall.png gimp/RightFallMask.png
+build/RightFallKnight.raw: gimp/RightFall.png gimp/RightFallMask.png
 	./scripts/genSprites.sh $^ -o $@
 
-build/LeftJumpKnight.inc: gimp/LeftJump.png gimp/LeftJumpMask.png
+build/LeftJumpKnight.raw: gimp/LeftJump.png gimp/LeftJumpMask.png
 	./scripts/genSprites.sh $^ -o $@
 	
-build/LeftFallKnight.inc: gimp/LeftFall.png gimp/LeftFallMask.png
+build/LeftFallKnight.raw: gimp/LeftFall.png gimp/LeftFallMask.png
 	./scripts/genSprites.sh $^ -o $@

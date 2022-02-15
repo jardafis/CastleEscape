@@ -9,17 +9,17 @@ IF  !_ZXN
         section RODATA_2
 
 _RightKnight0:
-        #include    "sprite/RightKnight.inc"
+        binary      "sprite/RightKnight.raw"
 _LeftKnight0:
-        #include    "sprite/LeftKnight.inc"
+        binary      "sprite/LeftKnight.raw"
 RightJumpKnight0:
-        #include    "sprite/RightJumpKnight.inc"
+        binary      "sprite/RightJumpKnight.raw"
 RightFallKnight0:
-        #include    "sprite/RightFallKnight.inc"
+        binary      "sprite/RightFallKnight.raw"
 LeftJumpKnight0:
-        #include    "sprite/LeftJumpKnight.inc"
+        binary      "sprite/LeftJumpKnight.raw"
 LeftFallKnight0:
-        #include    "sprite/LeftFallKnight.inc"
+        binary      "sprite/LeftFallKnight.raw"
 ELSE
         section RODATA_4
 
