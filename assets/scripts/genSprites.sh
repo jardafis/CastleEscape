@@ -5,7 +5,7 @@ function usage() {
 	echo
 	echo "OPTIONS:"
 	echo "    -h           Display this text."
-	echo "    -o <string>  Specify output asm file name."
+	echo "    -o <string>  Specify output file name with .raw extension."
 	echo "    -f <int>     Number of frames contained in image files."
 	echo "    -w <int>     Width of the sprite is bytes."
 	echo
@@ -36,7 +36,7 @@ spriteSheet=${argArray[0]}
 maskSheet=${argArray[1]}
 spriteFileName=$(basename -- $spriteSheet .png)
 maskFileName=$(basename -- $maskSheet .png)
-outFile=${spriteSheet%.png}.inc
+outFile=${spriteSheet%.png}.raw
 numFrames=8
 spriteByteWidth=3
 
@@ -69,7 +69,7 @@ done
 temp=`mktemp -d $PWD/tmp.XXXXX`
 #temp=temp
 #mkdir -p temp
-echo "Creating $temp"
+#echo "Creating ${temp}"
 
 frame=0
 ty=0
@@ -77,37 +77,41 @@ ty=0
 while [ $frame -lt $numFrames ]
 do
 	echo "Creating frame $frame"
-	
+
 	tx=$((frame*spriteByteWidth*8))
 	n=0
+	# Split the image and mask into 8x16 pixel rectangles
 	while [ $n -lt $spriteByteWidth ]
 	do
-		convert $maskSheet -colorspace Gray -threshold 1% -crop 8x16+$tx+$ty PNG8:$temp/${maskFileName}$n.png
-		convert $spriteSheet -colorspace Gray -threshold 1% -crop 8x16+$tx+$ty PNG8:$temp/${spriteFileName}$n.png
+		convert $maskSheet -colorspace Gray -threshold 1% -crop 8x16+$tx+$ty PNG8:${temp}/${maskFileName}$n.png
+		convert $spriteSheet -colorspace Gray -threshold 1% -crop 8x16+$tx+$ty PNG8:${temp}/${spriteFileName}$n.png
 		tx=$((tx+=8))
 		n=$((n+1))
 	done
 
+    # Interleave the mask and image rectangles
 	convert \
-		$temp/${maskFileName}0.png $temp/${spriteFileName}0.png \
-		$temp/${maskFileName}1.png $temp/${spriteFileName}1.png \
-		$temp/${maskFileName}2.png $temp/${spriteFileName}2.png \
-		+append PNG8:$temp/interlace_${spriteFileName}$frame.png
-	
+		${temp}/${maskFileName}0.png ${temp}/${spriteFileName}0.png \
+		${temp}/${maskFileName}1.png ${temp}/${spriteFileName}1.png \
+		${temp}/${maskFileName}2.png ${temp}/${spriteFileName}2.png \
+		+append PNG8:${temp}/interlace_${spriteFileName}$frame.png
+
 	frame=$((frame+1))
 done
 
-convert $temp/interlace_${spriteFileName}0.png \
-		$temp/interlace_${spriteFileName}1.png \
-		$temp/interlace_${spriteFileName}2.png \
-		$temp/interlace_${spriteFileName}3.png \
-		$temp/interlace_${spriteFileName}4.png \
-		$temp/interlace_${spriteFileName}5.png \
-		$temp/interlace_${spriteFileName}6.png \
-		$temp/interlace_${spriteFileName}7.png \
-	-append PNG8:$temp/interlace_${spriteFileName}.png
+# Put the interleaved images into a single image
+convert ${temp}/interlace_${spriteFileName}0.png \
+		${temp}/interlace_${spriteFileName}1.png \
+		${temp}/interlace_${spriteFileName}2.png \
+		${temp}/interlace_${spriteFileName}3.png \
+		${temp}/interlace_${spriteFileName}4.png \
+		${temp}/interlace_${spriteFileName}5.png \
+		${temp}/interlace_${spriteFileName}6.png \
+		${temp}/interlace_${spriteFileName}7.png \
+	-append PNG8:${temp}/interlace_${spriteFileName}.png
 
-convert $temp/interlace_${spriteFileName}.png -depth 1 GRAY:$outFile
+# Convert to raw mono/gray format
+convert ${temp}/interlace_${spriteFileName}.png -depth 1 GRAY:${outFile}
 
-echo "Removing $temp"
-rm -rf $temp
+#echo "Removing ${temp}"
+rm -rf ${temp}

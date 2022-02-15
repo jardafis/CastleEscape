@@ -5,6 +5,7 @@ A ZX Spectrum game written using [Z88DK](https://github.com/z88dk/z88dk) and [FU
 ## Credits
 
 * Sprites & Tiles - Supported by [Carnivac](https://zxart.ee/eng/authors/c/carnivac/)
+* Tile & Sprite conversion - [Headkaze](https://github.com/headkaze/Gfx2Next)
 * Tape & Disk Loaders - Courtesy of [Tom Dalby](https://tomdalby.com/) ([ZXSTLC](https://tomdalby.com/other/zxstlc.html))
 * screen$ and menu art - Created by [crayon](https://github.com/jardafis)
   * Converted to .scr with [PNG-to-SCR](https://github.com/MatejJan/PNG-to-SCR)
@@ -41,7 +42,7 @@ The latest release can be downloaded from [here](https://github.com/iratahack/Ca
 
 ### Level Map
 
-The game consists 24 levels arranged in a 4x6 grid, shown below.
+The game consists 24 levels, shown below.
 
 ![Level Map](assets/tiled/levels.png "Level Map")
 
