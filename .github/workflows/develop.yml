@@ -17,12 +17,10 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Install GIMP
+      - name: Install Packages
         run: |
+          sudo apt update
           sudo apt install gimp
-
-      - name: Install Ninja
-        run: |
           sudo apt install ninja-build
 
       - name: Install z88dk
