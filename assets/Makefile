@@ -1,6 +1,7 @@
 .PHONY: clean all install
 
-all: build Gfx2Next/bin/gfx2next \
+all: build \
+	Gfx2Next/bin/gfx2next \
 	build/levels.nxm \
 	build/banner.nxm \
 	build/RightKnight.raw \
@@ -26,19 +27,9 @@ install: all
 build:
 	mkdir -p $@
 
-build/ZXN_tilesheet.nxt: build/tilesheet.png
-	@echo "Creating $@"
-	@./Gfx2Next/bin/gfx2next -pal-min -map-none -colors-4bit -tile-size=8x8 $< $@
-
 build/ZXN_Sprites.spr: build/ZXN_Sprites.png
 	@echo "Creating $@"
 	@./Gfx2Next/bin/gfx2next -pal-min -colors-4bit -sprites $< $@
-
-build/tilesheet.png: gimp/tilesheet.png
-	convert $< PNG8:$@
-
-build/ZXN_Sprites.png: gimp/ZXN_Sprites.png
-	convert $< PNG8:$@
 
 Gfx2Next/bin/gfx2next:
 	git clone --depth=1 https://github.com/headkaze/Gfx2Next.git
@@ -48,30 +39,42 @@ build/%.nxm: tiled/%.tmx
 	@echo "Creating $@"
 	@cd tiled && ../Gfx2Next/bin/gfx2next -tiled -pal-none -tile-none -tiled-blank=11 $(<F) ../$@
 
-build/ZXS_tilesheet.nxt: gimp/tilesheet.png
+build/ZXN_tilesheet.nxt: build/tilesheet.png
+	@echo "Creating $@"
+	@./Gfx2Next/bin/gfx2next -pal-min -map-none -colors-4bit -tile-size=8x8 $< $@
+
+build/ZXS_tilesheet.nxt: build/tilesheet.png
 	@echo "Creating $@"
 	@./Gfx2Next/bin/gfx2next -pal-none -map-none -colors-1bit -tile-size=8x8 $< $@
 
-build/RightKnight.raw: gimp/RightKnight.png gimp/RightMasks.png
+build/RightKnight.raw: build/animation_2.png build/animation_8.png
 	@echo "Creating $@"
 	@./scripts/genSprites.sh $^ -o $@
 
-build/LeftKnight.raw: gimp/LeftKnight.png gimp/LeftMasks.png
+build/LeftKnight.raw: build/animation_5.png build/animation_11.png
 	@echo "Creating $@"
 	@./scripts/genSprites.sh $^ -o $@
 
-build/RightJumpKnight.raw: gimp/RightJump.png gimp/RightJumpMask.png
+build/RightJumpKnight.raw: build/animation_1.png build/animation_7.png
 	@echo "Creating $@"
 	@./scripts/genSprites.sh $^ -o $@
 
-build/RightFallKnight.raw: gimp/RightFall.png gimp/RightFallMask.png
+build/RightFallKnight.raw: build/animation_0.png build/animation_6.png
 	@echo "Creating $@"
 	@./scripts/genSprites.sh $^ -o $@
 
-build/LeftJumpKnight.raw: gimp/LeftJump.png gimp/LeftJumpMask.png
+build/LeftJumpKnight.raw: build/animation_4.png build/animation_10.png
 	@echo "Creating $@"
 	@./scripts/genSprites.sh $^ -o $@
 	
-build/LeftFallKnight.raw: gimp/LeftFall.png gimp/LeftFallMask.png
+build/LeftFallKnight.raw: build/animation_3.png build/animation_9.png
 	@echo "Creating $@"
 	@./scripts/genSprites.sh $^ -o $@
+
+build/%.png: gimp/%.xcf
+	./scripts/xcf2png.sh $< $@
+	convert $@ PNG8:$@
+
+build/animation_%.png: gimp/animation.xcf
+	./scripts/xcf2layers.sh $< build/animation.gif
+	convert build/animation.gif build/animation_%d.png
