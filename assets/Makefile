@@ -37,6 +37,7 @@ Gfx2Next/bin/gfx2next:
 
 build/%.nxm: tiled/%.tmx
 	@echo "Creating $@"
+	@convert gimp/tilesheet.png PNG8:gimp/tilesheet.png
 	@cd tiled && ../Gfx2Next/bin/gfx2next -tiled -pal-none -tile-none -tiled-blank=11 $(<F) ../$@
 
 build/ZXN_tilesheet.nxt: build/tilesheet.png

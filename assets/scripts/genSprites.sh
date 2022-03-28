@@ -108,10 +108,10 @@ convert ${temp}/interlace_${spriteFileName}0.png \
 		${temp}/interlace_${spriteFileName}5.png \
 		${temp}/interlace_${spriteFileName}6.png \
 		${temp}/interlace_${spriteFileName}7.png \
-	-append PNG8:${temp}/interlace_${spriteFileName}.png
+	-append PNG8:${outFile}_preview.png
 
 # Convert to raw mono/gray format
-convert ${temp}/interlace_${spriteFileName}.png -depth 1 -colors 2 GRAY:${outFile}
+convert ${outFile}_preview.png -depth 1 -colors 2 GRAY:${outFile}
 
 #echo "Removing ${temp}"
 rm -rf ${temp}
