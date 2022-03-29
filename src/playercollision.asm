@@ -14,12 +14,6 @@
         public  checkXCol
         public  checkYCol
 
-        ; Enable precise collision detection
-        ; This option shrinks the sprite by 4 pixels
-        ; left and right when checking for collisions
-        ; with platforms.
-        defc    precise_col=1
-
         #include    "defs.inc"
         section CODE_2
 
@@ -58,22 +52,14 @@ checkXCol:
         jp      p, movingRight
         ; We are checking the new position, which is 1 pixel
         ; to the left.
-if  precise_col
         inc     de
         inc     de
         inc     de
-else
-        dec     de
-endif
         jr      movingLeft
 movingRight:
         ; Player is moving right, check the new position,
         ; which is 1 pixel to the right of the player.
-if  precise_col
         addde   PLAYER_WIDTH-4
-else
-        addde   PLAYER_WIDTH
-endif
 movingLeft:
         ; Get the yPos into HL. It needs to be 16
         ; bits as we will convert it to a Y offset
@@ -229,9 +215,7 @@ movingUp:
         hlx     TILEMAP_WIDTH
 
         ld      a, (_xPos)              ; Get the X pixel offset
-if  precise_col
         add     4
-endif
         ld      c, a                    ; Save pixel offset for later
         rrca                            ; Divide by 8 to get the byte offset
         rrca                            ; Faster to do rrca followed by AND rather than srl
@@ -246,20 +230,19 @@ endif
         ld      a, b
         or      a
         jp      m, checkSolids          ; Player is moving upward, only check solid tiles
-        								; Player is moving downward, include solid tiles also.
+
+        ; Player is moving downward, include soft tiles
+        ; only if the Y position is tile aligned
+        ld      a, (_yPos)
+        and     0x07
+        jr      nz, checkSolids
+
         ld      d, ID_SOFT_TILE         ; Switch to ID_SOFT_TILE
 checkSolids:
 
         ld      a, (hl)                 ; Get tile ID
         cp      d
         jr      nc, yCollision          ; 'nc' if a >= value
-
-if  !precise_col
-        inc     hl                      ; Next tile to the right
-        ld      a, (hl)                 ; Get tile ID
-        cp      d
-        jr      nc, yCollision          ; 'nc' if a >= value
-endif
 
         ld      a, c                    ; Restore X pixel offset
         and     %00000111               ; Check if any of the lower 3 bits are set

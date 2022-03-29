@@ -9,17 +9,17 @@ IF  !_ZXN
         section RODATA_2
 
 _RightKnight0:
-        binary      "sprite/RightKnight.raw"
+        binary  "sprite/RightKnight.raw"
 _LeftKnight0:
-        binary      "sprite/LeftKnight.raw"
+        binary  "sprite/LeftKnight.raw"
 RightJumpKnight0:
-        binary      "sprite/RightJumpKnight.raw"
+        binary  "sprite/RightJumpKnight.raw"
 RightFallKnight0:
-        binary      "sprite/RightFallKnight.raw"
+        binary  "sprite/RightFallKnight.raw"
 LeftJumpKnight0:
-        binary      "sprite/LeftJumpKnight.raw"
+        binary  "sprite/LeftJumpKnight.raw"
 LeftFallKnight0:
-        binary      "sprite/LeftFallKnight.raw"
+        binary  "sprite/LeftFallKnight.raw"
 ELSE
         section RODATA_4
 
