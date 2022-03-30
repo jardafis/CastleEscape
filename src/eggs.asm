@@ -51,31 +51,18 @@ updateEggImage:
         ret
 
 decrementEggs:
-        push    hl
-
         ld      hl, counter
         dec     (hl)
-        jp      p, skip
-        ld      (hl), 99
-
-        push    af
+        ret     nz
 
         ld      a, (eggCount)
         and     a
-        jr      z, noEggs
-
-        push    de
+        ret     z
 
         ld      de, eggCount
         call    decBCD
         call    displayEggCount
 
-        pop     de
-
-noEggs:
-        pop     af
-skip:
-        pop     hl
         ret
 
 displayEggCount:

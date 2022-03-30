@@ -60,6 +60,7 @@ ENDIF
         extern  __BANK_0_head
         extern  heapCheck
         extern  __STACK_tail
+        extern  ticks
 
         public  _currentTileMap
         public  _falling
@@ -348,6 +349,9 @@ ENDIF
         ; ######################################
         call    checkYCol
 
+        ld      a, (ticks)
+        and     0x01
+        jr      z, noXUpdate
         ; ######################################
         ;
         ; Check if player is colliding with platforms
@@ -357,6 +361,7 @@ ENDIF
         ld      a, (_xSpeed)            ; If xSpeed != 0 player is moving
         or      a                       ; left or right.
         call    nz, checkXCol           ; Check for a collision.
+noXUpdate:
 
         ; ######################################
         ;

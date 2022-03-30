@@ -7,6 +7,7 @@ IF  _ZXN
         extern  _ySpeed
         extern  _xSpeed
         extern  jumpFall
+        extern  ticks
 
         public  _displaySprite
         public  playerSprite
@@ -23,6 +24,10 @@ IF  _ZXN
         ;       c  - Screen x pixel location
         ;
 _displaySprite:
+        ld      a, (ticks)
+        and     0x01
+        ret     z
+
         ld      hl, (jumpFall)          ; 16
         xor     a                       ; 4
         cp      l                       ; 4
