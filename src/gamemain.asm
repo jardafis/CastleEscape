@@ -46,7 +46,6 @@ ENDIF
         extern  initISR
         extern  kjScan
         extern  mainMenu
-        extern  playerSprite
         extern  printAttr
         extern  readKempston
         extern  score
@@ -54,7 +53,6 @@ ENDIF
         extern  spiderTables
         extern  titleScreen
         extern  updateSpiderPos
-        extern  wyz_play_sound
         extern  wyz_player_init
         extern  __HEAP_2_head
         extern  __BANK_0_head
@@ -73,6 +71,7 @@ IF  !_ZXN
 ENDIF
         public  _tileMapX
         public  _tileMapY
+        public  playerSprite
         public  _xPos
         public  _xSpeed
         public  _yPos
@@ -80,12 +79,12 @@ ENDIF
         public  gameOver
         public  newGame
         public  score
-        public  startSprite
-        public  xyPos
-        public  xyStartPos
         public  _bank2HeapEnd
         public  resetPlayer
         public  jumpFall
+        public  spriteDataStart
+        public  spriteDataEnd
+        public  spriteDataStore
 
         #include    "defs.inc"
 
@@ -198,7 +197,11 @@ ENDIF
         ;
         ; Starting X and Y player position
         ;
-        ld      hl, START_Y<<8|START_X
+        ld      a, START_X
+        ld      (_xPos), a
+fptest:
+        ld      hl, FIX_POINT(START_Y, 0)
+        ld      (_yPos), hl
         call    resetPlayer
 
         ;
@@ -226,7 +229,11 @@ ENDIF
 
 IF  !_ZXN
         ld      de, _spriteBuffer
-        ld      bc, (_xPos)
+        ld      bc, (_yPos)
+        fix_to_int  b, c
+        ld      b, c
+        ld      a, (_xPos)
+        ld      c, a
         call    _copyScreen
 ENDIF
 
@@ -270,6 +277,11 @@ IF  !_ZXN
         ld      hl, (currentSpiderTable)
         call    displayPixelItems
 ENDIF
+
+        ; If player is falling he can't move
+        ld      a, (_falling)
+        or      a
+        jr      nz, falling
 
         ; ######################################
         ;
@@ -315,28 +327,57 @@ noXMovement:
 updateXSpeedDone:
         ld      (_xSpeed), a
 
-        ; Check if the jump key is pressed
-        ; and try to start a jump
-        bit     JUMP_BIT, e
-        call    nz, startJump
+        ;
+        ; Handle jumping
+        ;
 
-        ; Skip the code that follows if not jumping
+        ; If player is already jumping, can't jump
         ld      a, (_jumping)
         or      a
-        jr      z, continueJumping
+        jr      z, notJumping
 
-        ld      hl, jumpCnt
-        dec     (hl)
-        jp      p, continueJumping
+        ; Player is jumping
 
-        call    getJumpSequence
-        jr      c, stillJumping
-stopJumping:
-        ; Stop jumping, zero y speed
+        ; Decrement jumping counter
+        dec     a
         ld      (_jumping), a
-stillJumping:
-        ld      (_ySpeed), a
-continueJumping:
+
+        ; Update Y speed if it is less than GRAVITY
+        ld      hl, (_ySpeed)
+        ld      de, GRAVITY
+        or      a
+        sbc     hl, de
+        jr      z, falling
+
+        ld      de, (jumpFriction)
+        ld      hl, (_ySpeed)
+        add     hl, de
+        ld      (_ySpeed), hl
+
+        jr      falling
+
+notJumping:
+        bit     JUMP_BIT, e
+        jr      z, falling
+
+        ; Set the initial jump speed and friction
+        ld      hl, -JUMP_SPEED
+        ld      de, JUMP_SPEED_DECREMENT
+        ld      (_ySpeed), hl
+
+        ; Set the initial (short) jump length
+        ld      b, SHORT_JUMP_LENGTH
+        ld      a, (eggCount)
+        or      a
+        jr      z, shortJump
+        ; Long jump
+        ld      b, LONG_JUMP_LENGTH
+        ld      de, JUMP_SPEED_DECREMENT/2
+shortJump:
+        ld      a, b
+        ld      (_jumping), a
+        ld      (jumpFriction), de
+falling:
 
 IF  !_ZXN
         call    setPlayerSprite
@@ -401,11 +442,19 @@ noAnimate:
         ; ######################################
 IF  !_ZXN
         ld      de, _spriteBuffer
-        ld      bc, (_xPos)
+        ld      bc, (_yPos)
+        fix_to_int  b, c
+        ld      b, c
+        ld      a, (_xPos)
+        ld      c, a
         call    _copyScreen
 ENDIF
 
-        ld      bc, (_xPos)
+        ld      bc, (_yPos)
+        fix_to_int  b, c
+        ld      b, c
+        ld      a, (_xPos)
+        ld      c, a
         call    _displaySprite
 
         call    updateSpiderPos
@@ -465,66 +514,6 @@ _setCurrentTileMap:
 
         ret
 
-startJump:
-        ; Only start a jump if not currently jumping or falling
-        ld      hl, (jumpFall)
-        ld      a, h
-        or      l
-        ret     nz
-
-        ; Set the jumping flag
-        inc     l
-        ld      (jumpFall), hl
-
-        ; Big or short jump?
-        ld      a, (eggCount)           ; Get egg count
-        or      a
-
-        ; Setup for small jump
-        ld      hl, smallJump
-        ld      c, AYFX_JUMP
-        jr      z, small
-
-        ; Big jump instead
-        inc     c
-        ld      hl, bigJump
-small:
-        call    getJumpSequence1
-        ld      (_ySpeed), a
-
-
-        push    de
-        di
-        ld      a, c
-        ld      b, AYFX_CHANNEL+1
-        call    wyz_play_sound
-        ei
-        pop     de
-        ret
-
-		;
-		; Get the next jump sequence from the jump table
-		;
-		; Exit:
-		;	a = jump speed
-		;	cf = 1 next jump sequence
-		;	cf = 0 end of jump sequence
-		;
-getJumpSequence:
-        ; Get count & y speed from jump table
-        ld      hl, (jumpPos)
-getJumpSequence1:
-        ld      a, (hl)                 ; Count
-        or      a
-        ret     z                       ; cf = 0
-        inc     hl
-        ld      (jumpCnt), a
-        ld      a, (hl)                 ; Jump speed
-        inc     hl
-        ld      (jumpPos), hl
-        scf                             ; cf = 1
-        ret
-
         ;
         ; Initialize the X/Y speed variables
         ;
@@ -533,15 +522,15 @@ getJumpSequence1:
         ;   l - Player X pixel location
         ;
         ; Output:
-        ;	a - Corrupted
+        ;	a, hl - Corrupted
         ;
 resetPlayer:
-        ld      (xyPos), hl
         xor     a
         ld      (_xSpeed), a
-        ld      (_ySpeed), a
         ld      (_jumping), a
         ld      (_falling), a
+        ld      hl, GRAVITY
+        ld      (_ySpeed), hl
         ret
 
 IF  !_ZXN
@@ -576,9 +565,9 @@ playerSpriteDone:
 
 jumpingSprite:
         ld      hl, fallingTab
-        ld      a, (_ySpeed)
-        and     0x80
-        ret     z
+        ld      a, (_ySpeed+1)
+        or      a
+        ret     p
 
         ld      hl, jumpingTab
         ret
@@ -593,10 +582,6 @@ fallingTab:
 ENDIF
 
         section BSS_2
-jumpCnt:
-        ds      1
-jumpPos:
-        ds      2
 score:                                  ; Score in BCD
         ds      2
 coinRotate:
@@ -607,29 +592,41 @@ _tileMapX:
         ds      1
 _tileMapY:
         ds      1
-xyPos:
+
+        ;
+        ; Sprite data
+        ;
+spriteDataStart:
 _xPos:
         ds      1
 _yPos:
+        ds      2
+playerSprite:
+        ds      2
+IF  !_ZXN
+lastDirection:
         ds      1
+ENDIF
+spriteDataEnd:
+
 _xSpeed:
         ds      1
 _ySpeed:
-        ds      1
+        ds      2
 jumpFall:                               ; Access jumping and falling as a single word
 _jumping:
         ds      1
 _falling:
         ds      1
-startSprite:
+jumpFriction:
         ds      2
-xyStartPos:                             ; Position where player entered the level
-        ds      2
+
+spriteDataStore:
+        ds      (spriteDataEnd-spriteDataStart)
+
 IF  !_ZXN
 _spriteBuffer:
         ds      3*PLAYER_HEIGHT
-lastDirection:
-        ds      1
 ENDIF
 
         section DATA_2
@@ -643,15 +640,3 @@ readyMsg:
         db      "Ready?", 0x00
 gameOverMsg:
         db      " Game Over! ", 0x80, " ", 0x00
-
-        section RODATA_2
-smallJump:
-        db      0x0c, 0xfe              ; 12 frames up
-        db      0x04, 0xff              ; 4 frames hover
-        db      0x0b, 0x00              ; 12 frames down
-        db      0x00                    ; End of jump
-bigJump:
-        db      0x18, 0xfe              ; 24 frames up
-        db      0x08, 0xff              ; 8 frames hover
-        db      0x17, 0x00              ; 24 frames down
-        db      0x00                    ; End of jump

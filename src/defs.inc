@@ -2,6 +2,17 @@
         extern  bankedCall
         extern  banked_call
 
+        #define FIX_POINT(a,b)  +((a) << FIX_POINT_SHIFT | (b))
+
+        defc FIX_POINT_SHIFT=3
+        defc JUMP_SPEED=FIX_POINT(2, 4)
+        defc JUMP_SPEED_DECREMENT=2
+        defc GRAVITY=FIX_POINT(1, 0)
+        defc FIX_POINT_MASK=FIX_POINT(-1, 0)
+
+        defc SHORT_JUMP_LENGTH=+(((JUMP_SPEED+GRAVITY)/JUMP_SPEED_DECREMENT)*2)
+        defc LONG_JUMP_LENGTH=+(((JUMP_SPEED+GRAVITY)/(JUMP_SPEED_DECREMENT/2))*2)
+
 		;
 		; ZX Spectrum Next Definitions
 		;
@@ -36,7 +47,9 @@
         defc    IO_TurboMode=0x07
 
         defc    SPRITE_ID_TOMBSTONE=5
-        defc    SPRITE_ID_JUMP=3
+        defc    SPRITE_ID_JUMP_UP=1
+        defc    SPRITE_ID_JUMP_PEEK=2
+        defc    SPRITE_ID_FALL=3
         defc    SPRITE_ID_SPIDER_UP=6
         defc    SPRITE_ID_SPIDER_DOWN=8
         defc    SPRITE_ID_LANTERN=12
@@ -147,7 +160,6 @@
         defc    JUMP_HEIGHT=24
         defc    LEFT_SPEED=-1
         defc    RIGHT_SPEED=1
-        defc    JUMP_SPEED=-2
         defc    DOWN_SPEED=1
         defc    UP_SPEED=-1
 
@@ -606,4 +618,13 @@ noAdd:
 mulDone:
         pop     de
         pop     bc
+        ENDM
+
+fix_to_int MACRO hi, lo
+        ld      a, lo
+        REPT FIX_POINT_SHIFT
+        sra     hi
+        rra
+        ENDR
+        ld      lo, a
         ENDM

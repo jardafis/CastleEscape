@@ -20,6 +20,7 @@
         defc    ID_SOLID_TILE=12*TILE_SHEET_WIDTH
         defc    ID_SOFT_TILE=10*TILE_SHEET_WIDTH
         defc    FALL_DISTANCE=33
+        defc    SCREEN_OFFSET=24
 
         ;
         ; Check for player colliding with platforms on
@@ -64,13 +65,12 @@ movingLeft:
         ; Get the yPos into HL. It needs to be 16
         ; bits as we will convert it to a Y offset
         ; within the tilemap.
-        ld      a, (_yPos)
-        ld      l, a
-        ld      h, 0
+        ld      hl, (_yPos)
+        fix_to_int  h, l
         ; Subtract the delta between the screen offset and the level offset.
         ; Since the first 3 character rows of the screen is status info we
         ; should remove them.
-        ld      a, -24
+        ld      a, -SCREEN_OFFSET
         add     l
         ; Save the result in C
         ld      c, a
@@ -178,30 +178,39 @@ stopX:
         ;		None
         ;
         ; Register variables:
-        ;		b - ySpeed
-        ;		c - xPos
+        ;		b - ySpeed sign bit
+        ;		c - _xPos
         ;
 checkYCol:
-        ld      a, (_yPos)
-        ld      l, a
-        ld      h, 0
-        ld      a, (_ySpeed)            ; Check if ySpeed is negative
-        add     1                       ; Add gravity
-        ld      b, a
+        ld      hl, (_ySpeed)
+        ld      b, h                    ; Save sign bit for later
+        ld      a, h
         or      a
-        jp      p, movingDown           ; Moving down or stopped
-        ld      de, -25                 ; Pixel position above the player
-        jr      movingUp
+        jp      m, movingUp
 movingDown:
-        ld      de, PLAYER_HEIGHT-24    ; Pixel position below the player
+        ; Pixel position of the players feet
+        ld      de, FIX_POINT(PLAYER_HEIGHT-1-SCREEN_OFFSET, 0)
+
+        ld      a, (_jumping)
+        or      a
+        jr      nz, _l_1
+        ld      hl, GRAVITY
+        ld      (_ySpeed), hl
+        ld      b, h                    ; Save sign bit for later
+        jr      _l_1
 movingUp:
+        ld      de, FIX_POINT(-SCREEN_OFFSET, 0)
+_l_1:
         add     hl, de
+        ld      de, (_yPos)
+        add     hl, de
+
+        fix_to_int  h, l
 
         ;
         ; Divide hl by 8 to remove the pixel offset.
         ; It could be negative at this point.
         ;
-        ld      a, l
         sra     h
         rra
         sra     h
@@ -233,7 +242,10 @@ movingUp:
 
         ; Player is moving downward, include soft tiles
         ; only if the Y position is tile aligned
-        ld      a, (_yPos)
+        push    hl
+        ld      hl, (_yPos)
+        fix_to_int  h, l
+        pop     hl
         and     0x07
         jr      nz, checkSolids
 
@@ -280,13 +292,20 @@ updateYPos:
         ;
         ; Update y position
         ;
-        ld      a, (_yPos)
-        add     b
+        ld      hl, (_yPos)
+        ld      de, (_ySpeed)
+        add     hl, de
+
+        fix_to_int  h, l
+
         cp      MAX_Y_POS-PLAYER_HEIGHT
         jr      nc, nextYLevel          ; 'nc' if a >= value
-        cp      24
+        cp      SCREEN_OFFSET
         jr      c, previousYLevel       ; 'c' if 'a' < value
-        ld      (_yPos), a
+
+        ld      hl, (_yPos)
+        add     hl, de
+        ld      (_yPos), hl
         ret
 
 previousYLevel:
@@ -295,7 +314,7 @@ previousYLevel:
         ret     z
         dec     a
         ld      (_tileMapY), a
-        ld      a, MAX_Y_POS-PLAYER_HEIGHT
+        ld      hl, FIX_POINT(MAX_Y_POS-PLAYER_HEIGHT, 0)
         jr      changeYLevel
 nextYLevel:
         ld      a, (_tileMapY)
@@ -303,9 +322,9 @@ nextYLevel:
         ret     z
         inc     a
         ld      (_tileMapY), a
-        ld      a, 24
+        ld      hl, FIX_POINT(SCREEN_OFFSET, 0)
 changeYLevel:
-        ld      (_yPos), a
+        ld      (_yPos), hl
         call    _setupScreen
         ret
 
@@ -339,7 +358,10 @@ landed:
 
         xor     a
         ld      (_ySpeed), a
+        ld      (_ySpeed+1), a
         ld      (_jumping), a
         ld      (_falling), a
-
+        ld      a, (_ySpeed)
+        and     FIX_POINT_MASK
+        ld      (_ySpeed), a
         ret

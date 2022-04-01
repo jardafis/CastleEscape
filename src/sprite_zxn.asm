@@ -8,9 +8,9 @@ IF  _ZXN
         extern  _xSpeed
         extern  jumpFall
         extern  ticks
+        extern  playerSprite
 
         public  _displaySprite
-        public  playerSprite
 
         #include    "defs.inc"
 
@@ -29,11 +29,9 @@ _displaySprite:
         ret     z
 
         ld      hl, (jumpFall)          ; 16
-        xor     a                       ; 4
-        cp      l                       ; 4
-        jr      nz, setJumpSprite
-        cp      h                       ; 4
-        jr      nz, setFallSprite
+        ld		a, h
+        or		l
+        jr		nz, setJumpSprite
 
         call    getPatternIndex
         add     SPRITE_ID_KNIGHT        ; Sprite pattern offset
@@ -50,11 +48,14 @@ setSprite:
         call    updateSpriteAttribs
         ret
 setJumpSprite:
-        ld      a, (_ySpeed)
-        add     SPRITE_ID_JUMP
-        jr      setSprite
-setFallSprite:
-        ld      a, SPRITE_ID_JUMP
+        ld      de, (_ySpeed)
+        fix_to_int  d, e
+        or      a
+        ld      a, SPRITE_ID_JUMP_UP
+        jp      m, setSprite
+        ld      a, SPRITE_ID_JUMP_PEEK
+        jr      z, setSprite
+        ld      a, SPRITE_ID_FALL
         jr      setSprite
 
 getPatternIndex:
@@ -72,8 +73,6 @@ getPatternIndex:
         ret
 
         section BSS_2
-playerSprite:
-        ds      2
 frame:
         ds      1
 ENDIF

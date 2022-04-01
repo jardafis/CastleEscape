@@ -1,9 +1,9 @@
 IF  !_ZXN
+        extern  playerSprite
 
         public  _copyScreen
         public  _pasteScreen
         public  _displaySprite
-        public  playerSprite
 
         #include    "defs.inc"
 
@@ -136,8 +136,6 @@ displaySpriteSP:
         ret
 
         section BSS_2
-playerSprite:
-        ds      2
 addressTab:
         ds      16*SIZEOF_ptr
 

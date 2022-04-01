@@ -67,10 +67,10 @@ ifeq (,$(findstring $(MAKECMDGOALS),clean))
 
 %.d: %.c
 	@./mkdep.sh $< > $@
-endif
 
 mainmenu.scr.zx0: mainmenu.scr
 	z88dk-zx0 -f -q $<
+endif
 
 %.o: %.c
 	@echo "Compiling $<"

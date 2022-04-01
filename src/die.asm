@@ -5,8 +5,8 @@
         extern  decBCD
         extern  display2BCD
 IF  !_ZXN
+        extern  _yPos
         extern  displayPixelTile
-        extern  lastDirection
 ELSE
         extern  setSpritePattern
         extern  knightSprite
@@ -15,12 +15,12 @@ ELSE
 ENDIF
         extern  gameOver
         extern  heartCount
-        extern  playerSprite
-        extern  startSprite
         extern  wyz_play_song
         extern  wyz_player_stop
-        extern  xyStartPos
         extern  resetPlayer
+        extern  spriteDataStart
+        extern  spriteDataEnd
+        extern  spriteDataStore
 
         public  die
 
@@ -39,13 +39,21 @@ die:
 
 IF  !_ZXN
         ld      de, _spriteBuffer
-        ld      bc, (_xPos)
+        ld      bc, (_yPos)
+        fix_to_int  b, c
+        ld      b, c
+        ld      a, (_xPos)
+        ld      c, a
         call    _copyScreen
 
 		;
 		; Display headstone where player died
 		;
-        ld      bc, (_xPos)
+        ld      bc, (_yPos)
+        fix_to_int  b, c
+        ld      b, c
+        ld      a, (_xPos)
+        ld      c, a
         ld      a, ID_HEADSTONE0
         call    displayPixelTile
         ld      a, c
@@ -133,15 +141,13 @@ ENDIF
 
         ; Set player X/Y position (and sprite direction) to where
         ; they entered the level.
-        ld      hl, (startSprite)
-        ld      (playerSprite), hl
+        ld      hl, spriteDataStore
+        ld      de, spriteDataStart
+        ld      bc, spriteDataEnd-spriteDataStart
+        ldir
 
-        ld      hl, (xyStartPos)
         call    resetPlayer
 
-IF  !_ZXN
-        ld      (lastDirection), a
-ENDIF
         pop     hl
         pop     de
         pop     bc

@@ -350,7 +350,8 @@ nextItem:
         add     ITEM_HEIGHT-5           ; Bottom pixel offset, pushed up a little
         ld      c, a
 
-        ld      a, (_yPos)
+        ld      de, (_yPos)
+        fix_to_int  d, e
         cp      c                       ; Compare with bottom
         jr      nc, noCollision         ; 'nc' if 'c' <= 'a'
 

@@ -16,13 +16,12 @@
         extern  eggTables
         extern  heartCount
         extern  heartTables
-        extern  playerSprite
         extern  score
         extern  setCurrentItemTable
         extern  spiderTables
-        extern  startSprite
-        extern  xyPos
-        extern  xyStartPos
+        extern  spriteDataStart
+        extern  spriteDataEnd
+        extern  spriteDataStore
 IF  _ZXN
         extern  initSpiders
 ENDIF
@@ -100,12 +99,11 @@ ENDIF
         call    _scrollReset
 
         ; Save the location (and direction) where the player entered
-        ; the level. This is used as the starting
-        ; location when they die.
-        ld      hl, (xyPos)
-        ld      (xyStartPos), hl
-        ld      hl, (playerSprite)
-        ld      (startSprite), hl
+        ; the level. This is used as the starting location when they die.
+        ld      hl, spriteDataStart
+        ld      de, spriteDataStore
+        ld      bc, spriteDataEnd-spriteDataStart
+        ldir
 
         popall
         ret
