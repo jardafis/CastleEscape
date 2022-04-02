@@ -57,7 +57,7 @@ ENDIF
         extern  __HEAP_2_head
         extern  __BANK_0_head
         extern  heapCheck
-        extern  __STACK_tail
+        extern  __DATA_STACK_tail
         extern  ticks
 
         public  _currentTileMap
@@ -90,7 +90,7 @@ ENDIF
 
         section CODE_2
 _main:
-        ld      sp, __STACK_tail
+        ld      sp, __DATA_STACK_tail
         call    init
 
         bcall   titleScreen

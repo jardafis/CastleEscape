@@ -1,5 +1,5 @@
         extern  currentBank
-        extern  __BANKING_STACK_tail
+        extern  __DATA_BANKING_STACK_tail
         public  banked_call
 
         #include    "defs.inc"
@@ -107,4 +107,4 @@ saveSP2:
 
         SECTION DATA_2
 tempsp:
-        dw      __BANKING_STACK_tail
+        dw      __DATA_BANKING_STACK_tail

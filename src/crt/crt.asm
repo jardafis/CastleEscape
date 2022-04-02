@@ -59,13 +59,13 @@ ENDIF
 IFDEF   CRT_ORG_BANK_2
         SECTION BANK_2
         org     CRT_ORG_BANK_2
-        SECTION VECTORS
+        SECTION DATA_VECTORS
         ds      0x101, 0x81             ; 257 byte vector table
-        SECTION BANKING_STACK
+        SECTION DATA_BANKING_STACK
         ds      0x20, 0xaa              ; 32 bytes of banked call stack
-        SECTION STACK
+        SECTION DATA_STACK
         ds      0x60, 0x55              ; 96 bytes of stack
-        SECTION ISR                     ; Interrupt subroutine @ 0x8181
+        SECTION CODE_ISR                ; Interrupt subroutine @ 0x8181
         SECTION code_clib
         SECTION code_l_sccz80
         SECTION dzx0_decompress

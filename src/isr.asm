@@ -1,7 +1,7 @@
         #include    "defs.inc"
 
         extern  wyz_play_frame
-        extern  __VECTORS_head
+        extern  __DATA_VECTORS_head
 
         public  initISR
         public  ticks
@@ -14,7 +14,7 @@ ELSE
 ENDIF
 initISR:
         di
-        ld      a, __VECTORS_head>>8    ; Write the high order byte of the
+        ld      a, __DATA_VECTORS_head>>8    ; Write the high order byte of the
         ld      i, a                    ; vector table address to the i register
         im      2                       ; Enable interrupt mode 2
         ei                              ; Enable interrupts
