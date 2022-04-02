@@ -6,7 +6,7 @@
 
         defc FIX_POINT_SHIFT=3
         defc JUMP_SPEED=FIX_POINT(2, 4)
-        defc JUMP_SPEED_DECREMENT=2
+        defc JUMP_SPEED_DECREMENT=FIX_POINT(0, 2)
         defc GRAVITY=FIX_POINT(1, 0)
         defc FIX_POINT_MASK=FIX_POINT(-1, 0)
 

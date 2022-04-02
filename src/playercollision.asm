@@ -361,7 +361,7 @@ landed:
         ld      (_ySpeed+1), a
         ld      (_jumping), a
         ld      (_falling), a
-        ld      a, (_ySpeed)
+        ld      a, (_yPos)
         and     FIX_POINT_MASK
-        ld      (_ySpeed), a
+        ld      (_yPos), a
         ret
