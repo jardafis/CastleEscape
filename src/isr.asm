@@ -20,7 +20,7 @@ initISR:
         ei                              ; Enable interrupts
         ret
 
-        section ISR
+        section CODE_ISR
 isr:
         push    af
         push    bc
